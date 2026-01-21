@@ -1,0 +1,23 @@
+# robots.txt para Retífica Premium
+# Otimizado para SEO
+
+User-agent: *
+Allow: /
+
+# Bloquear arquivos e diretórios específicos
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /*.json$
+
+# Permitir arquivos estáticos importantes
+Allow: /images/
+Allow: /fonts/
+Allow: /*.css$
+Allow: /*.js$
+
+# Sitemap location
+Sitemap: https://retificapremium.com.br/sitemap.xml
+
+# Crawl-delay (opcional, ajuste conforme necessário)
+# Crawl-delay: 1

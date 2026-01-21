@@ -1,26 +1,121 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Design Tokens - Retífica Premium */
+  --rp-navy: #020e1d;
+  --rp-royal: #1e3a8a;
+  --rp-accent: #2563eb;
+  --rp-gold: #fbbf24;
+  --rp-gray: #f3f4f6;
+  --rp-dark: #111827;
+
+  --radius-card: 16px;
+  --radius-btn: 9999px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-rp-navy: var(--rp-navy);
+  --color-rp-royal: var(--rp-royal);
+  --color-rp-accent: var(--rp-accent);
+  --color-rp-gold: var(--rp-gold);
+  --color-rp-gray: var(--rp-gray);
+  --color-rp-dark: var(--rp-dark);
+
+  --font-heading: var(--font-poppins);
+  --font-body: var(--font-inter);
+  --font-rajdhani: var(--font-rajdhani);
+  --font-open-sans: var(--font-open-sans);
+
+  --radius-card: var(--radius-card);
+  --radius-btn: var(--radius-btn);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Padrão de fundo hero claro com listras diagonais suaves */
+.bg-hero-light {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.03) 10px,
+    rgba(255, 255, 255, 0.03) 20px
+  );
+}
+
+/* Seção escura com overlay */
+.section-dark-overlay {
+  position: relative;
+}
+
+.section-dark-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(10, 22, 40, 0.7);
+  z-index: 1;
+}
+
+.section-dark-overlay > * {
+  position: relative;
+  z-index: 2;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-poppins), sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Marquee infinito */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-infinite {
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-infinite:hover {
+  animation-play-state: paused;
+}
+
+/* Clip-path diagonal para seção B2B */
+.b2b-image-diagonal {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+@media (min-width: 768px) {
+  .b2b-image-diagonal {
+    clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+/* Tipografia seção B2B - Headline responsiva */
+.b2b-headline {
+  font-family: var(--font-rajdhani);
+  font-weight: 700;
+  line-height: 100%;
+  letter-spacing: 0%;
+  font-size: 36px;
+}
+
+@media (min-width: 768px) {
+  .b2b-headline {
+    font-size: 66.78px;
+  }
 }
