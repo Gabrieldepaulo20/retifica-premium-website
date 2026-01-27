@@ -2,6 +2,7 @@
 
 import { navItems } from "@/lib/nav";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -26,16 +27,36 @@ export function Header() {
           className="flex items-center"
           aria-label="Retífica Premium - Página inicial"
         >
-          <span className="text-xl font-heading font-bold text-white">
-            RETÍFICA PREMIUM
-          </span>
-          {/* TODO: Adicionar logo SVG quando disponível */}
+          <Image
+            src="/logo.png"
+            alt="Retífica Premium"
+            width={120}
+            height={32}
+            className="h-auto w-auto"
+            priority={true}
+          />
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex md:items-center md:gap-8">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
+            const isB2B = item.href === "/b2b";
+            if (isActive && isB2B) {
+              return (
+                <span
+                  key={item.href}
+                  className={cn(
+                    "relative text-sm font-medium text-rp-gold",
+                    "cursor-default"
+                  )}
+                  aria-current="page"
+                >
+                  {item.label}
+                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-rp-gold" />
+                </span>
+              );
+            }
             return (
               <Link
                 key={item.href}
@@ -90,6 +111,18 @@ export function Header() {
           <div className="border-t border-rp-royal bg-rp-navy px-4 py-4">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
+              const isB2B = item.href === "/b2b";
+              if (isActive && isB2B) {
+                return (
+                  <span
+                    key={item.href}
+                    className="block cursor-default py-3 text-base font-medium text-rp-gold"
+                    aria-current="page"
+                  >
+                    {item.label}
+                  </span>
+                );
+              }
               return (
                 <Link
                   key={item.href}

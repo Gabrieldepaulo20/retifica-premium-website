@@ -119,3 +119,33 @@ h6 {
     font-size: 66.78px;
   }
 }
+
+/* Borda animada com gradiente rotacionando para cards de parceria */
+.partnership-card-animated-border {
+  position: relative;
+  border-radius: 1rem;
+  background: #0a1a36;
+  padding: 3px;
+}
+
+.partnership-card-animated-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, #f3b839, #0e62f6, #2e5aa7, #f3b839);
+  padding: 3px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  animation: rotate-border 3s linear infinite;
+  z-index: 0;
+}
+
+.partnership-card-animated-border > div {
+  position: relative;
+  z-index: 1;
+  background: #0a1a36;
+  border-radius: calc(1rem - 3px);
+}

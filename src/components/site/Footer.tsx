@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 
 export function Footer() {
@@ -9,9 +10,13 @@ export function Footer() {
           {/* Logo e Descrição */}
           <div className="space-y-4">
             <Link href="/" aria-label="Retífica Premium - Página inicial">
-              <span className="text-xl font-heading font-bold">
-                RETÍFICA PREMIUM
-              </span>
+              <Image
+                src="/logo.png"
+                alt="Retífica Premium"
+                width={120}
+                height={32}
+                className="h-auto w-auto"
+              />
             </Link>
             <p className="text-sm text-gray-400">
               {/* TODO: Adicionar descrição quando disponível */}

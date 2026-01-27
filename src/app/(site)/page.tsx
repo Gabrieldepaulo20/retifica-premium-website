@@ -15,10 +15,15 @@ export default function HomePage() {
       <section className="relative bg-rp-navy pt-20 pb-20 md:pt-24 md:pb-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
-            {/* Logo placeholder */}
-            <div className="mb-8 h-24 w-24 rounded-full bg-gradient-to-br from-rp-gold/20 to-rp-accent/20 p-4">
-              <div className="h-full w-full rounded-full border-2 border-rp-gold/50" />
-              {/* TODO: Adicionar logo SVG real */}
+            {/* Logo */}
+            <div className="mb-8 w-[240px] h-[180px]">
+              <Image
+                src="/logo.png"
+                alt="Retífica Premium"
+                width={240}
+                height={180}
+                className="object-contain"
+              />
             </div>
 
             {/* Título em 2 linhas */}
