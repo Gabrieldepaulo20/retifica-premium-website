@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { StatsCounter } from "@/components/site/StatsCounter";
 
 export default function SobrePage() {
   return (
@@ -54,21 +57,21 @@ export default function SobrePage() {
       <section className="relative overflow-hidden py-20 md:min-h-[650px] md:py-32">
         {/* Background com imagem blur */}
         <div className="absolute inset-0 z-0">
-  <Image
-    src="/fundoquemsomos.png"
-    alt=""
-    fill
-    className="object-cover opacity-35"
-    style={{ filter: "blur(6px)" }}
-    priority={false}
-  />
+          <Image
+            src="/fundoquemsomos.png"
+            alt=""
+            fill
+            className="object-cover opacity-35"
+            style={{ filter: "blur(6px)" }}
+            priority={false}
+          />
 
-  {/* Película escura para destacar o conteúdo */}
-  <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          {/* Película escura para destacar o conteúdo */}
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
-  {/* Vignette suave para dar profundidade */}
-  <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/45" />
-</div>
+          {/* Vignette suave para dar profundidade */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/45" />
+        </div>
 
         {/* Conteúdo */}
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -113,44 +116,46 @@ export default function SobrePage() {
             <div className="relative mx-auto w-full max-w-[540px] md:h-[720px]">
               {/* Imagem 1 - Topo */}
               <div className="relative h-[300px] w-full max-w-[400px] overflow-hidden rounded-xl border-4 border-white shadow-xl">
-  <Image
-    src="/quemsomos.png"
-    alt="Equipe da Retífica Premium"
-    fill
-    className="object-cover"
-    sizes="(max-width: 768px) 100vw, 400px"
-  />
-</div>
+                <Image
+                  src="/quemsomos.png"
+                  alt="Equipe da Retífica Premium"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 400px"
+                />
+              </div>
 
               {/* Imagem 2 - Baixo */}
               <div className="relative mt-6 h-[300px] w-full max-w-[400px] overflow-hidden rounded-xl border-4 border-white shadow-xl">
-  <Image
-    src="/quemsomos.png"
-    alt="Equipe da Retífica Premium"
-    fill
-    className="object-cover"
-    sizes="(max-width: 768px) 100vw, 400px"
-  />
-</div>
+                <Image
+                  src="/quemsomos.png"
+                  alt="Equipe da Retífica Premium"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 400px"
+                />
+              </div>
 
               {/* Imagem 3 - Meio sobreposta e mais à direita */}
               <div className="absolute right-[-125px] top-[180px] z-20 h-[300px] w-[400px] overflow-hidden rounded-xl border-4 border-white shadow-xl">
-  <Image
-    src="/quemsomos.png"
-    alt="Equipe da Retífica Premium"
-    fill
-    className="object-cover"
-    sizes="400px"
-  />
-</div>
+                <Image
+                  src="/quemsomos.png"
+                  alt="Equipe da Retífica Premium"
+                  fill
+                  className="object-cover"
+                  sizes="400px"
+                />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* 3. NO QUE ACREDITAMOS */}
-      <section className="min-h-[1100px] bg-white py-20 md:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative min-h-[1100px] bg-white py-20 md:py-32">
+        {/* Película azul */}
+        <div className="pointer-events-none absolute inset-0 z-0 bg-[#053282]/20" />
+        <div className="relative z-10 mx-auto max-w-[1149px] px-4 sm:px-6 lg:px-8">
           {/* Título central */}
           <div className="mb-16 text-center">
             <h2
@@ -165,84 +170,94 @@ export default function SobrePage() {
           <div className="mb-16 flex flex-col items-center gap-8">
             {/* Missão */}
             <div
-              className="w-full max-w-4xl overflow-hidden rounded-lg p-8 shadow-xl"
-              style={{ background: "#1a1a1a" }}
+              className="group w-full max-w-[1149px] overflow-hidden rounded-lg p-6 shadow-xl transition-all duration-300 hover:shadow-2xl md:h-[212px] md:p-8"
+              style={{
+                background:
+                  "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
+              }}
             >
-              <div className="flex items-start justify-between gap-6">
+              <div className="flex h-full items-center justify-between gap-6">
                 <div className="flex-1">
                   <h3
-                    className="mb-4 font-rajdhani text-2xl font-bold text-white"
+                    className="mb-3 font-rajdhani text-2xl font-bold text-white md:text-3xl"
                     style={{ fontFamily: "var(--font-rajdhani)" }}
                   >
                     Nossa Missão
                   </h3>
+                  {/* Linhas duplas com animação */}
+                  <div className="mb-4 flex items-center gap-2">
+                    {/* Barra grande com efeito story */}
+                    <div className="relative h-[3px] w-[220px] overflow-hidden rounded-full bg-white/30">
+                      <div className="absolute left-0 top-0 h-full w-0 rounded-full bg-[#F3B839] transition-[width] duration-[1100ms] ease-out will-change-[width] group-hover:w-full" />
+                    </div>
+                    {/* Barra pequena */}
+                    <div className="h-[3px] w-8 rounded-full bg-white transition-colors duration-300 group-hover:bg-[#F3B839]" />
+                  </div>
                   <p
-                    className="text-base leading-relaxed text-white"
+                    className="text-base leading-relaxed text-white md:text-lg"
                     style={{ fontFamily: "var(--font-open-sans)" }}
                   >
                     Restaurar a performance e a confiabilidade dos motores com
                     qualidade técnica, agilidade e atendimento humano.
                   </p>
                 </div>
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-16 w-16 text-rp-gold"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <div className="shrink-0">
+                  <span
+                    className="material-symbols-outlined leading-none text-[134px] text-[#F3B839] max-md:text-[96px]"
+                    style={{
+                      fontVariationSettings:
+                        '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                    }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                    target
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Visão */}
             <div
-              className="w-full max-w-4xl overflow-hidden rounded-lg p-8 shadow-xl"
-              style={{ background: "#1a1a1a" }}
+              className="group w-full max-w-[1149px] overflow-hidden rounded-lg p-6 shadow-xl transition-all duration-300 hover:shadow-2xl md:h-[212px] md:p-8"
+              style={{
+                background:
+                  "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%)",
+              }}
             >
-              <div className="flex items-start justify-between gap-6">
+              <div className="flex h-full items-center justify-between gap-6">
                 <div className="flex-1">
                   <h3
-                    className="mb-4 font-rajdhani text-2xl font-bold text-white"
+                    className="mb-3 font-rajdhani text-2xl font-bold text-white md:text-3xl"
                     style={{ fontFamily: "var(--font-rajdhani)" }}
                   >
                     Nossa Visão
                   </h3>
+                  {/* Linhas duplas com animação */}
+                  <div className="mb-4 flex items-center gap-2">
+                    {/* Barra grande com efeito story */}
+                    <div className="relative h-[3px] w-[220px] overflow-hidden rounded-full bg-white/30">
+                      <div className="absolute left-0 top-0 h-full w-0 rounded-full bg-[#F3B839] transition-[width] duration-[1100ms] ease-out will-change-[width] group-hover:w-full" />
+                    </div>
+                    {/* Barra pequena */}
+                    <div className="h-[3px] w-8 rounded-full bg-white transition-colors duration-300 group-hover:bg-[#F3B839]" />
+                  </div>
                   <p
-                    className="text-base leading-relaxed text-white"
+                    className="text-base leading-relaxed text-white md:text-lg"
                     style={{ fontFamily: "var(--font-open-sans)" }}
                   >
                     Ser reconhecida como a melhor retífica de motores do Brasil,
                     referência em qualidade, inovação e atendimento ao cliente.
                   </p>
                 </div>
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-16 w-16 text-rp-gold"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                <div className="shrink-0">
+                  <span
+                    className="material-symbols-outlined leading-none text-[134px] text-[#F3B839] max-md:text-[96px]"
+                    style={{
+                      fontVariationSettings:
+                        '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                    }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
+                    visibility
+                  </span>
                 </div>
               </div>
             </div>
@@ -252,23 +267,19 @@ export default function SobrePage() {
           <div className="grid grid-cols-1 justify-items-center gap-y-8 md:grid-cols-2 md:gap-x-[60px] md:gap-y-[60px]">
             {/* Precisão */}
             <div
-              className="w-full max-w-[360px] rounded-lg border border-rp-gold/20 p-8 shadow-lg md:h-[360px] md:w-[360px]"
+              className="w-full max-w-[360px] rounded-lg border border-rp-gold/20 p-8 shadow-lg transition-transform duration-200 will-change-transform hover:scale-105 md:h-[360px] md:w-[360px]"
               style={{ background: "#1a1a1a" }}
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <svg
-                  className="mb-4 h-12 w-12 text-rp-gold"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <span
+                  className="material-symbols-outlined mb-4 leading-none text-[80px] text-[#F3B839] max-md:text-[56px]"
+                  style={{
+                    fontVariationSettings:
+                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                  }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
+                  track_changes
+                </span>
                 <h3
                   className="mb-3 font-rajdhani text-2xl font-bold text-white"
                   style={{ fontFamily: "var(--font-rajdhani)" }}
@@ -287,23 +298,19 @@ export default function SobrePage() {
 
             {/* Compromisso */}
             <div
-              className="w-full max-w-[360px] rounded-lg border border-rp-gold/20 p-8 shadow-lg md:h-[360px] md:w-[360px]"
+              className="w-full max-w-[360px] rounded-lg border border-rp-gold/20 p-8 shadow-lg transition-transform duration-200 will-change-transform hover:scale-105 md:h-[360px] md:w-[360px]"
               style={{ background: "#1a1a1a" }}
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <svg
-                  className="mb-4 h-12 w-12 text-rp-gold"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <span
+                  className="material-symbols-outlined mb-4 leading-none text-[80px] text-[#F3B839] max-md:text-[56px]"
+                  style={{
+                    fontVariationSettings:
+                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                  }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                  />
-                </svg>
+                  handshake
+                </span>
                 <h3
                   className="mb-3 font-rajdhani text-2xl font-bold text-white"
                   style={{ fontFamily: "var(--font-rajdhani)" }}
@@ -322,23 +329,19 @@ export default function SobrePage() {
 
             {/* Qualidade */}
             <div
-              className="w-full max-w-[360px] rounded-lg border border-rp-gold/20 p-8 shadow-lg md:h-[360px] md:w-[360px]"
+              className="w-full max-w-[360px] rounded-lg border border-rp-gold/20 p-8 shadow-lg transition-transform duration-200 will-change-transform hover:scale-105 md:h-[360px] md:w-[360px]"
               style={{ background: "#1a1a1a" }}
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <svg
-                  className="mb-4 h-12 w-12 text-rp-gold"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <span
+                  className="material-symbols-outlined mb-4 leading-none text-[80px] text-[#F3B839] max-md:text-[56px]"
+                  style={{
+                    fontVariationSettings:
+                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                  }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                  />
-                </svg>
+                  workspace_premium
+                </span>
                 <h3
                   className="mb-3 font-rajdhani text-2xl font-bold text-white"
                   style={{ fontFamily: "var(--font-rajdhani)" }}
@@ -357,23 +360,19 @@ export default function SobrePage() {
 
             {/* Equipe */}
             <div
-              className="w-full max-w-[360px] rounded-lg border border-rp-gold/20 p-8 shadow-lg md:h-[360px] md:w-[360px]"
+              className="w-full max-w-[360px] rounded-lg border border-rp-gold/20 p-8 shadow-lg transition-transform duration-200 will-change-transform hover:scale-105 md:h-[360px] md:w-[360px]"
               style={{ background: "#1a1a1a" }}
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <svg
-                  className="mb-4 h-12 w-12 text-rp-gold"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <span
+                  className="material-symbols-outlined mb-4 leading-none text-[80px] text-[#F3B839] max-md:text-[56px]"
+                  style={{
+                    fontVariationSettings:
+                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                  }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
+                  groups
+                </span>
                 <h3
                   className="mb-3 font-rajdhani text-2xl font-bold text-white"
                   style={{ fontFamily: "var(--font-rajdhani)" }}
@@ -394,77 +393,28 @@ export default function SobrePage() {
       </section>
 
       {/* 4. FAIXA DE MÉTRICAS */}
-      <section
-        className="h-[350px]"
-        style={{
-          background: "linear-gradient(90deg, #053282 0%, #002159 100%)",
-        }}
-      >
+      <section className="h-[350px] bg-gradient-to-r from-[#053282] via-[#0B2F6B] to-[#053282]">
         <div className="mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
           <div className="grid w-full grid-cols-2 gap-8 md:grid-cols-4">
             {/* Métrica 1 */}
-            <div className="text-center text-white">
-              <div
-                className="mb-2 font-rajdhani text-5xl font-bold md:text-6xl"
-                style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1 }}
-              >
-                20+
-              </div>
-              <p
-                className="text-sm md:text-base"
-                style={{ fontFamily: "var(--font-open-sans)" }}
-              >
-                Anos de experiência
-              </p>
-            </div>
+            <StatsCounter
+              endValue={20}
+              suffix="+"
+              label="Anos de experiência"
+            />
 
             {/* Métrica 2 */}
-            <div className="text-center text-white">
-              <div
-                className="mb-2 font-rajdhani text-5xl font-bold md:text-6xl"
-                style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1 }}
-              >
-                5000+
-              </div>
-              <p
-                className="text-sm md:text-base"
-                style={{ fontFamily: "var(--font-open-sans)" }}
-              >
-                Motores Retificados
-              </p>
-            </div>
+            <StatsCounter
+              endValue={5000}
+              suffix="+"
+              label="Motores Retificados"
+            />
 
             {/* Métrica 3 */}
-            <div className="text-center text-white">
-              <div
-                className="mb-2 font-rajdhani text-5xl font-bold md:text-6xl"
-                style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1 }}
-              >
-                98%
-              </div>
-              <p
-                className="text-sm md:text-base"
-                style={{ fontFamily: "var(--font-open-sans)" }}
-              >
-                Satisfação
-              </p>
-            </div>
+            <StatsCounter endValue={98} suffix="%" label="Satisfação" />
 
             {/* Métrica 4 */}
-            <div className="text-center text-white">
-              <div
-                className="mb-2 font-rajdhani text-5xl font-bold md:text-6xl"
-                style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1 }}
-              >
-                15
-              </div>
-              <p
-                className="text-sm md:text-base"
-                style={{ fontFamily: "var(--font-open-sans)" }}
-              >
-                Especialistas
-              </p>
-            </div>
+            <StatsCounter endValue={15} label="Especialistas" />
           </div>
         </div>
       </section>

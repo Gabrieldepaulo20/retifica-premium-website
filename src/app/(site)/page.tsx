@@ -244,17 +244,17 @@ export default function HomePage() {
           <div className="mt-25 mb-8 grid grid-cols-1 justify-items-center gap-y-14 md:grid-cols-2 md:gap-x-10 xl:grid-cols-3">
             {[
               {
-                img: "/homesection3.png",
+                img: "/retificademotor.jpg",
                 title: "RETÍFICA DE MOTORES",
                 desc: "Serviço completo de retífica com equipamentos de última geração e precisão milimétrica.",
               },
               {
-                img: "/homesection32.png",
+                img: "/montagemdemotores.jpg",
                 title: "MONTAGEM DE MOTORES",
                 desc: "Montagem profissional com peças originais e testes rigorosos de qualidade.",
               },
               {
-                img: "/homesection33.png",
+                img: "/diagnosticotecnico.png",
                 title: "DIAGNÓSTICO TÉCNICO",
                 desc: "Análise detalhada do estado do motor com relatório técnico completo.",
               },
@@ -270,14 +270,20 @@ export default function HomePage() {
               >
                 {/* Imagem flutuando (fora do card) */}
                 <div className="absolute left-1/2 top-[-52px] w-[276px] max-w-[calc(100%+24px)] -translate-x-1/2">
-                  <Image
-                    src={card.img}
-                    alt={card.title}
-                    width={276}
-                    height={209}
-                    className="h-[209px] w-[276px] max-w-full rounded-[10px] object-cover shadow-md transition-transform duration-200 group-hover:scale-[1.02]"
-                    priority={false}
-                  />
+                  <div className="relative h-[209px] w-[276px] overflow-hidden rounded-[10px] shadow-md transition-transform duration-200 group-hover:scale-[1.02]">
+                    <Image
+                      src={card.img}
+                      alt={card.title}
+                      width={276}
+                      height={209}
+                      sizes="(max-width: 768px) 90vw, 276px"
+                      quality={75}
+                      className="h-full w-full object-cover object-center"
+                      loading="lazy"
+                    />
+                    {/* Overlay com gradiente azul */}
+                    <div className="pointer-events-none absolute inset-0 rounded-[10px] bg-gradient-to-b from-[#053282]/15 to-[#053282]/30" />
+                  </div>
                 </div>
 
                 {/* Conteúdo */}
