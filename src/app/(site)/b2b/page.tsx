@@ -31,10 +31,7 @@ const partnershipLevels = [
     percent: "5%",
     percentColor: "#C7643A",
     serviceRange: "1-5 serviços/mês",
-    benefits: [
-      "Descontos progressivos",
-      "Suporte técnico",
-    ],
+    benefits: ["Descontos progressivos", "Suporte técnico"],
   },
   {
     name: "Parceiro Prata",

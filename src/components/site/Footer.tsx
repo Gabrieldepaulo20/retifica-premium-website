@@ -1,63 +1,164 @@
-import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
+const HORARIOS = [
+  { dia: "Segunda-feira", horario: "08:00–11:30, 13:00–18:00" },
+  { dia: "Terça-feira", horario: "08:00–11:30, 13:00–18:00" },
+  { dia: "Quarta-feira", horario: "08:00–11:30, 13:00–18:00" },
+  { dia: "Quinta-feira", horario: "08:00–11:30, 13:00–18:00" },
+  { dia: "Sexta-feira", horario: "08:00–12:00, 13:00–17:30" },
+  { dia: "Sábado", horario: "Fechado" },
+  { dia: "Domingo", horario: "Fechado" },
+] as const;
+
 export function Footer() {
   return (
-    <footer className="bg-rp-dark text-white" role="contentinfo">
-      <div className="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {/* Logo e Descrição */}
-          <div className="space-y-4">
-            <Link href="/" aria-label="Retífica Premium - Página inicial">
+    <footer className="relative overflow-hidden text-white" role="contentinfo">
+      {/* Camada 1: textura de fundo (cover, center) */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/fundorodape.png"
+          alt=""
+          fill
+          className="object-cover object-center opacity-100"
+          sizes="100vw"
+          priority={false}
+        />
+      </div>
+
+      {/* Camada 2: overlay azul #053282 para contraste, textura visível */}
+      <div
+        className="absolute inset-0 z-1"
+        style={{ backgroundColor: "rgba(5, 50, 130, 0.85)" }}
+        aria-hidden
+      />
+
+      {/* Conteúdo acima das camadas */}
+      <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-14 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 border-white/10 sm:gap-12 lg:grid-cols-3 lg:gap-14 [&>div]:border-b [&>div]:border-white/10 [&>div]:pb-10 lg:[&>div]:border-b-0 lg:[&>div]:pb-0">
+          {/* Coluna A — Brand */}
+          <div className="space-y-5">
+            <Link
+              href="/"
+              className="inline-block focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
+              aria-label="Retífica Premium - Página inicial"
+            >
               <Image
                 src="/logo.png"
                 alt="Retífica Premium"
-                width={120}
-                height={32}
+                width={140}
+                height={38}
                 className="h-auto w-auto"
               />
             </Link>
-            <p className="text-sm text-gray-400">
-              {/* TODO: Adicionar descrição quando disponível */}
+            <p className="max-w-xs text-sm leading-relaxed text-white/80">
               Especialistas em retífica de cabeçotes com mais de 20 anos de
               experiência.
             </p>
           </div>
 
-          {/* Contato */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-heading font-semibold">CONTATO</h3>
-            <div className="space-y-2 text-sm text-gray-400">
-              {/* TODO: Adicionar informações de contato reais */}
-              <p>Rua das Oficinas, 24</p>
-              <p>Sertãozinho - SP, 14170-000</p>
-              <p>(16) 3624-4610</p>
-              <p>(16) 99302-1919</p>
-              <p>contato@retificapremium.com.br</p>
+          {/* Coluna B — Contato */}
+          <div className="space-y-5">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-white">
+              Contato
+            </h3>
+            <ul className="space-y-2.5 text-sm leading-relaxed text-white/80">
+              <li>
+                Av. Fioravante Magro, 1059 - Jardim Boa Vista, Sertãozinho - SP,
+                14177-578
+              </li>
+              <li>
+                <a
+                  href="tel:+551635244661"
+                  className="transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
+                >
+                  (16) 3524-4661
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://wa.me/5516993021998"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
+                >
+                  (16) 99302-1998
+                </a>{" "}
+                <span className="text-white/60">(WhatsApp)</span>
+              </li>
+              <li>
+                <a
+                  href="mailto:retificapremium5@gmail.com"
+                  className="break-all transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
+                >
+                  retificapremium5@gmail.com
+                </a>
+              </li>
+              <li className="text-white/70">CNPJ: 48.842.592/0001-15</li>
+            </ul>
+
+            {/* Ícones WhatsApp e Instagram */}
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <a
+                href="https://wa.me/5516993021998"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
+                aria-label="WhatsApp"
+              >
+                <Image
+                  src="/whatsapprodape.png"
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 object-contain"
+                />
+                <span className="text-xs text-white/70">WhatsApp</span>
+              </a>
+              <a
+                href="https://www.instagram.com/retifica_premium/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
+                aria-label="Instagram"
+              >
+                <Image
+                  src="/instagram.png"
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 object-contain"
+                />
+                <span className="text-xs text-white/70">Instagram</span>
+              </a>
             </div>
           </div>
 
-          {/* Funcionamento */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-heading font-semibold">
-              FUNCIONAMENTO
+          {/* Coluna C — Funcionamento */}
+          <div className="space-y-5">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-white">
+              Funcionamento
             </h3>
-            <div className="space-y-2 text-sm text-gray-400">
-              {/* TODO: Adicionar horários reais */}
-              <p>SEG - SEX: 08:00 - 18:00</p>
-              <p>SÁBADO: 08:00 - 12:00</p>
-              <p>DOMINGO: FECHADO</p>
-            </div>
+            <ul className="space-y-2 text-sm leading-relaxed text-white/80">
+              {HORARIOS.map(({ dia, horario }) => (
+                <li
+                  key={dia}
+                  className="grid grid-cols-[1fr_auto] gap-4 sm:gap-6"
+                >
+                  <span>{dia}:</span>
+                  <span className="text-right">{horario}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
+        {/* Linha divisória antes do copyright */}
+        <div className="mt-10 border-t border-white/15 md:mt-12" />
+
         {/* Copyright */}
-        <div className="mt-8 border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
-          <p>
-            © {new Date().getFullYear()} Retífica Premium. Todos os direitos
-            reservados.
-          </p>
+        <div className="pt-8 text-center text-sm leading-relaxed text-white/70">
+          <p>© 2026 Retífica Premium. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

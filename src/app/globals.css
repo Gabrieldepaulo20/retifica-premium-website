@@ -59,6 +59,10 @@
   z-index: 2;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: var(--font-inter), sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -88,10 +92,6 @@ h6 {
 
 .marquee-infinite {
   animation: marquee 30s linear infinite;
-}
-
-.marquee-infinite:hover {
-  animation-play-state: paused;
 }
 
 /* Clip-path diagonal para seção B2B */
@@ -148,4 +148,30 @@ h6 {
   z-index: 1;
   background: #0a1a36;
   border-radius: calc(1rem - 3px);
+}
+
+/* Material Symbols Outlined */
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40;
+}
+
+/* Carrossel infinito — seção de depoimentos */
+@keyframes testimonials-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.testimonials-carousel-track {
+  animation: testimonials-scroll 30s linear infinite;
+}
+
+/* Garantir que o carrossel de depoimentos NUNCA pause (hover/focus) */
+.testimonials-carousel-track:hover,
+.testimonials-carousel-track:focus,
+.testimonials-carousel-track:focus-within {
+  animation-play-state: running;
 }

@@ -11,23 +11,23 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen">
-      {/* 1. HERO */}
-      <section className="relative bg-rp-navy pt-20 pb-20 md:pt-24 md:pb-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
+      {/* 1. HERO — altura por viewport para que a faixa azul fique acima da dobra */}
+      <section className="relative flex min-h-[calc(100svh-6rem)] max-h-[calc(100svh-6rem)] flex-col bg-rp-navy pt-[clamp(1rem,5vh,6rem)] pb-[clamp(1.5rem,3vh,2rem)] md:pt-20 md:pb-6 lg:pt-24 lg:pb-6">
+        <div className="mx-auto flex max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
+          <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
             {/* Logo */}
-            <div className="mb-8 w-[240px] h-[180px]">
+            <div className="mb-4 w-[200px] h-[150px] md:mb-8 md:h-[180px] md:w-[240px]">
               <Image
                 src="/logo.png"
                 alt="Retífica Premium"
                 width={240}
                 height={180}
-                className="object-contain"
+                className="h-full w-full object-contain"
               />
             </div>
 
             {/* Título em 2 linhas */}
-            <h1 className="mb-6 font-heading text-4xl font-extrabold uppercase leading-tight tracking-tight md:text-5xl lg:text-6xl">
+            <h1 className="mb-4 font-heading text-4xl font-extrabold uppercase leading-tight tracking-tight md:mb-6 md:text-5xl lg:text-6xl">
               <span className="text-[#f59e0b]">POTÊNCIA E PRECISÃO</span>
               <br />
               <span className="text-white">PARA O CORAÇÃO DO SEU MOTOR</span>
@@ -38,7 +38,7 @@ export default function HomePage() {
               Especialistas em retífica de motores com mais de 20 anos de
               experiência.
             </p>
-            <p className="mb-10 text-base text-gray-400 md:text-lg">
+            <p className="mb-6 text-base text-gray-400 md:mb-10 md:text-lg">
               Precisão, qualidade e confiança em cada serviço realizado.
             </p>
 
@@ -56,8 +56,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. BANNER/MARQUEE */}
-      <section className="relative overflow-hidden bg-rp-royal py-4">
+      {/* 2. BANNER/MARQUEE — sobe ~30px para ficar acima da dobra */}
+      <section className="relative -mt-6 overflow-hidden bg-rp-royal py-4 md:-mt-6 lg:-mt-8 xl:-mt-9">
         <div className="marquee-infinite flex whitespace-nowrap text-sm font-semibold uppercase text-white md:text-base">
           <div className="flex items-center gap-4 px-8">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -454,14 +454,17 @@ export default function HomePage() {
                   "ECONOMIA NA COMPRA DE PEÇAS E COMPONENTES",
                   "ATENDIMENTO PRIORITÁRIO E PRAZOS REDUZIDOS",
                 ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3">
+                  <li key={i} className="flex items-center gap-3">
                     <span
-                      className="mt-0 inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full border border-[#F3B839] bg-white text-[#F3B839]"
-                      style={{
-                        fontSize: "18px",
-                      }}
+                      className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center text-[#F3B839]"
+                      aria-hidden="true"
                     >
-                      ✓
+                      <span
+                        className="material-symbols-outlined leading-none"
+                        style={{ fontSize: "34px" }}
+                      >
+                        check_circle
+                      </span>
                     </span>
                     <span
                       className="text-white"
@@ -469,7 +472,7 @@ export default function HomePage() {
                         fontFamily: "var(--font-open-sans)",
                         fontWeight: 700,
                         fontSize: "20.34px",
-                        lineHeight: "100%",
+                        lineHeight: "1",
                         letterSpacing: "0%",
                       }}
                     >
@@ -521,7 +524,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. DEPOIMENTOS */}
+      {/* 6. DEPOIMENTOS — carrossel infinito + cards premium */}
       <section className="relative overflow-hidden">
         {/* Imagem de fundo */}
         <div className="absolute inset-0 z-0">
@@ -532,13 +535,10 @@ export default function HomePage() {
             className="object-cover object-center"
             priority={false}
           />
-          {/* Overlay escuro + leve blur (efeito "telinha" do Figma) */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/60 to-black/75 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-[#000617]/70 backdrop-blur-[2px]" />
         </div>
 
-        {/* Conteúdo */}
         <div className="relative z-10 flex min-h-[700px] flex-col justify-between md:min-h-[950px]">
-          {/* Título e subtítulo centralizados no topo */}
           <div className="mx-auto max-w-7xl px-4 pt-16 text-center sm:px-6 lg:px-8 md:pt-24">
             <h2 className="mb-2 font-heading text-3xl font-bold text-white md:text-4xl">
               QUEM JÁ CONFIA NA{" "}
@@ -550,38 +550,119 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Faixa azul translúcida centralizada verticalmente (pega de fora a fora) */}
-          <div className="flex flex-1 items-center justify-center py-8 md:py-12">
-            <div
-              className="w-full py-8 md:py-12"
-              style={{
-                background: "rgba(4, 59, 155, 0.29)",
-              }}
-            >
-              {/* Container para centralizar os cards dentro da faixa */}
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                {/* Grid de cards de depoimentos */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                  {Array.from({ length: 4 }).map((_, i) => (
+          {/* Viewport do carrossel: mascara nas laterais para foco no centro */}
+          <div
+            className="flex flex-1 items-center py-8 md:py-12"
+            style={{
+              maskImage:
+                "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)",
+            }}
+          >
+            <div className="w-full overflow-hidden">
+              {/* Track: 2 cópias dos 3 cards para loop infinito */}
+              <div
+                className="testimonials-carousel-track flex w-max flex-nowrap gap-10"
+                tabIndex={0}
+                aria-label="Carrossel de depoimentos"
+              >
+                {[1, 2].map((copy) =>
+                  [
+                    {
+                      id: "marcio",
+                      quote:
+                        "Nós, da oficina Márcio Auto Mecânica, recomendamos os serviços da Retífica Premium pela confiança, agilidade e qualidade.",
+                      logoType: "text" as const,
+                      line1: "MARCIO",
+                      line2: "Auto Mecânica",
+                    },
+                    {
+                      id: "sert",
+                      quote:
+                        "SERVIÇO PROFISSIONAL, ÓTIMO ATENDIMENTO, SEMPRE PRESTATIVOS, ALÉM DE ÓTIMO PREÇO. PESSOAS DE CONFIANÇA. RECOMENDO.",
+                      logoType: "image" as const,
+                      src: "/sert-pecas.jpg",
+                      alt: "Sert Peças",
+                    },
+                    {
+                      id: "diego",
+                      quote:
+                        "SERVIÇO DE EXCELÊNCIA. OS MELHORES PROFISSIONAIS, SEMPRE SE DEDICANDO PARA ENTREGAR UM SERVIÇO DE QUALIDADE. AGRADECEMOS A PARCERIA DESSA EQUIPE. SUPER RECOMENDO.",
+                      logoType: "image" as const,
+                      src: "/Diego.png",
+                      alt: "Diego",
+                    },
+                  ].map((item) => (
                     <div
-                      key={i}
-                      className="relative rounded-lg bg-white p-6 shadow-lg before:absolute before:bottom-0 before:right-0 before:h-2 before:w-1/3 before:rounded-tl-lg before:bg-rp-accent"
+                      key={`${copy}-${item.id}`}
+                      className="flex h-[340px] w-[300px] shrink-0 flex-col rounded-2xl border-2 border-[#F8B628] bg-white px-6 py-8 shadow-[0_20px_60px_rgba(0,0,0,0.25)] md:h-[380px] md:w-[380px] md:px-10 md:py-10"
                     >
-                      <p className="mb-4 text-sm italic text-gray-700">
-                        &quot;Serviço excepcional! Minha frota de caminhões
-                        nunca teve motores tão bem cuidados.&quot;
-                      </p>
-                      <div className="border-t border-gray-200 pt-4">
-                        <p className="font-heading text-sm font-bold text-rp-navy">
-                          Carlos Silva
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Proprietário de Frota
+                      <div className="flex flex-1 flex-col items-center justify-center text-center">
+                        <p
+                          className="mx-auto max-w-[26ch] leading-tight text-slate-700 text-[17px] md:text-[22px]"
+                          style={{
+                            fontFamily: "var(--font-open-sans)",
+                          }}
+                        >
+                          &quot;{item.quote}&quot;
                         </p>
                       </div>
+                      <div className="mt-auto flex h-[96px] items-center justify-center">
+                        {item.logoType === "text" && (
+                          <>
+                            <p
+                              className="text-center text-[24px] font-bold leading-tight md:text-[28px]"
+                              style={{
+                                fontFamily: "var(--font-rajdhani)",
+                                color: "#c41e3a",
+                                textShadow:
+                                  "1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff",
+                              }}
+                            >
+                              {item.line1}
+                            </p>
+                            <p
+                              className="mt-1 text-center text-[16px] font-bold leading-tight md:text-[18px]"
+                              style={{
+                                fontFamily: "var(--font-rajdhani)",
+                                color: "#0E62F6",
+                                textShadow:
+                                  "1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff",
+                              }}
+                            >
+                              {item.line2}
+                            </p>
+                          </>
+                        )}
+                        {item.logoType === "image" &&
+                          item.src === "/sert-pecas.jpg" && (
+                            <div className="flex h-[90px] w-[220px] items-center justify-center">
+                              <Image
+                                src="/sert-pecas.jpg"
+                                alt={item.alt}
+                                width={220}
+                                height={90}
+                                className="h-[90px] w-[220px] object-contain"
+                              />
+                            </div>
+                          )}
+                        {item.logoType === "image" &&
+                          item.src === "/Diego.png" && (
+                            <div className="flex h-[96px] w-[220px] items-center justify-center">
+                              <Image
+                                src="/Diego.png"
+                                alt={item.alt}
+                                width={220}
+                                height={80}
+                                className="h-[80px] w-auto object-contain -translate-y-2 drop-shadow-sm"
+                              />
+                            </div>
+                          )}
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
