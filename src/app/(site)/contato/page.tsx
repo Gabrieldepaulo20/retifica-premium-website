@@ -1,54 +1,60 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect } from "react";
 
 export default function ContatoPage() {
-  return (
-    <main className="min-h-screen">
-      {/* SEÇÃO 1 — HERO */}
-      <section className="relative min-h-[600px] overflow-hidden bg-[#2E5AA7]">
-        {/* Background com imagem */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/cabecotefundo.png"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          {/* Overlay escuro para contraste */}
-          <div className="absolute inset-0 bg-black/70" />
-          {/* Vignette */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
-        </div>
+  useEffect(() => {
+    if (window.location.hash === "#contato-form") {
+      const formElement = document.getElementById("contato-form");
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, []);
 
-        {/* Conteúdo centralizado */}
-        <div className="relative z-10 mx-auto flex min-h-[600px] max-w-7xl items-center justify-center px-4 text-center sm:px-6 lg:px-8">
-          <div className="space-y-4">
-            <h1
-              className="text-4xl font-bold text-white md:text-5xl lg:text-6xl"
-              style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.3 }}
-            >
-              Entre em Contato
-            </h1>
-            <div
-              className="mx-auto max-w-2xl space-y-2 text-lg md:text-xl"
-              style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.6 }}
-            >
-              <p className="font-semibold text-[#F3B839]">
-                Estamos prontos para atender você.
-              </p>
-              <p className="text-white/90">
-                Envie sua mensagem ou visite nossa oficina.
-              </p>
+  return (
+    <main className="min-h-screen bg-white">
+      {/* PARTE A — HERO/FORMULÁRIO */}
+      <section className="bg-white">
+        <div className="relative min-h-[700px] overflow-hidden bg-[#2E5AA7]">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/cabecotefundo.jpg"
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-[#2E5AA7]/90" />
+            <div className="absolute inset-0 bg-linear-to-b from-[#2E5AA7]/75 via-[#1E3B73]/65 to-black/60" />
+          </div>
+
+          <div className="relative z-10 mx-auto flex min-h-[700px] max-w-7xl items-center justify-center px-4 text-center sm:px-6 lg:px-8">
+            <div className="space-y-4">
+              <h1
+                className="text-4xl font-bold text-white md:text-5xl lg:text-6xl"
+                style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.3 }}
+              >
+                Entre em Contato
+              </h1>
+              <div
+                className="mx-auto max-w-2xl space-y-2 text-lg md:text-xl"
+                style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.6 }}
+              >
+                <p className="font-semibold text-[#F3B839]">
+                  Estamos prontos para atender você.
+                </p>
+                <p className="text-white/90">
+                  Envie sua mensagem ou visite nossa oficina.
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* SEÇÃO 2 — FORMULÁRIO */}
-      <section className="min-h-[1200px] bg-white py-20">
-        <div className="mx-auto flex max-w-7xl items-center justify-center px-4 sm:px-6 lg:px-8">
-          <div className="w-full max-w-2xl rounded-3xl bg-[#F8B628] p-10 shadow-xl md:p-12">
+        <div className="-mt-[90px] mx-auto max-w-7xl px-4 pb-40 pt-2 sm:px-6 lg:px-8">
+          <div id="contato-form" className="relative z-10 mx-auto w-full max-w-2xl rounded-3xl bg-[#F8B628] p-8 shadow-xl md:p-10">
             <h2
               className="mb-8 text-center text-2xl font-bold uppercase text-white md:text-3xl"
               style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
@@ -56,15 +62,14 @@ export default function ContatoPage() {
               ENVIE SUA MENSAGEM
             </h2>
 
-            <form action="#" method="post" className="space-y-6">
-              {/* Nome */}
+            <form action="#" method="post" className="space-y-5">
               <div>
                 <label
                   htmlFor="nome"
                   className="mb-2 block text-sm font-medium text-white"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
-                  Nome
+                  Nome completo
                 </label>
                 <input
                   type="text"
@@ -77,7 +82,6 @@ export default function ContatoPage() {
                 />
               </div>
 
-              {/* Telefone/WhatsApp */}
               <div>
                 <label
                   htmlFor="telefone"
@@ -92,12 +96,11 @@ export default function ContatoPage() {
                   name="telefone"
                   required
                   className="h-12 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50"
-                  placeholder="(11) 99999-9999"
+                  placeholder="(16) 99999-9999"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 />
               </div>
 
-              {/* E-mail */}
               <div>
                 <label
                   htmlFor="email"
@@ -117,7 +120,6 @@ export default function ContatoPage() {
                 />
               </div>
 
-              {/* Assunto */}
               <div>
                 <label
                   htmlFor="assunto"
@@ -136,11 +138,10 @@ export default function ContatoPage() {
                   <option value="">Selecione um assunto</option>
                   <option value="orcamento">Solicitar Orçamento</option>
                   <option value="duvidas">Tirar Dúvidas</option>
-                  <option value="orcamento">Outros Assuntos</option>
+                  <option value="outros">Outros Assuntos</option>
                 </select>
               </div>
 
-              {/* Mensagem */}
               <div>
                 <label
                   htmlFor="mensagem"
@@ -154,13 +155,12 @@ export default function ContatoPage() {
                   name="mensagem"
                   rows={6}
                   required
-                  className="min-h-[180px] w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="min-h-[170px] w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50"
                   placeholder="Sua mensagem aqui..."
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 />
               </div>
 
-              {/* Botão Enviar */}
               <div className="pt-4">
                 <button
                   type="submit"
@@ -178,94 +178,55 @@ export default function ContatoPage() {
         </div>
       </section>
 
-      {/* SEÇÃO 3 — MAPA/LOCALIZAÇÃO */}
-      <section className="min-h-[1100px] bg-gray-50 py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
-            {/* Mapa placeholder */}
-            <div className="order-2 lg:order-1">
-              <div className="h-[400px] rounded-3xl bg-white shadow-xl sm:h-[500px] lg:h-[600px]">
-                <div className="flex h-full items-center justify-center">
-                  <p
-                    className="text-gray-500"
-                    style={{ fontFamily: "var(--font-open-sans)" }}
-                  >
-                    Mapa aqui (Google Maps embed)
-                  </p>
-                </div>
-              </div>
-            </div>
+      {/* PARTE B — ONDE ESTAMOS */}
+      <section className="relative -mt-[90px] overflow-hidden bg-linear-to-b from-[#2E5AA7] via-[#2A5197] to-[#1F407A] pb-20 pt-28 md:pt-32">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/cabecotefundo.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover opacity-15"
+          />
+          <div className="absolute inset-0 bg-[#2E5AA7]/85" />
+          <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black/40" />
+        </div>
 
-            {/* Cards de informações */}
-            <div className="order-1 space-y-6 lg:order-2">
-              {/* Card Endereço */}
-              <div className="rounded-2xl bg-white p-6 shadow-lg">
-                <h3
-                  className="mb-3 text-xl font-bold text-gray-900"
-                  style={{ fontFamily: "var(--font-rajdhani)" }}
-                >
-                  Endereço
-                </h3>
-                <p
-                  className="text-gray-700"
-                  style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.6 }}
-                >
-                  Rua das Oficinas, 123
-                  <br />
-                  São Paulo - SP, 01234-567
-                </p>
-              </div>
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center text-white">
+            <span
+              className="material-symbols-outlined inline-block leading-none text-[130px] text-[#F3B839] md:text-[134px]"
+              aria-hidden="true"
+            >
+              location_on
+            </span>
+            <h2
+              className="mt-2 text-3xl font-bold md:text-4xl lg:text-5xl"
+              style={{ fontFamily: "var(--font-rajdhani)" }}
+            >
+              Onde estamos?
+            </h2>
+            <p
+              className="mt-4 text-base text-white/90 md:text-lg"
+              style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.7 }}
+            >
+              Av. Fioravante Magro, 1059 - Jardim Boa Vista, Sertãozinho - SP,
+              14177-578
+            </p>
+          </div>
 
-              {/* Card Horário */}
-              <div className="rounded-2xl bg-white p-6 shadow-lg">
-                <h3
-                  className="mb-3 text-xl font-bold text-gray-900"
-                  style={{ fontFamily: "var(--font-rajdhani)" }}
-                >
-                  Horário
-                </h3>
-                <p
-                  className="text-gray-700"
-                  style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.6 }}
-                >
-                  Segunda a Sexta: 8h às 18h
-                  <br />
-                  Sábado: 9h às 12h
-                  <br />
-                  Domingo: Fechado
-                </p>
-              </div>
-
-              {/* Card Telefone */}
-              <div className="rounded-2xl bg-white p-6 shadow-lg">
-                <h3
-                  className="mb-3 text-xl font-bold text-gray-900"
-                  style={{ fontFamily: "var(--font-rajdhani)" }}
-                >
-                  Telefone
-                </h3>
-                <p
-                  className="text-gray-700"
-                  style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.6 }}
-                >
-                  (11) 99999-9999
-                </p>
-              </div>
-
-              {/* Card E-mail */}
-              <div className="rounded-2xl bg-white p-6 shadow-lg">
-                <h3
-                  className="mb-3 text-xl font-bold text-gray-900"
-                  style={{ fontFamily: "var(--font-rajdhani)" }}
-                >
-                  E-mail
-                </h3>
-                <p
-                  className="text-gray-700"
-                  style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.6 }}
-                >
-                  contato@retificapremium.com.br
-                </p>
+          <div className="mt-12 flex justify-center">
+            <div className="w-full max-w-[974px]">
+              <div className="h-[380px] w-full overflow-hidden rounded-[60px] shadow-2xl md:h-[520px] md:rounded-[126px] lg:h-[647px]">
+                <iframe
+                  title="Mapa - Retífica Premium"
+                  src="https://www.google.com/maps?q=Av.%20Fioravante%20Magro,%201059%20-%20Jardim%20Boa%20Vista,%20Sert%C3%A3ozinho%20-%20SP,%2014177-578&output=embed"
+                  className="h-full w-full"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                  style={{ border: 0 }}
+                />
               </div>
             </div>
           </div>

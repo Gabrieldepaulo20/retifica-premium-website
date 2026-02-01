@@ -5,19 +5,40 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Travar scroll do body quando menu mobile estiver aberto
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 bg-rp-navy/95 backdrop-blur-sm"
+      className="fixed top-0 left-0 right-0 z-[9999] h-[225px] bg-[#020E1D]"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 9999,
+        height: "225px",
+        backgroundColor: "#020E1D",
+      }}
       role="banner"
     >
       <nav
-        className="mx-auto flex min-h-[80px] max-w-screen-xl items-center justify-between px-4 py-6 sm:px-6 lg:px-8"
+        className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 py-6 sm:px-6 lg:px-8"
         role="navigation"
         aria-label="Navegação principal"
       >
@@ -83,8 +104,9 @@ export function Header() {
         <button
           type="button"
           className="md:hidden"
-          aria-label="Abrir menu"
+          aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-menu"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           <svg
@@ -107,8 +129,11 @@ export function Header() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden">
-          <div className="border-t border-rp-royal bg-rp-navy px-4 py-4">
+        <div
+          id="mobile-menu"
+          className="absolute left-0 right-0 top-[225px] border-t border-[#1E3B73] bg-[#020E1D] shadow-lg md:hidden"
+        >
+          <div className="px-4 py-4">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               const isB2B = item.href === "/b2b";

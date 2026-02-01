@@ -60,13 +60,25 @@
 }
 
 html {
+  height: 100%;
   scroll-behavior: smooth;
+  scroll-padding-top: 225px;
+  position: relative;
 }
 
 body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
   font-family: var(--font-inter), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Garantir que body não crie containing block para fixed */
+  transform: none;
+  filter: none;
+  perspective: none;
+  contain: none;
 }
 
 h1,
@@ -153,6 +165,10 @@ h6 {
 /* Material Symbols Outlined */
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40;
+  display: inline-block;
+  font-family: "Material Symbols Outlined";
+  font-style: normal;
+  font-weight: 400;
 }
 
 /* Carrossel infinito — seção de depoimentos */

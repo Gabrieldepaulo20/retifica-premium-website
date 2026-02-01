@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins, Inter, Rajdhani, Open_Sans } from "next/font/google";
 import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
+import { Header } from "@/components/site/Header";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -120,6 +121,7 @@ export default function RootLayout({
         className={`${poppins.variable} ${inter.variable} ${rajdhani.variable} ${openSans.variable} font-body antialiased`}
       >
         <MaterialSymbolsLoader />
+        <Header />
         {children}
       </body>
     </html>

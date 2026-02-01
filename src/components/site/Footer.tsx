@@ -13,27 +13,22 @@ const HORARIOS = [
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden text-white" role="contentinfo">
-      {/* Camada 1: textura de fundo (cover, center) */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/fundorodape.png"
-          alt=""
-          fill
-          className="object-cover object-center opacity-100"
-          sizes="100vw"
-          priority={false}
-        />
-      </div>
-
-      {/* Camada 2: overlay azul #053282 para contraste, textura visível */}
+    <footer
+      className="relative overflow-hidden bg-[#053282] text-white"
+      role="contentinfo"
+    >
+      {/* Textura de fundo com overlay */}
       <div
-        className="absolute inset-0 z-1"
-        style={{ backgroundColor: "rgba(5, 50, 130, 0.85)" }}
+        className="pointer-events-none absolute inset-0 z-0 opacity-35 mix-blend-overlay"
+        style={{
+          backgroundImage: "url('/fundorodape.png')",
+          backgroundRepeat: "repeat",
+          backgroundSize: "420px 420px",
+        }}
         aria-hidden
       />
 
-      {/* Conteúdo acima das camadas */}
+      {/* Conteúdo acima da textura */}
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-14 lg:px-8">
         <div className="grid grid-cols-1 gap-10 border-white/10 sm:gap-12 lg:grid-cols-3 lg:gap-14 [&>div]:border-b [&>div]:border-white/10 [&>div]:pb-10 lg:[&>div]:border-b-0 lg:[&>div]:pb-0">
           {/* Coluna A — Brand */}

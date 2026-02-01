@@ -203,10 +203,12 @@ export default function SobrePage() {
                 </div>
                 <div className="shrink-0">
                   <span
-                    className="material-symbols-outlined leading-none text-[134px] text-[#F3B839] max-md:text-[96px]"
+                    className="material-symbols-outlined leading-none text-[#F3B839]"
                     style={{
+                      fontSize: 134,
+                      lineHeight: 1,
                       fontVariationSettings:
-                        '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                        '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
                     }}
                   >
                     target
@@ -250,10 +252,12 @@ export default function SobrePage() {
                 </div>
                 <div className="shrink-0">
                   <span
-                    className="material-symbols-outlined leading-none text-[134px] text-[#F3B839] max-md:text-[96px]"
+                    className="material-symbols-outlined leading-none text-[#F3B839]"
                     style={{
+                      fontSize: 134,
+                      lineHeight: 1,
                       fontVariationSettings:
-                        '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                        '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
                     }}
                   >
                     visibility
@@ -272,10 +276,12 @@ export default function SobrePage() {
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
                 <span
-                  className="material-symbols-outlined mb-4 leading-none text-[80px] text-[#F3B839] max-md:text-[56px]"
+                  className="material-symbols-outlined mb-4 leading-none text-[#F3B839]"
                   style={{
+                    fontSize: 134,
+                    lineHeight: 1,
                     fontVariationSettings:
-                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
                   }}
                 >
                   track_changes
@@ -303,10 +309,12 @@ export default function SobrePage() {
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
                 <span
-                  className="material-symbols-outlined mb-4 leading-none text-[80px] text-[#F3B839] max-md:text-[56px]"
+                  className="material-symbols-outlined mb-4 leading-none text-[#F3B839]"
                   style={{
+                    fontSize: 134,
+                    lineHeight: 1,
                     fontVariationSettings:
-                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
                   }}
                 >
                   handshake
@@ -334,10 +342,12 @@ export default function SobrePage() {
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
                 <span
-                  className="material-symbols-outlined mb-4 leading-none text-[80px] text-[#F3B839] max-md:text-[56px]"
+                  className="material-symbols-outlined mb-4 leading-none text-[#F3B839]"
                   style={{
+                    fontSize: 134,
+                    lineHeight: 1,
                     fontVariationSettings:
-                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
                   }}
                 >
                   workspace_premium
@@ -365,10 +375,12 @@ export default function SobrePage() {
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
                 <span
-                  className="material-symbols-outlined mb-4 leading-none text-[80px] text-[#F3B839] max-md:text-[56px]"
+                  className="material-symbols-outlined mb-4 leading-none text-[#F3B839]"
                   style={{
+                    fontSize: 134,
+                    lineHeight: 1,
                     fontVariationSettings:
-                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 40',
+                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
                   }}
                 >
                   groups

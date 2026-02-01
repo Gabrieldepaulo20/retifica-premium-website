@@ -1,25 +1,54 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title:
+    "Programa de Parceria B2B | Retífica Premium - Descontos para Oficinas",
+  description:
+    "Junte-se à maior rede de oficinas parceiras da região. Descontos progressivos de até 15%, atendimento prioritário, suporte técnico especializado e programa de fidelidade com pontos. Parceria B2B para oficinas mecânicas em Sertãozinho/SP.",
+  keywords: [
+    "parceria b2b oficinas",
+    "descontos para oficinas mecânicas",
+    "programa de fidelidade oficinas",
+    "parceria retífica",
+    "benefícios oficinas parceiras",
+    "atendimento prioritário oficinas",
+    "suporte técnico oficinas",
+    "rede de oficinas parceiras",
+    "Sertãozinho",
+    "retífica parceria",
+  ],
+  openGraph: {
+    title: "Programa de Parceria B2B | Retífica Premium",
+    description:
+      "Descontos progressivos, atendimento prioritário e programa de fidelidade para oficinas mecânicas parceiras.",
+    type: "website",
+    locale: "pt_BR",
+  },
+};
 
 const headingStyle = { fontFamily: "var(--font-rajdhani)" };
 const bodyStyle = { fontFamily: "var(--font-open-sans)" };
 
 const fidelityItems = [
   {
-    image: "/beneficio.png",
+    image: "/beneficios-exclusivos-parceria-b2b-oficinas.png",
     title: "Benefícios Exclusivos",
     description:
-      "Vantagens especiais e serviços premium para fidelizar sua oficina.",
+      "Acesso a vantagens especiais, condições diferenciadas e serviços premium exclusivos para oficinas parceiras.",
   },
   {
     image: "/sistemadepontos.png",
     title: "Sistema de Pontos",
-    description: "Acumule pontos a cada serviço e troque por recompensas.",
+    description:
+      "Acumule pontos a cada serviço realizado e troque por recompensas, descontos adicionais e benefícios exclusivos.",
   },
   {
     image: "/crescimento.png",
     title: "Crescimento Conjunto",
-    description: "Parcerias sólidas para ampliar resultados e oportunidades.",
+    description:
+      "Parcerias estratégicas que geram crescimento mútuo, ampliando resultados e oportunidades de negócio.",
   },
 ];
 
@@ -31,7 +60,10 @@ const partnershipLevels = [
     percent: "5%",
     percentColor: "#C7643A",
     serviceRange: "1-5 serviços/mês",
-    benefits: ["Descontos progressivos", "Suporte técnico"],
+    benefits: [
+      "Descontos progressivos em serviços e peças",
+      "Suporte técnico especializado",
+    ],
   },
   {
     name: "Parceiro Prata",
@@ -41,9 +73,9 @@ const partnershipLevels = [
     percentColor: "#A7A7A7",
     serviceRange: "6-10 serviços/mês",
     benefits: [
-      "Descontos progressivos",
-      "Suporte técnico",
-      "Atendimento prioritário",
+      "Descontos progressivos em serviços e peças",
+      "Suporte técnico especializado",
+      "Atendimento prioritário e agendamento preferencial",
     ],
   },
   {
@@ -54,9 +86,9 @@ const partnershipLevels = [
     percentColor: "#F8B628",
     serviceRange: "acima de 10 serviços/mês",
     benefits: [
-      "Descontos progressivos",
-      "Suporte técnico",
-      "Condições especiais",
+      "Descontos progressivos em serviços e peças",
+      "Suporte técnico especializado",
+      "Condições especiais e negociação personalizada",
     ],
   },
 ];
@@ -65,22 +97,26 @@ const steps = [
   {
     number: "1º",
     title: "Cadastro",
-    description: "Preencha o formulário e apresente os dados da sua oficina.",
+    description:
+      "Preencha nosso formulário de parceria com os dados da sua oficina mecânica e informações de contato.",
   },
   {
     number: "2º",
     title: "Análise",
-    description: "Nossa equipe avalia e aprova seu cadastro em até 48 horas.",
+    description:
+      "Nossa equipe analisa seu cadastro e aprova sua parceria em até 48 horas úteis.",
   },
   {
     number: "3º",
     title: "Ativação",
-    description: "Receba seu kit de boas-vindas e credenciais de acesso.",
+    description:
+      "Receba seu kit de boas-vindas com credenciais de acesso e todas as informações sobre benefícios.",
   },
   {
     number: "4º",
     title: "Benefícios",
-    description: "Comece a aproveitar todas as vantagens imediatamente.",
+    description:
+      "Comece a aproveitar descontos, atendimento prioritário e todas as vantagens da parceria imediatamente.",
   },
 ];
 
@@ -88,12 +124,12 @@ export default function B2BPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* Seção 1 — HERO */}
-      <section className="flex min-h-[720px] items-center justify-center bg-[#053282]">
+      <section className="flex min-h-[720px] items-center justify-center bg-[#053282] pt-20 pb-16">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-          <div className="mb-8 flex justify-center">
+          <div className="mb-10 flex justify-center">
             <Image
               src="/mao.png"
-              alt="Parceria B2B"
+              alt="Parceria B2B - Retífica Premium para oficinas mecânicas"
               width={253}
               height={223}
               className="h-auto w-[180px] md:w-[220px]"
@@ -101,53 +137,58 @@ export default function B2BPage() {
             />
           </div>
           <h1
-            className="mb-5 text-4xl font-bold uppercase text-white md:text-5xl lg:text-6xl"
+            className="mb-6 text-4xl font-bold uppercase text-white md:text-5xl lg:text-6xl"
             style={headingStyle}
           >
             Programa de Parceria B2B
           </h1>
           <p
-            className="mx-auto mb-8 max-w-2xl text-base text-white/80 md:text-lg"
+            className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-white/80 md:text-xl"
             style={bodyStyle}
           >
-            Junte-se à rede de oficinas parceiras e potencialize seu negócio com
-            benefícios exclusivos e atendimento prioritário.
+            Potencialize sua oficina mecânica com descontos progressivos de até
+            15%, atendimento prioritário e suporte técnico especializado.
+            Junte-se à maior rede de oficinas parceiras da região.
           </p>
           <Link
-            href="/contato"
+            href="/contato#contato-form"
             className="mx-auto flex h-[58px] w-full max-w-[260px] items-center justify-center rounded-full text-sm font-bold uppercase text-white shadow-lg transition-all hover:brightness-110"
             style={{
               background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
               fontFamily: "var(--font-open-sans)",
             }}
           >
-            SEJA UM PARCEIRO
+            Solicitar Parceria Agora
           </Link>
         </div>
       </section>
 
       {/* Seção 2 — Vantagens do Programa */}
-      <section className="min-h-[1150px] bg-[#F5F5FA] py-20">
+      <section className="bg-[#F5F5FA] py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2
-              className="mb-3 text-3xl font-bold text-rp-accent md:text-4xl"
+              className="mb-4 text-3xl font-bold text-rp-accent md:text-4xl lg:text-5xl"
               style={headingStyle}
             >
-              Vantagens do Programa
+              Vantagens do Programa de Parceria
             </h2>
-            <p className="text-sm text-gray-600 md:text-base" style={bodyStyle}>
-              Benefícios pensados para impulsionar sua oficina mecânica.
+            <p
+              className="text-base leading-relaxed text-gray-600 md:text-lg"
+              style={bodyStyle}
+            >
+              Benefícios exclusivos pensados para impulsionar o crescimento da
+              sua oficina mecânica e aumentar sua margem de lucro.
             </p>
           </div>
 
-          <div className="mt-16 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <Image
               src="/carrob2b.png"
-              alt="Carro de exposição"
+              alt="Carro em exposição - Parceria B2B Retífica Premium para oficinas"
               width={1080}
               height={860}
-              className="h-auto w-[90%] max-w-[650px]"
+              className="h-auto w-[90%] max-w-[1200px]"
               priority={false}
             />
           </div>
@@ -169,14 +210,18 @@ export default function B2BPage() {
               </svg>
             </div>
             <h2
-              className="mb-3 text-3xl font-bold text-rp-accent md:text-4xl"
+              className="mb-4 text-3xl font-bold text-rp-accent md:text-4xl lg:text-5xl"
               style={headingStyle}
             >
-              Programa de Fidelidade
+              Programa de Fidelidade para Oficinas
             </h2>
-            <p className="text-sm text-gray-600 md:text-base" style={bodyStyle}>
-              Um programa estruturado com pontos, suporte e benefícios
-              exclusivos.
+            <p
+              className="text-base leading-relaxed text-gray-600 md:text-lg"
+              style={bodyStyle}
+            >
+              Um programa estruturado com sistema de pontos, suporte técnico
+              dedicado e benefícios exclusivos para fidelizar e recompensar
+              oficinas parceiras.
             </p>
           </div>
 
@@ -187,19 +232,22 @@ export default function B2BPage() {
                   <div className="mb-4 flex justify-center">
                     <Image
                       src={item.image}
-                      alt={item.title}
+                      alt={`${item.title} - Programa de Fidelidade Retífica Premium`}
                       width={90}
                       height={90}
                       className="h-[90px] w-[90px] object-contain"
                     />
                   </div>
                   <h3
-                    className="mb-2 text-base font-semibold text-[#D4A13A]"
+                    className="mb-3 text-lg font-semibold text-[#D4A13A] md:text-xl"
                     style={headingStyle}
                   >
                     {item.title}
                   </h3>
-                  <p className="text-sm text-gray-300" style={bodyStyle}>
+                  <p
+                    className="text-sm leading-relaxed text-gray-300 md:text-base"
+                    style={bodyStyle}
+                  >
                     {item.description}
                   </p>
                 </div>
@@ -210,17 +258,21 @@ export default function B2BPage() {
       </section>
 
       {/* Seção 4 — Níveis de Parceria */}
-      <section className="min-h-[1670px] bg-[#000617] py-28">
+      <section className="bg-[#000617] py-24 pb-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2
-              className="mb-3 text-3xl font-bold text-white md:text-4xl"
+              className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl"
               style={headingStyle}
             >
-              Níveis de Parceria
+              Níveis de Parceria e Descontos Progressivos
             </h2>
-            <p className="text-sm text-white/70 md:text-base" style={bodyStyle}>
-              Quanto mais você utiliza, mais benefícios recebe.
+            <p
+              className="text-base leading-relaxed text-white/70 md:text-lg lg:text-xl"
+              style={bodyStyle}
+            >
+              Quanto mais serviços você realiza, maiores são os descontos e
+              benefícios exclusivos para sua oficina mecânica.
             </p>
           </div>
 
@@ -228,12 +280,15 @@ export default function B2BPage() {
             {partnershipLevels.map((level) => (
               <div
                 key={level.name}
-                className="partnership-card-animated-border mx-auto w-full max-w-[90%] min-h-[342px] py-10 shadow-lg sm:max-w-3xl md:py-12 lg:max-w-[1216px]"
+                className="mx-auto w-full max-w-[90%] rounded-2xl bg-[#051E40] shadow-lg sm:max-w-3xl md:px-16 md:py-12 lg:max-w-[1216px]"
+                style={{
+                  border: `2px solid ${level.levelColor}40`,
+                }}
               >
-                <div className="flex flex-col gap-6 px-6 md:flex-row md:items-center md:justify-between md:px-8">
-                  <div className="md:w-[420px]">
+                <div className="grid gap-10 px-6 py-6 md:grid-cols-[420px_1fr] md:items-center md:px-0 md:py-0">
+                  <div className="flex flex-col justify-center">
                     <p
-                      className="text-base font-semibold uppercase tracking-wide text-white md:text-lg"
+                      className="text-lg font-semibold uppercase tracking-wide text-white md:text-xl"
                       style={headingStyle}
                     >
                       Parceiro{" "}
@@ -242,39 +297,38 @@ export default function B2BPage() {
                       </span>
                     </p>
                     <p
-                      className="mt-2 text-sm text-white/70 md:text-base"
+                      className="mt-3 text-base leading-relaxed text-white/70 md:text-lg"
                       style={bodyStyle}
                     >
                       {level.serviceRange}
                     </p>
                     <p
-                      className="mt-4 text-center text-[72px] font-bold md:text-[116.87px]"
+                      className="mt-4 text-[72px] font-bold leading-none tracking-tight md:text-[116.87px]"
                       style={{
                         fontFamily: "var(--font-rajdhani)",
                         fontWeight: 700,
-                        lineHeight: "100%",
                         color: level.percentColor,
                       }}
                     >
                       {level.percent}
                     </p>
                     <p
-                      className="mt-2 text-center text-sm text-white/60 md:text-base"
+                      className="mt-3 text-base text-white/60 md:text-lg"
                       style={bodyStyle}
                     >
                       de desconto
                     </p>
                   </div>
-                  <div className="w-full space-y-4 md:w-[520px]">
+                  <div className="flex flex-col justify-center gap-6">
                     {level.benefits.map((benefit) => (
                       <div
                         key={benefit}
-                        className="flex items-center gap-4 text-base text-white md:text-lg"
+                        className="flex items-center gap-4 text-lg leading-relaxed text-white md:text-xl"
                         style={bodyStyle}
                       >
                         <Image
                           src="/check.png"
-                          alt="check"
+                          alt="Benefício incluído"
                           width={34}
                           height={34}
                           className="h-[34px] w-[34px] shrink-0"
@@ -291,49 +345,57 @@ export default function B2BPage() {
       </section>
 
       {/* Seção 5 — Como Funciona */}
-      <section className="relative min-h-[1280px] overflow-hidden py-20">
+      <section className="relative overflow-hidden bg-[#D9E7FF] py-16">
         <Image
           src="/texturewhite.png"
-          alt="Textura de fundo"
+          alt=""
           fill
-          className="object-cover"
+          className="object-cover opacity-40"
           priority={false}
+          aria-hidden="true"
         />
         <div className="absolute inset-0 bg-[#0E62F6]/5" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2
-              className="mb-3 text-3xl font-bold text-rp-accent md:text-4xl"
+              className="mb-4 text-3xl font-bold text-rp-accent md:text-4xl lg:text-5xl"
               style={headingStyle}
             >
-              Como Funciona?
+              Como Funciona a Parceria?
             </h2>
-            <p className="text-sm text-gray-600 md:text-base" style={bodyStyle}>
-              Um processo simples para iniciar sua parceria com a Retífica
-              Premium.
+            <p
+              className="text-base leading-relaxed text-gray-600 md:text-lg"
+              style={bodyStyle}
+            >
+              Um processo simples e rápido para iniciar sua parceria com a
+              Retífica Premium e começar a aproveitar todos os benefícios
+              imediatamente.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2">
+          <div className="mt-14 grid gap-10 sm:grid-cols-2 place-items-center">
             {steps.map((step) => (
               <div
                 key={step.number}
-                className="mx-auto w-full max-w-[382px] rounded-2xl border border-[#BFD5FF] bg-white/95 px-6 py-8 shadow-md"
+                className="mx-auto flex w-full max-w-[382px] min-h-[280px] flex-col items-center justify-center rounded-2xl border-2 border-[#0E62F6] bg-[#D9E7FF] px-8 py-10 text-center shadow-md"
               >
                 <p
-                  className="mb-4 text-4xl font-bold text-[#0B2D5C]"
+                  className="text-[84px] font-bold leading-none text-[#0B2D5C] md:text-[96px]"
                   style={headingStyle}
                 >
                   {step.number}
                 </p>
                 <h3
-                  className="mb-2 text-base font-semibold text-[#0B2D5C]"
+                  className="mt-3 text-xl font-bold text-[#0B2D5C] md:text-2xl"
                   style={headingStyle}
                 >
                   {step.title}
                 </h3>
-                <p className="text-sm text-gray-600" style={bodyStyle}>
+                <p
+                  className="mt-3 text-sm leading-relaxed text-[#0B2D5C]/80 md:text-base"
+                  style={bodyStyle}
+                >
                   {step.description}
                 </p>
               </div>
@@ -346,27 +408,29 @@ export default function B2BPage() {
       <section className="flex min-h-[550px] items-center bg-[#F5F5FA]">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2
-            className="mb-4 text-3xl font-bold text-rp-accent md:text-4xl"
+            className="mb-5 text-3xl font-bold text-rp-accent md:text-4xl lg:text-5xl"
             style={headingStyle}
           >
-            Junte-se a +80 Oficinas Parceiras
+            Junte-se a Mais de 80 Oficinas Parceiras
           </h2>
           <p
-            className="mb-8 text-sm text-gray-600 md:text-base"
+            className="mb-8 text-base leading-relaxed text-gray-600 md:text-lg"
             style={bodyStyle}
           >
-            Faça parte da maior rede de oficinas parceiras da região e tenha
-            acesso a benefícios exclusivos que farão seu negócio crescer.
+            Faça parte da maior e mais confiável rede de oficinas parceiras da
+            região de Sertãozinho/SP. Tenha acesso a descontos exclusivos,
+            atendimento prioritário e suporte técnico especializado que farão
+            sua oficina crescer e se destacar no mercado.
           </p>
           <Link
-            href="/contato"
+            href="/contato#contato-form"
             className="mx-auto flex h-[58px] w-full max-w-[340px] items-center justify-center rounded-full text-sm font-bold uppercase text-white shadow-lg transition-all hover:brightness-110"
             style={{
               background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
               fontFamily: "var(--font-open-sans)",
             }}
           >
-            QUERO SER PARCEIRO PREMIUM
+            Quero Ser Parceiro Premium
           </Link>
         </div>
       </section>
