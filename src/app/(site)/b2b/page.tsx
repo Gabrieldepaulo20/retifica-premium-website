@@ -3,10 +3,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title:
-    "Programa de Parceria B2B | Retífica Premium - Descontos para Oficinas",
+  title: "Parceria B2B para Oficinas | Retífica Premium",
   description:
-    "Junte-se à maior rede de oficinas parceiras da região. Descontos progressivos de até 15%, atendimento prioritário, suporte técnico especializado e programa de fidelidade com pontos. Parceria B2B para oficinas mecânicas em Sertãozinho/SP.",
+    "Programa B2B para oficinas mecânicas com descontos progressivos, atendimento prioritário e suporte técnico em Sertãozinho-SP.",
   keywords: [
     "parceria b2b oficinas",
     "descontos para oficinas mecânicas",
@@ -19,12 +18,32 @@ export const metadata: Metadata = {
     "Sertãozinho",
     "retífica parceria",
   ],
+  alternates: {
+    canonical: "/b2b",
+  },
   openGraph: {
-    title: "Programa de Parceria B2B | Retífica Premium",
+    title: "Parceria B2B para Oficinas | Retífica Premium",
     description:
-      "Descontos progressivos, atendimento prioritário e programa de fidelidade para oficinas mecânicas parceiras.",
-    type: "website",
+      "Descontos progressivos, atendimento prioritário e suporte técnico para oficinas parceiras.",
+    url: "https://retificapremium.com.br/b2b",
+    siteName: "Retífica Premium",
     locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Parceria B2B para Oficinas - Retífica Premium",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Parceria B2B para Oficinas | Retífica Premium",
+    description:
+      "Descontos progressivos, atendimento prioritário e suporte técnico para oficinas parceiras.",
+    images: ["/og-image.jpg"],
   },
 };
 
@@ -98,25 +117,24 @@ const steps = [
     number: "1º",
     title: "Cadastro",
     description:
-      "Preencha nosso formulário de parceria com os dados da sua oficina mecânica e informações de contato.",
+      "Envie seus dados e o perfil da oficina para iniciarmos a parceria.",
   },
   {
     number: "2º",
     title: "Análise",
     description:
-      "Nossa equipe analisa seu cadastro e aprova sua parceria em até 48 horas úteis.",
+      "Nossa equipe avalia seu cadastro e retorna em até 48 horas úteis.",
   },
   {
     number: "3º",
     title: "Ativação",
-    description:
-      "Receba seu kit de boas-vindas com credenciais de acesso e todas as informações sobre benefícios.",
+    description: "Receba orientações e acesso aos benefícios do programa.",
   },
   {
     number: "4º",
     title: "Benefícios",
     description:
-      "Comece a aproveitar descontos, atendimento prioritário e todas as vantagens da parceria imediatamente.",
+      "Comece a usar descontos, prioridade de atendimento e suporte técnico.",
   },
 ];
 
@@ -133,7 +151,6 @@ export default function B2BPage() {
               width={253}
               height={223}
               className="h-auto w-[180px] md:w-[220px]"
-              priority={true}
             />
           </div>
           <h1
@@ -146,9 +163,9 @@ export default function B2BPage() {
             className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-white/80 md:text-xl"
             style={bodyStyle}
           >
-            Potencialize sua oficina mecânica com descontos progressivos de até
-            15%, atendimento prioritário e suporte técnico especializado.
-            Junte-se à maior rede de oficinas parceiras da região.
+            Potencialize sua oficina mecânica com preços exclusivos, atendimento
+            prioritário e suporte técnico especializado. Parceria para serviços
+            de retífica de cabeçotes e usinagem com padrão premium.
           </p>
           <Link
             href="/contato#contato-form"
@@ -158,7 +175,7 @@ export default function B2BPage() {
               fontFamily: "var(--font-open-sans)",
             }}
           >
-            Solicitar Parceria Agora
+            Quero ser parceiro
           </Link>
         </div>
       </section>
@@ -177,19 +194,18 @@ export default function B2BPage() {
               className="text-base leading-relaxed text-gray-600 md:text-lg"
               style={bodyStyle}
             >
-              Benefícios exclusivos pensados para impulsionar o crescimento da
-              sua oficina mecânica e aumentar sua margem de lucro.
+              Benefícios pensados para aumentar sua margem, dar previsibilidade
+              de prazos e fortalecer a confiança dos seus clientes.
             </p>
           </div>
 
           <div className="mt-8 flex justify-center">
             <Image
               src="/carrob2b.png"
-              alt="Carro em exposição - Parceria B2B Retífica Premium para oficinas"
+              alt="Carro em oficina parceira - Programa B2B Retífica Premium"
               width={1080}
               height={860}
               className="h-auto w-[90%] max-w-[1200px]"
-              priority={false}
             />
           </div>
         </div>
@@ -219,9 +235,8 @@ export default function B2BPage() {
               className="text-base leading-relaxed text-gray-600 md:text-lg"
               style={bodyStyle}
             >
-              Um programa estruturado com sistema de pontos, suporte técnico
-              dedicado e benefícios exclusivos para fidelizar e recompensar
-              oficinas parceiras.
+              Sistema de pontos, suporte técnico dedicado e benefícios claros
+              para fidelizar e recompensar oficinas parceiras.
             </p>
           </div>
 
@@ -351,7 +366,7 @@ export default function B2BPage() {
           alt=""
           fill
           className="object-cover opacity-40"
-          priority={false}
+          sizes="100vw"
           aria-hidden="true"
         />
         <div className="absolute inset-0 bg-[#0E62F6]/5" />
@@ -417,20 +432,19 @@ export default function B2BPage() {
             className="mb-8 text-base leading-relaxed text-gray-600 md:text-lg"
             style={bodyStyle}
           >
-            Faça parte da maior e mais confiável rede de oficinas parceiras da
-            região de Sertãozinho/SP. Tenha acesso a descontos exclusivos,
-            atendimento prioritário e suporte técnico especializado que farão
-            sua oficina crescer e se destacar no mercado.
+            Faça parte da maior rede de oficinas parceiras em Sertãozinho-SP e
+            região. Tenha descontos, prioridade de atendimento e suporte técnico
+            para entregar mais rápido e com mais margem.
           </p>
           <Link
-            href="/contato#contato-form"
-            className="mx-auto flex h-[58px] w-full max-w-[340px] items-center justify-center rounded-full text-sm font-bold uppercase text-white shadow-lg transition-all hover:brightness-110"
+            href="/contato#formulario"
+            className="mx-auto flex h-[68px] w-full max-w-[420px] items-center justify-center rounded-full text-base md:text-lg font-bold uppercase text-white shadow-lg transition-all hover:brightness-110"
             style={{
               background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
               fontFamily: "var(--font-open-sans)",
             }}
           >
-            Quero Ser Parceiro Premium
+            Quero ser parceiro premium
           </Link>
         </div>
       </section>

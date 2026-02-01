@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Poppins, Inter, Rajdhani, Open_Sans } from "next/font/google";
 import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
 import { Header } from "@/components/site/Header";
+import { FloatingWhatsApp } from "@/components/site/FloatingWhatsApp";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -33,9 +34,9 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Retífica Premium | Especializada em Cabeçotes Automotivos",
+  title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
   description:
-    "Retífica de cabeçotes com mais de 20 anos de experiência. Equipamentos modernos, equipe especializada e garantia de qualidade em Sertãozinho/SP.",
+    "Retífica automotiva com usinagem de precisão, revisão de válvulas e montagem técnica. Atendimento para oficinas e clientes em Sertãozinho-SP.",
   keywords: [
     "retífica cabeçotes",
     "retífica motor",
@@ -59,9 +60,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Retífica Premium | Especializada em Cabeçotes Automotivos",
+    title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
     description:
-      "Retífica de cabeçotes com mais de 20 anos de experiência. Equipamentos modernos, equipe especializada e garantia de qualidade em Sertãozinho/SP.",
+      "Retífica automotiva com usinagem de precisão, revisão de válvulas e montagem técnica em Sertãozinho-SP.",
     url: "https://retificapremium.com.br", // Ajuste com seu domínio
     siteName: "Retífica Premium",
     locale: "pt_BR",
@@ -77,9 +78,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Retífica Premium | Especializada em Cabeçotes Automotivos",
+    title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
     description:
-      "Retífica de cabeçotes com mais de 20 anos de experiência. Equipamentos modernos, equipe especializada e garantia de qualidade em Sertãozinho/SP.",
+      "Retífica automotiva com usinagem de precisão, revisão de válvulas e montagem técnica em Sertãozinho-SP.",
     images: ["/og-image.jpg"], // Você precisará criar esta imagem
     creator: "@retificapremium", // Ajuste com seu handle do Twitter
   },
@@ -123,6 +124,7 @@ export default function RootLayout({
         <MaterialSymbolsLoader />
         <Header />
         {children}
+        <FloatingWhatsApp />
       </body>
     </html>
   );

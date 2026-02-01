@@ -1,8 +1,44 @@
-"use client";
-
-import { Button } from "@/components/ui";
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+import {
+  LocalBusinessSchema,
+  ServiceSchema,
+  FAQSchema,
+} from "@/components/site/StructuredData";
+
+export const metadata: Metadata = {
+  title: "Retífica de Cabeçote em Sertãozinho e Região | Retífica Premium",
+  description:
+    "Retífica de cabeçote e usinagem automotiva em Sertãozinho, Ribeirão Preto e região. Orçamento rápido, garantia e prazo confiável. Atende carro, caminhão, diesel e gasolina.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Retífica de Cabeçote em Ribeirão Preto e Região | Retífica Premium",
+    description:
+      "Retífica de cabeçote e usinagem automotiva. Orçamento rápido, garantia e prazo confiável para carro, caminhão e motores diesel.",
+    url: "https://retificapremium.com.br",
+    siteName: "Retífica Premium",
+    locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Retífica Premium - Retífica de Cabeçote em Sertãozinho-SP",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Retífica de Cabeçote em Sertãozinho e Região | Retífica Premium",
+    description:
+      "Retífica de cabeçote e usinagem automotiva. Orçamento rápido, garantia e prazo confiável para carro, caminhão e motores diesel.",
+    images: ["/og-image.jpg"],
+  },
+};
 
 export default function HomePage() {
   // Ajuste este valor para controlar o “corte” (inclinação) da lateral esquerda da foto.
@@ -12,58 +48,72 @@ export default function HomePage() {
   return (
     <main className="min-h-screen">
       {/* 1. HERO — altura por viewport para que a faixa azul fique acima da dobra */}
-      <section className="relative flex min-h-[calc(100svh-6rem)] max-h-[calc(100svh-6rem)] flex-col bg-rp-navy pt-[clamp(1rem,5vh,6rem)] pb-[clamp(1.5rem,3vh,2rem)] md:pt-20 md:pb-6 lg:pt-24 lg:pb-6">
+      <section className="relative z-10 flex min-h-[calc(100svh-8.5rem)] flex-col bg-rp-navy pt-[clamp(0.5rem,2.5vh,3rem)] pb-[clamp(1rem,2vh,1.5rem)] md:pt-12 md:pb-4 lg:pt-14 lg:pb-5">
         <div className="mx-auto flex max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
-          <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
-            {/* Logo */}
-            <div className="mb-4 w-[200px] h-[150px] md:mb-8 md:h-[180px] md:w-[240px]">
-              <Image
-                src="/logo.png"
-                alt="Retífica Premium"
-                width={240}
-                height={180}
-                className="h-full w-full object-contain"
-              />
+          <div className="relative z-30 flex min-h-0 flex-1 flex-col items-center justify-start pb-10 text-center md:pb-12 lg:pb-14">
+            {/* Bloco Superior: Logo + H1 + Textos */}
+            <div className="flex flex-col items-center gap-3 md:gap-4 lg:gap-5 pt-3 md:pt-5 lg:pt-6">
+              {/* Logo */}
+              <div className="h-[120px] w-[165px] md:h-[155px] md:w-[210px]">
+                <Image
+                  src="/logo.png"
+                  alt="Retífica Premium"
+                  width={240}
+                  height={180}
+                  className="h-full w-full object-contain"
+                  priority
+                />
+              </div>
+
+              {/* Título em 2 linhas */}
+              <h1 className="font-heading text-[32px] font-extrabold uppercase leading-[1.05] tracking-tight md:text-5xl md:leading-[1.08] lg:text-6xl lg:leading-[1.1]">
+                <span className="text-[#f59e0b]">RETÍFICA DE CABEÇOTE</span>
+                <br />
+                <span className="text-white text-[28px] md:text-[42px] lg:text-5xl">
+                  EM SERTÃOZINHO
+                </span>
+              </h1>
+
+              {/* Subtexto */}
+              <div className="flex flex-col gap-2 md:gap-2.5">
+                <p className="mx-auto max-w-2xl text-[15px] leading-snug text-gray-300 md:text-lg md:leading-relaxed">
+                  Usinagem de precisão, revisão de válvulas e montagem técnica
+                  para carro, caminhão, ônibus e trator. Motor diesel, gasolina
+                  ou álcool.
+                </p>
+                <p className="mx-auto max-w-2xl text-[13.5px] leading-snug text-gray-400 md:text-base md:leading-relaxed">
+                  Diagnóstico técnico e orçamento rápido pelo WhatsApp para você
+                  decidir com segurança.
+                </p>
+              </div>
+              {/* Bloco Inferior: CTA */}
+              <div className="mt-6 md:mt-8 relative z-40">
+                <Link
+                  href="https://wa.me/5516993021998?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Ret%C3%ADfica%20Premium%20e%20gostaria%20de%20solicitar%20um%20or%C3%A7amento%20para%20ret%C3%ADfica%20de%20cabe%C3%A7ote."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative z-40 inline-flex h-[60px] w-auto items-center justify-center rounded-[62px] px-8 md:px-12 text-[13px] md:text-base font-bold uppercase text-white whitespace-nowrap transition-all hover:brightness-110 md:h-[68px]"
+                  style={{
+                    background:
+                      "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
+                  }}
+                >
+                  Solicitar orçamento pelo WhatsApp
+                </Link>
+              </div>
             </div>
-
-            {/* Título em 2 linhas */}
-            <h1 className="mb-4 font-heading text-4xl font-extrabold uppercase leading-tight tracking-tight md:mb-6 md:text-5xl lg:text-6xl">
-              <span className="text-[#f59e0b]">POTÊNCIA E PRECISÃO</span>
-              <br />
-              <span className="text-white">PARA O CORAÇÃO DO SEU MOTOR</span>
-            </h1>
-
-            {/* Subtexto */}
-            <p className="mx-auto mb-2 max-w-2xl text-lg text-gray-300 md:text-xl">
-              Especialistas em retífica de motores com mais de 20 anos de
-              experiência.
-            </p>
-            <p className="mb-6 text-base text-gray-400 md:mb-10 md:text-lg">
-              Precisão, qualidade e confiança em cada serviço realizado.
-            </p>
-
-            {/* CTA Button */}
-            <Link
-              href="/contato"
-              className="flex h-[68px] w-full max-w-[354px] items-center justify-center rounded-[62px] text-base font-bold uppercase text-white transition-all hover:brightness-110"
-              style={{
-                background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
-              }}
-            >
-              SOLICITAR ORÇAMENTO
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* 2. BANNER/MARQUEE — sobe ~30px para ficar acima da dobra */}
-      <section className="relative -mt-6 overflow-hidden bg-rp-royal py-4 md:-mt-6 lg:-mt-8 xl:-mt-9">
+      {/* 2. BANNER/MARQUEE — sobe para aparecer na primeira dobra */}
+      <section className="pointer-events-none relative z-20 -mt-28 overflow-hidden bg-rp-royal py-4 md:-mt-32 lg:-mt-36 xl:-mt-40">
         <div className="marquee-infinite flex whitespace-nowrap text-sm font-semibold uppercase text-white md:text-base">
           <div className="flex items-center gap-4 px-8">
             {Array.from({ length: 3 }).map((_, i) => (
               <span key={i} className="flex items-center gap-4">
-                RETÍFICA DE ALTA PRECISÃO • ENGENHARIA AUTOMOTIVA • TECNOLOGIA
-                EM MOTORES • USINAGEM DE CABEÇOTES • QUALIDADE GARANTIDA
+                USINAGEM DE PRECISÃO • RETÍFICA DE CABEÇOTES • DIAGNÓSTICO
+                TÉCNICO • ORÇAMENTO RÁPIDO • GARANTIA DOCUMENTADA
                 {i < 2 && <span className="text-rp-gold">•</span>}
               </span>
             ))}
@@ -77,10 +127,10 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0">
           <Image
             src="/cabecote.webp"
-            alt="Cabeçote em retífica"
+            alt="Cabeçote em processo de retífica"
             fill
+            sizes="100vw"
             className="object-cover object-center opacity-[0.23]"
-            priority={false}
           />
           {/* Overlay escuro */}
           <div className="absolute inset-0 bg-[rgba(2,14,29,0.7)]" />
@@ -99,7 +149,7 @@ export default function HomePage() {
                   DIFERENCIAIS
                 </p>
                 <h2 className="mb-4 font-heading text-3xl font-bold text-white md:text-4xl">
-                  Por que escolher a Retífica Premium?
+                  Por que a Retífica Premium é a escolha certa para seu motor?
                 </h2>
                 <div className="mb-8 flex gap-2">
                   <div className="h-1 w-12 bg-[#f59e0b]" />
@@ -125,7 +175,7 @@ export default function HomePage() {
                     Entrega Rápida
                   </h3>
                   <p className="text-xs text-gray-600">
-                    Prazos otimizados sem comprometer a qualidade
+                    Prazos combinados e acompanhamento do serviço
                   </p>
                 </div>
 
@@ -144,7 +194,7 @@ export default function HomePage() {
                     Garantia Estendida
                   </h3>
                   <p className="text-xs text-gray-600">
-                    Cobertura ampliada em todos os serviços
+                    Garantia real e documentação clara
                   </p>
                 </div>
 
@@ -163,7 +213,7 @@ export default function HomePage() {
                     Equipe Especializada
                   </h3>
                   <p className="text-xs text-gray-600">
-                    Profissionais certificados e experientes
+                    Técnicos experientes em retífica de cabeçotes
                   </p>
                 </div>
 
@@ -183,7 +233,7 @@ export default function HomePage() {
                     Padrão Premium
                   </h3>
                   <p className="text-xs text-gray-600">
-                    Qualidade superior em cada detalhe
+                    Controle de qualidade em cada entrega
                   </p>
                 </div>
               </div>
@@ -221,7 +271,7 @@ export default function HomePage() {
               }}
             >
               Soluções completas <br className="hidden lg:block" />
-              em retífica de motores
+              em retífica automotiva
             </h2>
 
             <p
@@ -234,9 +284,8 @@ export default function HomePage() {
               }}
             >
               Trabalhamos com retífica de cabeçotes, usinagem de precisão,
-              revisão de válvulas e montagem completa de motores. Cada serviço é
-              executado com equipamentos modernos e controle rigoroso de
-              qualidade.
+              revisão de válvulas e montagem técnica. Tudo com equipamentos
+              modernos, controle rigoroso e garantia no resultado final.
             </p>
           </div>
 
@@ -245,18 +294,21 @@ export default function HomePage() {
             {[
               {
                 img: "/retificademotor.jpg",
-                title: "RETÍFICA DE MOTORES",
-                desc: "Serviço completo de retífica com equipamentos de última geração e precisão milimétrica.",
+                alt: "Bancada de retífica de motores em usinagem",
+                title: "Retífica de Motores",
+                desc: "Retífica completa com medidas exatas e controle de folgas para máximo desempenho.",
               },
               {
                 img: "/montagemdemotores.jpg",
-                title: "MONTAGEM DE MOTORES",
-                desc: "Montagem profissional com peças originais e testes rigorosos de qualidade.",
+                alt: "Montagem técnica de motor em bancada",
+                title: "Montagem de Motores",
+                desc: "Montagem técnica com peças revisadas e testes de funcionamento antes da entrega.",
               },
               {
                 img: "/diagnosticotecnico.png",
-                title: "DIAGNÓSTICO TÉCNICO",
-                desc: "Análise detalhada do estado do motor com relatório técnico completo.",
+                alt: "Diagnóstico técnico de motor automotivo",
+                title: "Diagnóstico Técnico",
+                desc: "Avaliação detalhada do motor com laudo e orientação das melhores soluções.",
               },
             ].map((card) => (
               <div
@@ -273,7 +325,7 @@ export default function HomePage() {
                   <div className="relative h-[209px] w-[276px] overflow-hidden rounded-[10px] shadow-md transition-transform duration-200 group-hover:scale-[1.02]">
                     <Image
                       src={card.img}
-                      alt={card.title}
+                      alt={card.alt}
                       width={276}
                       height={209}
                       sizes="(max-width: 768px) 90vw, 276px"
@@ -282,7 +334,7 @@ export default function HomePage() {
                       loading="lazy"
                     />
                     {/* Overlay com gradiente azul */}
-                    <div className="pointer-events-none absolute inset-0 rounded-[10px] bg-gradient-to-b from-[#053282]/15 to-[#053282]/30" />
+                    <div className="pointer-events-none absolute inset-0 rounded-[10px] bg-linear-to-b from-[#053282]/15 to-[#053282]/30" />
                   </div>
                 </div>
 
@@ -326,7 +378,7 @@ export default function HomePage() {
                       lineHeight: "100%",
                     }}
                   >
-                    SAIBA MAIS
+                    Ver detalhes
                   </Link>
                 </div>
               </div>
@@ -346,7 +398,7 @@ export default function HomePage() {
                 lineHeight: "100%",
               }}
             >
-              VER TODOS OS SERVIÇOS
+              Ver todos os serviços
             </Link>
           </div>
         </div>
@@ -354,7 +406,7 @@ export default function HomePage() {
 
       {/* 5. B2B */}
       <section className="relative overflow-hidden bg-rp-navy py-32 md:py-44">
-        <div className="pointer-events-none absolute -top-32 -bottom-32 left-1/2 z-20 hidden w-[140px] -translate-x-1/2 translate-x-[140px] -skew-x-20 md:-top-56 md:-bottom-56 md:block">
+        <div className="pointer-events-none absolute -top-32 -bottom-32 left-1/2 z-20 hidden w-[140px] translate-x-[calc(-50%+140px)] -skew-x-20 md:-top-56 md:-bottom-56 md:block">
           {/* Parte de cima */}
           <div
             className="absolute left-0 top-0 w-full bg-[#F4BC4A]"
@@ -377,7 +429,7 @@ export default function HomePage() {
         </div>
 
         {/* ===== FAIXA FINA AMARELA (SEM corte, inteira) ===== */}
-        <div className="pointer-events-none absolute -top-32 -bottom-32 left-1/2 z-30 hidden w-[24px] -translate-x-1/2 translate-x-[300px] -skew-x-20 origin-center bg-[#F4BC4A] md:-top-56 md:-bottom-56 md:block" />
+        <div className="pointer-events-none absolute -top-32 -bottom-32 left-1/2 z-30 hidden w-[24px] translate-x-[calc(-50%+300px)] -skew-x-20 origin-center bg-[#F4BC4A] md:-top-56 md:-bottom-56 md:block" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 items-stretch gap-12 md:grid-cols-2 md:gap-0">
             {/* Esquerda: Texto */}
@@ -413,8 +465,7 @@ export default function HomePage() {
                   letterSpacing: "0%",
                 }}
               >
-                Junte-se à nossa rede de oficinas parceiras e potencialize seu
-                negócio com{" "}
+                Se você é dono ou gestor de oficina mecânica, tenha{" "}
                 <strong
                   style={{
                     fontFamily: "var(--font-open-sans)",
@@ -424,7 +475,7 @@ export default function HomePage() {
                     letterSpacing: "0%",
                   }}
                 >
-                  benefícios exclusivos
+                  preços exclusivos
                 </strong>
                 ,{" "}
                 <strong
@@ -436,7 +487,7 @@ export default function HomePage() {
                     letterSpacing: "0%",
                   }}
                 >
-                  programa de fidelidade estruturado
+                  atendimento prioritário
                 </strong>{" "}
                 e{" "}
                 <strong
@@ -448,17 +499,17 @@ export default function HomePage() {
                     letterSpacing: "0%",
                   }}
                 >
-                  vantagens
+                  suporte técnico dedicado
                 </strong>{" "}
-                que aumentam sua competitividade.
+                para ganhar margem, prazo e confiança com seus clientes.
               </p>
 
               {/* Lista de benefícios */}
               <ul className="space-y-4 pt-2">
                 {[
-                  "PREÇOS ESPECIAIS E DESCONTOS PROGRESSIVOS",
-                  "ECONOMIA NA COMPRA DE PEÇAS E COMPONENTES",
-                  "ATENDIMENTO PRIORITÁRIO E PRAZOS REDUZIDOS",
+                  "Preços especiais e descontos progressivos",
+                  "Economia na compra de peças e componentes",
+                  "Atendimento prioritário e prazos reduzidos",
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <span
@@ -491,14 +542,14 @@ export default function HomePage() {
               {/* CTA */}
               <div className="pt-6">
                 <Link
-                  href="/b2b"
+                  href="/contato#formulario"
                   className="inline-flex h-[68px] items-center justify-center rounded-[62px] px-10 text-base font-bold uppercase text-white transition hover:brightness-110"
                   style={{
                     background:
                       "linear-gradient(0deg, #1654A6 0%, #0E62F6 100%)",
                   }}
                 >
-                  SEJA UM PARCEIRO PREMIUM
+                  Quero ser parceiro
                 </Link>
               </div>
             </div>
@@ -538,8 +589,9 @@ export default function HomePage() {
             src="/homecomment.png"
             alt=""
             fill
+            sizes="100vw"
             className="object-cover object-center"
-            priority={false}
+            aria-hidden="true"
           />
           <div className="absolute inset-0 bg-[#000617]/70 backdrop-blur-[2px]" />
         </div>
@@ -547,12 +599,11 @@ export default function HomePage() {
         <div className="relative z-10 flex min-h-[700px] flex-col justify-between md:min-h-[950px]">
           <div className="mx-auto max-w-7xl px-4 pt-16 text-center sm:px-6 lg:px-8 md:pt-24">
             <h2 className="mb-2 font-heading text-3xl font-bold text-white md:text-4xl">
-              QUEM JÁ CONFIA NA{" "}
-              <span className="text-rp-accent">RETÍFICA PREMIUM</span>
+              Quem já confia na{" "}
+              <span className="text-rp-accent">Retífica Premium</span>
             </h2>
             <p className="text-base text-gray-300 md:text-lg">
-              Veja o que nossos parceiros e clientes dizem sobre a qualidade,
-              rapidez e confiança do nosso trabalho.
+              Depoimentos reais sobre qualidade, prazo e atendimento.
             </p>
           </div>
 
@@ -586,7 +637,7 @@ export default function HomePage() {
                     {
                       id: "sert",
                       quote:
-                        "SERVIÇO PROFISSIONAL, ÓTIMO ATENDIMENTO, SEMPRE PRESTATIVOS, ALÉM DE ÓTIMO PREÇO. PESSOAS DE CONFIANÇA. RECOMENDO.",
+                        "Serviço profissional, ótimo atendimento, sempre prestativos e com excelente custo-benefício. Pessoas de confiança. Recomendo.",
                       logoType: "image" as const,
                       src: "/sert-pecas.jpg",
                       alt: "Sert Peças",
@@ -594,7 +645,7 @@ export default function HomePage() {
                     {
                       id: "diego",
                       quote:
-                        "SERVIÇO DE EXCELÊNCIA. OS MELHORES PROFISSIONAIS, SEMPRE SE DEDICANDO PARA ENTREGAR UM SERVIÇO DE QUALIDADE. AGRADECEMOS A PARCERIA DESSA EQUIPE. SUPER RECOMENDO.",
+                        "Serviço de excelência. Profissionais dedicados e entrega com qualidade. Agradecemos a parceria dessa equipe. Super recomendo.",
                       logoType: "image" as const,
                       src: "/Diego.png",
                       alt: "Diego",
@@ -674,6 +725,157 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 7. FAQ — PARA SGE/IA */}
+      <section className="bg-white py-16 md:py-20">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <h2 className="mb-10 text-center font-heading text-3xl font-bold text-gray-900 md:text-4xl">
+            Dúvidas Frequentes sobre Retífica de Cabeçote
+          </h2>
+          <div className="space-y-6">
+            {[
+              {
+                q: "Quanto custa retífica de cabeçote?",
+                a: "O valor varia conforme o modelo do veículo e o estado do cabeçote. Fazemos diagnóstico técnico e enviamos orçamento detalhado pelo WhatsApp em até 2 horas úteis.",
+              },
+              {
+                q: "Quanto tempo demora a retífica?",
+                a: "Retífica simples de cabeçote leva de 2 a 4 dias úteis. Montagem completa de motor pode levar de 5 a 10 dias. Informamos o prazo exato após diagnóstico técnico.",
+              },
+              {
+                q: "Retífica de cabeçote tem garantia?",
+                a: "Sim. Oferecemos garantia documentada conforme o tipo de serviço realizado. Tudo é registrado e entregue junto com o laudo técnico.",
+              },
+              {
+                q: "Quando o motor precisa de retífica?",
+                a: "Principais sinais: superaquecimento constante, perda de potência, consumo alto de óleo, fumaça branca ou azul, junta queimada, cabeçote trincado, motor batendo ou falhando.",
+              },
+              {
+                q: "Atendem caminhão e motor diesel?",
+                a: "Sim. Atendemos carro (passeio e utilitário), caminhão, ônibus, van, trator e motores diesel, gasolina e álcool.",
+              },
+              {
+                q: "Vocês atendem oficinas?",
+                a: "Sim. Temos programa B2B com descontos progressivos de 5% a 15%, atendimento prioritário e suporte técnico para oficinas parceiras em Ribeirão Preto e região.",
+              },
+              {
+                q: "Como solicitar orçamento?",
+                a: "Chame no WhatsApp (16) 99302-1998, ligue no (16) 3524-4661 ou preencha o formulário no site. Respondemos rápido.",
+              },
+              {
+                q: "Onde fica a Retífica Premium?",
+                a: "Av. Fioravante Magro, 1059 - Jardim Boa Vista, Sertãozinho-SP. Atendemos Ribeirão Preto, Sertãozinho e toda a região.",
+              },
+            ].map((item, idx) => (
+              <details
+                key={idx}
+                className="group rounded-lg border border-gray-200 bg-gray-50 p-6 transition-all hover:border-rp-accent"
+              >
+                <summary className="cursor-pointer font-semibold text-gray-900 list-none flex items-start justify-between">
+                  <span className="flex-1">{item.q}</span>
+                  <span className="ml-4 text-rp-accent group-open:rotate-180 transition-transform">
+                    ▼
+                  </span>
+                </summary>
+                <p className="mt-4 text-gray-700 leading-relaxed">{item.a}</p>
+              </details>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link
+              href="/contato"
+              className="inline-flex h-14 items-center justify-center rounded-full bg-rp-accent px-10 text-base font-bold text-white transition-all hover:brightness-110"
+            >
+              Chamar no WhatsApp agora
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. REGIÃO ATENDIDA — SEO LOCAL */}
+      <section className="bg-rp-navy py-16 md:py-20">
+        <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
+          <h2 className="mb-6 font-heading text-3xl font-bold text-white md:text-4xl">
+            Atendemos Ribeirão Preto, Sertãozinho e Toda a Região
+          </h2>
+          <p className="mx-auto mb-8 max-w-3xl text-lg leading-relaxed text-gray-300">
+            A Retífica Premium atende clientes e oficinas mecânicas em{" "}
+            <strong>Ribeirão Preto</strong>, <strong>Sertãozinho</strong>,{" "}
+            <strong>Cravinhos</strong>, <strong>Jaboticabal</strong>,{" "}
+            <strong>Batatais</strong>, <strong>Brodowski</strong>,{" "}
+            <strong>Guariba</strong>, <strong>Pontal</strong>,{" "}
+            <strong>Serrana</strong> e <strong>Monte Alto</strong>.
+          </p>
+          <p className="mb-8 text-base text-gray-400">
+            Se você está em outra cidade da região e precisa de retífica de
+            cabeçote, usinagem ou diagnóstico técnico, entre em contato pelo
+            WhatsApp para confirmar atendimento.
+          </p>
+          <Link
+            href="https://wa.me/5516993021998?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Ret%C3%ADfica%20Premium%20e%20gostaria%20de%20solicitar%20um%20or%C3%A7amento%20para%20ret%C3%ADfica%20de%20cabe%C3%A7ote."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-14 items-center justify-center rounded-full bg-[#25D366] px-10 text-base font-bold text-white transition-all hover:brightness-110"
+          >
+            <svg
+              className="mr-2 h-6 w-6"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+            </svg>
+            Chamar no WhatsApp
+          </Link>
+        </div>
+      </section>
+
+      {/* JSON-LD Structured Data */}
+      <LocalBusinessSchema />
+      <ServiceSchema />
+      <FAQSchema
+        items={[
+          {
+            question: "Quanto custa retífica de cabeçote?",
+            answer:
+              "O valor varia conforme o modelo do veículo e o estado do cabeçote. Fazemos diagnóstico técnico e enviamos orçamento detalhado pelo WhatsApp em até 2 horas úteis.",
+          },
+          {
+            question: "Quanto tempo demora a retífica?",
+            answer:
+              "Retífica simples de cabeçote leva de 2 a 4 dias úteis. Montagem completa de motor pode levar de 5 a 10 dias. Informamos o prazo exato após diagnóstico técnico.",
+          },
+          {
+            question: "Retífica de cabeçote tem garantia?",
+            answer:
+              "Sim. Oferecemos garantia documentada conforme o tipo de serviço realizado. Tudo é registrado e entregue junto com o laudo técnico.",
+          },
+          {
+            question: "Quando o motor precisa de retífica?",
+            answer:
+              "Principais sinais: superaquecimento constante, perda de potência, consumo alto de óleo, fumaça branca ou azul, junta queimada, cabeçote trincado, motor batendo ou falhando.",
+          },
+          {
+            question: "Atendem caminhão e motor diesel?",
+            answer:
+              "Sim. Atendemos carro (passeio e utilitário), caminhão, ônibus, van, trator e motores diesel, gasolina e álcool.",
+          },
+          {
+            question: "Vocês atendem oficinas?",
+            answer:
+              "Sim. Temos programa B2B com descontos progressivos de 5% a 15%, atendimento prioritário e suporte técnico para oficinas parceiras em Ribeirão Preto e região.",
+          },
+          {
+            question: "Como solicitar orçamento?",
+            answer:
+              "Chame no WhatsApp (16) 99302-1998, ligue no (16) 3524-4661 ou preencha o formulário no site. Respondemos rápido.",
+          },
+          {
+            question: "Onde fica a Retífica Premium?",
+            answer:
+              "Av. Fioravante Magro, 1059 - Jardim Boa Vista, Sertãozinho-SP. Atendemos Ribeirão Preto, Sertãozinho e toda a região.",
+          },
+        ]}
+      />
     </main>
   );
 }

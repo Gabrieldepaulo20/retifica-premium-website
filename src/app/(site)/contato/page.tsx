@@ -1,20 +1,44 @@
-"use client";
-
 import Image from "next/image";
-import { useEffect } from "react";
+import type { Metadata } from "next";
+import { ContatoScroll } from "@/components/site/ContatoScroll";
+
+export const metadata: Metadata = {
+  title: "Contato | Retífica Premium em Sertãozinho-SP",
+  description:
+    "Fale com a Retífica Premium para orçamento de retífica de cabeçote, usinagem e montagem. Atendimento rápido por telefone e WhatsApp.",
+  alternates: {
+    canonical: "/contato",
+  },
+  openGraph: {
+    title: "Contato | Retífica Premium em Sertãozinho-SP",
+    description:
+      "Fale com a Retífica Premium para orçamento de retífica de cabeçote, usinagem e montagem.",
+    url: "https://retificapremium.com.br/contato",
+    siteName: "Retífica Premium",
+    locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Contato Retífica Premium",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contato | Retífica Premium em Sertãozinho-SP",
+    description:
+      "Fale com a Retífica Premium para orçamento de retífica de cabeçote, usinagem e montagem.",
+    images: ["/og-image.jpg"],
+  },
+};
 
 export default function ContatoPage() {
-  useEffect(() => {
-    if (window.location.hash === "#contato-form") {
-      const formElement = document.getElementById("contato-form");
-      if (formElement) {
-        formElement.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  }, []);
-
   return (
     <main className="min-h-screen bg-white">
+      <ContatoScroll />
       {/* PARTE A — HERO/FORMULÁRIO */}
       <section className="bg-white">
         <div className="relative min-h-[700px] overflow-hidden bg-[#2E5AA7]">
@@ -25,6 +49,7 @@ export default function ContatoPage() {
               fill
               sizes="100vw"
               className="object-cover"
+              aria-hidden="true"
             />
             <div className="absolute inset-0 bg-[#2E5AA7]/90" />
             <div className="absolute inset-0 bg-linear-to-b from-[#2E5AA7]/75 via-[#1E3B73]/65 to-black/60" />
@@ -36,17 +61,17 @@ export default function ContatoPage() {
                 className="text-4xl font-bold text-white md:text-5xl lg:text-6xl"
                 style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.3 }}
               >
-                Entre em Contato
+                Fale com um especialista
               </h1>
               <div
                 className="mx-auto max-w-2xl space-y-2 text-lg md:text-xl"
                 style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.6 }}
               >
                 <p className="font-semibold text-[#F3B839]">
-                  Estamos prontos para atender você.
+                  Orçamento rápido para retífica de cabeçote.
                 </p>
                 <p className="text-white/90">
-                  Envie sua mensagem ou visite nossa oficina.
+                  Fale por WhatsApp, telefone ou envie sua mensagem.
                 </p>
               </div>
             </div>
@@ -54,12 +79,12 @@ export default function ContatoPage() {
         </div>
 
         <div className="-mt-[90px] mx-auto max-w-7xl px-4 pb-40 pt-2 sm:px-6 lg:px-8">
-          <div id="contato-form" className="relative z-10 mx-auto w-full max-w-2xl rounded-3xl bg-[#F8B628] p-8 shadow-xl md:p-10">
+          <div id="formulario" className="relative z-10 mx-auto w-full max-w-2xl rounded-3xl bg-[#F8B628] p-8 shadow-xl md:p-10">
             <h2
               className="mb-8 text-center text-2xl font-bold uppercase text-white md:text-3xl"
               style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
             >
-              ENVIE SUA MENSAGEM
+              Solicite seu orçamento
             </h2>
 
             <form action="#" method="post" className="space-y-5">
@@ -170,7 +195,7 @@ export default function ContatoPage() {
                     fontFamily: "var(--font-rajdhani)",
                   }}
                 >
-                  ENVIAR MENSAGEM
+                  Enviar mensagem
                 </button>
               </div>
             </form>
@@ -187,6 +212,7 @@ export default function ContatoPage() {
             fill
             sizes="100vw"
             className="object-cover opacity-15"
+            aria-hidden="true"
           />
           <div className="absolute inset-0 bg-[#2E5AA7]/85" />
           <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black/40" />
@@ -211,7 +237,7 @@ export default function ContatoPage() {
               style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.7 }}
             >
               Av. Fioravante Magro, 1059 - Jardim Boa Vista, Sertãozinho - SP,
-              14177-578
+              14177-578. Visite nossa oficina e conheça nossa estrutura.
             </p>
           </div>
 

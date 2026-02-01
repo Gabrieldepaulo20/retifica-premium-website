@@ -1,7 +1,40 @@
-"use client";
-
 import Image from "next/image";
 import { StatsCounter } from "@/components/site/StatsCounter";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title:
+    "Sobre a Retífica Premium | 20 Anos de Experiência em Retífica de Motores",
+  description:
+    "Mais de 20 anos de experiência em retífica de cabeçotes e usinagem automotiva. Equipe especializada, equipamentos modernos e compromisso com qualidade em Sertãozinho-SP.",
+  alternates: {
+    canonical: "/sobre",
+  },
+  openGraph: {
+    title: "Sobre a Retífica Premium | 20 Anos de Experiência",
+    description:
+      "Mais de 20 anos de experiência em retífica de cabeçotes e usinagem automotiva com equipe especializada.",
+    url: "https://retificapremium.com.br/sobre",
+    siteName: "Retífica Premium",
+    locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Sobre a Retífica Premium",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sobre a Retífica Premium | 20 Anos de Experiência",
+    description:
+      "Mais de 20 anos de experiência em retífica de cabeçotes e usinagem automotiva com equipe especializada.",
+    images: ["/og-image.jpg"],
+  },
+};
 
 export default function SobrePage() {
   return (
@@ -14,15 +47,15 @@ export default function SobrePage() {
             src="/texturewhite.png"
             alt=""
             fill
-            priority
             sizes="100vw"
             className="object-cover opacity-85"
+            aria-hidden="true"
           />
 
           {/* Overlay leve (não “apaga” a textura) */}
           <div className="absolute inset-0 bg-white/20" />
           {/* opcional: dá um “polimento” */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/30" />
+          <div className="absolute inset-0 bg-linear-to-b from-white/30 via-transparent to-white/30" />
         </div>
 
         {/* Conteúdo */}
@@ -32,10 +65,9 @@ export default function SobrePage() {
               className="font-rajdhani text-5xl font-bold leading-tight md:text-6xl lg:text-7xl"
               style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
             >
-              <span className="text-rp-accent">Excelência</span> em cada
-              cabeçote.
-              <br />
-              <span className="text-rp-accent">Confiança</span> em cada reparo.
+              Mais de{" "}
+              <span className="text-rp-accent">20 Anos de Experiência</span> em
+              Retífica Automotiva e Usinagem de Precisão
             </h1>
 
             <p
@@ -46,8 +78,10 @@ export default function SobrePage() {
                 lineHeight: 1.5,
               }}
             >
-              Mais de 20 anos de experiência transformando motores com precisão
-              e qualidade incomparáveis.
+              Desde 2004, a Retífica Premium entrega serviços completos de
+              retífica de cabeçotes com garantia, prazo e transparência.
+              Atendemos carros, caminhões, ônibus e tratores em Sertãozinho-SP,
+              Ribeirão Preto e região.
             </p>
           </div>
         </div>
@@ -63,14 +97,15 @@ export default function SobrePage() {
             fill
             className="object-cover opacity-35"
             style={{ filter: "blur(6px)" }}
-            priority={false}
+            sizes="100vw"
+            aria-hidden="true"
           />
 
           {/* Película escura para destacar o conteúdo */}
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
           {/* Vignette suave para dar profundidade */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/45" />
+          <div className="absolute inset-0 bg-linear-to-b from-black/35 via-transparent to-black/45" />
         </div>
 
         {/* Conteúdo */}
@@ -90,24 +125,21 @@ export default function SobrePage() {
               >
                 <p>
                   Fundada em 2004, a Retífica Premium nasceu com a missão de
-                  oferecer serviços de excelência em retífica de motores. Ao
-                  longo de mais de 20 anos, consolidamos nossa posição como
-                  referência no setor, sempre priorizando a qualidade técnica e
-                  a satisfação dos nossos clientes.
+                  entregar retífica de cabeçotes com qualidade e prazo. Ao longo
+                  de mais de 20 anos, consolidamos nossa presença em
+                  Sertãozinho-SP, sempre com foco em resultado e confiança.
                 </p>
                 <p>
-                  Utilizamos equipamentos de última geração e contamos com uma
-                  equipe altamente qualificada, que combina experiência prática
-                  com conhecimento técnico avançado. Investimos continuamente em
-                  tecnologia e capacitação, garantindo que cada motor seja
-                  tratado com o máximo de cuidado e precisão.
+                  Utilizamos equipamentos modernos e contamos com uma equipe
+                  altamente qualificada, unindo experiência prática e
+                  conhecimento técnico. Investimos continuamente em tecnologia e
+                  capacitação para garantir precisão em cada etapa.
                 </p>
                 <p>
-                  Nossa filosofia é simples: cada motor que passa por nossas
-                  mãos recebe atenção individualizada, seguindo os mais
-                  rigorosos padrões de qualidade. Somos reconhecidos na região
-                  pela nossa pontualidade, transparência e compromisso com a
-                  excelência em cada serviço realizado.
+                  Nossa filosofia é simples: cada motor recebe atenção
+                  individual, seguindo padrões de qualidade e transparência.
+                  Somos reconhecidos pela pontualidade, clareza no atendimento e
+                  compromisso com o serviço bem feito.
                 </p>
               </div>
             </div>
@@ -188,7 +220,7 @@ export default function SobrePage() {
                   <div className="mb-4 flex items-center gap-2">
                     {/* Barra grande com efeito story */}
                     <div className="relative h-[3px] w-[220px] overflow-hidden rounded-full bg-white/30">
-                      <div className="absolute left-0 top-0 h-full w-0 rounded-full bg-[#F3B839] transition-[width] duration-[1100ms] ease-out will-change-[width] group-hover:w-full" />
+                      <div className="absolute left-0 top-0 h-full w-0 rounded-full bg-[#F3B839] transition-[width] duration-1100 ease-out will-change-[width] group-hover:w-full" />
                     </div>
                     {/* Barra pequena */}
                     <div className="h-[3px] w-8 rounded-full bg-white transition-colors duration-300 group-hover:bg-[#F3B839]" />
@@ -237,7 +269,7 @@ export default function SobrePage() {
                   <div className="mb-4 flex items-center gap-2">
                     {/* Barra grande com efeito story */}
                     <div className="relative h-[3px] w-[220px] overflow-hidden rounded-full bg-white/30">
-                      <div className="absolute left-0 top-0 h-full w-0 rounded-full bg-[#F3B839] transition-[width] duration-[1100ms] ease-out will-change-[width] group-hover:w-full" />
+                      <div className="absolute left-0 top-0 h-full w-0 rounded-full bg-[#F3B839] transition-[width] duration-1100 ease-out will-change-[width] group-hover:w-full" />
                     </div>
                     {/* Barra pequena */}
                     <div className="h-[3px] w-8 rounded-full bg-white transition-colors duration-300 group-hover:bg-[#F3B839]" />
@@ -246,8 +278,8 @@ export default function SobrePage() {
                     className="text-base leading-relaxed text-white md:text-lg"
                     style={{ fontFamily: "var(--font-open-sans)" }}
                   >
-                    Ser reconhecida como a melhor retífica de motores do Brasil,
-                    referência em qualidade, inovação e atendimento ao cliente.
+                    Ser referência regional em retífica de cabeçotes, inovação e
+                    atendimento ao cliente.
                   </p>
                 </div>
                 <div className="shrink-0">
@@ -405,7 +437,7 @@ export default function SobrePage() {
       </section>
 
       {/* 4. FAIXA DE MÉTRICAS */}
-      <section className="h-[350px] bg-gradient-to-r from-[#053282] via-[#0B2F6B] to-[#053282]">
+      <section className="h-[350px] bg-linear-to-r from-[#053282] via-[#0B2F6B] to-[#053282]">
         <div className="mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
           <div className="grid w-full grid-cols-2 gap-8 md:grid-cols-4">
             {/* Métrica 1 */}
@@ -440,7 +472,8 @@ export default function SobrePage() {
             alt=""
             fill
             className="object-cover opacity-70"
-            priority={false}
+            sizes="100vw"
+            aria-hidden="true"
           />
           <div className="absolute inset-0 bg-white/30" />
         </div>
@@ -449,7 +482,7 @@ export default function SobrePage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-center">
             {/* Coluna esquerda: Placeholder para imagem futura */}
-            <div className="relative hidden aspect-[4/3] overflow-hidden rounded-lg bg-gray-200 md:block">
+            <div className="relative hidden aspect-4/3 overflow-hidden rounded-lg bg-gray-200 md:block">
               <div className="flex h-full items-center justify-center text-gray-400">
                 <span className="text-sm">Imagem: Equipe</span>
               </div>

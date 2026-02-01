@@ -103,7 +103,7 @@ export function Footer() {
               >
                 <Image
                   src="/whatsapprodape.png"
-                  alt=""
+                  alt="WhatsApp"
                   width={32}
                   height={32}
                   className="h-8 w-8 object-contain"
@@ -119,7 +119,7 @@ export function Footer() {
               >
                 <Image
                   src="/instagram.png"
-                  alt=""
+                  alt="Instagram"
                   width={32}
                   height={32}
                   className="h-8 w-8 object-contain"

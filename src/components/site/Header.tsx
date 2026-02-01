@@ -5,40 +5,20 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Travar scroll do body quando menu mobile estiver aberto
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [mobileMenuOpen]);
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-[9999] h-[225px] bg-[#020E1D]"
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 9999,
-        height: "225px",
-        backgroundColor: "#020E1D",
-      }}
-      role="banner"
-    >
+    <header className="w-full bg-[#020E1D]" role="banner">
       <nav
-        className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 py-6 sm:px-6 lg:px-8"
+        className="mx-auto flex h-[160px] max-w-7xl items-center justify-between px-4 sm:px-6 md:h-[200px] lg:px-8"
         role="navigation"
         aria-label="Navegação principal"
       >
@@ -51,10 +31,9 @@ export function Header() {
           <Image
             src="/logo.png"
             alt="Retífica Premium"
-            width={120}
-            height={32}
+            width={140}
+            height={38}
             className="h-auto w-auto"
-            priority={true}
           />
         </Link>
 
@@ -128,44 +107,45 @@ export function Header() {
       </nav>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div
-          id="mobile-menu"
-          className="absolute left-0 right-0 top-[225px] border-t border-[#1E3B73] bg-[#020E1D] shadow-lg md:hidden"
-        >
-          <div className="px-4 py-4">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-              const isB2B = item.href === "/b2b";
-              if (isActive && isB2B) {
-                return (
-                  <span
-                    key={item.href}
-                    className="block cursor-default py-3 text-base font-medium text-rp-gold"
-                    aria-current="page"
-                  >
-                    {item.label}
-                  </span>
-                );
-              }
+      <div
+        id="mobile-menu"
+        className={cn(
+          "border-t border-[#1E3B73] bg-[#020E1D] shadow-lg md:hidden",
+          mobileMenuOpen ? "block" : "hidden"
+        )}
+      >
+        <div className="px-4 py-4">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            const isB2B = item.href === "/b2b";
+            if (isActive && isB2B) {
               return (
-                <Link
+                <span
                   key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "block py-3 text-base font-medium text-white transition-colors",
-                    isActive ? "text-rp-gold" : "hover:text-rp-gold"
-                  )}
-                  aria-current={isActive ? "page" : undefined}
-                  onClick={() => setMobileMenuOpen(false)}
+                  className="block cursor-default py-3 text-base font-medium text-rp-gold"
+                  aria-current="page"
                 >
                   {item.label}
-                </Link>
+                </span>
               );
-            })}
-          </div>
+            }
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "block py-3 text-base font-medium text-white transition-colors",
+                  isActive ? "text-rp-gold" : "hover:text-rp-gold"
+                )}
+                aria-current={isActive ? "page" : undefined}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
-      )}
+      </div>
     </header>
   );
 }

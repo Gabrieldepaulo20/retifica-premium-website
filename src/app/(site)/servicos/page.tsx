@@ -1,5 +1,39 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Serviços de Retífica de Cabeçote | Retífica Premium",
+  description:
+    "Limpeza química, retífica de sedes e válvulas, plaina, usinagem e montagem. Retífica automotiva com precisão e garantia em Sertãozinho-SP.",
+  alternates: {
+    canonical: "/servicos",
+  },
+  openGraph: {
+    title: "Serviços de Retífica de Cabeçote | Retífica Premium",
+    description:
+      "Serviços completos de retífica de cabeçotes com usinagem de precisão, revisão de válvulas e montagem técnica.",
+    url: "https://retificapremium.com.br/servicos",
+    siteName: "Retífica Premium",
+    locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Serviços de Retífica de Cabeçote - Retífica Premium",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Serviços de Retífica de Cabeçote | Retífica Premium",
+    description:
+      "Serviços completos de retífica de cabeçotes com usinagem de precisão, revisão de válvulas e montagem técnica.",
+    images: ["/og-image.jpg"],
+  },
+};
 
 // Componente de Card de Serviço conforme design Figma
 function ServiceCard({
@@ -58,6 +92,7 @@ export default function ServicosPage() {
     {
       id: 1,
       titulo: "Limpeza Química de Cabeçotes",
+      alt: "Ícone de limpeza química de cabeçote",
       descricao: [
         "Remoção completa de sujeira, graxa, ferrugem e resíduos de combustão.",
         "Restaura a eficiência térmica e prepara o cabeçote para a usinagem.",
@@ -69,6 +104,7 @@ export default function ServicosPage() {
     {
       id: 2,
       titulo: "Retífica de Sedes e Válvulas",
+      alt: "Ícone de retífica de sedes e válvulas",
       descricao: [
         "Restauração precisa de sedes e válvulas, garantindo vedação perfeita e compressão ideal.",
         "Reduz perda de potência e melhora o desempenho do motor.",
@@ -80,6 +116,7 @@ export default function ServicosPage() {
     {
       id: 3,
       titulo: "Troca e Adaptação de Guias",
+      alt: "Ícone de troca e adaptação de guias",
       descricao: [
         "Substituição e ajuste técnico das guias conforme as medidas originais.",
         "Garante movimento suave das válvulas e redução de atrito.",
@@ -91,6 +128,7 @@ export default function ServicosPage() {
     {
       id: 4,
       titulo: "Esmerilhamento de Válvulas",
+      alt: "Ícone de esmerilhamento de válvulas",
       descricao: [
         "Polimento e acabamento para vedação perfeita entre válvula e sede.",
         "Mais eficiência e menor consumo de combustível.",
@@ -102,6 +140,7 @@ export default function ServicosPage() {
     {
       id: 5,
       titulo: "Usinagem de Roscas",
+      alt: "Ícone de usinagem de roscas",
       descricao: [
         "Correção e recuperação de roscas danificadas com tolerância de fábrica.",
         "Evita vazamentos e garante fixação segura dos componentes.",
@@ -113,6 +152,7 @@ export default function ServicosPage() {
     {
       id: 6,
       titulo: "Plaina de Cabeçotes",
+      alt: "Ícone de plaina de cabeçotes",
       descricao: [
         "Nivelamento exato da superfície para contato perfeito com o bloco do motor.",
         "Evita vazamentos e mantém a compressão ideal.",
@@ -124,6 +164,7 @@ export default function ServicosPage() {
     {
       id: 7,
       titulo: "Solda de Trincas e Reparos Estruturais",
+      alt: "Ícone de solda de trincas e reparos estruturais",
       descricao: [
         "Correção de fissuras e danos sem comprometer o cabeçote.",
         "Recuperação completa com acabamento reforçado e seguro.",
@@ -135,6 +176,7 @@ export default function ServicosPage() {
     {
       id: 8,
       titulo: "Mandrilhamento de Sedes e Guias",
+      alt: "Ícone de mandrilhamento de sedes e guias",
       descricao: [
         "Usinagem interna de precisão para restauração das medidas e centralização perfeita.",
         "Aumenta a durabilidade e melhora o alinhamento do conjunto.",
@@ -146,6 +188,7 @@ export default function ServicosPage() {
     {
       id: 9,
       titulo: "Montagem e Regulagem Final",
+      alt: "Ícone de montagem e regulagem final",
       descricao: [
         "Montagem técnica e ajustes calibrados conforme as especificações do fabricante.",
         "Motor testado, ajustado e pronto para rodar com desempenho máximo.",
@@ -166,13 +209,13 @@ export default function ServicosPage() {
             src="/texturewhite.png"
             alt=""
             fill
-            priority
             sizes="100vw"
             className="object-cover opacity-85"
+            aria-hidden="true"
           />
           {/* Overlay leve */}
           <div className="absolute inset-0 bg-white/20" />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/30" />
+          <div className="absolute inset-0 bg-linear-to-b from-white/30 via-transparent to-white/30" />
         </div>
 
         {/* Conteúdo */}
@@ -182,9 +225,9 @@ export default function ServicosPage() {
               className="text-4xl font-bold leading-tight text-gray-900 md:text-5xl lg:text-6xl"
               style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
             >
-              Serviços Especializados em
+              Serviços de
               <br />
-              <span className="text-rp-accent">Retífica de Cabeçotes</span>
+              <span className="text-rp-accent">Retífica de Cabeçote</span>
             </h1>
 
             <p
@@ -195,21 +238,21 @@ export default function ServicosPage() {
                 lineHeight: 1.5,
               }}
             >
-              Na Retífica de Cabeçotes Premium, cada serviço é executado com
-              equipamentos de alta precisão, mão de obra especializada e controle
-              técnico rigoroso.
+              Equipamentos de alta precisão, equipe especializada e controle
+              técnico do início ao fim. Atendemos Sertãozinho-SP com prazo e
+              garantia em cada serviço.
             </p>
 
             <div className="pt-4">
               <Link
-                href="/contato"
+                href="/contato#formulario"
                 className="inline-flex h-14 items-center justify-center rounded-full px-10 text-base font-bold text-white shadow-lg transition-all hover:opacity-90"
                 style={{
                   background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
                   fontFamily: "var(--font-rajdhani)",
                 }}
               >
-                SOLICITAR ORÇAMENTO
+                Solicitar orçamento
               </Link>
             </div>
           </div>
@@ -235,9 +278,8 @@ export default function ServicosPage() {
                 A excelência está nos detalhes.
               </p>
               <p>
-                Cada cabeçote é tratado com atenção individual, seguindo padrões
-                de fábrica e protocolos de qualidade que fazem da Retífica Premium
-                uma referência no setor.
+                Cada cabeçote passa por processos que seguem padrões de fábrica,
+                garantindo vedação, desempenho e durabilidade.
               </p>
             </div>
           </div>
@@ -248,7 +290,7 @@ export default function ServicosPage() {
               <ServiceCard
                 key={servico.id}
                 image={servico.image}
-                alt={servico.titulo}
+                alt={servico.alt}
                 width={servico.width}
                 height={servico.height}
                 titulo={servico.titulo}
@@ -270,12 +312,12 @@ export default function ServicosPage() {
             className="object-cover"
             style={{ filter: "blur(6px)" }}
             sizes="100vw"
-            priority={false}
+            aria-hidden="true"
           />
           {/* Overlay escuro */}
           <div className="absolute inset-0 bg-black/65" />
           {/* Vignette */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/50" />
+          <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-black/50" />
         </div>
 
         {/* Conteúdo */}
@@ -285,11 +327,10 @@ export default function ServicosPage() {
             <div className="mb-6 flex justify-center">
               <Image
                 src="/ferramenta.png"
-                alt="Ferramenta"
+                alt="Ferramenta de usinagem"
                 width={479}
                 height={98}
                 className="object-contain"
-                priority={false}
               />
             </div>
 
@@ -311,21 +352,21 @@ export default function ServicosPage() {
                 lineHeight: 1.6,
               }}
             >
-              Entre em contato e descubra como nossa retífica pode devolver
-              potência, eficiência e confiança ao seu veículo.
+              Fale com um especialista e entenda o melhor caminho para devolver
+              potência, eficiência e confiança ao seu motor.
             </p>
 
             {/* Botão CTA */}
             <div className="pt-4">
               <Link
-                href="/contato"
+                href="/contato#formulario"
                 className="inline-flex h-14 items-center justify-center rounded-full px-10 text-base font-bold text-white shadow-lg transition-all hover:opacity-90"
                 style={{
                   background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
                   fontFamily: "var(--font-rajdhani)",
                 }}
               >
-                SOLICITAR ORÇAMENTO
+                Falar com especialista
               </Link>
             </div>
           </div>
