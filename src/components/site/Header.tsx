@@ -17,7 +17,7 @@ export function Header() {
   return (
     <header className="w-full bg-[#020E1D]" role="banner">
       <nav
-        className="relative mx-auto flex h-auto max-w-7xl flex-col items-center justify-center gap-2 px-4 py-4 max-[640px]:pt-6 max-[640px]:pb-2 sm:px-6 md:h-[200px] md:flex-row md:items-center md:justify-between md:gap-0 md:py-0 lg:px-8"
+        className="relative mx-auto flex h-auto max-w-7xl flex-col items-center justify-center gap-2 px-4 py-4 max-[640px]:pt-8 max-[640px]:pb-2 sm:px-6 md:h-[200px] md:flex-row md:items-center md:justify-between md:gap-0 md:py-0 lg:px-8"
         role="navigation"
         aria-label="Navegação principal"
       >

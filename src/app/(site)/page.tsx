@@ -48,11 +48,11 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-rp-navy md:bg-transparent">
       {/* 1. HERO — altura por viewport para que a faixa azul fique acima da dobra */}
-      <section className="relative z-10 flex min-h-[calc(100svh-14rem)] flex-col bg-rp-navy pt-6 pb-6 max-[640px]:min-h-[calc(100svh-(56px+env(safe-area-inset-bottom)+112px))] max-[640px]:pt-10 max-[640px]:pb-0 md:min-h-[calc(100svh-8.5rem)] md:pt-12 md:pb-4 lg:pt-14 lg:pb-5">
+      <section className="relative z-10 flex min-h-[calc(100svh-14rem)] flex-col bg-rp-navy pt-6 pb-6 max-[640px]:min-h-[calc(100svh-(56px+env(safe-area-inset-bottom)+112px))] max-[640px]:pt-12 max-[640px]:pb-0 md:min-h-[calc(100svh-8.5rem)] md:pt-14 md:pb-4 lg:pt-14 lg:pb-5">
         <div className="mx-auto flex max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
           <div className="relative z-30 flex min-h-0 flex-1 flex-col items-center justify-start pb-10 max-[640px]:pb-0 text-center md:pb-12 lg:pb-14">
             {/* Bloco Superior: Logo + H1 + Textos */}
-            <div className="flex flex-col items-center gap-3 md:gap-4 lg:gap-5 pt-4 max-[640px]:pt-6 md:pt-5 lg:pt-6">
+            <div className="flex flex-col items-center gap-3 md:gap-4 lg:gap-5 pt-4 max-[640px]:pt-12 md:pt-5 lg:pt-6">
               {/* Logo */}
               <div className="hidden h-[155px] w-[210px] md:block">
                 <Image
@@ -87,7 +87,7 @@ export default function HomePage() {
                 </p>
               </div>
               {/* Bloco Inferior: CTA */}
-              <div className="mt-5 max-[640px]:mt-6 md:mt-8 relative z-40">
+              <div className="mt-5 max-[640px]:mt-8 md:mt-8 relative z-40">
                 <Link
                   href="https://wa.me/5516993021998?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Ret%C3%ADfica%20Premium%20e%20gostaria%20de%20solicitar%20um%20or%C3%A7amento%20para%20ret%C3%ADfica%20de%20cabe%C3%A7ote."
                   target="_blank"

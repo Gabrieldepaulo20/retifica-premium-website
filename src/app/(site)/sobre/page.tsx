@@ -93,7 +93,8 @@ export default function SobrePage() {
                 className="font-rajdhani text-[30px] font-bold leading-[1.12] tracking-tight text-gray-900"
                 style={{ fontFamily: "var(--font-rajdhani)" }}
               >
-                <span className="text-rp-royal">Excelência</span> em cada cabeçote.
+                <span className="text-rp-royal">Excelência</span> em cada
+                cabeçote.
                 <br />
                 <span className="text-rp-royal">Confiança</span> em cada reparo.
               </h1>
@@ -101,19 +102,28 @@ export default function SobrePage() {
               <div className="mt-8 space-y-2">
                 <p
                   className="text-[18px] font-bold text-[#0b1f3a]"
-                  style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.35 }}
+                  style={{
+                    fontFamily: "var(--font-open-sans)",
+                    lineHeight: 1.35,
+                  }}
                 >
                   Mais de 20 anos de experiência
                 </p>
                 <p
                   className="text-[16px] text-[#0b1f3a]"
-                  style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.45 }}
+                  style={{
+                    fontFamily: "var(--font-open-sans)",
+                    lineHeight: 1.45,
+                  }}
                 >
                   transformando motores com precisão
                 </p>
                 <p
                   className="text-[16px] text-[#0b1f3a]"
-                  style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.45 }}
+                  style={{
+                    fontFamily: "var(--font-open-sans)",
+                    lineHeight: 1.45,
+                  }}
                 >
                   e qualidade incomparáveis.
                 </p>
@@ -161,24 +171,35 @@ export default function SobrePage() {
                 style={{ fontFamily: "var(--font-open-sans)" }}
               >
                 <p className="font-bold">
-                  Fundada em 2004, a Retífica Premium nasceu do sonho de oferecer serviços de retífica de motores com excelência técnica e atendimento diferenciado.
+                  Fundada em 2004, a Retífica Premium nasceu do sonho de
+                  oferecer serviços de retífica de motores com excelência
+                  técnica e atendimento diferenciado.
                 </p>
 
                 <p>
-                  <span className="font-bold">Com equipamentos de última geração e uma equipe altamente qualificada,</span>{" "}
+                  <span className="font-bold">
+                    Com equipamentos de última geração e uma equipe altamente
+                    qualificada,
+                  </span>{" "}
                   conquistamos a confiança de milhares de clientes.
                 </p>
 
                 <p>
-                  Ao longo dos anos, investimos continuamente em tecnologia e capacitação profissional, tornando-nos referência no mercado de retífica de motores.
+                  Ao longo dos anos, investimos continuamente em tecnologia e
+                  capacitação profissional, tornando-nos referência no mercado
+                  de retífica de motores.
                 </p>
 
                 <p className="font-bold uppercase text-rp-accent">
-                  NOSSA FILOSOFIA É SIMPLES: TRATAR CADA MOTOR COM O MESMO CUIDADO E PRECISÃO QUE GOSTARÍAMOS QUE TRATASSEM O NOSSO.
+                  NOSSA FILOSOFIA É SIMPLES: TRATAR CADA MOTOR COM O MESMO
+                  CUIDADO E PRECISÃO QUE GOSTARÍAMOS QUE TRATASSEM O NOSSO.
                 </p>
 
                 <p>
-                  Hoje, orgulhamo-nos de ser uma das retíficas mais respeitadas da região, reconhecida pela qualidade dos serviços, pontualidade nas entregas e transparência no relacionamento com os clientes.
+                  Hoje, orgulhamo-nos de ser uma das retíficas mais respeitadas
+                  da região, reconhecida pela qualidade dos serviços,
+                  pontualidade nas entregas e transparência no relacionamento
+                  com os clientes.
                 </p>
               </div>
             </div>

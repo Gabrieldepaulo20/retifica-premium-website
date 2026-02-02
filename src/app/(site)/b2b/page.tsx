@@ -77,24 +77,28 @@ const fidelityItems = [
 const programAdvantages = [
   {
     icon: "paid",
+    imageSrc: "/precoespecial.png",
     title: "Preços Especiais",
     description:
       "Descontos exclusivos em todos os serviços de retífica e manutenção para oficinas parceiras.",
   },
   {
     icon: "support_agent",
+    imageSrc: "/atendimentoprioritario.png",
     title: "Atendimento Prioritário",
     description:
       "Fila preferencial e prazos reduzidos para garantir agilidade no seu negócio.",
   },
   {
     icon: "inventory_2",
+    imageSrc: "/descontoempecas.png",
     title: "Descontos em Peças",
     description:
       "Economia garantida na compra de peças originais e componentes de qualidade.",
   },
   {
     icon: "school",
+    imageSrc: "/automacoes.png",
     title: "Treinamentos Exclusivos",
     description: "Benefícios pensados para impulsionar sua oficina mecânica.",
   },
@@ -111,6 +115,7 @@ const partnershipLevels = [
     benefits: [
       "Descontos progressivos em serviços e peças",
       "Suporte técnico especializado",
+      "Desenvolvimento personalizado incluso na parceria",
     ],
   },
   {
@@ -123,7 +128,7 @@ const partnershipLevels = [
     benefits: [
       "Descontos progressivos em serviços e peças",
       "Suporte técnico especializado",
-      "Atendimento prioritário e agendamento preferencial",
+      "Desenvolvimento personalizado incluso na parceria",
     ],
   },
   {
@@ -137,6 +142,7 @@ const partnershipLevels = [
       "Descontos progressivos em serviços e peças",
       "Suporte técnico especializado",
       "Condições especiais e negociação personalizada",
+      "Desenvolvimento personalizado incluso na parceria",
     ],
   },
 ];
@@ -245,10 +251,14 @@ export default function B2BPage() {
                   key={item.title}
                   className="flex flex-col items-center text-center"
                 >
-                  <div className="mb-4 flex h-[145px] w-[145px] items-center justify-center rounded-full bg-[#F3B839]">
-                    <span className="material-symbols-outlined text-[98px] leading-none text-[#0B1E3D]">
-                      {item.icon}
-                    </span>
+                  <div className="mb-4 flex h-[120px] w-[120px] items-center justify-center rounded-full bg-[#F3B839]">
+                    <Image
+                      src={item.imageSrc}
+                      alt={item.title}
+                      width={98}
+                      height={98}
+                      className="h-[72px] w-[72px] object-contain"
+                    />
                   </div>
                   <h3
                     className="mb-2 text-lg font-bold text-[#0B2D5C]"
@@ -355,69 +365,77 @@ export default function B2BPage() {
           </div>
 
           <div className="mt-14 space-y-10 max-[640px]:space-y-7">
-            {partnershipLevels.map((level) => (
-              <div
-                key={level.name}
-                className="mx-auto w-full max-w-[90%] rounded-2xl bg-[#051E40] shadow-lg max-[640px]:h-[342px] max-[640px]:w-[300px] max-[640px]:max-w-none sm:max-w-3xl md:px-16 md:py-12 lg:max-w-[1216px]"
-                style={{
-                  border: `2px solid ${level.levelColor}40`,
-                }}
-              >
-                <div className="grid gap-10 px-6 py-6 max-[640px]:gap-6 max-[640px]:px-5 max-[640px]:py-6 md:grid-cols-[420px_1fr] md:items-center md:px-0 md:py-0">
-                  <div className="flex flex-col justify-center">
-                    <p
-                      className="text-lg font-semibold uppercase tracking-wide text-white max-[640px]:text-[16px] md:text-xl"
-                      style={headingStyle}
-                    >
-                      Parceiro{" "}
-                      <span style={{ color: level.levelColor }}>
-                        {level.levelName}
-                      </span>
-                    </p>
-                    <p
-                      className="mt-3 text-base leading-relaxed text-white/70 max-[640px]:text-[13px] md:text-lg"
-                      style={bodyStyle}
-                    >
-                      {level.serviceRange}
-                    </p>
-                    <p
-                      className="mt-4 text-[72px] font-bold leading-none tracking-tight max-[640px]:text-[56px] md:text-[116.87px]"
-                      style={{
-                        fontFamily: "var(--font-rajdhani)",
-                        fontWeight: 700,
-                        color: level.percentColor,
-                      }}
-                    >
-                      {level.percent}
-                    </p>
-                    <p
-                      className="mt-3 text-base text-white/60 max-[640px]:text-[13px] md:text-lg"
-                      style={bodyStyle}
-                    >
-                      de desconto
-                    </p>
-                  </div>
-                  <div className="flex flex-col justify-center gap-6">
-                    {level.benefits.map((benefit) => (
-                      <div
-                        key={benefit}
-                        className="flex items-center gap-4 text-lg leading-relaxed text-white max-[640px]:text-[14px] md:text-xl"
+            {partnershipLevels.map((level) => {
+              const mobileHeightClass =
+                level.percent === "10%"
+                  ? "max-[640px]:h-[398px]"
+                  : level.percent === "15%"
+                  ? "max-[640px]:h-[478px]"
+                  : "max-[640px]:h-[400px]";
+              return (
+                <div
+                  key={level.name}
+                  className={`mx-auto w-full max-w-[90%] rounded-2xl bg-[#000617] shadow-lg ${mobileHeightClass} max-[640px]:w-[300px] max-[640px]:max-w-none sm:max-w-3xl md:px-16 md:py-12 lg:max-w-[1216px]`}
+                  style={{
+                    border: `2px solid ${level.levelColor}40`,
+                  }}
+                >
+                  <div className="grid gap-10 px-6 py-6 max-[640px]:gap-6 max-[640px]:px-5 max-[640px]:py-6 md:grid-cols-[420px_1fr] md:items-center md:px-0 md:py-0">
+                    <div className="flex flex-col justify-center">
+                      <p
+                        className="text-lg font-semibold uppercase tracking-wide text-white max-[640px]:text-[16px] md:text-xl"
+                        style={headingStyle}
+                      >
+                        Parceiro{" "}
+                        <span style={{ color: level.levelColor }}>
+                          {level.levelName}
+                        </span>
+                      </p>
+                      <p
+                        className="mt-3 text-base leading-relaxed text-white/70 max-[640px]:text-[13px] md:text-lg"
                         style={bodyStyle}
                       >
-                        <Image
-                          src="/check.png"
-                          alt="Benefício incluído"
-                          width={34}
-                          height={34}
-                          className="h-[34px] w-[34px] shrink-0 max-[640px]:h-[24px] max-[640px]:w-[24px]"
-                        />
-                        <span>{benefit}</span>
-                      </div>
-                    ))}
+                        {level.serviceRange}
+                      </p>
+                      <p
+                        className="mt-4 text-[72px] font-bold leading-none tracking-tight max-[640px]:text-[56px] md:text-[116.87px]"
+                        style={{
+                          fontFamily: "var(--font-rajdhani)",
+                          fontWeight: 700,
+                          color: level.percentColor,
+                        }}
+                      >
+                        {level.percent}
+                      </p>
+                      <p
+                        className="mt-3 text-base text-white/60 max-[640px]:text-[13px] md:text-lg"
+                        style={bodyStyle}
+                      >
+                        de desconto
+                      </p>
+                    </div>
+                    <div className="flex flex-col justify-center gap-6">
+                      {level.benefits.map((benefit) => (
+                        <div
+                          key={benefit}
+                          className="flex items-center gap-4 text-lg leading-relaxed text-white max-[640px]:text-[14px] md:text-xl"
+                          style={bodyStyle}
+                        >
+                          <Image
+                            src="/check.png"
+                            alt="Benefício incluído"
+                            width={34}
+                            height={34}
+                            className="h-[34px] w-[34px] shrink-0 max-[640px]:h-[24px] max-[640px]:w-[24px]"
+                          />
+                          <span>{benefit}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
