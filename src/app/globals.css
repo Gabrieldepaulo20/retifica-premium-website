@@ -201,3 +201,33 @@ h6 {
   animation: bounce-subtle 3s ease-in-out infinite;
   animation-delay: 1s;
 }
+
+/* Stacking cards - somente mobile (Home > Serviços) */
+@media (max-width: 768px) {
+  .service-card-stack {
+    position: sticky;
+  }
+
+  .service-card-stack-1 {
+    top: 130px;
+    z-index: 10;
+  }
+
+  .service-card-stack-2 {
+    top: 160px;
+    z-index: 11;
+  }
+
+  .service-card-stack-3 {
+    top: 190px;
+    z-index: 12;
+  }
+}
+
+@media (min-width: 769px) {
+  .service-card-stack {
+    position: relative;
+    top: auto;
+    z-index: auto;
+  }
+}

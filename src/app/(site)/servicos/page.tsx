@@ -54,7 +54,7 @@ function ServiceCard({
   const descricoes = Array.isArray(descricao) ? descricao : [descricao];
 
   return (
-    <div className="flex w-full max-w-[382px] min-h-[458px] flex-col items-center justify-between rounded-[15px] border-2 border-[#0E62F6] bg-[#D9E7FF] p-8 shadow-[0_10px_25px_rgba(0,0,0,0.18)] transition-transform duration-200 ease-out hover:scale-[1.03] hover:shadow-[0_15px_35px_rgba(0,0,0,0.25)] md:h-[458px]">
+    <div className="flex w-full max-w-[382px] min-h-[458px] flex-col items-center justify-between rounded-[15px] border-2 border-[#0E62F6] bg-[#D9E7FF] p-8 shadow-[0_10px_25px_rgba(0,0,0,0.18)] transition-transform duration-200 ease-out hover:scale-[1.03] hover:shadow-[0_15px_35px_rgba(0,0,0,0.25)] max-[640px]:h-[328px] max-[640px]:w-[280px] max-[640px]:max-w-none max-[640px]:min-h-[328px] max-[640px]:p-6 md:h-[458px]">
       <div className="flex justify-center">
         <Image
           src={image}
@@ -66,12 +66,12 @@ function ServiceCard({
       </div>
       <div className="flex flex-1 flex-col items-center justify-center">
         <h3
-          className="mb-4 text-center text-xl font-bold text-gray-900"
+          className="mb-4 text-center text-xl font-bold text-gray-900 max-[640px]:text-[18px]"
           style={{ fontFamily: "var(--font-rajdhani)" }}
         >
           {titulo}
         </h3>
-        <div className="text-center text-sm leading-relaxed text-gray-700">
+        <div className="text-center text-sm leading-relaxed text-gray-700 max-[640px]:text-[13px]">
           {descricoes.map((desc, index) => (
             <p
               key={index}
@@ -285,7 +285,7 @@ export default function ServicosPage() {
           </div>
 
           {/* Grid de cards */}
-          <div className="grid grid-cols-1 place-items-center gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 place-items-center gap-6 max-[640px]:gap-8 md:grid-cols-2 lg:grid-cols-3">
             {servicos.map((servico) => (
               <ServiceCard
                 key={servico.id}

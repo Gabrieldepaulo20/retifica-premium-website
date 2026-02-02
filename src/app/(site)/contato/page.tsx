@@ -79,19 +79,19 @@ export default function ContatoPage() {
         </div>
 
         <div className="-mt-[90px] mx-auto max-w-7xl px-4 pb-40 pt-2 sm:px-6 lg:px-8">
-          <div id="formulario" className="relative z-10 mx-auto w-full max-w-2xl rounded-3xl bg-[#F8B628] p-8 shadow-xl md:p-10">
+          <div id="formulario" className="relative z-10 mx-auto w-full max-w-2xl rounded-3xl bg-[#F8B628] p-5 shadow-xl max-[640px]:p-6 md:p-10">
             <h2
-              className="mb-8 text-center text-2xl font-bold uppercase text-white md:text-3xl"
+              className="mb-6 text-center text-xl font-bold uppercase text-white max-[640px]:mb-5 md:text-2xl md:mb-8 lg:text-3xl"
               style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
             >
               Solicite seu orçamento
             </h2>
 
-            <form action="#" method="post" className="space-y-5">
+            <form action="#" method="post" className="space-y-4 max-[640px]:space-y-3 md:space-y-5">
               <div>
                 <label
                   htmlFor="nome"
-                  className="mb-2 block text-sm font-medium text-white"
+                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
                   Nome completo
@@ -101,7 +101,7 @@ export default function ContatoPage() {
                   id="nome"
                   name="nome"
                   required
-                  className="h-12 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
                   placeholder="Seu nome completo"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 />
@@ -110,7 +110,7 @@ export default function ContatoPage() {
               <div>
                 <label
                   htmlFor="telefone"
-                  className="mb-2 block text-sm font-medium text-white"
+                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
                   Telefone/WhatsApp
@@ -120,7 +120,7 @@ export default function ContatoPage() {
                   id="telefone"
                   name="telefone"
                   required
-                  className="h-12 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
                   placeholder="(16) 99999-9999"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 />
@@ -129,7 +129,7 @@ export default function ContatoPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-sm font-medium text-white"
+                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
                   E-mail
@@ -139,7 +139,7 @@ export default function ContatoPage() {
                   id="email"
                   name="email"
                   required
-                  className="h-12 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
                   placeholder="seu@email.com"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 />
@@ -148,7 +148,7 @@ export default function ContatoPage() {
               <div>
                 <label
                   htmlFor="assunto"
-                  className="mb-2 block text-sm font-medium text-white"
+                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
                   Assunto
@@ -157,7 +157,7 @@ export default function ContatoPage() {
                   id="assunto"
                   name="assunto"
                   required
-                  className="h-12 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-4 text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
                   <option value="">Selecione um assunto</option>
@@ -170,7 +170,7 @@ export default function ContatoPage() {
               <div>
                 <label
                   htmlFor="mensagem"
-                  className="mb-2 block text-sm font-medium text-white"
+                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
                   Mensagem
@@ -178,18 +178,18 @@ export default function ContatoPage() {
                 <textarea
                   id="mensagem"
                   name="mensagem"
-                  rows={6}
+                  rows={4}
                   required
-                  className="min-h-[170px] w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="min-h-[120px] w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 py-2.5 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:min-h-[100px] max-[640px]:px-3 md:min-h-[170px] md:px-4 md:py-3 md:text-base"
                   placeholder="Sua mensagem aqui..."
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 />
               </div>
 
-              <div className="pt-4">
+              <div className="pt-3 max-[640px]:pt-2 md:pt-4">
                 <button
                   type="submit"
-                  className="w-full rounded-full px-10 py-3 text-lg font-bold text-white shadow-lg transition-all hover:opacity-90"
+                  className="w-full rounded-full px-8 py-2.5 text-base font-bold text-white shadow-lg transition-all hover:opacity-90 max-[640px]:px-6 max-[640px]:py-2 max-[640px]:text-sm md:px-10 md:py-3 md:text-lg"
                   style={{
                     background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
                     fontFamily: "var(--font-rajdhani)",

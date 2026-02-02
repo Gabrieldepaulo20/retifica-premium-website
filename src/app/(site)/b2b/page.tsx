@@ -53,21 +53,50 @@ const bodyStyle = { fontFamily: "var(--font-open-sans)" };
 const fidelityItems = [
   {
     image: "/beneficios-exclusivos-parceria-b2b-oficinas.png",
+    icon: "workspace_premium",
     title: "Benefícios Exclusivos",
     description:
       "Acesso a vantagens especiais, condições diferenciadas e serviços premium exclusivos para oficinas parceiras.",
   },
   {
     image: "/sistemadepontos.png",
+    icon: "loyalty",
     title: "Sistema de Pontos",
     description:
       "Acumule pontos a cada serviço realizado e troque por recompensas, descontos adicionais e benefícios exclusivos.",
   },
   {
     image: "/crescimento.png",
+    icon: "trending_up",
     title: "Crescimento Conjunto",
     description:
       "Parcerias estratégicas que geram crescimento mútuo, ampliando resultados e oportunidades de negócio.",
+  },
+];
+
+const programAdvantages = [
+  {
+    icon: "paid",
+    title: "Preços Especiais",
+    description:
+      "Descontos exclusivos em todos os serviços de retífica e manutenção para oficinas parceiras.",
+  },
+  {
+    icon: "support_agent",
+    title: "Atendimento Prioritário",
+    description:
+      "Fila preferencial e prazos reduzidos para garantir agilidade no seu negócio.",
+  },
+  {
+    icon: "inventory_2",
+    title: "Descontos em Peças",
+    description:
+      "Economia garantida na compra de peças originais e componentes de qualidade.",
+  },
+  {
+    icon: "school",
+    title: "Treinamentos Exclusivos",
+    description: "Benefícios pensados para impulsionar sua oficina mecânica.",
   },
 ];
 
@@ -185,13 +214,13 @@ export default function B2BPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2
-              className="mb-4 text-3xl font-bold text-rp-accent md:text-4xl lg:text-5xl"
+              className="mb-4 text-3xl font-bold text-rp-accent max-[640px]:text-[24px] max-[640px]:leading-tight md:text-4xl lg:text-5xl"
               style={headingStyle}
             >
               Vantagens do Programa de Parceria
             </h2>
             <p
-              className="text-base leading-relaxed text-gray-600 md:text-lg"
+              className="text-base leading-relaxed text-gray-600 max-[640px]:text-[14px] md:text-lg"
               style={bodyStyle}
             >
               Benefícios pensados para aumentar sua margem, dar previsibilidade
@@ -199,7 +228,7 @@ export default function B2BPage() {
             </p>
           </div>
 
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex justify-center max-[640px]:hidden">
             <Image
               src="/carrob2b.png"
               alt="Carro em oficina parceira - Programa B2B Retífica Premium"
@@ -208,16 +237,45 @@ export default function B2BPage() {
               className="h-auto w-[90%] max-w-[1200px]"
             />
           </div>
+
+          <div className="mt-10 hidden max-[640px]:block">
+            <div className="space-y-10">
+              {programAdvantages.map((item) => (
+                <div
+                  key={item.title}
+                  className="flex flex-col items-center text-center"
+                >
+                  <div className="mb-4 flex h-[145px] w-[145px] items-center justify-center rounded-full bg-[#F3B839]">
+                    <span className="material-symbols-outlined text-[98px] leading-none text-[#0B1E3D]">
+                      {item.icon}
+                    </span>
+                  </div>
+                  <h3
+                    className="mb-2 text-lg font-bold text-[#0B2D5C]"
+                    style={headingStyle}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="max-w-[260px] text-[14px] leading-relaxed text-gray-600"
+                    style={bodyStyle}
+                  >
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Seção 3 — Programa de Fidelidade */}
-      <section className="bg-white py-20">
+      <section className="bg-white py-20 max-[640px]:bg-[#101010] max-[640px]:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#0B1E3D]">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#0B1E3D] max-[640px]:h-16 max-[640px]:w-16 max-[640px]:bg-[#F3B839]">
               <svg
-                className="h-6 w-6 text-[#D4A13A]"
+                className="h-6 w-6 text-[#D4A13A] max-[640px]:h-8 max-[640px]:w-8 max-[640px]:text-[#0B1E3D]"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 aria-hidden="true"
@@ -226,13 +284,13 @@ export default function B2BPage() {
               </svg>
             </div>
             <h2
-              className="mb-4 text-3xl font-bold text-rp-accent md:text-4xl lg:text-5xl"
+              className="mb-4 text-3xl font-bold text-rp-accent max-[640px]:text-[24px] max-[640px]:leading-tight max-[640px]:text-white md:text-4xl lg:text-5xl"
               style={headingStyle}
             >
               Programa de Fidelidade para Oficinas
             </h2>
             <p
-              className="text-base leading-relaxed text-gray-600 md:text-lg"
+              className="text-base leading-relaxed text-gray-600 max-[640px]:text-[14px] max-[640px]:text-white/80 md:text-lg"
               style={bodyStyle}
             >
               Sistema de pontos, suporte técnico dedicado e benefícios claros
@@ -240,27 +298,32 @@ export default function B2BPage() {
             </p>
           </div>
 
-          <div className="mx-auto mt-12 rounded-2xl bg-[#161616] px-8 py-12 shadow-lg">
-            <div className="grid gap-10 md:grid-cols-3">
+          <div className="mx-auto mt-12 rounded-2xl bg-[#161616] px-8 py-12 shadow-lg max-[640px]:mt-10 max-[640px]:rounded-none max-[640px]:bg-transparent max-[640px]:px-0 max-[640px]:py-0 max-[640px]:shadow-none">
+            <div className="grid gap-10 max-[640px]:gap-12 md:grid-cols-3">
               {fidelityItems.map((item) => (
                 <div key={item.title} className="text-center">
                   <div className="mb-4 flex justify-center">
+                    <div className="hidden max-[640px]:flex h-[72px] w-[72px] items-center justify-center rounded-full bg-[#F3B839]/15">
+                      <span className="material-symbols-outlined text-[48px] leading-none text-[#F3B839]">
+                        {item.icon}
+                      </span>
+                    </div>
                     <Image
                       src={item.image}
                       alt={`${item.title} - Programa de Fidelidade Retífica Premium`}
                       width={90}
                       height={90}
-                      className="h-[90px] w-[90px] object-contain"
+                      className="h-[90px] w-[90px] object-contain max-[640px]:hidden"
                     />
                   </div>
                   <h3
-                    className="mb-3 text-lg font-semibold text-[#D4A13A] md:text-xl"
+                    className="mb-3 text-lg font-semibold text-[#D4A13A] max-[640px]:text-[18px] max-[640px]:text-white md:text-xl"
                     style={headingStyle}
                   >
                     {item.title}
                   </h3>
                   <p
-                    className="text-sm leading-relaxed text-gray-300 md:text-base"
+                    className="text-sm leading-relaxed text-gray-300 max-[640px]:text-[14px] max-[640px]:text-white/75 md:text-base"
                     style={bodyStyle}
                   >
                     {item.description}
@@ -273,17 +336,17 @@ export default function B2BPage() {
       </section>
 
       {/* Seção 4 — Níveis de Parceria */}
-      <section className="bg-[#000617] py-24 pb-20">
+      <section className="bg-[#000617] py-24 pb-20 max-[640px]:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2
-              className="mb-4 text-4xl font-bold text-white md:text-5xl lg:text-6xl"
+              className="mb-4 text-4xl font-bold text-white max-[640px]:text-[26px] max-[640px]:leading-tight md:text-5xl lg:text-6xl"
               style={headingStyle}
             >
               Níveis de Parceria e Descontos Progressivos
             </h2>
             <p
-              className="text-base leading-relaxed text-white/70 md:text-lg lg:text-xl"
+              className="text-base leading-relaxed text-white/70 max-[640px]:text-[14px] md:text-lg lg:text-xl"
               style={bodyStyle}
             >
               Quanto mais serviços você realiza, maiores são os descontos e
@@ -291,19 +354,19 @@ export default function B2BPage() {
             </p>
           </div>
 
-          <div className="mt-14 space-y-10">
+          <div className="mt-14 space-y-10 max-[640px]:space-y-7">
             {partnershipLevels.map((level) => (
               <div
                 key={level.name}
-                className="mx-auto w-full max-w-[90%] rounded-2xl bg-[#051E40] shadow-lg sm:max-w-3xl md:px-16 md:py-12 lg:max-w-[1216px]"
+                className="mx-auto w-full max-w-[90%] rounded-2xl bg-[#051E40] shadow-lg max-[640px]:h-[342px] max-[640px]:w-[300px] max-[640px]:max-w-none sm:max-w-3xl md:px-16 md:py-12 lg:max-w-[1216px]"
                 style={{
                   border: `2px solid ${level.levelColor}40`,
                 }}
               >
-                <div className="grid gap-10 px-6 py-6 md:grid-cols-[420px_1fr] md:items-center md:px-0 md:py-0">
+                <div className="grid gap-10 px-6 py-6 max-[640px]:gap-6 max-[640px]:px-5 max-[640px]:py-6 md:grid-cols-[420px_1fr] md:items-center md:px-0 md:py-0">
                   <div className="flex flex-col justify-center">
                     <p
-                      className="text-lg font-semibold uppercase tracking-wide text-white md:text-xl"
+                      className="text-lg font-semibold uppercase tracking-wide text-white max-[640px]:text-[16px] md:text-xl"
                       style={headingStyle}
                     >
                       Parceiro{" "}
@@ -312,13 +375,13 @@ export default function B2BPage() {
                       </span>
                     </p>
                     <p
-                      className="mt-3 text-base leading-relaxed text-white/70 md:text-lg"
+                      className="mt-3 text-base leading-relaxed text-white/70 max-[640px]:text-[13px] md:text-lg"
                       style={bodyStyle}
                     >
                       {level.serviceRange}
                     </p>
                     <p
-                      className="mt-4 text-[72px] font-bold leading-none tracking-tight md:text-[116.87px]"
+                      className="mt-4 text-[72px] font-bold leading-none tracking-tight max-[640px]:text-[56px] md:text-[116.87px]"
                       style={{
                         fontFamily: "var(--font-rajdhani)",
                         fontWeight: 700,
@@ -328,7 +391,7 @@ export default function B2BPage() {
                       {level.percent}
                     </p>
                     <p
-                      className="mt-3 text-base text-white/60 md:text-lg"
+                      className="mt-3 text-base text-white/60 max-[640px]:text-[13px] md:text-lg"
                       style={bodyStyle}
                     >
                       de desconto
@@ -338,7 +401,7 @@ export default function B2BPage() {
                     {level.benefits.map((benefit) => (
                       <div
                         key={benefit}
-                        className="flex items-center gap-4 text-lg leading-relaxed text-white md:text-xl"
+                        className="flex items-center gap-4 text-lg leading-relaxed text-white max-[640px]:text-[14px] md:text-xl"
                         style={bodyStyle}
                       >
                         <Image
@@ -346,7 +409,7 @@ export default function B2BPage() {
                           alt="Benefício incluído"
                           width={34}
                           height={34}
-                          className="h-[34px] w-[34px] shrink-0"
+                          className="h-[34px] w-[34px] shrink-0 max-[640px]:h-[24px] max-[640px]:w-[24px]"
                         />
                         <span>{benefit}</span>
                       </div>
