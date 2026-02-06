@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/retificapremium.jpeg",
         width: 1200,
         height: 630,
         alt: "Retífica Premium - Retífica de Cabeçote em Sertãozinho-SP",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: "Retífica de Cabeçote em Sertãozinho e Região | Retífica Premium",
     description:
       "Retífica de cabeçote e usinagem automotiva. Orçamento rápido, garantia e prazo confiável para carro, caminhão e motores diesel.",
-    images: ["/og-image.jpg"],
+    images: ["/retificapremium.jpeg"],
   },
 };
 
