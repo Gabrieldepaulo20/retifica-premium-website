@@ -69,13 +69,15 @@ export function StatsCounter({
       }
     );
 
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
+    const observedElement = elementRef.current;
+
+    if (observedElement) {
+      observer.observe(observedElement);
     }
 
     return () => {
-      if (elementRef.current) {
-        observer.unobserve(elementRef.current);
+      if (observedElement) {
+        observer.unobserve(observedElement);
       }
     };
   }, [endValue, duration, hasAnimated]);

@@ -10,7 +10,7 @@ export function LocalBusinessSchema() {
     "name": "Retífica Premium",
     "url": "https://retificapremium.com.br",
     "logo": "https://retificapremium.com.br/logo.png",
-    "image": "https://retificapremium.com.br/og-image.jpg",
+    "image": "https://retificapremium.com.br/retificapremium.jpeg",
     "description": "Retífica de cabeçotes e usinagem automotiva com mais de 20 anos de experiência em Sertãozinho-SP. Atende carro, caminhão, ônibus, trator e motores diesel, gasolina e álcool.",
     "address": {
       "@type": "PostalAddress",

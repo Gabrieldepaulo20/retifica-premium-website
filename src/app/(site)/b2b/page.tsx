@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/retificapremium.jpeg",
         width: 1200,
         height: 630,
         alt: "Parceria B2B para Oficinas - Retífica Premium",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     title: "Parceria B2B para Oficinas | Retífica Premium",
     description:
       "Descontos progressivos, atendimento prioritário e suporte técnico para oficinas parceiras.",
-    images: ["/og-image.jpg"],
+    images: ["/retificapremium.jpeg"],
   },
 };
 

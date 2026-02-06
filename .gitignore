@@ -38,3 +38,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# local codex artifacts
+_codex_review/
+_codex_release/

@@ -4,9 +4,8 @@
 User-agent: *
 Allow: /
 
-# Bloquear arquivos e diretórios específicos
+# Bloquear apenas áreas sensíveis
 Disallow: /api/
-Disallow: /_next/
 Disallow: /admin/
 Disallow: /*.json$
 

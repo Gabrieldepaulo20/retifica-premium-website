@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/retificapremium.jpeg",
         width: 1200,
         height: 630,
         alt: "Serviços de Retífica de Cabeçote - Retífica Premium",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: "Serviços de Retífica de Cabeçote | Retífica Premium",
     description:
       "Serviços completos de retífica de cabeçotes com usinagem de precisão, revisão de válvulas e montagem técnica.",
-    images: ["/og-image.jpg"],
+    images: ["/retificapremium.jpeg"],
   },
 };
 

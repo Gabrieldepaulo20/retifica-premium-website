@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg", // Você precisará criar esta imagem
+        url: "/retificapremium.jpeg", // Você precisará criar esta imagem
         width: 1200,
         height: 630,
         alt: "Retífica Premium - Especializada em Cabeçotes Automotivos",
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
     title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
     description:
       "Retífica automotiva com usinagem de precisão, revisão de válvulas e montagem técnica em Sertãozinho-SP.",
-    images: ["/og-image.jpg"], // Você precisará criar esta imagem
+    images: ["/retificapremium.jpeg"], // Você precisará criar esta imagem
     creator: "@retificapremium", // Ajuste com seu handle do Twitter
   },
   robots: {

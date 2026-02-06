@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/retificapremium.jpeg",
         width: 1200,
         height: 630,
         alt: "Sobre a Retífica Premium",
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     title: "Sobre a Retífica Premium | 20 Anos de Experiência",
     description:
       "Mais de 20 anos de experiência em retífica de cabeçotes e usinagem automotiva com equipe especializada.",
-    images: ["/og-image.jpg"],
+    images: ["/retificapremium.jpeg"],
   },
 };
 
