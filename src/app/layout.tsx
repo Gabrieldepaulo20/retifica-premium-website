@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins, Inter, Rajdhani, Open_Sans } from "next/font/google";
+import Script from "next/script";
 import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
 import { Header } from "@/components/site/Header";
 import { FloatingWhatsApp } from "@/components/site/FloatingWhatsApp";
@@ -118,6 +119,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-HD00424MR7"
+          strategy="afterInteractive"
+          async
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-HD00424MR7');`}
+        </Script>
+      </head>
       <body
         className={`${poppins.variable} ${inter.variable} ${rajdhani.variable} ${openSans.variable} font-body antialiased`}
       >
