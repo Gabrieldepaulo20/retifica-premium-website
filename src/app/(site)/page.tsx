@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     title: "Retífica de Cabeçote em Ribeirão Preto e Região | Retífica Premium",
     description:
       "Retífica de cabeçote e usinagem automotiva. Orçamento rápido, garantia e prazo confiável para carro, caminhão e motores diesel.",
-    url: "https://retificapremium.com.br",
+    url: "https://www.premiumretifica.com.br",
     siteName: "Retífica Premium",
     locale: "pt_BR",
     type: "website",

@@ -16,7 +16,7 @@ Allow: /*.css$
 Allow: /*.js$
 
 # Sitemap location
-Sitemap: https://retificapremium.com.br/sitemap.xml
+Sitemap: https://www.premiumretifica.com.br/sitemap.xml
 
 # Crawl-delay (opcional, ajuste conforme necessário)
 # Crawl-delay: 1

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     title: "Parceria B2B para Oficinas | Retífica Premium",
     description:
       "Descontos progressivos, atendimento prioritário e suporte técnico para oficinas parceiras.",
-    url: "https://retificapremium.com.br/b2b",
+    url: "https://www.premiumretifica.com.br/b2b",
     siteName: "Retífica Premium",
     locale: "pt_BR",
     type: "website",

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "Serviços de Retífica de Cabeçote | Retífica Premium",
     description:
       "Serviços completos de retífica de cabeçotes com usinagem de precisão, revisão de válvulas e montagem técnica.",
-    url: "https://retificapremium.com.br/servicos",
+    url: "https://www.premiumretifica.com.br/servicos",
     siteName: "Retífica Premium",
     locale: "pt_BR",
     type: "website",

@@ -8,9 +8,9 @@ export function LocalBusinessSchema() {
     "@context": "https://schema.org",
     "@type": "AutomotiveBusiness",
     "name": "Retífica Premium",
-    "url": "https://retificapremium.com.br",
-    "logo": "https://retificapremium.com.br/logo.png",
-    "image": "https://retificapremium.com.br/retificapremium.jpeg",
+    "url": "https://www.premiumretifica.com.br",
+    "logo": "https://www.premiumretifica.com.br/logo.png",
+    "image": "https://www.premiumretifica.com.br/retificapremium.jpeg",
     "description": "Retífica de cabeçotes e usinagem automotiva com mais de 20 anos de experiência em Sertãozinho-SP. Atende carro, caminhão, ônibus, trator e motores diesel, gasolina e álcool.",
     "address": {
       "@type": "PostalAddress",
@@ -71,7 +71,7 @@ export function ServiceSchema() {
     "provider": {
       "@type": "AutomotiveBusiness",
       "name": "Retífica Premium",
-      "url": "https://retificapremium.com.br"
+      "url": "https://www.premiumretifica.com.br"
     },
     "areaServed": {
       "@type": "State",

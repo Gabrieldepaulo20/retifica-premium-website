@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: "Sobre a Retífica Premium | 20 Anos de Experiência",
     description:
       "Mais de 20 anos de experiência em retífica de cabeçotes e usinagem automotiva com equipe especializada.",
-    url: "https://retificapremium.com.br/sobre",
+    url: "https://www.premiumretifica.com.br/sobre",
     siteName: "Retífica Premium",
     locale: "pt_BR",
     type: "website",

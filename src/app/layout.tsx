@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://retificapremium.com.br"), // Ajuste com seu domínio
+  metadataBase: new URL("https://www.premiumretifica.com.br"), // Ajuste com seu domínio
   alternates: {
     canonical: "/",
   },
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
     description:
       "Retífica automotiva com usinagem de precisão, revisão de válvulas e montagem técnica em Sertãozinho-SP.",
-    url: "https://retificapremium.com.br", // Ajuste com seu domínio
+    url: "https://www.premiumretifica.com.br", // Ajuste com seu domínio
     siteName: "Retífica Premium",
     locale: "pt_BR",
     type: "website",

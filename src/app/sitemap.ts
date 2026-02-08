@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://retificapremium.com.br"; // Ajuste com seu domínio
+  const baseUrl = "https://www.premiumretifica.com.br"; // Ajuste com seu domínio
 
   return [
     {

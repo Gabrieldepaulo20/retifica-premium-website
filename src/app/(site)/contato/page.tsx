@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "Contato | Retífica Premium em Sertãozinho-SP",
     description:
       "Fale com a Retífica Premium para orçamento de retífica de cabeçote, usinagem e montagem.",
-    url: "https://retificapremium.com.br/contato",
+    url: "https://www.premiumretifica.com.br/contato",
     siteName: "Retífica Premium",
     locale: "pt_BR",
     type: "website",
