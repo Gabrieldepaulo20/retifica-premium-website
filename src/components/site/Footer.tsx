@@ -77,13 +77,14 @@ export function Footer() {
                   href="https://wa.me/5516993021998"
                   target="_blank"
                   rel="noreferrer"
-                  onClick={() =>
+                  onClick={(e) => {
+                    e.stopPropagation();
                     trackEngagementEvent(
                       "whatsapp_footer_click",
                       "whatsapp_click",
                       "footer"
-                    )
-                  }
+                    );
+                  }}
                   className="transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
                 >
                   (16) 99302-1998
@@ -121,13 +122,14 @@ export function Footer() {
               href="https://wa.me/5516993021998"
               target="_blank"
               rel="noreferrer"
-              onClick={() =>
+              onClick={(e) => {
+                e.stopPropagation();
                 trackEngagementEvent(
                   "whatsapp_footer_click",
                   "whatsapp_click",
                   "footer"
-                )
-              }
+                );
+              }}
               className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
               aria-label="WhatsApp"
             >
@@ -144,13 +146,14 @@ export function Footer() {
               href="https://www.instagram.com/retifica_premium/"
               target="_blank"
               rel="noreferrer"
-              onClick={() =>
+              onClick={(e) => {
+                e.stopPropagation();
                 trackEngagementEvent(
                   "instagram_footer_click",
                   "instagram_click",
                   "footer"
-                )
-              }
+                );
+              }}
               className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
               aria-label="Instagram"
             >
@@ -217,13 +220,14 @@ export function Footer() {
                     href="https://wa.me/5516993021998"
                     target="_blank"
                     rel="noreferrer"
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.stopPropagation();
                       trackEngagementEvent(
                         "whatsapp_footer_click",
                         "whatsapp_click",
                         "footer"
-                      )
-                    }
+                      );
+                    }}
                     className="transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
                   >
                     (16) 99302-1998
@@ -247,13 +251,14 @@ export function Footer() {
                   href="https://wa.me/5516993021998"
                   target="_blank"
                   rel="noreferrer"
-                  onClick={() =>
+                  onClick={(e) => {
+                    e.stopPropagation();
                     trackEngagementEvent(
                       "whatsapp_footer_click",
                       "whatsapp_click",
                       "footer"
-                    )
-                  }
+                    );
+                  }}
                   className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
                   aria-label="WhatsApp"
                 >
@@ -270,13 +275,14 @@ export function Footer() {
                   href="https://www.instagram.com/retifica_premium/"
                   target="_blank"
                   rel="noreferrer"
-                  onClick={() =>
+                  onClick={(e) => {
+                    e.stopPropagation();
                     trackEngagementEvent(
                       "instagram_footer_click",
                       "instagram_click",
                       "footer"
-                    )
-                  }
+                    );
+                  }}
                   className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
                   aria-label="Instagram"
                 >

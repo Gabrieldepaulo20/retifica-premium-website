@@ -13,13 +13,14 @@ export function HomeWhatsAppCtaLink() {
       style={{
         background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
       }}
-      onClick={() =>
+      onClick={(e) => {
+        e.stopPropagation();
         trackEngagementEvent(
           "whatsapp_home_cta_click",
           "whatsapp_click",
           "home_cta"
-        )
-      }
+        );
+      }}
     >
       Solicitar orçamento pelo WhatsApp
     </Link>
