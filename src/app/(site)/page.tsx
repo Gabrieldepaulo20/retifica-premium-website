@@ -6,6 +6,7 @@ import {
   ServiceSchema,
   FAQSchema,
 } from "@/components/site/StructuredData";
+import { HomeWhatsAppCtaLink } from "@/components/site/HomeWhatsAppCtaLink";
 
 export const metadata: Metadata = {
   title: "Retífica de Cabeçote em Sertãozinho e Região | Retífica Premium",
@@ -88,18 +89,7 @@ export default function HomePage() {
               </div>
               {/* Bloco Inferior: CTA */}
               <div className="mt-5 max-[640px]:mt-8 md:mt-8 relative z-40">
-                <Link
-                  href="https://wa.me/5516993021998?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Ret%C3%ADfica%20Premium%20e%20gostaria%20de%20solicitar%20um%20or%C3%A7amento%20para%20ret%C3%ADfica%20de%20cabe%C3%A7ote."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative z-40 inline-flex h-[50px] w-auto items-center justify-center rounded-[62px] px-6 text-[12px] font-bold uppercase text-white whitespace-nowrap transition-all hover:brightness-110 md:h-[68px] md:px-12 md:text-base"
-                  style={{
-                    background:
-                      "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
-                  }}
-                >
-                  Solicitar orçamento pelo WhatsApp
-                </Link>
+                <HomeWhatsAppCtaLink />
               </div>
             </div>
           </div>
