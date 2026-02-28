@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Retifica Premium Website
 
-## Getting Started
+Site institucional da Retifica Premium em Next.js (App Router), com foco em SEO local, performance e conversao para atendimento via WhatsApp.
 
-First, run the development server:
+## Stack
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS 4
 
+## Comandos
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run lint
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Rotas Publicas
+- `/`
+- `/sobre`
+- `/servicos`
+- `/b2b`
+- `/contato`
+- `/sitemap.xml`
+- `/robots.txt`
+- `/favicon.ico`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estrutura Principal
+- `src/app/layout.tsx`: metadata global, fontes, analytics e layout raiz
+- `src/app/(site)/layout.tsx`: wrapper das paginas publicas com footer condicional
+- `src/app/(site)/page.tsx`: home
+- `src/app/(site)/sobre/page.tsx`: pagina institucional
+- `src/app/(site)/servicos/page.tsx`: pagina de servicos
+- `src/app/(site)/b2b/page.tsx`: pagina de parceria para oficinas
+- `src/app/(site)/contato/page.tsx`: pagina de contato
+- `src/app/sitemap.ts`: geracao do sitemap
+- `src/components/site/StructuredData.tsx`: JSON-LD (LocalBusiness, Service, FAQ)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## SEO Atual
+- Dominio canonico: `https://www.premiumretifica.com.br`
+- `metadataBase` centralizado no layout raiz
+- canonical por pagina nas rotas publicas
+- sitemap com URLs canonicas em `www`
+- `robots.txt` permitindo rastreio publico e declarando sitemap
+- Open Graph e Twitter configurados
 
-## Learn More
+## Analytics
+- GA4 global via `next/script`
+- Microsoft Clarity global via `next/script`
+- Tracking de cliques nos CTAs principais de WhatsApp e Instagram
 
-To learn more about Next.js, take a look at the following resources:
+## Observacoes Operacionais
+- O deploy de producao e feito a partir do repositorio Git conectado ao AWS Amplify.
+- Antes de subir alteracoes, valide sempre com `npm run lint` e `npm run build`.
+- Evite commitar relatorios temporarios, logs locais e artefatos de auditoria.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Validacao Recomendada
+```bash
+npm run lint
+npm run build
+npm run start -- -H 127.0.0.1 -p 3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Em producao, conferir:
+```bash
+curl -I https://www.premiumretifica.com.br/
+curl -I https://www.premiumretifica.com.br/sobre
+curl -I https://www.premiumretifica.com.br/servicos
+curl -I https://www.premiumretifica.com.br/b2b
+curl -I https://www.premiumretifica.com.br/contato
+curl -I https://www.premiumretifica.com.br/robots.txt
+curl -I https://www.premiumretifica.com.br/sitemap.xml
+```
