@@ -117,7 +117,7 @@ export default function RootLayout({
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-HD00424MR7"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           async
         />
         <Script id="ga4-init" strategy="afterInteractive">
