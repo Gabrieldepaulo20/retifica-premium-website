@@ -38,16 +38,6 @@ export const metadata: Metadata = {
   title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
   description:
     "Retífica automotiva com usinagem de precisão, revisão de válvulas e montagem técnica. Atendimento para oficinas e clientes em Sertãozinho-SP.",
-  keywords: [
-    "retífica cabeçotes",
-    "retífica motor",
-    "usinagem cabeçote",
-    "Sertãozinho",
-    "retífica automotiva",
-    "reparo cabeçote",
-    "usinagem motor",
-    "retífica SP",
-  ],
   authors: [{ name: "Retífica Premium" }],
   creator: "Retífica Premium",
   publisher: "Retífica Premium",
@@ -59,6 +49,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.premiumretifica.com.br"), // Ajuste com seu domínio
   alternates: {
     canonical: "/",
+  },
+  icons: {
+    icon: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    shortcut: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    apple: [{ url: "/logopreto.png", type: "image/png" }],
   },
   openGraph: {
     title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
@@ -139,7 +134,7 @@ gtag('config', 'G-HD00424MR7');`}
         <MaterialSymbolsLoader />
         <Header />
         {children}
-        <Script id="ms-clarity" strategy="afterInteractive">
+        <Script id="ms-clarity" strategy="lazyOnload">
           {`
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};

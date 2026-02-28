@@ -39,7 +39,6 @@ export function FloatingWhatsApp() {
           width={68}
           height={68}
           className="w-full h-full object-cover"
-          priority
         />
       </div>
     </Link>

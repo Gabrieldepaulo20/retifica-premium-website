@@ -3,14 +3,19 @@
  * LocalBusiness + Service + FAQPage
  */
 
+const baseUrl = "https://www.premiumretifica.com.br";
+const businessId = `${baseUrl}/#automotive-business`;
+const servicesUrl = `${baseUrl}/servicos`;
+
 export function LocalBusinessSchema() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "AutomotiveBusiness",
+    "@id": businessId,
     "name": "Retífica Premium",
-    "url": "https://www.premiumretifica.com.br",
-    "logo": "https://www.premiumretifica.com.br/logo.png",
-    "image": "https://www.premiumretifica.com.br/retificapremium.jpeg",
+    "url": baseUrl,
+    "logo": `${baseUrl}/logo.png`,
+    "image": `${baseUrl}/retificapremium.jpeg`,
     "description": "Retífica de cabeçotes e usinagem automotiva com mais de 20 anos de experiência em Sertãozinho-SP. Atende carro, caminhão, ônibus, trator e motores diesel, gasolina e álcool.",
     "address": {
       "@type": "PostalAddress",
@@ -67,19 +72,31 @@ export function ServiceSchema() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Service",
+    "@id": `${servicesUrl}#service`,
+    "name": "Serviços de retífica de cabeçote",
     "serviceType": "Retífica de Cabeçote e Usinagem Automotiva",
+    "description": "Limpeza química, retífica de sedes e válvulas, plaina, usinagem e montagem técnica de cabeçotes em Sertãozinho-SP.",
+    "url": servicesUrl,
     "provider": {
       "@type": "AutomotiveBusiness",
+      "@id": businessId,
       "name": "Retífica Premium",
-      "url": "https://www.premiumretifica.com.br"
+      "url": baseUrl
     },
-    "areaServed": {
-      "@type": "State",
-      "name": "São Paulo"
-    },
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "Sertãozinho"
+      },
+      {
+        "@type": "City",
+        "name": "Ribeirão Preto"
+      }
+    ],
     "offers": {
       "@type": "Offer",
-      "availability": "https://schema.org/InStock"
+      "availability": "https://schema.org/InStock",
+      "url": `${baseUrl}/contato`
     }
   };
 

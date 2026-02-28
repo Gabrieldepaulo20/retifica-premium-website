@@ -6,18 +6,6 @@ export const metadata: Metadata = {
   title: "Parceria B2B para Oficinas | Retífica Premium",
   description:
     "Programa B2B para oficinas mecânicas com descontos progressivos, atendimento prioritário e suporte técnico em Sertãozinho-SP.",
-  keywords: [
-    "parceria b2b oficinas",
-    "descontos para oficinas mecânicas",
-    "programa de fidelidade oficinas",
-    "parceria retífica",
-    "benefícios oficinas parceiras",
-    "atendimento prioritário oficinas",
-    "suporte técnico oficinas",
-    "rede de oficinas parceiras",
-    "Sertãozinho",
-    "retífica parceria",
-  ],
   alternates: {
     canonical: "/b2b",
   },
@@ -203,7 +191,7 @@ export default function B2BPage() {
             de retífica de cabeçotes e usinagem com padrão premium.
           </p>
           <Link
-            href="/contato#contato-form"
+            href="/contato#formulario"
             className="mx-auto flex h-[58px] w-full max-w-[260px] items-center justify-center rounded-full text-sm font-bold uppercase text-white shadow-lg transition-all hover:brightness-110"
             style={{
               background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",

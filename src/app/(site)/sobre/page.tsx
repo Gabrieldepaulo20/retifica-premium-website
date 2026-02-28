@@ -89,7 +89,7 @@ export default function SobrePage() {
           {/* Mobile (<= 640px) — igual ao print */}
           <div className="hidden w-full max-[640px]:block">
             <div className="mx-auto w-full max-w-[340px] text-center">
-              <h1
+              <div
                 className="font-rajdhani text-[30px] font-bold leading-[1.12] tracking-tight text-gray-900"
                 style={{ fontFamily: "var(--font-rajdhani)" }}
               >
@@ -97,7 +97,7 @@ export default function SobrePage() {
                 cabeçote.
                 <br />
                 <span className="text-rp-royal">Confiança</span> em cada reparo.
-              </h1>
+              </div>
 
               <div className="mt-8 space-y-2">
                 <p

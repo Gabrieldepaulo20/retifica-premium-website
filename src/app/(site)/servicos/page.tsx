@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ServiceSchema } from "@/components/site/StructuredData";
 
 export const metadata: Metadata = {
   title: "Serviços de Retífica de Cabeçote | Retífica Premium",
@@ -372,6 +373,7 @@ export default function ServicosPage() {
           </div>
         </div>
       </section>
+      <ServiceSchema />
     </main>
   );
 }

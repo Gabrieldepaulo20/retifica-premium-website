@@ -53,6 +53,12 @@ export function Footer() {
               Especialistas em retífica de cabeçotes com mais de 20 anos de
               experiência.
             </p>
+            <nav className="flex flex-col gap-2 mt-4 text-sm font-medium">
+              <Link href="/sobre" className="transition-colors hover:text-rp-gold">Sobre a Retífica</Link>
+              <Link href="/servicos" className="transition-colors hover:text-rp-gold">Nossos Serviços</Link>
+              <Link href="/b2b" className="transition-colors hover:text-rp-gold">Parceria B2B Oficinas</Link>
+              <Link href="/contato" className="transition-colors hover:text-rp-gold">Fale Conosco</Link>
+            </nav>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/85">
@@ -195,6 +201,16 @@ export function Footer() {
                 Especialistas em retífica de cabeçotes com mais de 20 anos de
                 experiência.
               </p>
+
+              <div className="pt-2">
+                <h3 className="mb-3 text-sm font-bold uppercase tracking-widest text-white">Links Rápidos</h3>
+                <nav className="flex flex-col gap-2.5 text-sm text-white/80">
+                  <Link href="/sobre" className="transition-colors hover:text-white">Sobre a Retífica</Link>
+                  <Link href="/servicos" className="transition-colors hover:text-white">Nossos Serviços</Link>
+                  <Link href="/b2b" className="transition-colors hover:text-white">Parceria B2B (Oficinas)</Link>
+                  <Link href="/contato" className="transition-colors hover:text-white">Fale Conosco</Link>
+                </nav>
+              </div>
             </div>
 
             {/* Coluna B — Contato */}
