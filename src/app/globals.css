@@ -163,6 +163,11 @@ h6 {
   font-family: "Material Symbols Outlined";
   font-style: normal;
   font-weight: 400;
+  max-width: 1em;
+  overflow: hidden;
+  text-align: center;
+  white-space: nowrap;
+  width: 1em;
 }
 
 /* Carrossel infinito — seção de depoimentos */

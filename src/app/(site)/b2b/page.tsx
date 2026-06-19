@@ -1,18 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { BreadcrumbSchema } from "@/components/site/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Parceria B2B para Oficinas | Retífica Premium",
+  title:
+    "Parceria B2B para Oficinas Mecânicas e Retífica de Cabeçote | Retífica Premium",
   description:
-    "Programa B2B para oficinas mecânicas com descontos progressivos, atendimento prioritário e suporte técnico em Sertãozinho-SP.",
+    "Programa B2B para oficinas mecânicas com retífica de cabeçote, suporte técnico, descontos progressivos e atendimento prioritário em Sertãozinho-SP.",
   alternates: {
     canonical: "/b2b",
   },
   openGraph: {
-    title: "Parceria B2B para Oficinas | Retífica Premium",
+    title: "Parceria B2B para Oficinas Mecânicas | Retífica Premium",
     description:
-      "Descontos progressivos, atendimento prioritário e suporte técnico para oficinas parceiras.",
+      "Retífica de cabeçote para oficinas com descontos progressivos, atendimento prioritário e suporte técnico.",
     url: "https://www.premiumretifica.com.br/b2b",
     siteName: "Retífica Premium",
     locale: "pt_BR",
@@ -28,9 +30,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Parceria B2B para Oficinas | Retífica Premium",
+    title: "Parceria B2B para Oficinas Mecânicas | Retífica Premium",
     description:
-      "Descontos progressivos, atendimento prioritário e suporte técnico para oficinas parceiras.",
+      "Retífica de cabeçote para oficinas com descontos progressivos, atendimento prioritário e suporte técnico.",
     images: ["/retificapremium.jpeg"],
   },
 };
@@ -190,16 +192,26 @@ export default function B2BPage() {
             prioritário e suporte técnico especializado. Parceria para serviços
             de retífica de cabeçotes e usinagem com padrão premium.
           </p>
-          <Link
-            href="/contato#formulario"
-            className="mx-auto flex h-[58px] w-full max-w-[260px] items-center justify-center rounded-full text-sm font-bold uppercase text-white shadow-lg transition-all hover:brightness-110"
-            style={{
-              background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
-              fontFamily: "var(--font-open-sans)",
-            }}
-          >
-            Quero ser parceiro
-          </Link>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/contato#formulario"
+              className="flex h-[58px] w-full max-w-[260px] items-center justify-center rounded-full text-sm font-bold uppercase text-white shadow-lg transition-all hover:brightness-110"
+              style={{
+                background:
+                  "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
+                fontFamily: "var(--font-open-sans)",
+              }}
+            >
+              Quero ser parceiro
+            </Link>
+            <Link
+              href="/servicos"
+              className="flex h-[58px] w-full max-w-[260px] items-center justify-center rounded-full border border-white/40 text-sm font-bold uppercase text-white transition-all hover:bg-white/10"
+              style={{ fontFamily: "var(--font-open-sans)" }}
+            >
+              Ver serviços
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -224,7 +236,7 @@ export default function B2BPage() {
 
           <div className="mt-8 flex justify-center max-[640px]:hidden">
             <Image
-              src="/carrob2b.png"
+              src="/carrob2b.webp"
               alt="Carro em oficina parceira - Programa B2B Retífica Premium"
               width={1080}
               height={860}
@@ -356,10 +368,10 @@ export default function B2BPage() {
             {partnershipLevels.map((level) => {
               const mobileHeightClass =
                 level.percent === "10%"
-                  ? "max-[640px]:h-[398px]"
+                  ? "max-[640px]:min-h-[398px]"
                   : level.percent === "15%"
-                  ? "max-[640px]:h-[478px]"
-                  : "max-[640px]:h-[400px]";
+                  ? "max-[640px]:min-h-[478px]"
+                  : "max-[640px]:min-h-[400px]";
               return (
                 <div
                   key={level.name}
@@ -517,6 +529,12 @@ export default function B2BPage() {
           </Link>
         </div>
       </section>
+      <BreadcrumbSchema
+        items={[
+          { name: "Início", url: "/" },
+          { name: "Parceria B2B", url: "/b2b" },
+        ]}
+      />
     </main>
   );
 }

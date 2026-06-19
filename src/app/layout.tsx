@@ -4,6 +4,7 @@ import Script from "next/script";
 import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
 import { Header } from "@/components/site/Header";
 import { FloatingWhatsApp } from "@/components/site/FloatingWhatsApp";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -35,18 +36,24 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
+  title: {
+    default:
+      "Retífica Premium | Retífica de Cabeçote e Motor em Sertãozinho-SP",
+    template: "%s",
+  },
   description:
-    "Retífica automotiva com usinagem de precisão, revisão de válvulas e montagem técnica. Atendimento para oficinas e clientes em Sertãozinho-SP.",
-  authors: [{ name: "Retífica Premium" }],
-  creator: "Retífica Premium",
-  publisher: "Retífica Premium",
+    "Retífica de cabeçote, diagnóstico de motor e usinagem automotiva em Sertãozinho-SP. Atendimento para oficinas, motoristas e frotas da região.",
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.name }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
+  category: "Automotive",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://www.premiumretifica.com.br"), // Ajuste com seu domínio
+  metadataBase: new URL(siteConfig.url),
   alternates: {
     canonical: "/",
   },
@@ -58,17 +65,17 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
     description:
-      "Retífica automotiva com usinagem de precisão, revisão de válvulas e montagem técnica em Sertãozinho-SP.",
-    url: "https://www.premiumretifica.com.br", // Ajuste com seu domínio
-    siteName: "Retífica Premium",
-    locale: "pt_BR",
+      "Retífica automotiva com usinagem de precisão, revisão de válvulas, diagnóstico técnico e montagem em Sertãozinho-SP.",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    locale: siteConfig.locale,
     type: "website",
     images: [
       {
-        url: "/retificapremium.jpeg", // Você precisará criar esta imagem
+        url: "/retificapremium.jpeg",
         width: 1200,
         height: 630,
-        alt: "Retífica Premium - Especializada em Cabeçotes Automotivos",
+        alt: "Retífica Premium - Retífica de cabeçote e usinagem automotiva",
       },
     ],
   },
@@ -76,9 +83,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
     description:
-      "Retífica automotiva com usinagem de precisão, revisão de válvulas e montagem técnica em Sertãozinho-SP.",
-    images: ["/retificapremium.jpeg"], // Você precisará criar esta imagem
-    creator: "@retificapremium", // Ajuste com seu handle do Twitter
+      "Retífica automotiva com usinagem de precisão, revisão de válvulas, diagnóstico técnico e montagem em Sertãozinho-SP.",
+    images: ["/retificapremium.jpeg"],
   },
   robots: {
     index: true,
@@ -91,11 +97,16 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    // Adicione aqui códigos de verificação quando tiver
-    // google: "seu-codigo-google",
-    // yandex: "seu-codigo-yandex",
-    // bing: "seu-codigo-bing",
+  other: {
+    "geo.region": "BR-SP",
+    "geo.placename": siteConfig.address.locality,
+    "geo.position": `${siteConfig.geo.latitude};${siteConfig.geo.longitude}`,
+    ICBM: `${siteConfig.geo.latitude}, ${siteConfig.geo.longitude}`,
+    "business:contact_data:locality": siteConfig.address.locality,
+    "business:contact_data:region": siteConfig.address.region,
+    "business:contact_data:country_name": "Brasil",
+    "business:contact_data:phone_number": siteConfig.phone.international,
+    "business:contact_data:website": absoluteUrl(),
   },
 };
 

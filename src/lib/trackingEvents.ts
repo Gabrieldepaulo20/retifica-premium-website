@@ -1,6 +1,7 @@
 export type ClarityEventName =
   | "whatsapp_floating_click"
   | "whatsapp_home_cta_click"
+  | "whatsapp_contact_form_submit"
   | "whatsapp_footer_click"
   | "instagram_footer_click";
 

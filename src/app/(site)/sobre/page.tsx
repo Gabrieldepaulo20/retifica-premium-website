@@ -1,19 +1,21 @@
 import Image from "next/image";
+import Link from "next/link";
 import { StatsCounter } from "@/components/site/StatsCounter";
 import type { Metadata } from "next";
+import { BreadcrumbSchema } from "@/components/site/StructuredData";
 
 export const metadata: Metadata = {
   title:
-    "Sobre a Retífica Premium | 20 Anos de Experiência em Retífica de Motores",
+    "Sobre a Retífica Premium | Retífica Automotiva em Sertãozinho-SP desde 2004",
   description:
-    "Mais de 20 anos de experiência em retífica de cabeçotes e usinagem automotiva. Equipe especializada, equipamentos modernos e compromisso com qualidade em Sertãozinho-SP.",
+    "Conheça a Retífica Premium: retífica de cabeçotes, diagnóstico de motor e usinagem automotiva em Sertãozinho-SP, com experiência desde 2004.",
   alternates: {
     canonical: "/sobre",
   },
   openGraph: {
-    title: "Sobre a Retífica Premium | 20 Anos de Experiência",
+    title: "Sobre a Retífica Premium | Retífica Automotiva em Sertãozinho-SP",
     description:
-      "Mais de 20 anos de experiência em retífica de cabeçotes e usinagem automotiva com equipe especializada.",
+      "Retífica de cabeçotes, diagnóstico de motor e usinagem automotiva com equipe especializada desde 2004.",
     url: "https://www.premiumretifica.com.br/sobre",
     siteName: "Retífica Premium",
     locale: "pt_BR",
@@ -29,9 +31,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sobre a Retífica Premium | 20 Anos de Experiência",
+    title: "Sobre a Retífica Premium | Retífica Automotiva em Sertãozinho-SP",
     description:
-      "Mais de 20 anos de experiência em retífica de cabeçotes e usinagem automotiva com equipe especializada.",
+      "Retífica de cabeçotes, diagnóstico de motor e usinagem automotiva com equipe especializada desde 2004.",
     images: ["/retificapremium.jpeg"],
   },
 };
@@ -94,7 +96,7 @@ export default function SobrePage() {
                 style={{ fontFamily: "var(--font-rajdhani)" }}
               >
                 <span className="text-rp-royal">Excelência</span> em cada
-                cabeçote.
+                cabeçote.{" "}
                 <br />
                 <span className="text-rp-royal">Confiança</span> em cada reparo.
               </div>
@@ -138,7 +140,7 @@ export default function SobrePage() {
         {/* Background com imagem blur */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/fundoquemsomos.png"
+            src="/fundoquemsomos.webp"
             alt=""
             fill
             className="object-cover opacity-35"
@@ -449,8 +451,8 @@ export default function SobrePage() {
                   className="text-sm leading-relaxed text-gray-300 md:text-base"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
-                  Utilizamos apenas peças originais e seguimos os mais rigorosos
-                  padrões de qualidade.
+                  Trabalhamos com componentes adequados, medições precisas e
+                  padrões de qualidade definidos para cada serviço.
                 </p>
               </div>
             </div>
@@ -535,11 +537,15 @@ export default function SobrePage() {
         {/* Conteúdo */}
         <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-center">
-            {/* Coluna esquerda: Placeholder para imagem futura */}
-            <div className="relative hidden aspect-4/3 overflow-hidden rounded-lg bg-gray-200 md:block">
-              <div className="flex h-full items-center justify-center text-gray-400">
-                <span className="text-sm">Imagem: Equipe</span>
-              </div>
+            {/* Coluna esquerda: imagem da estrutura */}
+            <div className="relative hidden aspect-4/3 overflow-hidden rounded-lg border border-[#D9E7FF] shadow-xl md:block">
+              <Image
+                src="/oficina.jpeg"
+                alt="Estrutura da Retífica Premium em Sertãozinho-SP"
+                fill
+                sizes="(max-width: 1024px) 50vw, 560px"
+                className="object-cover"
+              />
             </div>
 
             {/* Coluna direita: Texto */}
@@ -578,10 +584,30 @@ export default function SobrePage() {
                   cuidado com cada motor que passa por nossas mãos.
                 </p>
               </div>
+              <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+                <Link
+                  href="/servicos"
+                  className="inline-flex h-12 items-center justify-center rounded-full bg-rp-accent px-8 text-sm font-bold text-white transition-all hover:brightness-110"
+                >
+                  Conhecer serviços
+                </Link>
+                <Link
+                  href="/contato"
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-rp-accent px-8 text-sm font-bold text-rp-accent transition-all hover:bg-[#D9E7FF]"
+                >
+                  Falar com a equipe
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
+      <BreadcrumbSchema
+        items={[
+          { name: "Início", url: "/" },
+          { name: "Sobre", url: "/sobre" },
+        ]}
+      />
     </main>
   );
 }

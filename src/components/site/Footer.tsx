@@ -24,7 +24,7 @@ export function Footer() {
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-35 mix-blend-overlay"
         style={{
-          backgroundImage: "url('/fundorodape.png')",
+          backgroundImage: "url('/fundorodape.webp')",
           backgroundRepeat: "repeat",
           backgroundSize: "420px 420px",
         }}

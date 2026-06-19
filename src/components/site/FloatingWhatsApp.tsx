@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { trackEngagementEvent } from "@/lib/trackingEvents";
+import { whatsappBudgetUrl } from "@/lib/site";
 
 export function FloatingWhatsApp() {
   const [isVisible, setIsVisible] = useState(false);
@@ -16,7 +17,7 @@ export function FloatingWhatsApp() {
 
   return (
     <Link
-      href="https://wa.me/5516993021998?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Ret%C3%ADfica%20Premium%20e%20gostaria%20de%20solicitar%20um%20or%C3%A7amento%20para%20ret%C3%ADfica%20de%20cabe%C3%A7ote."
+      href={whatsappBudgetUrl}
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => {

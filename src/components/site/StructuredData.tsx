@@ -3,61 +3,96 @@
  * LocalBusiness + Service + FAQPage
  */
 
-const baseUrl = "https://www.premiumretifica.com.br";
+import { absoluteUrl, siteConfig } from "@/lib/site";
+
+const baseUrl = siteConfig.url;
 const businessId = `${baseUrl}/#automotive-business`;
 const servicesUrl = `${baseUrl}/servicos`;
 
 export function LocalBusinessSchema() {
   const schema = {
     "@context": "https://schema.org",
-    "@type": "AutomotiveBusiness",
+    "@type": ["AutoRepair", "AutomotiveBusiness"],
     "@id": businessId,
-    "name": "Retífica Premium",
-    "url": baseUrl,
-    "logo": `${baseUrl}/logo.png`,
-    "image": `${baseUrl}/retificapremium.jpeg`,
-    "description": "Retífica de cabeçotes e usinagem automotiva com mais de 20 anos de experiência em Sertãozinho-SP. Atende carro, caminhão, ônibus, trator e motores diesel, gasolina e álcool.",
-    "address": {
+    name: siteConfig.name,
+    legalName: siteConfig.legalName,
+    url: baseUrl,
+    logo: absoluteUrl("/logo.png"),
+    image: [absoluteUrl("/retificapremium.jpeg"), absoluteUrl("/oficina.jpeg")],
+    description:
+      "Retífica de cabeçotes e usinagem automotiva com mais de 20 anos de experiência em Sertãozinho-SP. Atende carro, caminhão, ônibus, trator e motores diesel, gasolina e álcool.",
+    foundingDate: siteConfig.foundingDate,
+    email: siteConfig.email,
+    address: {
       "@type": "PostalAddress",
-      "streetAddress": "Av. Fioravante Magro, 1059 - Jardim Boa Vista",
-      "addressLocality": "Sertãozinho",
-      "addressRegion": "SP",
-      "postalCode": "14177-578",
-      "addressCountry": "BR"
+      streetAddress: siteConfig.address.streetAddress,
+      addressLocality: siteConfig.address.locality,
+      addressRegion: siteConfig.address.region,
+      postalCode: siteConfig.address.postalCode,
+      addressCountry: siteConfig.address.country,
     },
-    "geo": {
+    geo: {
       "@type": "GeoCoordinates",
-      "latitude": "-21.1377",
-      "longitude": "-47.9897"
+      latitude: siteConfig.geo.latitude,
+      longitude: siteConfig.geo.longitude,
     },
-    "telephone": "+55-16-3524-4661",
-    "priceRange": "$$",
-    "openingHoursSpecification": [
+    hasMap: `https://www.google.com/maps?q=${encodeURIComponent(
+      siteConfig.address.formatted
+    )}`,
+    telephone: siteConfig.phone.international,
+    priceRange: "$$",
+    openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday"],
-        "opens": "08:00",
-        "closes": "18:00"
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"],
+        opens: "08:00",
+        closes: "11:30",
       },
       {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": "Friday",
-        "opens": "08:00",
-        "closes": "17:30"
-      }
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"],
+        opens: "13:00",
+        closes: "18:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Friday",
+        opens: "08:00",
+        closes: "12:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Friday",
+        opens: "13:00",
+        closes: "17:30",
+      },
     ],
-    "areaServed": {
-      "@type": "GeoCircle",
-      "geoMidpoint": {
-        "@type": "GeoCoordinates",
-        "latitude": "-21.1377",
-        "longitude": "-47.9897"
+    areaServed: siteConfig.areaServedCities.map((city) => ({
+      "@type": "City",
+      name: city,
+      addressRegion: "SP",
+      addressCountry: "BR",
+    })),
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        telephone: siteConfig.whatsapp.international,
+        contactType: "customer service",
+        areaServed: "BR",
+        availableLanguage: "Portuguese",
       },
-      "geoRadius": "50000"
-    },
-    "sameAs": [
-      "https://www.instagram.com/retifica_premium/"
-    ]
+    ],
+    knowsAbout: [...siteConfig.services, ...siteConfig.symptoms],
+    makesOffer: siteConfig.services.map((service) => ({
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: service,
+        areaServed: "Sertãozinho-SP e região",
+      },
+      url: servicesUrl,
+    })),
+    sameAs: [siteConfig.instagram],
   };
 
   return (
@@ -73,31 +108,37 @@ export function ServiceSchema() {
     "@context": "https://schema.org",
     "@type": "Service",
     "@id": `${servicesUrl}#service`,
-    "name": "Serviços de retífica de cabeçote",
-    "serviceType": "Retífica de Cabeçote e Usinagem Automotiva",
-    "description": "Limpeza química, retífica de sedes e válvulas, plaina, usinagem e montagem técnica de cabeçotes em Sertãozinho-SP.",
-    "url": servicesUrl,
-    "provider": {
-      "@type": "AutomotiveBusiness",
+    name: "Serviços de retífica de cabeçote e diagnóstico de motor",
+    serviceType: "Retífica de Cabeçote e Usinagem Automotiva",
+    description:
+      "Limpeza química, retífica de sedes e válvulas, plaina, usinagem, solda de trincas, montagem técnica e diagnóstico de sintomas como motor fumando, baixando óleo ou superaquecendo.",
+    url: servicesUrl,
+    provider: {
+      "@type": "AutoRepair",
       "@id": businessId,
-      "name": "Retífica Premium",
-      "url": baseUrl
+      name: siteConfig.name,
+      url: baseUrl,
     },
-    "areaServed": [
-      {
-        "@type": "City",
-        "name": "Sertãozinho"
-      },
-      {
-        "@type": "City",
-        "name": "Ribeirão Preto"
-      }
-    ],
-    "offers": {
+    areaServed: siteConfig.areaServedCities.map((city) => ({
+      "@type": "City",
+      name: city,
+    })),
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Serviços automotivos da Retífica Premium",
+      itemListElement: siteConfig.services.map((service) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: service,
+        },
+      })),
+    },
+    offers: {
       "@type": "Offer",
-      "availability": "https://schema.org/InStock",
-      "url": `${baseUrl}/contato`
-    }
+      availability: "https://schema.org/InStock",
+      url: `${baseUrl}/contato`,
+    },
   };
 
   return (
@@ -117,14 +158,38 @@ export function FAQSchema({ items }: { items: FAQItem[] }) {
   const schema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": items.map((item) => ({
+    mainEntity: items.map((item) => ({
       "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
+      name: item.question,
+      acceptedAnswer: {
         "@type": "Answer",
-        "text": item.answer
-      }
-    }))
+        text: item.answer,
+      },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+export function BreadcrumbSchema({
+  items,
+}: {
+  items: Array<{ name: string; url: string }>;
+}) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.url),
+    })),
   };
 
   return (

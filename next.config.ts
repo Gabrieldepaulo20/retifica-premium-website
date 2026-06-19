@@ -4,6 +4,7 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  poweredByHeader: false,
   allowedDevOrigins: isDevelopment
     ? ["localhost", "127.0.0.1", "192.168.15.42", "192.168.15.42:3000"]
     : undefined,
@@ -25,11 +26,31 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/fundorodape.png",
+        source: "/fundorodape.webp",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=2592000, stale-while-revalidate=86400",
+            value:
+              "public, max-age=31536000, immutable, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/:path*\\.(png|jpg|jpeg|webp|ico)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value:
+              "public, max-age=31536000, immutable, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },

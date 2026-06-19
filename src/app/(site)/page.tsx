@@ -7,18 +7,21 @@ import {
   FAQSchema,
 } from "@/components/site/StructuredData";
 import { HomeWhatsAppCtaLink } from "@/components/site/HomeWhatsAppCtaLink";
+import { whatsappBudgetUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Retífica de Cabeçote em Sertãozinho e Região | Retífica Premium",
+  title:
+    "Retífica de Cabeçote e Diagnóstico de Motor em Sertãozinho-SP | Retífica Premium",
   description:
-    "Retífica de cabeçote e usinagem automotiva em Sertãozinho, Ribeirão Preto e região. Orçamento rápido, garantia e prazo confiável. Atende carro, caminhão, diesel e gasolina.",
+    "Retífica de cabeçote, usinagem e diagnóstico para motor fumando, baixando óleo ou superaquecendo em Sertãozinho-SP e região. Peça orçamento.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Retífica de Cabeçote em Ribeirão Preto e Região | Retífica Premium",
+    title:
+      "Retífica de Cabeçote e Diagnóstico de Motor em Sertãozinho-SP | Retífica Premium",
     description:
-      "Retífica de cabeçote e usinagem automotiva. Orçamento rápido, garantia e prazo confiável para carro, caminhão e motores diesel.",
+      "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo.",
     url: "https://www.premiumretifica.com.br",
     siteName: "Retífica Premium",
     locale: "pt_BR",
@@ -34,9 +37,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Retífica de Cabeçote em Sertãozinho e Região | Retífica Premium",
+    title:
+      "Retífica de Cabeçote e Diagnóstico de Motor em Sertãozinho-SP | Retífica Premium",
     description:
-      "Retífica de cabeçote e usinagem automotiva. Orçamento rápido, garantia e prazo confiável para carro, caminhão e motores diesel.",
+      "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo.",
     images: ["/retificapremium.jpeg"],
   },
 };
@@ -68,7 +72,7 @@ export default function HomePage() {
 
               {/* Título em 2 linhas */}
               <h1 className="font-heading text-[28px] font-extrabold uppercase leading-[1.1] tracking-tight md:text-5xl md:leading-[1.08] lg:text-6xl lg:leading-[1.1]">
-                <span className="text-[#f59e0b]">RETÍFICA DE CABEÇOTE</span>
+                <span className="text-[#f59e0b]">RETÍFICA DE CABEÇOTE </span>
                 <br />
                 <span className="text-white text-[22px] md:text-[42px] lg:text-5xl">
                   EM SERTÃOZINHO
@@ -83,8 +87,9 @@ export default function HomePage() {
                   ou álcool.
                 </p>
                 <p className="mx-auto max-w-2xl text-[13px] leading-relaxed text-gray-400 md:text-base md:leading-relaxed">
-                  Diagnóstico técnico e orçamento rápido pelo WhatsApp para você
-                  decidir com segurança.
+                  Avaliamos sinais como motor fumando, baixando óleo,
+                  superaquecendo ou perdendo potência para indicar o reparo
+                  correto.
                 </p>
               </div>
               {/* Bloco Inferior: CTA */}
@@ -283,19 +288,19 @@ export default function HomePage() {
                 img: "/retificademotor.jpg",
                 alt: "Bancada de retífica de motores em usinagem",
                 title: "Retífica de Motores",
-                desc: "Retífica completa com medidas exatas e controle de folgas para máximo desempenho.",
+                desc: "Correção técnica para desgaste, perda de compressão, consumo de óleo e falhas de vedação.",
               },
               {
                 img: "/montagemdemotores.jpg",
                 alt: "Montagem técnica de motor em bancada",
                 title: "Montagem de Motores",
-                desc: "Montagem técnica com peças revisadas e testes de funcionamento antes da entrega.",
+                desc: "Montagem com conferência de componentes, regulagens e orientação para funcionamento seguro.",
               },
               {
-                img: "/diagnosticotecnico.png",
+                img: "/diagnosticotecnico.webp",
                 alt: "Diagnóstico técnico de motor automotivo",
                 title: "Diagnóstico Técnico",
-                desc: "Avaliação detalhada do motor com laudo e orientação das melhores soluções.",
+                desc: "Análise para motor fumando, baixando óleo, superaquecendo, falhando ou com perda de potência.",
               },
             ].map((card, index) => {
               const stackClass = `service-card-stack service-card-stack-${
@@ -569,7 +574,7 @@ export default function HomePage() {
         {/* Imagem de fundo */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/homecomment.png"
+            src="/homecomment.webp"
             alt=""
             fill
             sizes="100vw"
@@ -771,7 +776,9 @@ export default function HomePage() {
           </div>
           <div className="mt-10 text-center">
             <Link
-              href="/contato"
+              href={whatsappBudgetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex h-12 items-center justify-center rounded-full bg-rp-accent px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:px-10 md:text-base"
             >
               Chamar no WhatsApp agora
@@ -800,7 +807,7 @@ export default function HomePage() {
             WhatsApp para confirmar atendimento.
           </p>
           <Link
-            href="https://wa.me/5516993021998?text=Ol%C3%A1%2C%20vim%20pelo%20site%20da%20Ret%C3%ADfica%20Premium%20e%20gostaria%20de%20solicitar%20um%20or%C3%A7amento%20para%20ret%C3%ADfica%20de%20cabe%C3%A7ote."
+            href={whatsappBudgetUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:px-10 md:text-base"

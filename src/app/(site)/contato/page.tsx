@@ -1,18 +1,23 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
+import { BreadcrumbSchema } from "@/components/site/StructuredData";
 import { ContatoScroll } from "@/components/site/ContatoScroll";
+import { ContatoWhatsAppForm } from "@/components/site/ContatoWhatsAppForm";
+import { siteConfig, whatsappBudgetUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Contato | Retífica Premium em Sertãozinho-SP",
+  title:
+    "Contato da Retífica Premium em Sertãozinho-SP | WhatsApp e Orçamento",
   description:
-    "Fale com a Retífica Premium para orçamento de retífica de cabeçote, usinagem e montagem. Atendimento rápido por telefone e WhatsApp.",
+    "Fale com a Retífica Premium pelo WhatsApp ou telefone para orçamento de retífica de cabeçote, diagnóstico de motor e usinagem em Sertãozinho-SP.",
   alternates: {
     canonical: "/contato",
   },
   openGraph: {
-    title: "Contato | Retífica Premium em Sertãozinho-SP",
+    title: "Contato da Retífica Premium em Sertãozinho-SP",
     description:
-      "Fale com a Retífica Premium para orçamento de retífica de cabeçote, usinagem e montagem.",
+      "WhatsApp, telefone, endereço e formulário para orçamento de retífica de cabeçote e diagnóstico de motor.",
     url: "https://www.premiumretifica.com.br/contato",
     siteName: "Retífica Premium",
     locale: "pt_BR",
@@ -28,9 +33,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Contato | Retífica Premium em Sertãozinho-SP",
+    title: "Contato da Retífica Premium em Sertãozinho-SP",
     description:
-      "Fale com a Retífica Premium para orçamento de retífica de cabeçote, usinagem e montagem.",
+      "WhatsApp, telefone, endereço e formulário para orçamento de retífica de cabeçote e diagnóstico de motor.",
     images: ["/retificapremium.jpeg"],
   },
 };
@@ -74,6 +79,22 @@ export default function ContatoPage() {
                   Fale por WhatsApp, telefone ou envie sua mensagem.
                 </p>
               </div>
+              <div className="flex flex-col items-center justify-center gap-3 pt-4 sm:flex-row">
+                <Link
+                  href={whatsappBudgetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:text-base"
+                >
+                  WhatsApp {siteConfig.whatsapp.display}
+                </Link>
+                <Link
+                  href={siteConfig.phone.href}
+                  className="inline-flex h-12 items-center justify-center rounded-full border border-white/50 bg-white/10 px-8 text-sm font-bold text-white transition-all hover:bg-white/20 md:h-14 md:text-base"
+                >
+                  Ligar {siteConfig.phone.display}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -87,118 +108,7 @@ export default function ContatoPage() {
               Solicite seu orçamento
             </h2>
 
-            <form action="#" method="post" className="space-y-4 max-[640px]:space-y-3 md:space-y-5">
-              <div>
-                <label
-                  htmlFor="nome"
-                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                >
-                  Nome completo
-                </label>
-                <input
-                  type="text"
-                  id="nome"
-                  name="nome"
-                  required
-                  className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
-                  placeholder="Seu nome completo"
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="telefone"
-                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                >
-                  Telefone/WhatsApp
-                </label>
-                <input
-                  type="tel"
-                  id="telefone"
-                  name="telefone"
-                  required
-                  className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
-                  placeholder="(16) 99999-9999"
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                >
-                  E-mail
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
-                  placeholder="seu@email.com"
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="assunto"
-                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                >
-                  Assunto
-                </label>
-                <select
-                  id="assunto"
-                  name="assunto"
-                  required
-                  className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                >
-                  <option value="">Selecione um assunto</option>
-                  <option value="orcamento">Solicitar Orçamento</option>
-                  <option value="duvidas">Tirar Dúvidas</option>
-                  <option value="outros">Outros Assuntos</option>
-                </select>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="mensagem"
-                  className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                >
-                  Mensagem
-                </label>
-                <textarea
-                  id="mensagem"
-                  name="mensagem"
-                  rows={4}
-                  required
-                  className="min-h-[120px] w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 py-2.5 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:min-h-[100px] max-[640px]:px-3 md:min-h-[170px] md:px-4 md:py-3 md:text-base"
-                  placeholder="Sua mensagem aqui..."
-                  style={{ fontFamily: "var(--font-open-sans)" }}
-                />
-              </div>
-
-              <div className="pt-3 max-[640px]:pt-2 md:pt-4">
-                <button
-                  type="submit"
-                  className="w-full rounded-full px-8 py-2.5 text-base font-bold text-white shadow-lg transition-all hover:opacity-90 max-[640px]:px-6 max-[640px]:py-2 max-[640px]:text-sm md:px-10 md:py-3 md:text-lg"
-                  style={{
-                    background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
-                    fontFamily: "var(--font-rajdhani)",
-                  }}
-                >
-                  Enviar mensagem
-                </button>
-              </div>
-            </form>
+            <ContatoWhatsAppForm />
           </div>
         </div>
       </section>
@@ -258,6 +168,12 @@ export default function ContatoPage() {
           </div>
         </div>
       </section>
+      <BreadcrumbSchema
+        items={[
+          { name: "Início", url: "/" },
+          { name: "Contato", url: "/contato" },
+        ]}
+      />
     </main>
   );
 }
