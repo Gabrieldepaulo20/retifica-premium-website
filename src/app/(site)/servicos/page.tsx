@@ -1,11 +1,17 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 import {
   BreadcrumbSchema,
   FAQSchema,
   ServiceSchema,
 } from "@/components/site/StructuredData";
+import {
+  TrackedCtaLink,
+  TrackedPhoneLink,
+  TrackedServiceLink,
+  TrackedWhatsAppLink,
+} from "@/components/site/TrackedLinks";
+import { servicePath } from "@/lib/service-pages";
 import { siteConfig, whatsappBudgetUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -52,6 +58,7 @@ function ServiceCard({
   height,
   titulo,
   descricao,
+  href,
 }: {
   image: string;
   alt: string;
@@ -59,11 +66,12 @@ function ServiceCard({
   height: number;
   titulo: string;
   descricao: string | string[];
+  href?: string;
 }) {
   const descricoes = Array.isArray(descricao) ? descricao : [descricao];
 
   return (
-    <div className="flex w-full max-w-[382px] min-h-[458px] flex-col items-center justify-between rounded-[15px] border-2 border-[#0E62F6] bg-[#D9E7FF] p-8 shadow-[0_10px_25px_rgba(0,0,0,0.18)] transition-transform duration-200 ease-out hover:scale-[1.03] hover:shadow-[0_15px_35px_rgba(0,0,0,0.25)] max-[640px]:h-[328px] max-[640px]:w-[280px] max-[640px]:max-w-none max-[640px]:min-h-[328px] max-[640px]:p-6 md:h-[458px]">
+    <div className="flex w-full max-w-[382px] min-h-[458px] flex-col items-center justify-between rounded-[15px] border-2 border-[#0E62F6] bg-[#D9E7FF] p-8 shadow-[0_10px_25px_rgba(0,0,0,0.18)] transition-transform duration-200 ease-out hover:scale-[1.03] hover:shadow-[0_15px_35px_rgba(0,0,0,0.25)] max-[640px]:h-auto max-[640px]:w-[280px] max-[640px]:max-w-none max-[640px]:min-h-[390px] max-[640px]:p-6 md:h-[458px]">
       <div className="flex justify-center">
         <Image
           src={image}
@@ -91,6 +99,16 @@ function ServiceCard({
             </p>
           ))}
         </div>
+        {href && (
+          <TrackedServiceLink
+            href={href}
+            serviceName={titulo}
+            className="mt-4 inline-flex h-10 items-center justify-center rounded-full border border-[#0E62F6] bg-white px-5 text-xs font-bold uppercase text-[#053282] transition-all hover:bg-[#0E62F6] hover:text-white"
+            style={{ fontFamily: "var(--font-rajdhani)" }}
+          >
+            Ver detalhes
+          </TrackedServiceLink>
+        )}
       </div>
     </div>
   );
@@ -188,6 +206,7 @@ export default function ServicosPage() {
       image: "/cabecoteservicos.png",
       width: 106,
       height: 106,
+      href: servicePath("banho-quimico"),
     },
     {
       id: 2,
@@ -200,6 +219,7 @@ export default function ServicosPage() {
       image: "/valvulas.png",
       width: 110,
       height: 110,
+      href: servicePath("retifica-de-cabecote"),
     },
     {
       id: 3,
@@ -212,6 +232,7 @@ export default function ServicosPage() {
       image: "/adaptacaodeguias.png",
       width: 127,
       height: 95,
+      href: servicePath("retifica-de-cabecote"),
     },
     {
       id: 4,
@@ -224,6 +245,7 @@ export default function ServicosPage() {
       image: "/esmirilhamentodevalvulas.png",
       width: 103,
       height: 76,
+      href: servicePath("retifica-de-cabecote"),
     },
     {
       id: 5,
@@ -236,6 +258,7 @@ export default function ServicosPage() {
       image: "/usinagemderoscas.png",
       width: 90,
       height: 90,
+      href: servicePath("retifica-de-cabecote"),
     },
     {
       id: 6,
@@ -248,6 +271,7 @@ export default function ServicosPage() {
       image: "/plainadecabecotes.png",
       width: 118,
       height: 109,
+      href: servicePath("plaina-de-cabecote"),
     },
     {
       id: 7,
@@ -260,6 +284,7 @@ export default function ServicosPage() {
       image: "/soldadetrincas.png",
       width: 113,
       height: 113,
+      href: servicePath("teste-de-trinca"),
     },
     {
       id: 8,
@@ -272,6 +297,7 @@ export default function ServicosPage() {
       image: "/sedeseguias.png",
       width: 139,
       height: 129,
+      href: servicePath("retifica-de-cabecote"),
     },
     {
       id: 9,
@@ -284,6 +310,7 @@ export default function ServicosPage() {
       image: "/montagemeregulagemfinal.png",
       width: 148,
       height: 148,
+      href: servicePath("montagem-de-cabecote"),
     },
   ];
 
@@ -335,10 +362,10 @@ export default function ServicosPage() {
             </p>
 
             <div className="flex flex-col items-center justify-center gap-3 pt-4 sm:flex-row">
-              <Link
+              <TrackedWhatsAppLink
                 href={whatsappBudgetUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                eventLabel="services_hero_whatsapp"
+                clarityEventName="whatsapp_service_cta_click"
                 className="inline-flex h-14 items-center justify-center rounded-full px-10 text-base font-bold text-white shadow-lg transition-all hover:opacity-90"
                 style={{
                   background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
@@ -346,14 +373,15 @@ export default function ServicosPage() {
                 }}
               >
                 Solicitar orçamento
-              </Link>
-              <Link
+              </TrackedWhatsAppLink>
+              <TrackedPhoneLink
                 href={siteConfig.phone.href}
+                eventLabel="services_hero_phone"
                 className="inline-flex h-14 items-center justify-center rounded-full border border-[#0E62F6] bg-white px-8 text-base font-bold text-[#053282] shadow-sm transition-all hover:bg-[#D9E7FF]"
                 style={{ fontFamily: "var(--font-rajdhani)" }}
               >
                 Ligar {siteConfig.phone.display}
-              </Link>
+              </TrackedPhoneLink>
             </div>
           </div>
         </div>
@@ -405,20 +433,21 @@ export default function ServicosPage() {
           </div>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
+            <TrackedWhatsAppLink
               href={whatsappBudgetUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              eventLabel="services_symptoms_whatsapp"
+              clarityEventName="whatsapp_service_cta_click"
               className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:text-base"
             >
               Enviar sintoma pelo WhatsApp
-            </Link>
-            <Link
+            </TrackedWhatsAppLink>
+            <TrackedCtaLink
               href="/contato"
+              eventLabel="services_symptoms_contact"
               className="inline-flex h-12 items-center justify-center rounded-full border border-[#053282] px-8 text-sm font-bold text-[#053282] transition-all hover:bg-[#D9E7FF] md:h-14 md:text-base"
             >
               Ver endereço e horários
-            </Link>
+            </TrackedCtaLink>
           </div>
         </div>
       </section>
@@ -459,6 +488,7 @@ export default function ServicosPage() {
                 height={servico.height}
                 titulo={servico.titulo}
                 descricao={servico.descricao}
+                href={servico.href}
               />
             ))}
           </div>
@@ -577,10 +607,10 @@ export default function ServicosPage() {
 
             {/* Botão CTA */}
             <div className="pt-4">
-              <Link
+              <TrackedWhatsAppLink
                 href={whatsappBudgetUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                eventLabel="services_final_whatsapp"
+                clarityEventName="whatsapp_service_cta_click"
                 className="inline-flex h-14 items-center justify-center rounded-full px-10 text-base font-bold text-white shadow-lg transition-all hover:opacity-90"
                 style={{
                   background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
@@ -588,7 +618,7 @@ export default function ServicosPage() {
                 }}
               >
                 Falar com especialista no WhatsApp
-              </Link>
+              </TrackedWhatsAppLink>
             </div>
           </div>
         </div>

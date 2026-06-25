@@ -1,3 +1,5 @@
+import { serviceDetailPages, servicePath } from "@/lib/service-pages";
+
 export const siteConfig = {
   name: "Retífica Premium",
   legalName: "Retífica Premium",
@@ -114,4 +116,11 @@ export const sitePages = [
     changeFrequency: "weekly",
     images: ["/cabecotefundo.jpg"],
   },
+  ...serviceDetailPages.map((page) => ({
+    path: servicePath(page.slug),
+    name: page.shortTitle,
+    priority: 0.82,
+    changeFrequency: "monthly" as const,
+    images: [page.image],
+  })),
 ] as const;

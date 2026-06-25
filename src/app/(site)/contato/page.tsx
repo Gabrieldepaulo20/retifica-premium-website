@@ -1,9 +1,13 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { BreadcrumbSchema } from "@/components/site/StructuredData";
 import { ContatoScroll } from "@/components/site/ContatoScroll";
 import { ContatoWhatsAppForm } from "@/components/site/ContatoWhatsAppForm";
+import {
+  TrackedDirectionsLink,
+  TrackedPhoneLink,
+  TrackedWhatsAppLink,
+} from "@/components/site/TrackedLinks";
 import { siteConfig, whatsappBudgetUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -80,20 +84,21 @@ export default function ContatoPage() {
                 </p>
               </div>
               <div className="flex flex-col items-center justify-center gap-3 pt-4 sm:flex-row">
-                <Link
+                <TrackedWhatsAppLink
                   href={whatsappBudgetUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  eventLabel="contact_hero_whatsapp"
+                  clarityEventName="whatsapp_contact_cta_click"
                   className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:text-base"
                 >
                   WhatsApp {siteConfig.whatsapp.display}
-                </Link>
-                <Link
+                </TrackedWhatsAppLink>
+                <TrackedPhoneLink
                   href={siteConfig.phone.href}
+                  eventLabel="contact_hero_phone"
                   className="inline-flex h-12 items-center justify-center rounded-full border border-white/50 bg-white/10 px-8 text-sm font-bold text-white transition-all hover:bg-white/20 md:h-14 md:text-base"
                 >
                   Ligar {siteConfig.phone.display}
-                </Link>
+                </TrackedPhoneLink>
               </div>
             </div>
           </div>
@@ -149,6 +154,14 @@ export default function ContatoPage() {
               Av. Fioravante Magro, 1059 - Jardim Boa Vista, Sertãozinho - SP,
               14177-578. Visite nossa oficina e conheça nossa estrutura.
             </p>
+            <div className="mt-6">
+              <TrackedDirectionsLink
+                eventLabel="contact_map_directions"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-[#F3B839] px-8 text-sm font-bold text-[#053282] transition-all hover:brightness-105 md:h-14 md:text-base"
+              >
+                Abrir rota no Google Maps
+              </TrackedDirectionsLink>
+            </div>
           </div>
 
           <div className="mt-12 flex justify-center">

@@ -3,8 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { trackEngagementEvent } from "@/lib/trackingEvents";
-import { whatsappBudgetUrl } from "@/lib/site";
+import {
+  buildWhatsAppUrlWithAttribution,
+  trackEngagementEvent,
+} from "@/lib/trackingEvents";
+import { siteConfig, whatsappBudgetText, whatsappBudgetUrl } from "@/lib/site";
 
 export function FloatingWhatsApp() {
   const [isVisible, setIsVisible] = useState(false);
@@ -22,13 +25,17 @@ export function FloatingWhatsApp() {
       rel="noopener noreferrer"
       onClick={(e) => {
         e.stopPropagation();
+        e.currentTarget.href = buildWhatsAppUrlWithAttribution(
+          siteConfig.whatsapp.number,
+          whatsappBudgetText
+        );
         trackEngagementEvent(
           "whatsapp_floating_click",
           "whatsapp_click",
           "floating"
         );
       }}
-      className={`fixed bottom-[calc(60px+env(safe-area-inset-bottom))] right-4 z-[999] transition-all duration-300 animate-bounce-subtle max-[640px]:bottom-[calc(68px+env(safe-area-inset-bottom))] md:bottom-5 md:right-5 ${
+      className={`fixed bottom-[calc(60px+env(safe-area-inset-bottom))] right-4 z-[999] transition-all duration-300 animate-bounce-subtle max-[640px]:bottom-[calc(96px+env(safe-area-inset-bottom))] md:bottom-5 md:right-5 ${
         isVisible ? "opacity-100 scale-100" : "opacity-0 scale-90"
       } hover:scale-110 hover:shadow-2xl active:scale-105`}
       aria-label="Chamar no WhatsApp"

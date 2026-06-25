@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { BreadcrumbSchema } from "@/components/site/StructuredData";
+import { TrackedCtaLink } from "@/components/site/TrackedLinks";
 
 export const metadata: Metadata = {
   title:
@@ -193,8 +193,9 @@ export default function B2BPage() {
             de retífica de cabeçotes e usinagem com padrão premium.
           </p>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
+            <TrackedCtaLink
               href="/contato#formulario"
+              eventLabel="b2b_hero_partner"
               className="flex h-[58px] w-full max-w-[260px] items-center justify-center rounded-full text-sm font-bold uppercase text-white shadow-lg transition-all hover:brightness-110"
               style={{
                 background:
@@ -203,14 +204,15 @@ export default function B2BPage() {
               }}
             >
               Quero ser parceiro
-            </Link>
-            <Link
+            </TrackedCtaLink>
+            <TrackedCtaLink
               href="/servicos"
+              eventLabel="b2b_hero_services"
               className="flex h-[58px] w-full max-w-[260px] items-center justify-center rounded-full border border-white/40 text-sm font-bold uppercase text-white transition-all hover:bg-white/10"
               style={{ fontFamily: "var(--font-open-sans)" }}
             >
               Ver serviços
-            </Link>
+            </TrackedCtaLink>
           </div>
         </div>
       </section>
@@ -517,8 +519,9 @@ export default function B2BPage() {
             região. Tenha descontos, prioridade de atendimento e suporte técnico
             para entregar mais rápido e com mais margem.
           </p>
-          <Link
+          <TrackedCtaLink
             href="/contato#formulario"
+            eventLabel="b2b_final_partner"
             className="mx-auto flex h-[68px] w-full max-w-[420px] items-center justify-center rounded-full text-base md:text-lg font-bold uppercase text-white shadow-lg transition-all hover:brightness-110"
             style={{
               background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
@@ -526,7 +529,7 @@ export default function B2BPage() {
             }}
           >
             Quero ser parceiro premium
-          </Link>
+          </TrackedCtaLink>
         </div>
       </section>
       <BreadcrumbSchema

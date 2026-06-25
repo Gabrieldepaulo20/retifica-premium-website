@@ -7,19 +7,25 @@ import {
   FAQSchema,
 } from "@/components/site/StructuredData";
 import { HomeWhatsAppCtaLink } from "@/components/site/HomeWhatsAppCtaLink";
+import {
+  TrackedCtaLink,
+  TrackedServiceLink,
+  TrackedWhatsAppLink,
+} from "@/components/site/TrackedLinks";
+import { servicePath } from "@/lib/service-pages";
 import { whatsappBudgetUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title:
-    "Retífica de Cabeçote e Diagnóstico de Motor em Sertãozinho-SP | Retífica Premium",
+    "Retífica de Cabeçote e Diagnóstico de Motor | Retífica Premium",
   description:
-    "Retífica de cabeçote, usinagem e diagnóstico para motor fumando, baixando óleo ou superaquecendo em Sertãozinho-SP e região. Peça orçamento.",
+    "Retífica de cabeçote, usinagem e diagnóstico para motor fumando, baixando óleo ou superaquecendo. Atendimento regional para motoristas e oficinas.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title:
-      "Retífica de Cabeçote e Diagnóstico de Motor em Sertãozinho-SP | Retífica Premium",
+      "Retífica de Cabeçote e Diagnóstico de Motor | Retífica Premium",
     description:
       "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo.",
     url: "https://www.premiumretifica.com.br",
@@ -38,7 +44,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Retífica de Cabeçote e Diagnóstico de Motor em Sertãozinho-SP | Retífica Premium",
+      "Retífica de Cabeçote e Diagnóstico de Motor | Retífica Premium",
     description:
       "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo.",
     images: ["/retificapremium.jpeg"],
@@ -75,7 +81,7 @@ export default function HomePage() {
                 <span className="text-[#f59e0b]">RETÍFICA DE CABEÇOTE </span>
                 <br />
                 <span className="text-white text-[22px] md:text-[42px] lg:text-5xl">
-                  EM SERTÃOZINHO
+                  E DIAGNÓSTICO DE MOTOR
                 </span>
               </h1>
 
@@ -90,6 +96,10 @@ export default function HomePage() {
                   Avaliamos sinais como motor fumando, baixando óleo,
                   superaquecendo ou perdendo potência para indicar o reparo
                   correto.
+                </p>
+                <p className="mx-auto max-w-2xl text-[13px] leading-relaxed text-gray-400 md:text-base md:leading-relaxed">
+                  Atendimento regional para motoristas, oficinas e frotas em
+                  Sertãozinho, Ribeirão Preto e cidades próximas.
                 </p>
               </div>
               {/* Bloco Inferior: CTA */}
@@ -289,18 +299,21 @@ export default function HomePage() {
                 alt: "Bancada de retífica de motores em usinagem",
                 title: "Retífica de Motores",
                 desc: "Correção técnica para desgaste, perda de compressão, consumo de óleo e falhas de vedação.",
+                href: servicePath("retifica-de-motor"),
               },
               {
                 img: "/montagemdemotores.jpg",
                 alt: "Montagem técnica de motor em bancada",
                 title: "Montagem de Motores",
                 desc: "Montagem com conferência de componentes, regulagens e orientação para funcionamento seguro.",
+                href: servicePath("montagem-de-cabecote"),
               },
               {
                 img: "/diagnosticotecnico.webp",
                 alt: "Diagnóstico técnico de motor automotivo",
                 title: "Diagnóstico Técnico",
                 desc: "Análise para motor fumando, baixando óleo, superaquecendo, falhando ou com perda de potência.",
+                href: servicePath("retifica-de-cabecote"),
               },
             ].map((card, index) => {
               const stackClass = `service-card-stack service-card-stack-${
@@ -362,8 +375,9 @@ export default function HomePage() {
                     </p>
 
                     {/* Botão do card */}
-                    <Link
-                      href="/servicos"
+                    <TrackedServiceLink
+                      href={card.href}
+                      serviceName={card.title}
                       className="mt-auto inline-flex h-8 w-[128px] items-center justify-center rounded-[62px] text-[11px] font-bold text-white shadow-[0px_4px_10px_rgba(0,0,0,0.25)] transition-all duration-200 hover:brightness-110 hover:shadow-[0px_8px_18px_rgba(0,0,0,0.25)] md:h-[44px] md:w-[180px] md:text-[18px]"
                       style={{
                         background: "#053282",
@@ -373,7 +387,7 @@ export default function HomePage() {
                       }}
                     >
                       Ver detalhes
-                    </Link>
+                    </TrackedServiceLink>
                   </div>
                 </div>
               );
@@ -382,8 +396,9 @@ export default function HomePage() {
 
           {/* Botão central (perto do fim amarelo) */}
           <div className="mt-2 flex justify-center">
-            <Link
+            <TrackedCtaLink
               href="/servicos"
+              eventLabel="home_all_services"
               className="flex h-12 w-full max-w-[300px] items-center justify-center rounded-[62px] text-center text-sm text-white transition-all duration-200 hover:brightness-110 hover:shadow-[0px_10px_20px_rgba(0,0,0,0.25)] sm:h-[56px] sm:max-w-[340px] sm:text-base md:h-[68.2667px] md:max-w-[354.061px] md:text-[23px]"
               style={{
                 background: "linear-gradient(0deg, #1654A6 0%, #0E62F6 100%)",
@@ -393,7 +408,7 @@ export default function HomePage() {
               }}
             >
               Ver todos os serviços
-            </Link>
+            </TrackedCtaLink>
           </div>
         </div>
       </section>
@@ -775,14 +790,13 @@ export default function HomePage() {
             ))}
           </div>
           <div className="mt-10 text-center">
-            <Link
+            <TrackedWhatsAppLink
               href={whatsappBudgetUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              eventLabel="home_faq_cta"
               className="inline-flex h-12 items-center justify-center rounded-full bg-rp-accent px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:px-10 md:text-base"
             >
               Chamar no WhatsApp agora
-            </Link>
+            </TrackedWhatsAppLink>
           </div>
         </div>
       </section>
@@ -806,10 +820,9 @@ export default function HomePage() {
             cabeçote, usinagem ou diagnóstico técnico, entre em contato pelo
             WhatsApp para confirmar atendimento.
           </p>
-          <Link
+          <TrackedWhatsAppLink
             href={whatsappBudgetUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            eventLabel="home_region_cta"
             className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:px-10 md:text-base"
           >
             <svg
@@ -820,7 +833,7 @@ export default function HomePage() {
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
             </svg>
             Chamar no WhatsApp
-          </Link>
+          </TrackedWhatsAppLink>
         </div>
       </section>
 

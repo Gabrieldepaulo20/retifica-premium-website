@@ -2,10 +2,16 @@ import type { Metadata, Viewport } from "next";
 import { Poppins, Inter, Rajdhani, Open_Sans } from "next/font/google";
 import Script from "next/script";
 import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
+import { AnalyticsRuntime } from "@/components/site/AnalyticsRuntime";
 import { Header } from "@/components/site/Header";
 import { FloatingWhatsApp } from "@/components/site/FloatingWhatsApp";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import "./globals.css";
+
+const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-HD00424MR7";
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -37,12 +43,11 @@ const openSans = Open_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default:
-      "Retífica Premium | Retífica de Cabeçote e Motor em Sertãozinho-SP",
+    default: "Retífica Premium | Retífica de Cabeçote e Motor",
     template: "%s",
   },
   description:
-    "Retífica de cabeçote, diagnóstico de motor e usinagem automotiva em Sertãozinho-SP. Atendimento para oficinas, motoristas e frotas da região.",
+    "Retífica de cabeçote, diagnóstico de motor e usinagem automotiva. Atendimento regional para oficinas, motoristas e frotas.",
   applicationName: siteConfig.name,
   authors: [{ name: siteConfig.name }],
   creator: siteConfig.name,
@@ -63,9 +68,9 @@ export const metadata: Metadata = {
     apple: [{ url: "/logopreto.png", type: "image/png" }],
   },
   openGraph: {
-    title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
+    title: "Retífica Premium | Retífica de Cabeçote e Motor",
     description:
-      "Retífica automotiva com usinagem de precisão, revisão de válvulas, diagnóstico técnico e montagem em Sertãozinho-SP.",
+      "Retífica automotiva com usinagem de precisão, revisão de válvulas, diagnóstico técnico e montagem.",
     url: siteConfig.url,
     siteName: siteConfig.name,
     locale: siteConfig.locale,
@@ -81,9 +86,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Retífica Premium | Retífica de Cabeçote em Sertãozinho-SP",
+    title: "Retífica Premium | Retífica de Cabeçote e Motor",
     description:
-      "Retífica automotiva com usinagem de precisão, revisão de válvulas, diagnóstico técnico e montagem em Sertãozinho-SP.",
+      "Retífica automotiva com usinagem de precisão, revisão de válvulas, diagnóstico técnico e montagem.",
     images: ["/retificapremium.jpeg"],
   },
   robots: {
@@ -127,7 +132,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <head>
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-HD00424MR7"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="lazyOnload"
           async
         />
@@ -136,12 +141,35 @@ export default function RootLayout({
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 
-gtag('config', 'G-HD00424MR7');`}
+gtag('config', '${GA_MEASUREMENT_ID}');${
+            GOOGLE_ADS_ID ? `\ngtag('config', '${GOOGLE_ADS_ID}');` : ""
+          }`}
         </Script>
+        {GTM_ID && (
+          <Script id="gtm-init" strategy="afterInteractive">
+            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');`}
+          </Script>
+        )}
       </head>
       <body
         className={`${poppins.variable} ${inter.variable} ${rajdhani.variable} ${openSans.variable} font-body antialiased`}
       >
+        {GTM_ID && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+              title="Google Tag Manager"
+            />
+          </noscript>
+        )}
+        <AnalyticsRuntime />
         <MaterialSymbolsLoader />
         <Header />
         {children}

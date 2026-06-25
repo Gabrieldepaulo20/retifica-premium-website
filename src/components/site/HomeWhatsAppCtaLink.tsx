@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { trackEngagementEvent } from "@/lib/trackingEvents";
-import { whatsappBudgetUrl } from "@/lib/site";
+import {
+  buildWhatsAppUrlWithAttribution,
+  trackEngagementEvent,
+} from "@/lib/trackingEvents";
+import { siteConfig, whatsappBudgetText, whatsappBudgetUrl } from "@/lib/site";
 
 export function HomeWhatsAppCtaLink() {
   return (
@@ -16,6 +19,10 @@ export function HomeWhatsAppCtaLink() {
       }}
       onClick={(e) => {
         e.stopPropagation();
+        e.currentTarget.href = buildWhatsAppUrlWithAttribution(
+          siteConfig.whatsapp.number,
+          whatsappBudgetText
+        );
         trackEngagementEvent(
           "whatsapp_home_cta_click",
           "whatsapp_click",

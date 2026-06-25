@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { trackEngagementEvent } from "@/lib/trackingEvents";
+import { siteConfig, whatsappBudgetText } from "@/lib/site";
+import {
+  buildWhatsAppUrlWithAttribution,
+  trackEngagementEvent,
+} from "@/lib/trackingEvents";
 
 const HORARIOS = [
   { dia: "Segunda-feira", horario: "08:00–11:30, 13:00–18:00" },
@@ -73,6 +77,18 @@ export function Footer() {
               <li>
                 <a
                   href="tel:+551635244661"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    trackEngagementEvent(
+                      "phone_click",
+                      "phone_click",
+                      "footer_mobile",
+                      {
+                        link_url: e.currentTarget.href,
+                        method: "phone",
+                      }
+                    );
+                  }}
                   className="transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
                 >
                   (16) 3524-4661
@@ -85,6 +101,10 @@ export function Footer() {
                   rel="noreferrer"
                   onClick={(e) => {
                     e.stopPropagation();
+                    e.currentTarget.href = buildWhatsAppUrlWithAttribution(
+                      siteConfig.whatsapp.number,
+                      whatsappBudgetText
+                    );
                     trackEngagementEvent(
                       "whatsapp_footer_click",
                       "whatsapp_click",
@@ -130,6 +150,10 @@ export function Footer() {
               rel="noreferrer"
               onClick={(e) => {
                 e.stopPropagation();
+                e.currentTarget.href = buildWhatsAppUrlWithAttribution(
+                  siteConfig.whatsapp.number,
+                  whatsappBudgetText
+                );
                 trackEngagementEvent(
                   "whatsapp_footer_click",
                   "whatsapp_click",
@@ -226,6 +250,18 @@ export function Footer() {
                 <li>
                   <a
                     href="tel:+551635244661"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      trackEngagementEvent(
+                        "phone_click",
+                        "phone_click",
+                        "footer_desktop",
+                        {
+                          link_url: e.currentTarget.href,
+                          method: "phone",
+                        }
+                      );
+                    }}
                     className="transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
                   >
                     (16) 3524-4661
@@ -238,6 +274,10 @@ export function Footer() {
                     rel="noreferrer"
                     onClick={(e) => {
                       e.stopPropagation();
+                      e.currentTarget.href = buildWhatsAppUrlWithAttribution(
+                        siteConfig.whatsapp.number,
+                        whatsappBudgetText
+                      );
                       trackEngagementEvent(
                         "whatsapp_footer_click",
                         "whatsapp_click",
@@ -269,6 +309,10 @@ export function Footer() {
                   rel="noreferrer"
                   onClick={(e) => {
                     e.stopPropagation();
+                    e.currentTarget.href = buildWhatsAppUrlWithAttribution(
+                      siteConfig.whatsapp.number,
+                      whatsappBudgetText
+                    );
                     trackEngagementEvent(
                       "whatsapp_footer_click",
                       "whatsapp_click",

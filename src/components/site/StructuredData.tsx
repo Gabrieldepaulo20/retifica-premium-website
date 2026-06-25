@@ -4,6 +4,7 @@
  */
 
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import type { ServiceDetailPage } from "@/lib/service-pages";
 
 const baseUrl = siteConfig.url;
 const businessId = `${baseUrl}/#automotive-business`;
@@ -166,6 +167,54 @@ export function FAQSchema({ items }: { items: FAQItem[] }) {
         text: item.answer,
       },
     })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+export function ServiceDetailSchema({ page }: { page: ServiceDetailPage }) {
+  const pageUrl = `${servicesUrl}/${page.slug}`;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${pageUrl}#service`,
+    name: page.title,
+    serviceType: page.title,
+    description: page.metaDescription,
+    url: pageUrl,
+    image: absoluteUrl(page.image),
+    provider: {
+      "@type": "AutoRepair",
+      "@id": businessId,
+      name: siteConfig.name,
+      telephone: siteConfig.phone.international,
+      url: baseUrl,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: siteConfig.address.streetAddress,
+        addressLocality: siteConfig.address.locality,
+        addressRegion: siteConfig.address.region,
+        postalCode: siteConfig.address.postalCode,
+        addressCountry: siteConfig.address.country,
+      },
+    },
+    areaServed: siteConfig.areaServedCities.map((city) => ({
+      "@type": "City",
+      name: city,
+      addressRegion: "SP",
+      addressCountry: "BR",
+    })),
+    knowsAbout: page.symptoms,
+    offers: {
+      "@type": "Offer",
+      availability: "https://schema.org/InStock",
+      url: absoluteUrl("/contato"),
+    },
   };
 
   return (

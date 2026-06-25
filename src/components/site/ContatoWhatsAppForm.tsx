@@ -3,7 +3,11 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { siteConfig } from "@/lib/site";
-import { trackEngagementEvent } from "@/lib/trackingEvents";
+import {
+  attributionMessageLines,
+  trackEngagementEvent,
+  trackMarketingEvent,
+} from "@/lib/trackingEvents";
 
 type ContactFormState = {
   nome: string;
@@ -30,6 +34,18 @@ const subjectLabels: Record<string, string> = {
 
 export function ContatoWhatsAppForm() {
   const [form, setForm] = useState(initialState);
+  const [formStarted, setFormStarted] = useState(false);
+
+  function handleFormStart() {
+    if (formStarted) return;
+
+    setFormStarted(true);
+    trackMarketingEvent("form_start", {
+      event_category: "lead",
+      event_label: "contact_form",
+      method: "whatsapp_form",
+    });
+  }
 
   function updateField(
     field: keyof ContactFormState,
@@ -50,6 +66,7 @@ export function ContatoWhatsAppForm() {
       form.email ? `E-mail: ${form.email}` : "",
       `Assunto: ${assunto}`,
       `Mensagem: ${form.mensagem}`,
+      ...attributionMessageLines(),
     ]
       .filter(Boolean)
       .join("\n");
@@ -59,6 +76,11 @@ export function ContatoWhatsAppForm() {
       "whatsapp_click",
       "contact_form"
     );
+    trackMarketingEvent("generate_lead", {
+      event_category: "lead",
+      event_label: "contact_form",
+      method: "whatsapp",
+    });
 
     window.open(
       `https://wa.me/${siteConfig.whatsapp.number}?text=${encodeURIComponent(
@@ -70,7 +92,11 @@ export function ContatoWhatsAppForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-[640px]:space-y-3 md:space-y-5">
+    <form
+      onSubmit={handleSubmit}
+      onFocusCapture={handleFormStart}
+      className="space-y-4 max-[640px]:space-y-3 md:space-y-5"
+    >
       <div>
         <label
           htmlFor="nome"
