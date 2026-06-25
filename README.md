@@ -50,6 +50,15 @@ npm run start
 - Microsoft Clarity global via `next/script`
 - Tracking de cliques nos CTAs principais de WhatsApp e Instagram
 
+## Formulario de Contato
+- O formulario de `/contato` envia leads para `/api/contato`.
+- O envio de e-mail usa a API do Resend, sem guardar segredo no codigo.
+- Variaveis necessarias no ambiente do deploy:
+  - `RESEND_API_KEY`: chave da API do Resend.
+  - `CONTACT_EMAIL_FROM`: remetente verificado, ex. `Retífica Premium <contato@premiumretifica.com.br>`.
+  - `CONTACT_EMAIL_TO`: destino dos leads, ex. `retificapremium5@gmail.com`.
+- Se o envio falhar ou as variaveis nao estiverem configuradas, o formulario mostra um fallback para WhatsApp para nao perder o lead.
+
 ## Observacoes Operacionais
 - O deploy de producao e feito a partir do repositorio Git conectado ao AWS Amplify.
 - Antes de subir alteracoes, valide sempre com `npm run lint` e `npm run build`.

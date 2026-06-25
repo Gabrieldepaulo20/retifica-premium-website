@@ -4,7 +4,8 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { siteConfig } from "@/lib/site";
 import {
-  attributionMessageLines,
+  buildWhatsAppUrlWithAttribution,
+  getStoredAttribution,
   trackEngagementEvent,
   trackMarketingEvent,
 } from "@/lib/trackingEvents";
@@ -32,9 +33,20 @@ const subjectLabels: Record<string, string> = {
   outros: "Outros assuntos",
 };
 
+type SubmitStatus = "idle" | "sending" | "success" | "error";
+
 export function ContatoWhatsAppForm() {
   const [form, setForm] = useState(initialState);
   const [formStarted, setFormStarted] = useState(false);
+  const [website, setWebsite] = useState("");
+  const [status, setStatus] = useState<SubmitStatus>("idle");
+  const [statusMessage, setStatusMessage] = useState("");
+  const [fallbackUrl, setFallbackUrl] = useState(
+    buildWhatsAppUrlWithAttribution(
+      siteConfig.whatsapp.number,
+      "Olá, vim pelo site da Retífica Premium e gostaria de atendimento."
+    )
+  );
 
   function handleFormStart() {
     if (formStarted) return;
@@ -43,7 +55,7 @@ export function ContatoWhatsAppForm() {
     trackMarketingEvent("form_start", {
       event_category: "lead",
       event_label: "contact_form",
-      method: "whatsapp_form",
+      method: "email_form",
     });
   }
 
@@ -52,13 +64,14 @@ export function ContatoWhatsAppForm() {
     value: ContactFormState[keyof ContactFormState]
   ) {
     setForm((current) => ({ ...current, [field]: value }));
+    if (status !== "idle") {
+      setStatus("idle");
+      setStatusMessage("");
+    }
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const assunto = subjectLabels[form.assunto] ?? form.assunto;
-    const text = [
+  function buildLeadMessage(assunto: string) {
+    return [
       "Olá, vim pelo site da Retífica Premium e gostaria de atendimento.",
       "",
       `Nome: ${form.nome}`,
@@ -66,30 +79,76 @@ export function ContatoWhatsAppForm() {
       form.email ? `E-mail: ${form.email}` : "",
       `Assunto: ${assunto}`,
       `Mensagem: ${form.mensagem}`,
-      ...attributionMessageLines(),
     ]
       .filter(Boolean)
       .join("\n");
-
-    trackEngagementEvent(
-      "whatsapp_contact_form_submit",
-      "whatsapp_click",
-      "contact_form"
-    );
-    trackMarketingEvent("generate_lead", {
-      event_category: "lead",
-      event_label: "contact_form",
-      method: "whatsapp",
-    });
-
-    window.open(
-      `https://wa.me/${siteConfig.whatsapp.number}?text=${encodeURIComponent(
-        text
-      )}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
   }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const assunto = subjectLabels[form.assunto] ?? form.assunto;
+    const whatsAppUrl = buildWhatsAppUrlWithAttribution(
+      siteConfig.whatsapp.number,
+      buildLeadMessage(assunto)
+    );
+
+    setFallbackUrl(whatsAppUrl);
+    setStatus("sending");
+    setStatusMessage("");
+
+    try {
+      const response = await fetch("/api/contato", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...form,
+          pageLocation: window.location.href,
+          attribution: getStoredAttribution(),
+          website,
+        }),
+      });
+
+      const data = (await response.json().catch(() => null)) as {
+        message?: string;
+      } | null;
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Falha ao enviar o formulário.");
+      }
+
+      trackMarketingEvent("generate_lead", {
+        event_category: "lead",
+        event_label: "contact_form_email",
+        method: "email_form",
+      });
+
+      setForm(initialState);
+      setWebsite("");
+      setFormStarted(false);
+      setStatus("success");
+      setStatusMessage(
+        "Mensagem enviada. A equipe da Retífica Premium recebeu sua solicitação e vai responder em breve."
+      );
+    } catch (error) {
+      trackMarketingEvent("cta_click", {
+        event_category: "engagement",
+        event_label: "contact_form_email_error",
+        method: "email_form",
+      });
+
+      setStatus("error");
+      setStatusMessage(
+        error instanceof Error
+          ? error.message
+          : "Não conseguimos enviar por e-mail agora."
+      );
+    }
+  }
+
+  const isSending = status === "sending";
 
   return (
     <form
@@ -208,16 +267,66 @@ export function ContatoWhatsAppForm() {
         />
       </div>
 
+      <div className="hidden" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input
+          type="text"
+          id="website"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(event) => setWebsite(event.target.value)}
+        />
+      </div>
+
+      {statusMessage ? (
+        <div
+          role={status === "error" ? "alert" : "status"}
+          aria-live="polite"
+          className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
+            status === "success"
+              ? "bg-white/90 text-[#0f5132]"
+              : "bg-white/90 text-[#842029]"
+          }`}
+          style={{ fontFamily: "var(--font-open-sans)" }}
+        >
+          <p>{statusMessage}</p>
+          {status === "error" ? (
+            <a
+              href={fallbackUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => {
+                trackEngagementEvent(
+                  "whatsapp_contact_form_submit",
+                  "whatsapp_click",
+                  "contact_form_fallback",
+                  {
+                    link_url: event.currentTarget.href,
+                    method: "whatsapp",
+                  }
+                );
+              }}
+              className="mt-2 inline-flex rounded-full bg-[#25D366] px-4 py-2 text-xs font-bold text-white transition hover:brightness-110"
+            >
+              Chamar no WhatsApp agora
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+
       <div className="pt-3 max-[640px]:pt-2 md:pt-4">
         <button
           type="submit"
-          className="w-full rounded-full px-8 py-2.5 text-base font-bold text-white shadow-lg transition-all hover:opacity-90 max-[640px]:px-6 max-[640px]:py-2 max-[640px]:text-sm md:px-10 md:py-3 md:text-lg"
+          disabled={isSending}
+          className="w-full rounded-full px-8 py-2.5 text-base font-bold text-white shadow-lg transition-all hover:opacity-90 disabled:cursor-wait disabled:opacity-70 max-[640px]:px-6 max-[640px]:py-2 max-[640px]:text-sm md:px-10 md:py-3 md:text-lg"
           style={{
             background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
             fontFamily: "var(--font-rajdhani)",
           }}
         >
-          Enviar pelo WhatsApp
+          {isSending ? "Enviando..." : "Enviar solicitação"}
         </button>
       </div>
     </form>
