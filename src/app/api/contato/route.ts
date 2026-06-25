@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createHash, createHmac } from "node:crypto";
 import { siteConfig } from "@/lib/site";
 
 export const runtime = "nodejs";
@@ -64,6 +65,38 @@ function escapeHtml(value: string) {
 
 function validEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function formatEmailAddress(email: string, displayName?: string) {
+  const address = email.replace(/[\r\n]/g, "").trim();
+  if (address.includes("<") && address.includes(">")) return address;
+
+  const safeName = (displayName ?? "").replace(/["\r\n]/g, "").trim();
+  return safeName ? `"${safeName}" <${address}>` : address;
+}
+
+function sha256Hex(value: string) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+function hmac(key: Buffer | string, value: string) {
+  return createHmac("sha256", key).update(value).digest();
+}
+
+function hmacHex(key: Buffer | string, value: string) {
+  return createHmac("sha256", key).update(value).digest("hex");
+}
+
+function signingKey(secret: string, date: string, region: string) {
+  const kDate = hmac(`AWS4${secret}`, date);
+  const kRegion = hmac(kDate, region);
+  const kService = hmac(kRegion, "ses");
+  return hmac(kService, "aws4_request");
+}
+
+function amzDates(now = new Date()) {
+  const iso = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
+  return { amzDate: iso, dateStamp: iso.slice(0, 8) };
 }
 
 function attributionLines(payload: ContactPayload) {
@@ -197,6 +230,141 @@ async function sendWithResend({
   }
 }
 
+async function sendWithSes({
+  nome,
+  email,
+  assunto,
+  text,
+  html,
+}: {
+  nome: string;
+  email: string;
+  assunto: string;
+  text: string;
+  html: string;
+}) {
+  const region =
+    process.env.SES_REGION ||
+    process.env.AWS_REGION ||
+    process.env.AWS_SES_REGION ||
+    "us-east-1";
+  const accessKey =
+    process.env.SES_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || "";
+  const secretKey =
+    process.env.SES_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || "";
+  const from =
+    process.env.SUPPORT_FROM_EMAIL ||
+    process.env.CONTACT_EMAIL_FROM ||
+    "";
+  const fromName =
+    process.env.SUPPORT_FROM_NAME ||
+    process.env.CONTACT_EMAIL_FROM_NAME ||
+    siteConfig.name;
+  const to =
+    process.env.SUPPORT_TO_EMAIL ||
+    process.env.CONTACT_EMAIL_TO ||
+    siteConfig.email;
+  const replyTo =
+    email ||
+    process.env.SUPPORT_REPLY_TO_EMAIL ||
+    process.env.CONTACT_EMAIL_REPLY_TO ||
+    to;
+
+  if (!accessKey || !secretKey || !from || !to) {
+    throw new Error("SES_EMAIL_NOT_CONFIGURED");
+  }
+
+  const host = `email.${region}.amazonaws.com`;
+  const path = "/v2/email/outbound-emails";
+  const body = JSON.stringify({
+    FromEmailAddress: formatEmailAddress(from, fromName),
+    ReplyToAddresses: [replyTo],
+    Destination: { ToAddresses: [to] },
+    Content: {
+      Simple: {
+        Subject: { Data: `[Site] ${assunto} - ${nome}`, Charset: "UTF-8" },
+        Body: {
+          Text: { Data: text, Charset: "UTF-8" },
+          Html: { Data: html, Charset: "UTF-8" },
+        },
+      },
+    },
+  });
+
+  const { amzDate, dateStamp } = amzDates();
+  const payloadHash = sha256Hex(body);
+  const canonicalHeaders = `content-type:application/json\nhost:${host}\nx-amz-date:${amzDate}\n`;
+  const signedHeaders = "content-type;host;x-amz-date";
+  const canonicalRequest = [
+    "POST",
+    path,
+    "",
+    canonicalHeaders,
+    signedHeaders,
+    payloadHash,
+  ].join("\n");
+  const credentialScope = `${dateStamp}/${region}/ses/aws4_request`;
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    credentialScope,
+    sha256Hex(canonicalRequest),
+  ].join("\n");
+  const signature = hmacHex(
+    signingKey(secretKey, dateStamp, region),
+    stringToSign
+  );
+  const authorization = `AWS4-HMAC-SHA256 Credential=${accessKey}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  const response = await fetch(`https://${host}${path}`, {
+    method: "POST",
+    headers: {
+      Authorization: authorization,
+      "Content-Type": "application/json",
+      "X-Amz-Date": amzDate,
+    },
+    body,
+  });
+
+  if (!response.ok) {
+    throw new Error(`SES_EMAIL_FAILED_${response.status}`);
+  }
+}
+
+function hasResendConfig() {
+  return Boolean(process.env.RESEND_API_KEY && process.env.CONTACT_EMAIL_FROM);
+}
+
+function hasSesConfig() {
+  return Boolean(
+    (process.env.SES_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID) &&
+      (process.env.SES_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY) &&
+      (process.env.CONTACT_EMAIL_FROM || process.env.SUPPORT_FROM_EMAIL)
+  );
+}
+
+async function sendContactEmail(params: {
+  nome: string;
+  email: string;
+  assunto: string;
+  text: string;
+  html: string;
+}) {
+  if (hasResendConfig()) {
+    try {
+      return await sendWithResend(params);
+    } catch (error) {
+      if (!hasSesConfig()) throw error;
+    }
+  }
+
+  if (hasSesConfig()) {
+    return sendWithSes(params);
+  }
+
+  throw new Error("CONTACT_EMAIL_NOT_CONFIGURED");
+}
+
 export async function POST(request: Request) {
   let payload: ContactPayload;
 
@@ -269,7 +437,7 @@ export async function POST(request: Request) {
   });
 
   try {
-    await sendWithResend({ nome, email, assunto, text, html });
+    await sendContactEmail({ nome, email, assunto, text, html });
   } catch (error) {
     const code = error instanceof Error ? error.message : "CONTACT_EMAIL_FAILED";
     console.error("Contact form email failed:", code);

@@ -54,11 +54,16 @@ npm run start
 
 ## Formulario de Contato
 - O formulario de `/contato` envia leads para `/api/contato`.
-- O envio de e-mail usa a API do Resend, sem guardar segredo no codigo.
-- Variaveis necessarias no ambiente do deploy:
-  - `RESEND_API_KEY`: chave da API do Resend.
-  - `CONTACT_EMAIL_FROM`: remetente verificado, ex. `Retífica Premium <contato@premiumretifica.com.br>`.
-  - `CONTACT_EMAIL_TO`: destino dos leads, ex. `retificapremium5@gmail.com`.
+- O envio de e-mail tenta Resend quando `RESEND_API_KEY` + `CONTACT_EMAIL_FROM` existem.
+- Se Resend nao estiver configurado, o envio usa AWS SES com os mesmos nomes de secrets usados no Retiflow:
+  - `SES_REGION`.
+  - `SES_ACCESS_KEY_ID`.
+  - `SES_SECRET_ACCESS_KEY`.
+  - `SUPPORT_FROM_EMAIL` ou `CONTACT_EMAIL_FROM`.
+  - `SUPPORT_FROM_NAME` ou `CONTACT_EMAIL_FROM_NAME`.
+  - `SUPPORT_TO_EMAIL` ou `CONTACT_EMAIL_TO`.
+  - `SUPPORT_REPLY_TO_EMAIL` ou `CONTACT_EMAIL_REPLY_TO`.
+- Nenhum segredo fica no codigo; configure esses valores apenas no ambiente do deploy.
 - Se o envio falhar ou as variaveis nao estiverem configuradas, o formulario mostra um fallback para WhatsApp para nao perder o lead.
 
 ## Observacoes Operacionais
