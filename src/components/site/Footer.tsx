@@ -60,6 +60,7 @@ export function Footer() {
             <nav className="flex flex-col gap-2 mt-4 text-sm font-medium">
               <Link href="/sobre" className="transition-colors hover:text-rp-gold">Sobre a Retífica</Link>
               <Link href="/servicos" className="transition-colors hover:text-rp-gold">Nossos Serviços</Link>
+              <Link href="/regiao-atendida" className="transition-colors hover:text-rp-gold">Região atendida</Link>
               <Link href="/b2b" className="transition-colors hover:text-rp-gold">Parceria B2B Oficinas</Link>
               <Link href="/contato" className="transition-colors hover:text-rp-gold">Fale Conosco</Link>
             </nav>
@@ -231,6 +232,7 @@ export function Footer() {
                 <nav className="flex flex-col gap-2.5 text-sm text-white/80">
                   <Link href="/sobre" className="transition-colors hover:text-white">Sobre a Retífica</Link>
                   <Link href="/servicos" className="transition-colors hover:text-white">Nossos Serviços</Link>
+                  <Link href="/regiao-atendida" className="transition-colors hover:text-white">Região atendida</Link>
                   <Link href="/b2b" className="transition-colors hover:text-white">Parceria B2B (Oficinas)</Link>
                   <Link href="/contato" className="transition-colors hover:text-white">Fale Conosco</Link>
                 </nav>

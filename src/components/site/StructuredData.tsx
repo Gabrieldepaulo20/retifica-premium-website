@@ -5,6 +5,7 @@
 
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import type { ServiceDetailPage } from "@/lib/service-pages";
+import { primaryRegionalCities, regionalCities } from "@/lib/regional";
 
 const baseUrl = siteConfig.url;
 const businessId = `${baseUrl}/#automotive-business`;
@@ -239,6 +240,63 @@ export function BreadcrumbSchema({
       name: item.name,
       item: absoluteUrl(item.url),
     })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+export function RegionalServiceAreaSchema() {
+  const pageUrl = absoluteUrl("/regiao-atendida");
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${pageUrl}#webpage`,
+    name: "Retífica de cabeçote e motor na região de Ribeirão Preto",
+    url: pageUrl,
+    isPartOf: {
+      "@type": "WebSite",
+      name: siteConfig.name,
+      url: siteConfig.url,
+    },
+    about: {
+      "@type": "AutoRepair",
+      "@id": businessId,
+      name: siteConfig.name,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: siteConfig.address.streetAddress,
+        addressLocality: siteConfig.address.locality,
+        addressRegion: siteConfig.address.region,
+        postalCode: siteConfig.address.postalCode,
+        addressCountry: siteConfig.address.country,
+      },
+      areaServed: regionalCities.map((city) => ({
+        "@type": "City",
+        name: city.name,
+        addressRegion: "SP",
+        addressCountry: "BR",
+      })),
+    },
+    mainEntity: {
+      "@type": "ItemList",
+      name: "Cidades atendidas pela Retífica Premium em até 60 km",
+      itemListElement: regionalCities.map((city, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: `${city.name} - aproximadamente ${city.distanceKm} km de Sertãozinho`,
+      })),
+    },
+    keywords: [
+      "retífica Ribeirão Preto",
+      "retífica de cabeçote Ribeirão Preto",
+      "retífica de motor Ribeirão Preto",
+      ...primaryRegionalCities.map((city) => `retífica ${city}`),
+    ],
   };
 
   return (

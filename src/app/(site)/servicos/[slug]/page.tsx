@@ -114,8 +114,14 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             </p>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">
               Atendemos motoristas, oficinas, frotas e empresas em Sertãozinho,
-              Ribeirão Preto e cidades próximas, com orientação técnica para
-              escolher o serviço correto.
+              Ribeirão Preto e{" "}
+              <Link
+                href="/regiao-atendida"
+                className="font-semibold text-rp-gold underline-offset-4 hover:underline"
+              >
+                cidades próximas
+              </Link>
+              , com orientação técnica para escolher o serviço correto.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <TrackedWhatsAppLink

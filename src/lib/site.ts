@@ -1,4 +1,5 @@
 import { serviceDetailPages, servicePath } from "@/lib/service-pages";
+import { regionalCityNames } from "@/lib/regional";
 
 export const siteConfig = {
   name: "Retífica Premium",
@@ -33,18 +34,7 @@ export const siteConfig = {
     latitude: "-21.1377",
     longitude: "-47.9897",
   },
-  areaServedCities: [
-    "Sertãozinho",
-    "Ribeirão Preto",
-    "Cravinhos",
-    "Jaboticabal",
-    "Batatais",
-    "Brodowski",
-    "Guariba",
-    "Pontal",
-    "Serrana",
-    "Monte Alto",
-  ],
+  areaServedCities: regionalCityNames,
   services: [
     "Retífica de cabeçote",
     "Retífica de sedes e válvulas",
@@ -94,6 +84,13 @@ export const sitePages = [
     priority: 0.9,
     changeFrequency: "weekly",
     images: ["/retificademotor.jpg", "/montagemdemotores.jpg"],
+  },
+  {
+    path: "/regiao-atendida",
+    name: "Região atendida",
+    priority: 0.88,
+    changeFrequency: "weekly",
+    images: ["/oficina.jpeg", "/retificapremium.jpeg"],
   },
   {
     path: "/sobre",

@@ -20,6 +20,7 @@ npm run start
 - `/`
 - `/sobre`
 - `/servicos`
+- `/regiao-atendida`
 - `/b2b`
 - `/contato`
 - `/sitemap.xml`
@@ -32,6 +33,7 @@ npm run start
 - `src/app/(site)/page.tsx`: home
 - `src/app/(site)/sobre/page.tsx`: pagina institucional
 - `src/app/(site)/servicos/page.tsx`: pagina de servicos
+- `src/app/(site)/regiao-atendida/page.tsx`: pagina regional para cidades atendidas
 - `src/app/(site)/b2b/page.tsx`: pagina de parceria para oficinas
 - `src/app/(site)/contato/page.tsx`: pagina de contato
 - `src/app/sitemap.ts`: geracao do sitemap

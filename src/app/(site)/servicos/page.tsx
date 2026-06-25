@@ -550,6 +550,39 @@ export default function ServicosPage() {
         </div>
       </section>
 
+      {/* SEÇÃO 4 — ATENDIMENTO REGIONAL */}
+      <section className="bg-white py-14 md:py-20">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 md:grid-cols-[1fr_auto] md:items-center lg:px-8">
+          <div>
+            <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-rp-accent">
+              Região atendida
+            </p>
+            <h2
+              className="text-3xl font-bold text-gray-900 md:text-5xl"
+              style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.15 }}
+            >
+              Serviços de retífica para Ribeirão Preto e cidades próximas
+            </h2>
+            <p
+              className="mt-4 max-w-3xl text-base leading-relaxed text-gray-700 md:text-lg"
+              style={{ fontFamily: "var(--font-open-sans)" }}
+            >
+              Atendemos motoristas, oficinas e frotas em Sertãozinho, Ribeirão
+              Preto, Pontal, Dumont, Cravinhos e outras cidades em um raio
+              aproximado de 60 km. A página regional mostra a cobertura sem
+              criar conteúdo repetido para cada cidade.
+            </p>
+          </div>
+          <TrackedCtaLink
+            href="/regiao-atendida"
+            eventLabel="services_region_page"
+            className="inline-flex h-12 items-center justify-center rounded-full border border-[#053282] px-8 text-sm font-bold text-[#053282] transition-all hover:bg-[#D9E7FF] md:h-14 md:text-base"
+          >
+            Ver cidades atendidas
+          </TrackedCtaLink>
+        </div>
+      </section>
+
       {/* SEÇÃO 3 — CTA FINAL */}
       <section className="relative min-h-[922px] overflow-hidden">
         {/* Background com imagem blur */}

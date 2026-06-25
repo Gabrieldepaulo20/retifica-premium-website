@@ -13,6 +13,10 @@ export const navItems = [
     href: "/servicos",
   },
   {
+    label: "Região",
+    href: "/regiao-atendida",
+  },
+  {
     label: "B2B",
     href: "/b2b",
   },
