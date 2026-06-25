@@ -1,0 +1,25 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - printf "SES_REGION=%s\n" "$SES_REGION" >> .env.production
+        - printf "SES_ACCESS_KEY_ID=%s\n" "$SES_ACCESS_KEY_ID" >> .env.production
+        - printf "SES_SECRET_ACCESS_KEY=%s\n" "$SES_SECRET_ACCESS_KEY" >> .env.production
+        - printf "SUPPORT_FROM_EMAIL=%s\n" "$SUPPORT_FROM_EMAIL" >> .env.production
+        - printf "SUPPORT_FROM_NAME=%s\n" "$SUPPORT_FROM_NAME" >> .env.production
+        - printf "SUPPORT_TO_EMAIL=%s\n" "$SUPPORT_TO_EMAIL" >> .env.production
+        - printf "SUPPORT_REPLY_TO_EMAIL=%s\n" "$SUPPORT_REPLY_TO_EMAIL" >> .env.production
+        - printf "CONTACT_EMAIL_TO=%s\n" "$CONTACT_EMAIL_TO" >> .env.production
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
