@@ -61,8 +61,11 @@ npm run start
   - `SES_SECRET_ACCESS_KEY`.
   - `SUPPORT_FROM_EMAIL` ou `CONTACT_EMAIL_FROM`.
   - `SUPPORT_FROM_NAME` ou `CONTACT_EMAIL_FROM_NAME`.
-  - `SUPPORT_TO_EMAIL` ou `CONTACT_EMAIL_TO`.
+  - `SUPPORT_TO_EMAILS` para multiplos destinatarios separados por virgula.
+  - `SUPPORT_TO_EMAIL` ou `CONTACT_EMAIL_TO` como compatibilidade com a configuracao antiga.
   - `SUPPORT_REPLY_TO_EMAIL` ou `CONTACT_EMAIL_REPLY_TO`.
+- Em AWS SES sandbox, todos os destinatarios externos precisam estar verificados no SES antes de ativar multiplos e-mails.
+- O template visual do e-mail e a regra de envio ficam em `src/lib/contact-email.ts`.
 - Nenhum segredo fica no codigo; configure esses valores apenas no ambiente do deploy.
 - Se o envio falhar ou as variaveis nao estiverem configuradas, o formulario mostra um fallback para WhatsApp para nao perder o lead.
 
