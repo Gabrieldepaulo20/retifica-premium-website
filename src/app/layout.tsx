@@ -43,7 +43,7 @@ const openSans = Open_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Retífica Premium | Retífica de Cabeçote e Motor",
+    default: "Retífica Premium",
     template: "%s",
   },
   description:
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     apple: [{ url: "/logopreto.png", type: "image/png" }],
   },
   openGraph: {
-    title: "Retífica Premium | Retífica de Cabeçote e Motor",
+    title: "Retífica Premium",
     description:
       "Retífica automotiva com usinagem de precisão, revisão de válvulas, diagnóstico técnico e montagem.",
     url: siteConfig.url,
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Retífica Premium | Retífica de Cabeçote e Motor",
+    title: "Retífica Premium",
     description:
       "Retífica automotiva com usinagem de precisão, revisão de válvulas, diagnóstico técnico e montagem.",
     images: ["/retificapremium.jpeg"],

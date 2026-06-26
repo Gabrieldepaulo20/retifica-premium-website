@@ -17,16 +17,14 @@ import { servicePath } from "@/lib/service-pages";
 import { whatsappBudgetUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title:
-    "Retífica de Cabeçote e Diagnóstico de Motor | Retífica Premium",
+  title: "Retífica Premium",
   description:
     "Retífica de cabeçote, usinagem e diagnóstico para motor fumando, baixando óleo ou superaquecendo. Atendimento regional para motoristas e oficinas.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title:
-      "Retífica de Cabeçote e Diagnóstico de Motor | Retífica Premium",
+    title: "Retífica Premium",
     description:
       "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo.",
     url: "https://www.premiumretifica.com.br",
@@ -44,8 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title:
-      "Retífica de Cabeçote e Diagnóstico de Motor | Retífica Premium",
+    title: "Retífica Premium",
     description:
       "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo.",
     images: ["/retificapremium.jpeg"],
