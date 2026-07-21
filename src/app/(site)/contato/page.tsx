@@ -11,8 +11,7 @@ import {
 import { siteConfig, whatsappBudgetUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title:
-    "Contato da Retífica Premium em Sertãozinho-SP | WhatsApp e Orçamento",
+  title: "Contato e Orçamento | Retífica Premium Sertãozinho-SP",
   description:
     "Fale com a Retífica Premium pelo WhatsApp ou telefone para orçamento de retífica de cabeçote, diagnóstico de motor e usinagem em Sertãozinho-SP.",
   alternates: {
@@ -48,32 +47,33 @@ export default function ContatoPage() {
   return (
     <main className="min-h-screen bg-white">
       <ContatoScroll />
-      {/* PARTE A — HERO/FORMULÁRIO */}
-      <section className="bg-white">
-        <div className="relative min-h-[700px] overflow-hidden bg-[#2E5AA7]">
-          <div className="absolute inset-0 z-0">
-            <Image
-              src="/cabecotefundo.jpg"
-              alt=""
-              fill
-              sizes="100vw"
-              className="object-cover"
-              aria-hidden="true"
-            />
-            <div className="absolute inset-0 bg-[#2E5AA7]/90" />
-            <div className="absolute inset-0 bg-linear-to-b from-[#2E5AA7]/75 via-[#1E3B73]/65 to-black/60" />
-          </div>
+      {/* PARTE A — HERO + FORMULÁRIO (2 colunas no desktop) */}
+      <section className="relative overflow-hidden bg-[#2E5AA7]">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/cabecotefundo.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 bg-[#2E5AA7]/90" />
+          <div className="absolute inset-0 bg-linear-to-b from-[#2E5AA7]/80 via-[#1E3B73]/70 to-black/70" />
+        </div>
 
-          <div className="relative z-10 mx-auto flex min-h-[700px] max-w-7xl items-center justify-center px-4 text-center sm:px-6 lg:px-8">
-            <div className="space-y-4">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            {/* Esquerda — Texto, contatos e informações */}
+            <div className="text-center lg:text-left">
               <h1
                 className="text-4xl font-bold text-white md:text-5xl lg:text-6xl"
-                style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.3 }}
+                style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.15 }}
               >
                 Fale com um especialista
               </h1>
               <div
-                className="mx-auto max-w-2xl space-y-2 text-lg md:text-xl"
+                className="mx-auto mt-4 max-w-xl space-y-2 text-lg md:text-xl lg:mx-0"
                 style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.6 }}
               >
                 <p className="font-semibold text-[#F3B839]">
@@ -83,12 +83,12 @@ export default function ContatoPage() {
                   Fale por WhatsApp, telefone ou envie sua mensagem.
                 </p>
               </div>
-              <div className="flex flex-col items-center justify-center gap-3 pt-4 sm:flex-row">
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
                 <TrackedWhatsAppLink
                   href={whatsappBudgetUrl}
                   eventLabel="contact_hero_whatsapp"
                   clarityEventName="whatsapp_contact_cta_click"
-                  className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:text-base"
+                  className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 md:h-14 md:text-base"
                 >
                   WhatsApp {siteConfig.whatsapp.display}
                 </TrackedWhatsAppLink>
@@ -100,26 +100,49 @@ export default function ContatoPage() {
                   Ligar {siteConfig.phone.display}
                 </TrackedPhoneLink>
               </div>
+
+              {/* Mini-cards de informação */}
+              <div className="mt-8 grid gap-4 text-left sm:grid-cols-2">
+                <div className="rounded-2xl border border-white/15 bg-white/8 p-5 backdrop-blur-sm">
+                  <p className="text-xs font-bold uppercase tracking-wide text-[#F3B839]">
+                    Endereço
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/85">
+                    Av. Fioravante Magro, 1059 — Jardim Boa Vista, Sertãozinho-SP
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/15 bg-white/8 p-5 backdrop-blur-sm">
+                  <p className="text-xs font-bold uppercase tracking-wide text-[#F3B839]">
+                    Horário
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/85">
+                    Seg a Qui: 08h–11h30 e 13h–18h
+                    <br />
+                    Sexta: 08h–12h e 13h–17h30
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div className="-mt-[90px] mx-auto max-w-7xl px-4 pb-40 pt-2 sm:px-6 lg:px-8">
-          <div id="formulario" className="relative z-10 mx-auto w-full max-w-2xl rounded-3xl bg-[#F8B628] p-5 shadow-xl max-[640px]:p-6 md:p-10">
-            <h2
-              className="mb-6 text-center text-xl font-bold uppercase text-white max-[640px]:mb-5 md:text-2xl md:mb-8 lg:text-3xl"
-              style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
+            {/* Direita — Formulário */}
+            <div
+              id="formulario"
+              className="scroll-mt-24 rounded-3xl bg-[#F8B628] p-6 shadow-2xl md:p-8"
             >
-              Solicite seu orçamento
-            </h2>
-
-            <ContatoWhatsAppForm />
+              <h2
+                className="mb-6 text-center text-xl font-bold uppercase text-white md:text-2xl lg:text-3xl"
+                style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
+              >
+                Solicite seu orçamento
+              </h2>
+              <ContatoWhatsAppForm />
+            </div>
           </div>
         </div>
       </section>
 
       {/* PARTE B — ONDE ESTAMOS */}
-      <section className="relative -mt-[90px] overflow-hidden bg-linear-to-b from-[#2E5AA7] via-[#2A5197] to-[#1F407A] pb-20 pt-28 md:pt-32">
+      <section className="relative overflow-hidden bg-linear-to-b from-[#2E5AA7] via-[#2A5197] to-[#1F407A] py-16 md:py-20">
         <div className="absolute inset-0 z-0">
           <Image
             src="/cabecotefundo.jpg"
@@ -136,10 +159,13 @@ export default function ContatoPage() {
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center text-white">
             <span
-              className="material-symbols-outlined inline-block leading-none text-[130px] text-[#F3B839] md:text-[134px]"
+              className="mx-auto inline-flex h-16 w-16 items-center justify-center text-[#F3B839] md:h-20 md:w-20"
               aria-hidden="true"
             >
-              location_on
+              <svg viewBox="0 0 24 24" className="h-full w-full" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z" />
+                <circle cx="12" cy="10" r="2.5" />
+              </svg>
             </span>
             <h2
               className="mt-2 text-3xl font-bold md:text-4xl lg:text-5xl"
@@ -165,8 +191,8 @@ export default function ContatoPage() {
           </div>
 
           <div className="mt-12 flex justify-center">
-            <div className="w-full max-w-[974px]">
-              <div className="h-[380px] w-full overflow-hidden rounded-[60px] shadow-2xl md:h-[520px] md:rounded-[126px] lg:h-[647px]">
+            <div className="w-full max-w-[1000px]">
+              <div className="h-[360px] w-full overflow-hidden rounded-3xl shadow-2xl md:h-[460px] lg:h-[540px]">
                 <iframe
                   title="Mapa - Retífica Premium"
                   src="https://www.google.com/maps?q=Av.%20Fioravante%20Magro,%201059%20-%20Jardim%20Boa%20Vista,%20Sert%C3%A3ozinho%20-%20SP,%2014177-578&output=embed"

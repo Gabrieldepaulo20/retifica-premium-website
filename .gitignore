@@ -43,3 +43,5 @@ yarn-error.log*
 # local codex artifacts
 _codex_review/
 _codex_release/
+.playwright-mcp/
+.firecrawl/

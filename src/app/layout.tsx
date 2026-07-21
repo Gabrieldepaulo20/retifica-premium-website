@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Inter, Rajdhani, Open_Sans } from "next/font/google";
+import { Rajdhani, Open_Sans } from "next/font/google";
 import Script from "next/script";
 import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
 import { AnalyticsRuntime } from "@/components/site/AnalyticsRuntime";
@@ -13,24 +13,10 @@ const GA_MEASUREMENT_ID =
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
 
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
 const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -43,11 +29,12 @@ const openSans = Open_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Retífica Premium",
+    default:
+      "Retífica de Motor e Cabeçote | Sertãozinho e Ribeirão Preto",
     template: "%s",
   },
   description:
-    "Retífica de cabeçote, diagnóstico de motor e usinagem automotiva. Atendimento regional para oficinas, motoristas e frotas.",
+    "Retífica de cabeçote, diagnóstico de motor e usinagem automotiva em Sertãozinho-SP. Atendimento a Ribeirão Preto e região para oficinas, motoristas e frotas.",
   applicationName: siteConfig.name,
   authors: [{ name: siteConfig.name }],
   creator: siteConfig.name,
@@ -156,7 +143,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         )}
       </head>
       <body
-        className={`${poppins.variable} ${inter.variable} ${rajdhani.variable} ${openSans.variable} font-body antialiased`}
+        className={`${rajdhani.variable} ${openSans.variable} font-body antialiased`}
       >
         {GTM_ID && (
           <noscript>

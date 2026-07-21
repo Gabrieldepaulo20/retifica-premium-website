@@ -1,4 +1,5 @@
 import { serviceDetailPages, servicePath } from "@/lib/service-pages";
+import { problemDetailPages, problemPath } from "@/lib/problem-pages";
 import { regionalCityNames } from "@/lib/regional";
 
 export const siteConfig = {
@@ -70,6 +71,8 @@ export function absoluteUrl(path = "") {
   return `${siteConfig.url}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+export const siteContentLastModified = "2026-07-21T00:00:00-03:00";
+
 export const sitePages = [
   {
     path: "/",
@@ -86,8 +89,8 @@ export const sitePages = [
     images: ["/retificademotor.jpg", "/montagemdemotores.jpg"],
   },
   {
-    path: "/regiao-atendida",
-    name: "Região atendida",
+    path: "/retifica-em-ribeirao-preto",
+    name: "Retífica em Ribeirão Preto",
     priority: 0.88,
     changeFrequency: "weekly",
     images: ["/oficina.jpeg", "/retificapremium.jpeg"],
@@ -104,7 +107,7 @@ export const sitePages = [
     name: "Parceria B2B",
     priority: 0.8,
     changeFrequency: "monthly",
-    images: ["/oficina.jpeg", "/carrob2b.webp"],
+    images: ["/oficina.jpeg", "/retificapremium.jpeg"],
   },
   {
     path: "/contato",
@@ -117,6 +120,13 @@ export const sitePages = [
     path: servicePath(page.slug),
     name: page.shortTitle,
     priority: 0.82,
+    changeFrequency: "monthly" as const,
+    images: [page.image],
+  })),
+  ...problemDetailPages.map((page) => ({
+    path: problemPath(page.slug),
+    name: page.shortTitle,
+    priority: 0.8,
     changeFrequency: "monthly" as const,
     images: [page.image],
   })),

@@ -5,15 +5,14 @@ import type { Metadata } from "next";
 import { BreadcrumbSchema } from "@/components/site/StructuredData";
 
 export const metadata: Metadata = {
-  title:
-    "Sobre a Retífica Premium | Retífica Automotiva em Sertãozinho-SP desde 2004",
+  title: "Retífica Premium: Sobre a Oficina em Sertãozinho-SP",
   description:
     "Conheça a Retífica Premium: retífica de cabeçotes, diagnóstico de motor e usinagem automotiva em Sertãozinho-SP, com experiência desde 2004.",
   alternates: {
     canonical: "/sobre",
   },
   openGraph: {
-    title: "Sobre a Retífica Premium | Retífica Automotiva em Sertãozinho-SP",
+    title: "Retífica Premium: Sobre a Oficina em Sertãozinho-SP",
     description:
       "Retífica de cabeçotes, diagnóstico de motor e usinagem automotiva com equipe especializada desde 2004.",
     url: "https://www.premiumretifica.com.br/sobre",
@@ -31,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sobre a Retífica Premium | Retífica Automotiva em Sertãozinho-SP",
+    title: "Retífica Premium: Sobre a Oficina em Sertãozinho-SP",
     description:
       "Retífica de cabeçotes, diagnóstico de motor e usinagem automotiva com equipe especializada desde 2004.",
     images: ["/retificapremium.jpeg"],
@@ -42,7 +41,7 @@ export default function SobrePage() {
   return (
     <main className="min-h-screen">
       {/* 1. HERO */}
-      <section className="relative min-h-[590px] overflow-hidden bg-white max-[640px]:min-h-[302px] max-[640px]:h-auto max-[640px]:overflow-visible">
+      <section className="relative min-h-[440px] overflow-hidden bg-white max-[640px]:min-h-[302px] max-[640px]:h-auto max-[640px]:overflow-visible">
         {/* Background com textura */}
         <div className="pointer-events-none absolute inset-0 z-0">
           <Image
@@ -61,7 +60,7 @@ export default function SobrePage() {
         </div>
 
         {/* Conteúdo */}
-        <div className="relative z-10 mx-auto flex min-h-[590px] max-w-7xl items-center justify-center px-4 text-center sm:px-6 lg:px-8 max-[640px]:min-h-[300px] max-[640px]:items-center max-[640px]:justify-center max-[640px]:pt-10 max-[640px]:pb-10">
+        <div className="relative z-10 mx-auto flex min-h-[440px] max-w-7xl items-center justify-center px-4 py-16 text-center sm:px-6 md:py-20 lg:px-8 max-[640px]:min-h-[300px] max-[640px]:items-center max-[640px]:justify-center max-[640px]:pt-10 max-[640px]:pb-10">
           {/* Desktop / tablet */}
           <div className="space-y-6 max-[640px]:hidden">
             <h1

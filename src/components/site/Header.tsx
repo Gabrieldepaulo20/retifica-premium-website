@@ -17,7 +17,7 @@ export function Header() {
   return (
     <header className="w-full bg-[#020E1D]" role="banner">
       <nav
-        className="relative mx-auto flex h-auto max-w-7xl flex-col items-center justify-center gap-2 px-4 py-4 max-[640px]:pt-8 max-[640px]:pb-2 sm:px-6 md:h-[200px] md:flex-row md:items-center md:justify-between md:gap-0 md:py-0 lg:px-8"
+        className="relative mx-auto flex h-auto max-w-7xl flex-col items-center justify-center gap-2 px-4 py-4 max-[640px]:pt-8 max-[640px]:pb-2 sm:px-6 md:h-[132px] md:flex-row md:items-center md:justify-between md:gap-0 md:py-0 lg:px-8"
         role="navigation"
         aria-label="Navegação principal"
       >
@@ -30,9 +30,9 @@ export function Header() {
           <Image
             src="/logo.png"
             alt="Retífica Premium"
-            width={140}
-            height={38}
-            className="h-[90px] w-[125px] object-contain md:h-auto md:w-auto"
+            width={729}
+            height={551}
+            className="h-auto w-[125px] object-contain md:h-[84px] md:w-auto"
           />
         </Link>
 

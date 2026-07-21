@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import {
   BreadcrumbSchema,
   FAQSchema,
+  RegionalServiceAreaSchema,
   ServiceSchema,
 } from "@/components/site/StructuredData";
 import {
@@ -11,12 +12,16 @@ import {
   TrackedServiceLink,
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
+import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { problemPath } from "@/lib/problem-pages";
+import { primaryRegionalCities } from "@/lib/regional";
 import { servicePath } from "@/lib/service-pages";
 import { siteConfig, whatsappBudgetUrl } from "@/lib/site";
+import { videos } from "@/lib/videos";
 
 export const metadata: Metadata = {
   title:
-    "Serviços de Retífica de Cabeçote, Motor Fumando e Baixando Óleo | Retífica Premium",
+    "Serviços de Retífica de Cabeçote e Motor | Retífica Premium",
   description:
     "Retífica de cabeçote, plaina, sedes, válvulas, guias e diagnóstico para motor fumando, baixando óleo ou superaquecendo em Sertãozinho-SP.",
   alternates: {
@@ -50,6 +55,57 @@ export const metadata: Metadata = {
   },
 };
 
+const trustIconStroke = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.8,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+};
+
+const whyPremium = [
+  {
+    title: "Diagnóstico antes do orçamento",
+    desc: "Avaliamos o sintoma e a causa real. Você não paga por troca de peça que o motor não precisa.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-8 w-8" {...trustIconStroke}>
+        <circle cx="11" cy="11" r="7" />
+        <path d="M21 21l-4.3-4.3M11 8v6M8 11h6" />
+      </svg>
+    ),
+  },
+  {
+    title: "Garantia documentada",
+    desc: "Cada serviço sai com laudo técnico e garantia por escrito conforme o que foi feito na peça.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-8 w-8" {...trustIconStroke}>
+        <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+        <path d="M9 12l2 2 4-4" />
+      </svg>
+    ),
+  },
+  {
+    title: "Usinagem de precisão",
+    desc: "Medição de empeno, vedação, sedes e guias dentro da tolerância de fábrica, com equipamento adequado.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-8 w-8" {...trustIconStroke}>
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" />
+      </svg>
+    ),
+  },
+  {
+    title: "20+ anos de experiência",
+    desc: "Equipe especializada desde 2004, com mais de 5.000 motores retificados para motoristas e oficinas.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-8 w-8" {...trustIconStroke}>
+        <path d="M7 4h10v3a5 5 0 01-10 0V4z" />
+        <path d="M7 5H4v2a3 3 0 003 3M17 5h3v2a3 3 0 01-3 3M9 14h6M8 20h8M10 14v3a2 2 0 002 2 2 2 0 002-2v-3" />
+      </svg>
+    ),
+  },
+];
+
 // Componente de Card de Serviço conforme design Figma
 function ServiceCard({
   image,
@@ -73,13 +129,15 @@ function ServiceCard({
   return (
     <div className="flex w-full max-w-[382px] min-h-[458px] flex-col items-center justify-between rounded-[15px] border-2 border-[#0E62F6] bg-[#D9E7FF] p-8 shadow-[0_10px_25px_rgba(0,0,0,0.18)] transition-transform duration-200 ease-out hover:scale-[1.03] hover:shadow-[0_15px_35px_rgba(0,0,0,0.25)] max-[640px]:h-auto max-[640px]:w-[280px] max-[640px]:max-w-none max-[640px]:min-h-[390px] max-[640px]:p-6 md:h-[458px]">
       <div className="flex justify-center">
-        <Image
-          src={image}
-          alt={alt}
-          width={width}
-          height={height}
-          className="object-contain"
-        />
+        <div className="flex h-[120px] w-[120px] items-center justify-center rounded-full bg-white shadow-[0_6px_16px_rgba(5,50,130,0.12)] ring-1 ring-[#0E62F6]/15 max-[640px]:h-[100px] max-[640px]:w-[100px]">
+          <Image
+            src={image}
+            alt={alt}
+            width={width}
+            height={height}
+            className="h-auto max-h-[66px] w-auto max-w-[74px] object-contain max-[640px]:max-h-[56px] max-[640px]:max-w-[62px]"
+          />
+        </div>
       </div>
       <div className="flex flex-1 flex-col items-center justify-center">
         <h3
@@ -116,34 +174,46 @@ function ServiceCard({
 
 const symptomCards = [
   {
+    slug: "motor-fumando",
     title: "Motor fumando",
     description:
       "Fumaça azul, branca ou excesso de fumaça pode indicar desgaste, vedação comprometida, junta queimada ou entrada de óleo na câmara.",
+    href: problemPath("motor-fumando"),
   },
   {
+    slug: "motor-baixando-oleo",
     title: "Motor baixando óleo",
     description:
       "Consumo frequente de óleo pede avaliação de folgas, guias, retentores, anéis, cabeçote e possíveis vazamentos.",
+    href: problemPath("motor-baixando-oleo"),
   },
   {
+    slug: "motor-superaquecendo",
     title: "Motor superaquecendo",
     description:
       "Superaquecimento recorrente pode empenar o cabeçote, queimar junta e comprometer a vedação entre bloco e cabeçote.",
+    href: problemPath("motor-superaquecendo"),
   },
   {
+    slug: "perda-de-potencia",
     title: "Perda de potência",
     description:
       "Falhas de compressão, válvulas sem vedação e desgaste em componentes podem deixar o motor fraco ou irregular.",
+    href: servicePath("retifica-de-motor"),
   },
   {
+    slug: "junta-do-cabecote-queimada",
     title: "Junta queimada",
     description:
       "Mistura de óleo e água, pressão no arrefecimento ou aquecimento anormal exigem diagnóstico antes de montar novamente.",
+    href: problemPath("junta-do-cabecote-queimada"),
   },
   {
+    slug: "cabecote-trincado",
     title: "Cabeçote trincado",
     description:
       "Trincas precisam de inspeção e reparo técnico para evitar vazamento, perda de compressão e retorno do problema.",
+    href: servicePath("teste-de-trinca"),
   },
 ] as const;
 
@@ -317,72 +387,94 @@ export default function ServicosPage() {
   return (
     <main className="min-h-screen">
       {/* SEÇÃO 1 — HERO */}
-      <section className="relative min-h-[720px] overflow-hidden">
-        {/* Background com textura */}
-        <div className="pointer-events-none absolute inset-0 z-0">
+      <section className="relative overflow-hidden bg-rp-navy">
+        {/* Background */}
+        <div className="absolute inset-0 z-0">
           <Image
-            src="/texturewhite.png"
+            src="/cabecote.webp"
             alt=""
             fill
             sizes="100vw"
-            className="object-cover opacity-85"
+            className="object-cover object-center opacity-25"
             aria-hidden="true"
+            priority
           />
-          {/* Overlay leve */}
-          <div className="absolute inset-0 bg-white/20" />
-          <div className="absolute inset-0 bg-linear-to-b from-white/30 via-transparent to-white/30" />
+          <div className="absolute inset-0 bg-[rgba(2,14,29,0.82)]" />
+          <div className="absolute inset-0 bg-linear-to-b from-rp-navy via-rp-navy/70 to-rp-navy" />
         </div>
 
         {/* Conteúdo */}
-        <div className="relative z-10 mx-auto flex min-h-[720px] max-w-7xl items-center justify-center px-4 text-center sm:px-6 lg:px-8">
-          <div className="space-y-8">
-            <h1
-              className="text-4xl font-bold leading-tight text-gray-900 md:text-5xl lg:text-6xl"
-              style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
-            >
-              Serviços de{" "}
-              <br />
-              <span className="text-rp-accent">
-                Retífica de Cabeçote e Motor
-              </span>
-            </h1>
+        <div className="relative z-10 mx-auto flex min-h-[520px] max-w-4xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6 md:py-28 lg:px-8">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-rp-gold md:text-sm">
+            Retífica especializada • Sertãozinho-SP e região
+          </p>
+          <h1
+            className="text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl"
+            style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.15 }}
+          >
+            Serviços de{" "}
+            <span className="text-rp-accent">Retífica de Cabeçote e Motor</span>
+          </h1>
 
-            <p
-              className="mx-auto max-w-3xl text-lg text-gray-700 md:text-xl"
+          <p
+            className="mx-auto mt-5 max-w-2xl text-base text-gray-300 md:text-lg"
+            style={{ fontFamily: "var(--font-open-sans)", lineHeight: 1.6 }}
+          >
+            Equipamentos de precisão, equipe especializada e diagnóstico antes do
+            orçamento — para recuperar vedação, compressão e confiança do seu
+            motor, sem troca desnecessária de peças.
+          </p>
+
+          {/* Chips de confiança */}
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
+            {[
+              "Garantia documentada",
+              "+5.000 motores retificados",
+              "Desde 2004",
+              "Carro, caminhão, ônibus e trator",
+            ].map((chip) => (
+              <span
+                key={chip}
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white/85 md:text-sm"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-4 w-4 text-rp-gold"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.4}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12.5l4 4 10-10" />
+                </svg>
+                {chip}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <TrackedWhatsAppLink
+              href={whatsappBudgetUrl}
+              eventLabel="services_hero_whatsapp"
+              clarityEventName="whatsapp_service_cta_click"
+              className="inline-flex h-14 items-center justify-center rounded-full px-10 text-base font-bold text-white shadow-lg transition-all hover:opacity-90"
               style={{
-                fontFamily: "var(--font-open-sans)",
-                fontWeight: 400,
-                lineHeight: 1.5,
+                background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
+                fontFamily: "var(--font-rajdhani)",
               }}
             >
-              Equipamentos de precisão, equipe especializada e controle técnico
-              para recuperar vedação, compressão e confiabilidade. Avaliamos
-              motor fumando, baixando óleo, superaquecendo ou com perda de
-              potência.
-            </p>
-
-            <div className="flex flex-col items-center justify-center gap-3 pt-4 sm:flex-row">
-              <TrackedWhatsAppLink
-                href={whatsappBudgetUrl}
-                eventLabel="services_hero_whatsapp"
-                clarityEventName="whatsapp_service_cta_click"
-                className="inline-flex h-14 items-center justify-center rounded-full px-10 text-base font-bold text-white shadow-lg transition-all hover:opacity-90"
-                style={{
-                  background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
-                  fontFamily: "var(--font-rajdhani)",
-                }}
-              >
-                Solicitar orçamento
-              </TrackedWhatsAppLink>
-              <TrackedPhoneLink
-                href={siteConfig.phone.href}
-                eventLabel="services_hero_phone"
-                className="inline-flex h-14 items-center justify-center rounded-full border border-[#0E62F6] bg-white px-8 text-base font-bold text-[#053282] shadow-sm transition-all hover:bg-[#D9E7FF]"
-                style={{ fontFamily: "var(--font-rajdhani)" }}
-              >
-                Ligar {siteConfig.phone.display}
-              </TrackedPhoneLink>
-            </div>
+              Solicitar orçamento
+            </TrackedWhatsAppLink>
+            <TrackedPhoneLink
+              href={siteConfig.phone.href}
+              eventLabel="services_hero_phone"
+              className="inline-flex h-14 items-center justify-center rounded-full border border-white/40 bg-white/5 px-8 text-base font-bold text-white transition-all hover:bg-white/10"
+              style={{ fontFamily: "var(--font-rajdhani)" }}
+            >
+              Ligar {siteConfig.phone.display}
+            </TrackedPhoneLink>
           </div>
         </div>
       </section>
@@ -428,6 +520,13 @@ export default function ServicosPage() {
                 >
                   {symptom.description}
                 </p>
+                <TrackedCtaLink
+                  href={symptom.href}
+                  eventLabel={`services_${symptom.slug}_guide`}
+                  className="mt-4 inline-flex text-sm font-bold text-[#053282] underline decoration-[#F3B839] decoration-2 underline-offset-4 transition hover:text-rp-accent"
+                >
+                  Entender este sintoma →
+                </TrackedCtaLink>
               </article>
             ))}
           </div>
@@ -437,7 +536,7 @@ export default function ServicosPage() {
               href={whatsappBudgetUrl}
               eventLabel="services_symptoms_whatsapp"
               clarityEventName="whatsapp_service_cta_click"
-              className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:text-base"
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 md:h-14 md:text-base"
             >
               Enviar sintoma pelo WhatsApp
             </TrackedWhatsAppLink>
@@ -490,6 +589,48 @@ export default function ServicosPage() {
                 descricao={servico.descricao}
                 href={servico.href}
               />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SEÇÃO — POR QUE A RETÍFICA PREMIUM */}
+      <section className="bg-white py-14 md:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-rp-accent">
+              Por que confiar o seu motor à Retífica Premium
+            </p>
+            <h2
+              className="text-3xl font-bold text-gray-900 md:text-5xl"
+              style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.15 }}
+            >
+              Serviço técnico que você acompanha — sem surpresa no orçamento
+            </h2>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {whyPremium.map((item) => (
+              <div
+                key={item.title}
+                className="flex flex-col items-center rounded-2xl border border-[#0E62F6]/12 bg-[#F8FBFF] p-7 text-center shadow-[0_10px_30px_rgba(5,50,130,0.06)] transition-transform duration-200 hover:-translate-y-1"
+              >
+                <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#0E62F6]/10 text-[#0E62F6] ring-1 ring-[#0E62F6]/20">
+                  {item.icon}
+                </div>
+                <h3
+                  className="text-lg font-bold text-[#053282]"
+                  style={{ fontFamily: "var(--font-rajdhani)" }}
+                >
+                  {item.title}
+                </h3>
+                <p
+                  className="mt-2 text-sm leading-relaxed text-gray-600"
+                  style={{ fontFamily: "var(--font-open-sans)" }}
+                >
+                  {item.desc}
+                </p>
+              </div>
             ))}
           </div>
         </div>
@@ -550,41 +691,85 @@ export default function ServicosPage() {
         </div>
       </section>
 
-      {/* SEÇÃO 4 — ATENDIMENTO REGIONAL */}
-      <section className="bg-white py-14 md:py-20">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 md:grid-cols-[1fr_auto] md:items-center lg:px-8">
-          <div>
-            <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-rp-accent">
-              Região atendida
-            </p>
-            <h2
-              className="text-3xl font-bold text-gray-900 md:text-5xl"
-              style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.15 }}
-            >
-              Serviços de retífica para Ribeirão Preto e cidades próximas
-            </h2>
-            <p
-              className="mt-4 max-w-3xl text-base leading-relaxed text-gray-700 md:text-lg"
-              style={{ fontFamily: "var(--font-open-sans)" }}
-            >
-              Atendemos motoristas, oficinas e frotas em Sertãozinho, Ribeirão
-              Preto, Pontal, Dumont, Cravinhos e outras cidades em um raio
-              aproximado de 60 km. A página regional mostra a cobertura sem
-              criar conteúdo repetido para cada cidade.
-            </p>
+      {/* VÍDEO — processo (aparece quando houver youtubeId em lib/videos.ts) */}
+      {videos.servicesProcess.youtubeId && (
+        <section className="bg-[#0B2F6B] py-16 md:py-20">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto mb-8 max-w-2xl text-center">
+              <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-rp-gold">
+                Veja o processo
+              </p>
+              <h2
+                className="text-3xl font-bold text-white md:text-4xl"
+                style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.15 }}
+              >
+                Do diagnóstico à entrega, na prática
+              </h2>
+            </div>
+            <VideoEmbed slot={videos.servicesProcess} eventLabel="services_video" />
           </div>
-          <TrackedCtaLink
-            href="/regiao-atendida"
-            eventLabel="services_region_page"
-            className="inline-flex h-12 items-center justify-center rounded-full border border-[#053282] px-8 text-sm font-bold text-[#053282] transition-all hover:bg-[#D9E7FF] md:h-14 md:text-base"
+        </section>
+      )}
+
+      {/* SEÇÃO — ATENDIMENTO REGIONAL (faixa enxuta) */}
+      <section
+        id="regiao"
+        className="scroll-mt-24 bg-[#0B2F6B] py-14 text-white md:py-16"
+      >
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-rp-gold">
+            Atendimento regional
+          </p>
+          <h2
+            className="text-3xl font-bold md:text-4xl"
+            style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.15 }}
           >
-            Ver cidades atendidas
-          </TrackedCtaLink>
+            Retífica para Ribeirão Preto, Sertãozinho e cidades próximas
+          </h2>
+          <p
+            className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-white/80 md:text-lg"
+            style={{ fontFamily: "var(--font-open-sans)" }}
+          >
+            Ficamos em Sertãozinho e atendemos motoristas, oficinas e frotas num
+            raio de até cerca de 60 km. Leve a peça ou mande o sintoma pelo
+            WhatsApp — orientamos antes de você se deslocar.
+          </p>
+
+          <div className="mt-7 flex flex-wrap justify-center gap-2">
+            {primaryRegionalCities.map((city) => (
+              <span
+                key={city}
+                className="rounded-full border border-white/15 bg-white/8 px-4 py-2 text-sm font-semibold text-white/88"
+              >
+                {city}
+              </span>
+            ))}
+            <span className="rounded-full border border-rp-gold/30 bg-rp-gold/10 px-4 py-2 text-sm font-semibold text-rp-gold">
+              + cidades em até 60 km
+            </span>
+          </div>
+
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <TrackedWhatsAppLink
+              href={whatsappBudgetUrl}
+              eventLabel="services_region_whatsapp"
+              clarityEventName="whatsapp_service_cta_click"
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 md:h-14 md:text-base"
+            >
+              Pedir orçamento no WhatsApp
+            </TrackedWhatsAppLink>
+            <TrackedPhoneLink
+              eventLabel="services_region_phone"
+              className="inline-flex h-12 items-center justify-center rounded-full border border-white/40 px-8 text-sm font-bold text-white transition-all hover:bg-white/10 md:h-14 md:text-base"
+            >
+              Ligar {siteConfig.phone.display}
+            </TrackedPhoneLink>
+          </div>
         </div>
       </section>
 
       {/* SEÇÃO 3 — CTA FINAL */}
-      <section className="relative min-h-[922px] overflow-hidden">
+      <section className="relative overflow-hidden">
         {/* Background com imagem blur */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -603,7 +788,7 @@ export default function ServicosPage() {
         </div>
 
         {/* Conteúdo */}
-        <div className="relative z-10 mx-auto flex min-h-[922px] max-w-7xl items-center justify-center px-4 text-center sm:px-6 lg:px-8">
+        <div className="relative z-10 mx-auto flex min-h-[480px] max-w-7xl items-center justify-center px-4 py-24 text-center sm:px-6 md:py-32 lg:px-8">
           <div className="space-y-8">
             {/* Imagem da ferramenta */}
             <div className="mb-6 flex justify-center">
@@ -657,6 +842,7 @@ export default function ServicosPage() {
         </div>
       </section>
       <ServiceSchema />
+      <RegionalServiceAreaSchema />
       <FAQSchema items={[...serviceFaqItems]} />
       <BreadcrumbSchema
         items={[

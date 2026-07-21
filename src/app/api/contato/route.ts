@@ -14,6 +14,7 @@ type ContactPayload = {
   email?: unknown;
   assunto?: unknown;
   mensagem?: unknown;
+  b2bLevel?: unknown;
   pageLocation?: unknown;
   website?: unknown;
   attribution?: {
@@ -94,6 +95,7 @@ export async function POST(request: Request) {
   const assuntoKey = cleanText(payload.assunto, 60);
   const assunto = subjectLabels[assuntoKey] ?? assuntoKey;
   const mensagem = cleanMultiline(payload.mensagem, 2000);
+  const b2bLevel = cleanText(payload.b2bLevel, 160);
   const pageLocation = cleanText(payload.pageLocation, 400);
 
   if (!nome || nome.length < 2) {
@@ -138,6 +140,7 @@ export async function POST(request: Request) {
     email,
     assunto,
     mensagem,
+    b2bLevel,
     pageLocation,
     sourceLines,
   });

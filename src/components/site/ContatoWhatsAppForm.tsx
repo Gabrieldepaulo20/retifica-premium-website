@@ -18,7 +18,7 @@ type ContactFormState = {
   mensagem: string;
 };
 
-const initialState: ContactFormState = {
+const baseState: ContactFormState = {
   nome: "",
   telefone: "",
   email: "",
@@ -33,9 +33,28 @@ const subjectLabels: Record<string, string> = {
   outros: "Outros assuntos",
 };
 
+const b2bLevelLabels: Record<string, string> = {
+  essencial: "Essencial - R$ 8 mil a R$ 15 mil/mês",
+  crescimento: "Crescimento - R$ 15 mil a R$ 25 mil/mês",
+  performance: "Performance - R$ 25 mil a R$ 50 mil/mês",
+  diamante: "Diamante - R$ 50 mil+/mês",
+};
+
 type SubmitStatus = "idle" | "sending" | "success" | "error";
 
-export function ContatoWhatsAppForm() {
+type ContatoWhatsAppFormProps = {
+  defaultSubject?: keyof typeof subjectLabels;
+  leadLabel?: string;
+};
+
+export function ContatoWhatsAppForm({
+  defaultSubject,
+  leadLabel = "contact_form",
+}: ContatoWhatsAppFormProps = {}) {
+  const initialState: ContactFormState = {
+    ...baseState,
+    assunto: defaultSubject ?? "",
+  };
   const [form, setForm] = useState(initialState);
   const [formStarted, setFormStarted] = useState(false);
   const [website, setWebsite] = useState("");
@@ -54,7 +73,7 @@ export function ContatoWhatsAppForm() {
     setFormStarted(true);
     trackMarketingEvent("form_start", {
       event_category: "lead",
-      event_label: "contact_form",
+      event_label: leadLabel,
       method: "email_form",
     });
   }
@@ -70,7 +89,16 @@ export function ContatoWhatsAppForm() {
     }
   }
 
-  function buildLeadMessage(assunto: string) {
+  function getSelectedB2BLevel() {
+    if (typeof window === "undefined") return "";
+
+    const level = new URLSearchParams(window.location.search).get("nivel_b2b");
+    if (!level) return "";
+
+    return b2bLevelLabels[level] ?? level;
+  }
+
+  function buildLeadMessage(assunto: string, b2bLevel: string) {
     return [
       "Olá, vim pelo site da Retífica Premium e gostaria de atendimento.",
       "",
@@ -78,6 +106,7 @@ export function ContatoWhatsAppForm() {
       `Telefone/WhatsApp: ${form.telefone}`,
       form.email ? `E-mail: ${form.email}` : "",
       `Assunto: ${assunto}`,
+      b2bLevel ? `Nível B2B escolhido: ${b2bLevel}` : "",
       `Mensagem: ${form.mensagem}`,
     ]
       .filter(Boolean)
@@ -88,9 +117,10 @@ export function ContatoWhatsAppForm() {
     event.preventDefault();
 
     const assunto = subjectLabels[form.assunto] ?? form.assunto;
+    const b2bLevel = getSelectedB2BLevel();
     const whatsAppUrl = buildWhatsAppUrlWithAttribution(
       siteConfig.whatsapp.number,
-      buildLeadMessage(assunto)
+      buildLeadMessage(assunto, b2bLevel)
     );
 
     setFallbackUrl(whatsAppUrl);
@@ -105,6 +135,7 @@ export function ContatoWhatsAppForm() {
         },
         body: JSON.stringify({
           ...form,
+          b2bLevel,
           pageLocation: window.location.href,
           attribution: getStoredAttribution(),
           website,
@@ -121,7 +152,8 @@ export function ContatoWhatsAppForm() {
 
       trackMarketingEvent("generate_lead", {
         event_category: "lead",
-        event_label: "contact_form_email",
+        event_label: `${leadLabel}_email`,
+        b2b_level: b2bLevel,
         method: "email_form",
       });
 
@@ -135,7 +167,7 @@ export function ContatoWhatsAppForm() {
     } catch (error) {
       trackMarketingEvent("cta_click", {
         event_category: "engagement",
-        event_label: "contact_form_email_error",
+        event_label: `${leadLabel}_email_error`,
         method: "email_form",
       });
 
@@ -308,7 +340,7 @@ export function ContatoWhatsAppForm() {
                   }
                 );
               }}
-              className="mt-2 inline-flex rounded-full bg-[#25D366] px-4 py-2 text-xs font-bold text-white transition hover:brightness-110"
+              className="mt-2 inline-flex rounded-full bg-[#25D366] px-4 py-2 text-xs font-bold text-[#052E16] transition hover:brightness-110"
             >
               Chamar no WhatsApp agora
             </a>

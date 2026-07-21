@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
         destination: "https://www.premiumretifica.com.br/:path*",
         permanent: true,
       },
+      {
+        // Preserva os sinais da antiga landing regional na substituta equivalente.
+        source: "/regiao-atendida",
+        destination: "/retifica-em-ribeirao-preto",
+        permanent: true,
+      },
     ];
   },
   async headers() {

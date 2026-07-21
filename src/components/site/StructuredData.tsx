@@ -4,6 +4,7 @@
  */
 
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import type { ProblemDetailPage } from "@/lib/problem-pages";
 import type { ServiceDetailPage } from "@/lib/service-pages";
 import { primaryRegionalCities, regionalCities } from "@/lib/regional";
 
@@ -250,12 +251,101 @@ export function BreadcrumbSchema({
   );
 }
 
+export function ArticleSchema({ page }: { page: ProblemDetailPage }) {
+  const pageUrl = absoluteUrl(`/problemas/${page.slug}`);
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${pageUrl}#article`,
+    headline: page.metaTitle,
+    description: page.metaDescription,
+    url: pageUrl,
+    mainEntityOfPage: pageUrl,
+    image: absoluteUrl(page.image),
+    datePublished: "2026-07-21T00:00:00-03:00",
+    dateModified: "2026-07-21T00:00:00-03:00",
+    inLanguage: "pt-BR",
+    author: {
+      "@type": "Organization",
+      "@id": businessId,
+      name: siteConfig.name,
+      url: baseUrl,
+    },
+    publisher: {
+      "@type": "Organization",
+      "@id": businessId,
+      name: siteConfig.name,
+      url: baseUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: absoluteUrl("/logo.png"),
+      },
+    },
+    about: [page.title, ...page.causes.map((cause) => cause.title)],
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+export function RibeiraoPretoServiceSchema() {
+  const pageUrl = `${baseUrl}/retifica-em-ribeirao-preto`;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${pageUrl}#service`,
+    name: "Retífica de motores e cabeçotes para Ribeirão Preto",
+    serviceType: "Retífica de Cabeçote e Usinagem Automotiva",
+    description:
+      "Retífica de cabeçote, retífica de motor, plaina, teste de trinca e montagem técnica para motoristas, oficinas e frotas de Ribeirão Preto-SP, com oficina a cerca de 19 km, em Sertãozinho.",
+    url: pageUrl,
+    image: absoluteUrl("/oficina.jpeg"),
+    provider: {
+      "@type": "AutoRepair",
+      "@id": businessId,
+      name: siteConfig.name,
+      telephone: siteConfig.phone.international,
+      url: baseUrl,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: siteConfig.address.streetAddress,
+        addressLocality: siteConfig.address.locality,
+        addressRegion: siteConfig.address.region,
+        postalCode: siteConfig.address.postalCode,
+        addressCountry: siteConfig.address.country,
+      },
+    },
+    areaServed: {
+      "@type": "City",
+      name: "Ribeirão Preto",
+      addressRegion: "SP",
+      addressCountry: "BR",
+    },
+    offers: {
+      "@type": "Offer",
+      availability: "https://schema.org/InStock",
+      url: absoluteUrl("/contato"),
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 export function RegionalServiceAreaSchema() {
-  const pageUrl = absoluteUrl("/regiao-atendida");
+  const pageUrl = `${servicesUrl}#regiao`;
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": `${pageUrl}#webpage`,
+    "@id": `${servicesUrl}#regiao-webpage`,
     name: "Retífica de cabeçote e motor na região de Ribeirão Preto",
     url: pageUrl,
     isPartOf: {

@@ -19,6 +19,7 @@ type ContactEmailInput = {
   email: string;
   assunto: string;
   mensagem: string;
+  b2bLevel?: string;
   pageLocation: string;
   sourceLines: string[];
 };
@@ -133,6 +134,7 @@ export function buildContactEmail({
   email,
   assunto,
   mensagem,
+  b2bLevel,
   pageLocation,
   sourceLines,
 }: ContactEmailInput): ContactEmailContent {
@@ -142,6 +144,7 @@ export function buildContactEmail({
     ["Telefone/WhatsApp", telefone],
     ["E-mail", email || "Não informado"],
     ["Assunto", assunto],
+    ...(b2bLevel ? [["Nível B2B escolhido", b2bLevel]] : []),
     ["Página do formulário", pageLocation || "Não informada"],
   ];
   const textLines = [
@@ -151,6 +154,7 @@ export function buildContactEmail({
     `Telefone/WhatsApp: ${telefone}`,
     email ? `E-mail: ${email}` : "E-mail: Não informado",
     `Assunto: ${assunto}`,
+    b2bLevel ? `Nível B2B escolhido: ${b2bLevel}` : "",
     "",
     "Mensagem:",
     mensagem,

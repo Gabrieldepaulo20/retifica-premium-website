@@ -13,7 +13,7 @@ export function HomeWhatsAppCtaLink() {
       href={whatsappBudgetUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="relative z-40 inline-flex h-[50px] w-auto items-center justify-center rounded-[62px] px-6 text-[12px] font-bold uppercase text-white whitespace-nowrap transition-all hover:brightness-110 md:h-[68px] md:px-12 md:text-base"
+      className="relative z-40 inline-flex h-[46px] w-auto items-center justify-center rounded-full px-6 text-[12px] font-bold uppercase text-white whitespace-nowrap transition-all hover:brightness-110 md:h-[54px] md:px-9 md:text-[15px]"
       style={{
         background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
       }}

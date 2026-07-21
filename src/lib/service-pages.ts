@@ -23,9 +23,10 @@ export const serviceDetailPages = [
     slug: "retifica-de-cabecote",
     title: "Retífica de cabeçote",
     shortTitle: "Retífica de cabeçote",
-    metaTitle: "Retífica de Cabeçote | Plaina, Sedes e Válvulas | Retífica Premium",
+    metaTitle:
+      "Retífica de Cabeçote em Sertãozinho e Ribeirão Preto",
     metaDescription:
-      "Retífica de cabeçote com plaina, sedes, válvulas, guias, limpeza química e montagem técnica. Atendimento regional para oficinas e motoristas.",
+      "Retífica de cabeçote com plaina, sedes, válvulas, guias, limpeza química e montagem técnica em Sertãozinho-SP. Atende Ribeirão Preto e região.",
     hero: "Retífica de cabeçote com diagnóstico e usinagem de precisão",
     intro:
       "A retífica de cabeçote exige medição, limpeza, inspeção e usinagem correta antes da montagem. Na Retífica Premium, cada cabeçote é avaliado conforme o sintoma do veículo e o estado real da peça, evitando troca desnecessária e reduzindo risco de retrabalho.",
@@ -70,9 +71,9 @@ export const serviceDetailPages = [
     title: "Retífica de motor",
     shortTitle: "Retífica de motor",
     metaTitle:
-      "Retífica de Motor | Motor Fumando ou Baixando Óleo | Retífica Premium",
+      "Retífica de Motor em Sertãozinho e Ribeirão Preto",
     metaDescription:
-      "Diagnóstico e retífica de motor para sintomas como motor fumando, baixando óleo, superaquecendo, sem compressão ou fundido.",
+      "Diagnóstico e retífica de motor para motor fumando, baixando óleo, superaquecendo, sem compressão ou fundido. Sertãozinho-SP, Ribeirão Preto e região.",
     hero: "Retífica de motor com diagnóstico antes da troca de peças",
     intro:
       "Nem todo problema no motor exige retífica completa, mas sintomas como fumaça, consumo de óleo, superaquecimento e perda de potência pedem avaliação técnica. A Retífica Premium orienta o reparo correto para recuperar vedação, compressão e confiabilidade.",
@@ -116,9 +117,10 @@ export const serviceDetailPages = [
     slug: "plaina-de-cabecote",
     title: "Plaina de cabeçote",
     shortTitle: "Plaina de cabeçote",
-    metaTitle: "Plaina de Cabeçote | Correção de Empeno | Retífica Premium",
+    metaTitle:
+      "Plaina de Cabeçote em Sertãozinho-SP | Correção de Empeno",
     metaDescription:
-      "Serviço de plaina de cabeçote para corrigir empeno, melhorar vedação e preparar a peça para montagem com segurança.",
+      "Serviço de plaina de cabeçote para corrigir empeno, melhorar vedação e preparar a peça para montagem. Sertãozinho-SP, Ribeirão Preto e região.",
     hero: "Plaina de cabeçote para corrigir empeno e vedação",
     intro:
       "A plaina de cabeçote corrige irregularidades na superfície de contato com o bloco. É um serviço técnico que exige medição antes da usinagem, porque remover material sem critério pode comprometer o conjunto.",
@@ -162,9 +164,10 @@ export const serviceDetailPages = [
     slug: "banho-quimico",
     title: "Banho químico de cabeçote",
     shortTitle: "Banho químico",
-    metaTitle: "Banho Químico de Cabeçote | Retífica Premium",
+    metaTitle:
+      "Banho Químico de Cabeçote em Sertãozinho-SP",
     metaDescription:
-      "Banho químico e limpeza técnica de cabeçote para remover carbonização, óleo, ferrugem e resíduos antes da usinagem.",
+      "Banho químico e limpeza técnica de cabeçote para remover carbonização, óleo, ferrugem e resíduos antes da usinagem. Atende Ribeirão Preto e região.",
     hero: "Banho químico e limpeza técnica para cabeçote",
     intro:
       "A limpeza do cabeçote é etapa essencial antes de medir, usinar e montar. O banho químico remove sujeira pesada, carbonização, óleo e resíduos que podem esconder trincas, desgaste ou falhas de vedação.",
@@ -208,9 +211,10 @@ export const serviceDetailPages = [
     slug: "teste-de-trinca",
     title: "Inspeção de trincas no cabeçote",
     shortTitle: "Trincas no cabeçote",
-    metaTitle: "Teste de Trinca no Cabeçote | Retífica Premium",
+    metaTitle:
+      "Cabeçote Trincado Tem Conserto? Teste de Trinca",
     metaDescription:
-      "Inspeção de trincas, solda e reparos estruturais em cabeçote. Avaliação técnica para vazamentos, superaquecimento e perda de compressão.",
+      "Cabeçote trincado tem conserto em muitos casos. Inspeção de trincas, solda e reparo técnico em Sertãozinho-SP, com avaliação para vazamento e superaquecimento.",
     hero: "Inspeção de trincas e reparo técnico em cabeçote",
     intro:
       "Trincas no cabeçote podem causar vazamento, falha de compressão, mistura de água e óleo ou retorno do superaquecimento. A peça precisa ser limpa e inspecionada antes de decidir por reparo, solda ou substituição.",
@@ -254,9 +258,10 @@ export const serviceDetailPages = [
     slug: "montagem-de-cabecote",
     title: "Montagem e regulagem de cabeçote",
     shortTitle: "Montagem de cabeçote",
-    metaTitle: "Montagem de Cabeçote e Regulagem | Retífica Premium",
+    metaTitle:
+      "Montagem de Cabeçote e Regulagem em Sertãozinho-SP",
     metaDescription:
-      "Montagem e regulagem de cabeçote com conferência de componentes, vedação, válvulas e orientação para instalação correta.",
+      "Montagem e regulagem de cabeçote com conferência de componentes, vedação, válvulas e orientação para instalação correta. Atende Ribeirão Preto e região.",
     hero: "Montagem e regulagem de cabeçote com conferência técnica",
     intro:
       "A montagem correta é o que fecha o serviço de retífica com segurança. Após limpeza, medição e usinagem, a peça precisa de conferência de componentes, regulagem e orientação para voltar ao veículo sem retrabalho.",

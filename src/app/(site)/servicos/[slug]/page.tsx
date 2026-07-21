@@ -113,10 +113,16 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               {page.intro}
             </p>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">
-              Atendemos motoristas, oficinas, frotas e empresas em Sertãozinho,
-              Ribeirão Preto e{" "}
+              Atendemos motoristas, oficinas, frotas e empresas em Sertãozinho,{" "}
               <Link
-                href="/regiao-atendida"
+                href="/retifica-em-ribeirao-preto"
+                className="font-semibold text-rp-gold underline-offset-4 hover:underline"
+              >
+                Ribeirão Preto
+              </Link>{" "}
+              e{" "}
+              <Link
+                href="/servicos#regiao"
                 className="font-semibold text-rp-gold underline-offset-4 hover:underline"
               >
                 cidades próximas
@@ -127,7 +133,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               <TrackedWhatsAppLink
                 eventLabel={`service_${page.slug}_whatsapp`}
                 message={whatsappMessage}
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:text-base"
+                className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 md:h-14 md:text-base"
               >
                 Pedir orçamento no WhatsApp
               </TrackedWhatsAppLink>

@@ -12,21 +12,25 @@ import {
   TrackedServiceLink,
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
+import { VideoEmbed } from "@/components/site/VideoEmbed";
 import { primaryRegionalCities } from "@/lib/regional";
 import { servicePath } from "@/lib/service-pages";
 import { whatsappBudgetUrl } from "@/lib/site";
+import { videos } from "@/lib/videos";
 
 export const metadata: Metadata = {
-  title: "Retífica Premium",
+  title:
+    "Retífica de Motor e Cabeçote | Sertãozinho e Ribeirão Preto",
   description:
-    "Retífica de cabeçote, usinagem e diagnóstico para motor fumando, baixando óleo ou superaquecendo. Atendimento regional para motoristas e oficinas.",
+    "Retífica de motores e cabeçotes em Sertãozinho-SP, com atendimento a Ribeirão Preto e região. Diagnóstico técnico e orçamento pelo WhatsApp.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Retífica Premium",
+    title:
+      "Retífica de Motor e Cabeçote | Sertãozinho e Ribeirão Preto",
     description:
-      "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo.",
+      "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo. Atende Sertãozinho, Ribeirão Preto e região.",
     url: "https://www.premiumretifica.com.br",
     siteName: "Retífica Premium",
     locale: "pt_BR",
@@ -42,66 +46,133 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Retífica Premium",
+    title:
+      "Retífica de Motor e Cabeçote | Sertãozinho e Ribeirão Preto",
     description:
-      "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo.",
+      "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo. Atende Sertãozinho, Ribeirão Preto e região.",
     images: ["/retificapremium.jpeg"],
   },
 };
 
-export default function HomePage() {
-  // Ajuste este valor para controlar o “corte” (inclinação) da lateral esquerda da foto.
-  // Ex.: 25 = menos inclinado, 35 = padrão, 45 = mais inclinado (topo mais estreito)
-  const B2B_IMAGE_CUT_PERCENT = 34;
+const iconStroke = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.8,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+};
 
+const differentiators = [
+  {
+    title: "Entrega Rápida",
+    desc: "Prazos combinados e acompanhamento do serviço do início à entrega.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-8 w-8 md:h-9 md:w-9" {...iconStroke}>
+        <circle cx="12" cy="13" r="8" />
+        <path d="M12 9v4l2.5 2.5M9 2h6M12 5V2" />
+      </svg>
+    ),
+  },
+  {
+    title: "Garantia Documentada",
+    desc: "Garantia real por escrito e laudo técnico do serviço realizado.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-8 w-8 md:h-9 md:w-9" {...iconStroke}>
+        <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
+        <path d="M9 12l2 2 4-4" />
+      </svg>
+    ),
+  },
+  {
+    title: "Equipe Especializada",
+    desc: "Técnicos experientes em retífica de cabeçotes e usinagem de precisão.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-8 w-8 md:h-9 md:w-9" {...iconStroke}>
+        <path d="M14.7 6.3a4 4 0 010 5.6l-1.4 1.4 2.8 2.8 1.4-1.4 2 2-2.8 2.8-2-2-3.5-3.5a4 4 0 01-5.6-5.6l2.6 2.6 1.4-1.4-2.6-2.6a4 4 0 015.7 1.3z" />
+      </svg>
+    ),
+  },
+  {
+    title: "Padrão Premium",
+    desc: "Controle de qualidade e medição técnica em cada conjunto entregue.",
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-8 w-8 md:h-9 md:w-9" {...iconStroke}>
+        <path d="M7 4h10v3a5 5 0 01-10 0V4z" />
+        <path d="M7 5H4v2a3 3 0 003 3M17 5h3v2a3 3 0 01-3 3M9 14h6M8 20h8M10 14v3a2 2 0 002 2 2 2 0 002-2v-3" />
+      </svg>
+    ),
+  },
+];
+
+export default function HomePage() {
   return (
     <main className="min-h-screen bg-rp-navy md:bg-transparent">
       {/* 1. HERO — altura por viewport para que a faixa azul fique acima da dobra */}
-      <section className="relative z-10 flex min-h-[calc(100svh-14rem)] flex-col bg-rp-navy pt-6 pb-6 max-[640px]:min-h-[calc(100svh-(56px+env(safe-area-inset-bottom)+112px))] max-[640px]:pt-12 max-[640px]:pb-0 md:min-h-[calc(100svh-8.5rem)] md:pt-14 md:pb-4 lg:pt-14 lg:pb-5">
-        <div className="mx-auto flex max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
-          <div className="relative z-30 flex min-h-0 flex-1 flex-col items-center justify-start pb-10 max-[640px]:pb-0 text-center md:pb-12 lg:pb-14">
-            {/* Bloco Superior: Logo + H1 + Textos */}
-            <div className="flex flex-col items-center gap-3 md:gap-4 lg:gap-5 pt-4 max-[640px]:pt-12 md:pt-5 lg:pt-6">
-              {/* Logo */}
-              <div className="hidden h-[155px] w-[210px] md:block">
-                <Image
-                  src="/logo.png"
-                  alt="Retífica Premium"
-                  width={240}
-                  height={180}
-                  className="h-full w-full object-contain"
-                  priority
-                />
-              </div>
+      <section className="relative z-10 flex min-h-[calc(100svh-14rem)] flex-col overflow-hidden bg-rp-navy pt-6 pb-6 max-[640px]:min-h-[calc(100svh-(56px+env(safe-area-inset-bottom)+112px))] max-[640px]:pt-12 max-[640px]:pb-0 md:min-h-[calc(100svh-17rem)] md:pt-8 md:pb-0 lg:pt-8 lg:pb-0">
+        {/* Fundo com imagem de cabeçote + overlays para profundidade */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/cabecote.webp"
+            alt=""
+            fill
+            priority
+            fetchPriority="high"
+            sizes="100vw"
+            className="object-cover object-center opacity-[0.3]"
+            aria-hidden="true"
+          />
+          <div className="absolute inset-0 bg-[rgba(2,14,29,0.82)]" />
+          <div className="absolute inset-0 bg-linear-to-b from-rp-navy/70 via-rp-navy/40 to-rp-navy" />
+          {/* brilho dourado sutil atrás do título */}
+          <div className="absolute left-1/2 top-[38%] h-[420px] w-[680px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rp-gold/10 blur-[120px]" />
+        </div>
 
+        <div className="relative z-10 mx-auto flex max-w-7xl flex-1 flex-col px-4 sm:px-6 lg:px-8">
+          <div className="relative z-30 flex min-h-0 flex-1 flex-col items-center justify-start pb-8 max-[640px]:pb-0 text-center md:justify-center md:pb-6 lg:pb-6">
+            {/* Bloco Superior: H1 + Textos (logo já aparece no header) */}
+            <div className="flex flex-col items-center gap-3 md:gap-3.5 lg:gap-4 pt-4 max-[640px]:pt-12 md:pt-2 lg:pt-4">
               {/* Título em 2 linhas */}
               <h1 className="font-heading text-[28px] font-extrabold uppercase leading-[1.1] tracking-tight md:text-5xl md:leading-[1.08] lg:text-6xl lg:leading-[1.1]">
                 <span className="text-[#f59e0b]">RETÍFICA DE CABEÇOTE </span>
                 <br />
                 <span className="text-white text-[22px] md:text-[42px] lg:text-5xl">
-                  E DIAGNÓSTICO DE MOTOR
+                  COM PRECISÃO E GARANTIA REAL
                 </span>
               </h1>
 
               {/* Subtexto */}
-              <div className="flex flex-col gap-2 md:gap-2.5">
-                <p className="mx-auto max-w-2xl text-[14px] leading-relaxed text-gray-300 md:text-lg md:leading-relaxed">
+              <div className="flex flex-col gap-1.5 md:gap-2">
+                <p className="mx-auto max-w-3xl text-[14px] leading-relaxed text-gray-300 md:max-w-4xl md:text-lg md:leading-relaxed">
                   Usinagem de precisão, revisão de válvulas e montagem técnica
                   para carro, caminhão, ônibus e trator. Motor diesel, gasolina
                   ou álcool.
                 </p>
-                <p className="mx-auto max-w-2xl text-[13px] leading-relaxed text-gray-400 md:text-base md:leading-relaxed">
-                  Avaliamos sinais como motor fumando, baixando óleo,
-                  superaquecendo ou perdendo potência para indicar o reparo
-                  correto.
-                </p>
-                <p className="mx-auto max-w-2xl text-[13px] leading-relaxed text-gray-400 md:text-base md:leading-relaxed">
-                  Atendimento regional para motoristas, oficinas e frotas em
-                  Sertãozinho, Ribeirão Preto e cidades próximas.
-                </p>
               </div>
+              {/* Micro-prova social */}
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12px] text-gray-300 md:text-sm">
+                <span className="inline-flex items-center gap-1.5">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-4 w-4 text-rp-gold"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 2l2.9 6.26L21.5 9l-5 4.6L18 21l-6-3.5L6 21l1.5-7.4-5-4.6 6.6-.74z" />
+                  </svg>
+                  Clientes e oficinas que recomendam
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-rp-gold" />
+                  +5.000 motores retificados
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-rp-gold" />
+                  Desde 2004 em Sertãozinho-SP
+                </span>
+              </div>
+
               {/* Bloco Inferior: CTA */}
-              <div className="mt-5 max-[640px]:mt-8 md:mt-8 relative z-40">
+              <div className="relative z-40 mt-5 flex justify-center max-[640px]:mt-7 md:mt-5">
                 <HomeWhatsAppCtaLink />
               </div>
             </div>
@@ -110,7 +181,7 @@ export default function HomePage() {
       </section>
 
       {/* 2. BANNER/MARQUEE — sobe para aparecer na primeira dobra */}
-      <section className="pointer-events-none relative z-20 h-[calc(44px+env(safe-area-inset-bottom))] overflow-hidden bg-rp-royal max-[640px]:-mt-28 max-[640px]:h-[calc(56px+env(safe-area-inset-bottom))] md:h-auto md:-mt-32 md:py-4 lg:-mt-36 xl:-mt-40">
+      <section className="pointer-events-none relative z-20 h-[calc(44px+env(safe-area-inset-bottom))] overflow-hidden bg-rp-royal max-[640px]:-mt-12 max-[640px]:h-[calc(56px+env(safe-area-inset-bottom))] md:h-auto md:mt-0 md:py-4">
         <div className="marquee-infinite flex h-full items-center whitespace-nowrap text-[11px] font-semibold uppercase text-white max-[640px]:text-[12px] md:text-base">
           <div className="flex items-center gap-4 px-6 md:px-8">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -125,122 +196,55 @@ export default function HomePage() {
       </section>
 
       {/* 3. DIFERENCIAIS */}
-      <section className="relative min-h-[260px] overflow-hidden bg-rp-navy py-20 md:min-h-[340px] md:py-32">
+      <section className="relative overflow-hidden bg-rp-navy py-16 md:py-24">
         {/* Imagem de fundo */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/cabecote.webp"
-            alt="Cabeçote em processo de retífica"
+            alt=""
             fill
             sizes="100vw"
-            className="object-cover object-center opacity-[0.23]"
+            className="object-cover object-center opacity-[0.16]"
+            aria-hidden="true"
           />
-          {/* Overlay escuro */}
-          <div className="absolute inset-0 bg-[rgba(2,14,29,0.7)]" />
+          {/* Overlays para legibilidade e profundidade */}
+          <div className="absolute inset-0 bg-[rgba(2,14,29,0.82)]" />
+          <div className="absolute inset-0 bg-linear-to-b from-rp-navy via-transparent to-rp-navy" />
         </div>
 
         {/* Conteúdo por cima da imagem */}
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-center">
-            {/* Espaço vazio à esquerda (para manter grid) */}
-            <div className="hidden md:block" />
-
-            {/* Direita: Cards */}
-            <div className="space-y-8">
-              <div className="text-center md:text-left">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-rp-gold">
-                  DIFERENCIAIS
-                </p>
-                <h2 className="mb-4 font-heading text-[24px] font-bold leading-tight text-white md:text-4xl">
-                  Por que a Retífica Premium é a escolha certa para seu motor?
-                </h2>
-                <div className="mb-8 flex gap-2">
-                  <div className="h-1 w-12 bg-[#f59e0b]" />
-                  <div className="h-1 w-24 bg-rp-accent" />
-                </div>
-              </div>
-
-              {/* Grid 2x2 de cards */}
-              <div className="grid grid-cols-1 justify-items-center gap-6 md:grid-cols-2 md:gap-4">
-                {/* Card 1: Entrega Rápida */}
-                <div className="flex h-[216px] w-[216px] flex-col items-center justify-center rounded-lg bg-white p-4 text-center shadow-lg md:h-auto md:w-auto md:p-6">
-                  <div className="mb-4 flex justify-center">
-                    <Image
-                      src="/clockhome.png"
-                      alt="Entrega rápida"
-                      width={81}
-                      height={75}
-                      className="h-[56px] w-[56px] object-contain md:h-[75px] md:w-[81px]"
-                    />
-                  </div>
-
-                  <h3 className="mb-2 font-heading text-[13px] font-bold text-rp-navy md:text-sm">
-                    Entrega Rápida
-                  </h3>
-                  <p className="text-[11px] text-gray-600 md:text-xs">
-                    Prazos combinados e acompanhamento do serviço
-                  </p>
-                </div>
-
-                {/* Card 2: Garantia Estendida */}
-                <div className="flex h-[216px] w-[216px] flex-col items-center justify-center rounded-lg bg-white p-4 text-center shadow-lg md:h-auto md:w-auto md:p-6">
-                  <div className="mb-4 flex justify-center">
-                    <Image
-                      src="/mencionhome.png"
-                      alt="Garantia estendida"
-                      width={81}
-                      height={75}
-                      className="h-[56px] w-[56px] object-contain md:h-[75px] md:w-[81px]"
-                    />
-                  </div>
-                  <h3 className="mb-2 font-heading text-[13px] font-bold text-rp-navy md:text-sm">
-                    Garantia Estendida
-                  </h3>
-                  <p className="text-[11px] text-gray-600 md:text-xs">
-                    Garantia real e documentação clara
-                  </p>
-                </div>
-
-                {/* Card 3: Equipe Especializada */}
-                <div className="flex h-[216px] w-[216px] flex-col items-center justify-center rounded-lg bg-white p-4 text-center shadow-lg md:h-auto md:w-auto md:p-6">
-                  <div className="mb-4 flex justify-center">
-                    <Image
-                      src="/peoplehome.png"
-                      alt="Equipe especializada"
-                      width={81}
-                      height={75}
-                      className="h-[56px] w-[56px] object-contain md:h-[75px] md:w-[81px]"
-                    />
-                  </div>
-                  <h3 className="mb-2 font-heading text-[13px] font-bold text-rp-navy md:text-sm">
-                    Equipe Especializada
-                  </h3>
-                  <p className="text-[11px] text-gray-600 md:text-xs">
-                    Técnicos experientes em retífica de cabeçotes
-                  </p>
-                </div>
-
-                {/* Card 4: Padrão Premium */}
-                <div className="flex h-[216px] w-[216px] flex-col items-center justify-center rounded-lg bg-white p-4 text-center shadow-lg md:h-auto md:w-auto md:p-6">
-                  <div className="mb-4 flex justify-center">
-                    <Image
-                      src="/trophyhome.png"
-                      alt="Padrão Premium"
-                      width={81}
-                      height={75}
-                      className="h-[56px] w-[56px] object-contain md:h-[75px] md:w-[81px]"
-                    />
-                  </div>
-
-                  <h3 className="mb-2 font-heading text-[13px] font-bold text-rp-navy md:text-sm">
-                    Padrão Premium
-                  </h3>
-                  <p className="text-[11px] text-gray-600 md:text-xs">
-                    Controle de qualidade em cada entrega
-                  </p>
-                </div>
-              </div>
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-rp-gold">
+              DIFERENCIAIS
+            </p>
+            <h2 className="font-heading text-[26px] font-bold leading-tight text-white md:text-4xl">
+              Por que a Retífica Premium é a escolha certa para seu motor?
+            </h2>
+            <div className="mx-auto mt-5 flex justify-center gap-2">
+              <div className="h-1 w-12 rounded-full bg-rp-gold" />
+              <div className="h-1 w-24 rounded-full bg-rp-accent" />
             </div>
+          </div>
+
+          {/* Grid full-width de diferenciais */}
+          <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-4">
+            {differentiators.map((item) => (
+              <div
+                key={item.title}
+                className="group flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center shadow-[0_18px_45px_rgba(0,0,0,0.35)] backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:border-rp-gold/40 hover:bg-white/[0.07] md:p-7"
+              >
+                <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-rp-gold/15 text-rp-gold ring-1 ring-rp-gold/30 transition-colors group-hover:bg-rp-gold group-hover:text-rp-navy md:h-[72px] md:w-[72px]">
+                  {item.icon}
+                </div>
+                <h3 className="font-heading text-base font-bold text-white md:text-lg">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-300/90">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -294,24 +298,24 @@ export default function HomePage() {
             {[
               {
                 img: "/retificademotor.jpg",
-                alt: "Bancada de retífica de motores em usinagem",
-                title: "Retífica de Motores",
-                desc: "Correção técnica para desgaste, perda de compressão, consumo de óleo e falhas de vedação.",
-                href: servicePath("retifica-de-motor"),
+                alt: "Cabeçote em bancada de usinagem",
+                title: "Retífica de Cabeçote",
+                desc: "Plaina, sedes, válvulas e guias com medição de empeno e vedação para recuperar a compressão.",
+                href: servicePath("retifica-de-cabecote"),
               },
               {
                 img: "/montagemdemotores.jpg",
-                alt: "Montagem técnica de motor em bancada",
-                title: "Montagem de Motores",
-                desc: "Montagem com conferência de componentes, regulagens e orientação para funcionamento seguro.",
+                alt: "Montagem técnica de cabeçote em bancada",
+                title: "Montagem de Cabeçote",
+                desc: "Conferência de componentes, montagem de válvulas e regulagem final para vedação correta.",
                 href: servicePath("montagem-de-cabecote"),
               },
               {
                 img: "/diagnosticotecnico.webp",
-                alt: "Diagnóstico técnico de motor automotivo",
+                alt: "Diagnóstico técnico de cabeçote",
                 title: "Diagnóstico Técnico",
-                desc: "Análise para motor fumando, baixando óleo, superaquecendo, falhando ou com perda de potência.",
-                href: servicePath("retifica-de-cabecote"),
+                desc: "Avaliação de sintomas como motor fumando, baixando óleo ou superaquecendo para indicar o reparo do cabeçote.",
+                href: servicePath("teste-de-trinca"),
               },
             ].map((card, index) => {
               const stackClass = `service-card-stack service-card-stack-${
@@ -411,171 +415,117 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 4.5 VÍDEO — institucional (aparece quando houver youtubeId em lib/videos.ts) */}
+      {videos.homeShowcase.youtubeId && (
+        <section className="bg-rp-navy py-16 md:py-24">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto mb-8 max-w-2xl text-center">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-rp-gold">
+                A Retífica por dentro
+              </p>
+              <h2 className="font-heading text-2xl font-bold text-white md:text-4xl">
+                Veja nossa estrutura e o padrão de cada serviço
+              </h2>
+            </div>
+            <VideoEmbed slot={videos.homeShowcase} eventLabel="home_video" />
+          </div>
+        </section>
+      )}
+
       {/* 5. B2B */}
-      <section className="relative overflow-hidden bg-rp-navy py-24 md:py-44">
-        <div className="pointer-events-none absolute -top-32 -bottom-32 left-1/2 z-20 hidden w-[140px] translate-x-[calc(-50%+140px)] -skew-x-20 md:-top-56 md:-bottom-56 md:block">
-          {/* Parte de cima */}
-          <div
-            className="absolute left-0 top-0 w-full bg-[#F4BC4A]"
-            style={{
-              height: "calc(50% - 120px)",
-              // corte diagonal na parte de baixo (mesmo sentido da sua de baixo perfeita)
-              clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 150px))",
-            }}
-          />
+      <section className="relative overflow-hidden bg-rp-navy py-20 md:py-28 lg:py-36">
+        {/* Acento diagonal decorativo (atrás do conteúdo, sem cobrir nada) */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-0 hidden w-1/3 -skew-x-12 bg-linear-to-l from-rp-gold/10 to-transparent md:block" />
 
-          {/* Parte de baixo */}
-          <div
-            className="absolute left-0 bottom-0 w-full bg-[#F4BC4A]"
-            style={{
-              height: "calc(50% - 120px)",
-              // corte diagonal na parte de cima
-              clipPath: "polygon(0 80px, 100% 0, 100% 100%, 0 100%)",
-            }}
-          />
-        </div>
-
-        {/* ===== FAIXA FINA AMARELA (SEM corte, inteira) ===== */}
-        <div className="pointer-events-none absolute -top-32 -bottom-32 left-1/2 z-30 hidden w-[24px] translate-x-[calc(-50%+300px)] -skew-x-20 origin-center bg-[#F4BC4A] md:-top-56 md:-bottom-56 md:block" />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-stretch gap-12 md:grid-cols-2 md:gap-0">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
             {/* Esquerda: Texto */}
-            <div className="relative z-10 flex flex-col items-center justify-center space-y-5 text-center text-white md:items-start md:space-y-6 md:text-left md:pr-10">
-              {/* Título pequeno "PARCEIROS B2B" */}
-              <p
-                className="uppercase text-rp-accent text-sm md:text-[25.63px]"
-                style={{
-                  fontFamily: "var(--font-rajdhani)",
-                  fontWeight: 400,
-                  lineHeight: "100%",
-                  letterSpacing: "0%",
-                }}
-              >
+            <div className="flex flex-col items-center text-center text-white md:items-start md:text-left">
+              <p className="font-heading text-sm font-semibold uppercase tracking-[0.18em] text-rp-gold md:text-base">
                 PARCEIROS B2B
               </p>
 
-              {/* Headline "Programa B2B para Oficinas Parceiras" */}
-              <h2 className="b2b-headline text-[26px]! leading-tight md:text-[66.78px]!">
-                <span className="text-rp-accent">Programa B2B</span> para
-                Oficinas Parceiras
+              <h2 className="b2b-headline mt-3 text-[28px]! leading-tight md:text-[52px]!">
+                <span className="text-rp-accent">Programa B2B</span> para Oficinas
+                Parceiras
               </h2>
 
-              {/* Parágrafo descritivo */}
-              <p
-                className="max-w-[520px] text-sm leading-relaxed text-gray-300 md:max-w-none md:text-[24px]"
-                style={{
-                  fontFamily: "var(--font-open-sans)",
-                  fontWeight: 400,
-                  lineHeight: "135%",
-                  letterSpacing: "0%",
-                }}
-              >
-                Se você é dono ou gestor de oficina mecânica, tenha{" "}
-                <strong
-                  className="font-bold text-white"
-                  style={{
-                    fontFamily: "var(--font-open-sans)",
-                    fontWeight: 700,
-                    lineHeight: "135%",
-                    letterSpacing: "0%",
-                  }}
-                >
-                  preços exclusivos
-                </strong>
-                ,{" "}
-                <strong
-                  className="font-bold text-white"
-                  style={{
-                    fontFamily: "var(--font-open-sans)",
-                    fontWeight: 700,
-                    lineHeight: "135%",
-                    letterSpacing: "0%",
-                  }}
-                >
-                  atendimento prioritário
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-gray-300 md:text-lg">
+                É dono de oficina mecânica? Mande seus cabeçotes pra gente e
+                ganhe{" "}
+                <strong className="font-bold text-white">site próprio</strong>,{" "}
+                <strong className="font-bold text-white">
+                  sistema pra organizar a oficina
                 </strong>{" "}
-                e{" "}
-                <strong
-                  className="font-bold text-white"
-                  style={{
-                    fontFamily: "var(--font-open-sans)",
-                    fontWeight: 700,
-                    lineHeight: "135%",
-                    letterSpacing: "0%",
-                  }}
-                >
-                  suporte técnico dedicado
-                </strong>{" "}
-                para ganhar margem, prazo e confiança com seus clientes.
+                e <strong className="font-bold text-white">divulgação</strong> —
+                sem pagar nada a mais.
               </p>
 
-              {/* Lista de benefícios */}
-              <ul className="space-y-3 pt-2 md:space-y-4">
+              <ul className="mt-6 space-y-3 text-left">
                 {[
-                  "Preços especiais e descontos progressivos",
-                  "Economia na compra de peças e componentes",
-                  "Atendimento prioritário e prazos reduzidos",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 md:gap-3">
-                    <span
-                      className="inline-flex h-[26px] w-[26px] shrink-0 items-center justify-center text-[#F3B839] md:h-[34px] md:w-[34px]"
-                      aria-hidden="true"
-                    >
-                      <span className="material-symbols-outlined leading-none text-[24px] md:text-[34px]">
-                        check_circle
-                      </span>
+                  "Site da sua oficina, de graça (vale mais de R$ 4 mil)",
+                  "Sistema pra organizar orçamentos e serviços",
+                  "A gente busca o cabeçote e ainda te indica clientes",
+                ].map((item) => (
+                  <li key={item} className="flex items-center gap-3">
+                    <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-rp-gold/15 text-rp-gold ring-1 ring-rp-gold/30">
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2.4}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M5 12.5l4 4 10-10" />
+                      </svg>
                     </span>
-                    <span
-                      className="text-sm font-bold text-white md:text-[20.34px]"
-                      style={{
-                        fontFamily: "var(--font-open-sans)",
-                        fontWeight: 700,
-                        lineHeight: "1",
-                        letterSpacing: "0%",
-                      }}
-                    >
+                    <span className="text-sm font-semibold text-white md:text-base">
                       {item}
                     </span>
                   </li>
                 ))}
               </ul>
 
-              {/* CTA */}
-              <div className="pt-6">
-                <Link
-                  href="/contato#formulario"
-                  className="inline-flex h-12 items-center justify-center rounded-[62px] px-8 text-sm font-bold uppercase text-white transition hover:brightness-110 md:h-[68px] md:px-10 md:text-base md:self-start"
+              <div className="mt-8">
+                <TrackedCtaLink
+                  href="/b2b"
+                  eventLabel="home_b2b_partner"
+                  className="inline-flex h-12 items-center justify-center rounded-full px-8 text-sm font-bold uppercase text-white shadow-lg transition hover:brightness-110 md:h-[60px] md:px-10 md:text-base"
                   style={{
-                    background:
-                      "linear-gradient(0deg, #1654A6 0%, #0E62F6 100%)",
+                    background: "linear-gradient(0deg, #1654A6 0%, #0E62F6 100%)",
                   }}
                 >
-                  Quero ser parceiro
-                </Link>
+                  Conhecer o programa
+                </TrackedCtaLink>
               </div>
             </div>
 
-            {/* Direita: Imagem (encostada na direita) */}
-            <div className="relative hidden min-h-[420px] overflow-hidden md:block md:-my-56 md:min-h-[860px] md:-mr-[calc(50vw-50%)]">
-              {/*
-                Recorte em formato de trapézio (direita reta, esquerda inclinada).
-                Ajuste o valor em `B2B_IMAGE_CUT_PERCENT` para controlar a inclinação.
-              */}
+            {/* Direita: Imagem */}
+            <div className="relative mx-auto w-full max-w-[640px]">
               <div
-                className="absolute inset-y-0 right-0 w-full md:w-[720px] lg:w-[1075px] max-w-full"
-                style={{
-                  clipPath: `polygon(${B2B_IMAGE_CUT_PERCENT}% 0%, 100% 0%, 100% 100%, 0% 100%)`,
-                }}
+                className="relative w-full overflow-hidden rounded-2xl border border-rp-gold/25 shadow-[0_25px_60px_rgba(0,0,0,0.45)]"
+                style={{ aspectRatio: "5 / 4" }}
               >
                 <Image
                   src="/oficina.jpeg"
-                  alt="Oficina parceira Retífica Premium"
+                  alt="Fachada da Retífica Premium em Sertãozinho-SP"
                   fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes="(max-width: 768px) 92vw, 45vw"
                   className="object-cover"
                 />
-                {/* Overlay leve */}
-                <div className="absolute inset-0 bg-black/10" />
+                <div className="absolute inset-0 bg-linear-to-t from-rp-navy/55 via-transparent to-transparent" />
+              </div>
+              {/* Selo flutuante */}
+              <div className="absolute -bottom-4 -left-4 hidden rounded-xl bg-rp-gold px-5 py-3 shadow-xl md:block">
+                <p className="font-heading text-xl font-extrabold leading-none text-rp-navy">
+                  Sem custo
+                </p>
+                <p className="mt-1 text-xs font-semibold text-rp-navy/80">
+                  pra oficina parceira
+                </p>
               </div>
             </div>
           </div>
@@ -808,7 +758,13 @@ export default function HomePage() {
           <p className="mx-auto mb-6 max-w-[520px] text-[14px] leading-relaxed text-gray-300 md:mb-8 md:max-w-3xl md:text-lg">
             A Retífica Premium fica em Sertãozinho e atende motoristas,
             oficinas e frotas que procuram retífica de cabeçote, retífica de
-            motor, plaina, banho químico e diagnóstico técnico em Ribeirão Preto
+            motor, plaina, banho químico e diagnóstico técnico em{" "}
+            <Link
+              href="/retifica-em-ribeirao-preto"
+              className="font-semibold text-rp-gold underline-offset-4 hover:underline"
+            >
+              Ribeirão Preto
+            </Link>{" "}
             e cidades próximas.
           </p>
           <div className="mb-8 flex flex-wrap justify-center gap-2">
@@ -822,15 +778,15 @@ export default function HomePage() {
             ))}
           </div>
           <p className="mb-6 text-[13px] leading-relaxed text-gray-400 md:mb-8 md:text-base">
-            A lista completa de cidades em até 60 km fica em uma página
-            regional própria, evitando conteúdo duplicado e ajudando o Google a
-            entender a área real de atendimento.
+            Atendemos em um raio de até cerca de 60 km de Sertãozinho. Mande o
+            sintoma ou a foto da peça pelo WhatsApp e confirmamos rápido se
+            cobrimos a sua cidade.
           </p>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <TrackedWhatsAppLink
               href={whatsappBudgetUrl}
               eventLabel="home_region_cta"
-              className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:px-10 md:text-base"
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 md:h-14 md:px-10 md:text-base"
             >
               <svg
                 className="mr-2 h-6 w-6"
@@ -842,7 +798,7 @@ export default function HomePage() {
               Chamar no WhatsApp
             </TrackedWhatsAppLink>
             <TrackedCtaLink
-              href="/regiao-atendida"
+              href="/servicos#regiao"
               eventLabel="home_region_page"
               className="inline-flex h-12 items-center justify-center rounded-full border border-white/35 px-8 text-sm font-bold text-white transition-all hover:bg-white/10 md:h-14 md:px-10 md:text-base"
             >
