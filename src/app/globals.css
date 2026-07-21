@@ -8,6 +8,7 @@
   --rp-gold: #fbbf24;
   --rp-gray: #f3f4f6;
   --rp-dark: #111827;
+  --font-open-sans: Arial, Helvetica, sans-serif;
 
   --radius-card: 16px;
   --radius-btn: 9999px;
@@ -24,7 +25,6 @@
   --font-heading: var(--font-rajdhani);
   --font-body: var(--font-open-sans);
   --font-rajdhani: var(--font-rajdhani);
-  --font-open-sans: var(--font-open-sans);
 
   --radius-card: var(--radius-card);
   --radius-btn: var(--radius-btn);

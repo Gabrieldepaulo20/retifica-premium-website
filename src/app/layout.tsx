@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Rajdhani, Open_Sans } from "next/font/google";
+import { Rajdhani } from "next/font/google";
 import Script from "next/script";
 import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
 import { AnalyticsRuntime } from "@/components/site/AnalyticsRuntime";
@@ -17,13 +17,6 @@ const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
   display: "swap",
 });
 
@@ -143,7 +136,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         )}
       </head>
       <body
-        className={`${rajdhani.variable} ${openSans.variable} font-body antialiased`}
+        className={`${rajdhani.variable} font-body antialiased`}
       >
         {GTM_ID && (
           <noscript>
