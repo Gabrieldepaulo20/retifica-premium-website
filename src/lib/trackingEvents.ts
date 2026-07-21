@@ -20,7 +20,13 @@ type GaEventName =
   | "directions_click"
   | "cta_click"
   | "service_detail_click"
+  | "form_view"
   | "form_start"
+  | "form_field_complete"
+  | "form_submit_attempt"
+  | "form_validation_error"
+  | "form_abandon"
+  | "form_submit_error"
   | "generate_lead"
   | "scroll_depth";
 

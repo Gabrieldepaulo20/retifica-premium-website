@@ -1,7 +1,7 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { siteConfig } from "@/lib/site";
 import {
   buildWhatsAppUrlWithAttribution,
@@ -18,6 +18,8 @@ type ContactFormState = {
   mensagem: string;
 };
 
+type ContactField = keyof ContactFormState;
+
 const baseState: ContactFormState = {
   nome: "",
   telefone: "",
@@ -25,6 +27,14 @@ const baseState: ContactFormState = {
   assunto: "",
   mensagem: "",
 };
+
+const trackedFields: ContactField[] = [
+  "nome",
+  "telefone",
+  "email",
+  "assunto",
+  "mensagem",
+];
 
 const subjectLabels: Record<string, string> = {
   orcamento: "Solicitar orçamento",
@@ -56,7 +66,6 @@ export function ContatoWhatsAppForm({
     assunto: defaultSubject ?? "",
   };
   const [form, setForm] = useState(initialState);
-  const [formStarted, setFormStarted] = useState(false);
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [statusMessage, setStatusMessage] = useState("");
@@ -66,27 +75,168 @@ export function ContatoWhatsAppForm({
       "Olá, vim pelo site da Retífica Premium e gostaria de atendimento."
     )
   );
+  const formRef = useRef<HTMLFormElement>(null);
+  const formViewedRef = useRef(false);
+  const startedAtRef = useRef<number | null>(null);
+  const lastFieldRef = useRef<ContactField | null>(null);
+  const completedFieldsRef = useRef(new Set<ContactField>());
+  const submittedRef = useRef(false);
+  const abandonmentTrackedRef = useRef(false);
+
+  const formTimingSeconds = useCallback(() => {
+    if (!startedAtRef.current) return 0;
+    return Math.max(0, Math.round((Date.now() - startedAtRef.current) / 1000));
+  }, []);
+
+  const formProgressParams = useCallback(() => {
+    const completed = completedFieldsRef.current.size;
+
+    return {
+      form_name: leadLabel,
+      fields_completed: completed,
+      completion_percent: Math.round((completed / trackedFields.length) * 100),
+      form_elapsed_seconds: formTimingSeconds(),
+    };
+  }, [formTimingSeconds, leadLabel]);
+
+  const trackFormAbandonment = useCallback(
+    (reason: "page_exit" | "form_unmounted") => {
+      if (
+        !startedAtRef.current ||
+        submittedRef.current ||
+        abandonmentTrackedRef.current
+      ) {
+        return;
+      }
+
+      abandonmentTrackedRef.current = true;
+      trackMarketingEvent("form_abandon", {
+        event_category: "lead",
+        event_label: leadLabel,
+        method: "email_form",
+        abandon_reason: reason,
+        last_field: lastFieldRef.current ?? "unknown",
+        transport_type: "beacon",
+        ...formProgressParams(),
+      });
+    },
+    [formProgressParams, leadLabel]
+  );
+
+  useEffect(() => {
+    const formElement = formRef.current;
+    if (!formElement) return;
+
+    const trackView = () => {
+      if (formViewedRef.current) return;
+      formViewedRef.current = true;
+      trackMarketingEvent("form_view", {
+        event_category: "lead",
+        event_label: leadLabel,
+        method: "email_form",
+        form_name: leadLabel,
+      });
+    };
+
+    if (!("IntersectionObserver" in window)) {
+      trackView();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          trackView();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.35 }
+    );
+
+    observer.observe(formElement);
+    return () => observer.disconnect();
+  }, [leadLabel]);
+
+  useEffect(() => {
+    const handlePageExit = () => trackFormAbandonment("page_exit");
+    window.addEventListener("pagehide", handlePageExit);
+
+    return () => {
+      window.removeEventListener("pagehide", handlePageExit);
+      trackFormAbandonment("form_unmounted");
+    };
+  }, [trackFormAbandonment]);
 
   function handleFormStart() {
-    if (formStarted) return;
+    if (startedAtRef.current) return;
 
-    setFormStarted(true);
+    startedAtRef.current = Date.now();
+    submittedRef.current = false;
+    abandonmentTrackedRef.current = false;
     trackMarketingEvent("form_start", {
       event_category: "lead",
       event_label: leadLabel,
       method: "email_form",
+      form_name: leadLabel,
     });
   }
 
   function updateField(
-    field: keyof ContactFormState,
-    value: ContactFormState[keyof ContactFormState]
+    field: ContactField,
+    value: ContactFormState[ContactField]
   ) {
     setForm((current) => ({ ...current, [field]: value }));
     if (status !== "idle") {
       setStatus("idle");
       setStatusMessage("");
     }
+  }
+
+  function handleFieldFocus(field: ContactField) {
+    lastFieldRef.current = field;
+    handleFormStart();
+  }
+
+  function handleFieldComplete(field: ContactField, value: string) {
+    lastFieldRef.current = field;
+    if (!value.trim() || completedFieldsRef.current.has(field)) return;
+
+    completedFieldsRef.current.add(field);
+    trackMarketingEvent("form_field_complete", {
+      event_category: "lead",
+      event_label: `${leadLabel}_${field}`,
+      method: "email_form",
+      field_name: field,
+      ...formProgressParams(),
+    });
+  }
+
+  function validationReason(
+    element: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  ) {
+    if (element.validity.valueMissing) return "required";
+    if (element.validity.typeMismatch) return "invalid_format";
+    if (element.validity.tooShort) return "too_short";
+    if (element.validity.patternMismatch) return "pattern_mismatch";
+    return "invalid_value";
+  }
+
+  function handleInvalid(event: FormEvent<Element>) {
+    const element = event.currentTarget as
+      | HTMLInputElement
+      | HTMLSelectElement
+      | HTMLTextAreaElement;
+    const field = element.name as ContactField;
+    lastFieldRef.current = field;
+    handleFormStart();
+    trackMarketingEvent("form_validation_error", {
+      event_category: "lead",
+      event_label: `${leadLabel}_${field}`,
+      method: "email_form",
+      field_name: field,
+      validation_reason: validationReason(element),
+      ...formProgressParams(),
+    });
   }
 
   function getSelectedB2BLevel() {
@@ -126,6 +276,13 @@ export function ContatoWhatsAppForm({
     setFallbackUrl(whatsAppUrl);
     setStatus("sending");
     setStatusMessage("");
+    trackMarketingEvent("form_submit_attempt", {
+      event_category: "lead",
+      event_label: leadLabel,
+      method: "email_form",
+      lead_subject: form.assunto,
+      ...formProgressParams(),
+    });
 
     try {
       const response = await fetch("/api/contato", {
@@ -155,20 +312,30 @@ export function ContatoWhatsAppForm({
         event_label: `${leadLabel}_email`,
         b2b_level: b2bLevel,
         method: "email_form",
+        form_name: leadLabel,
+        lead_subject: form.assunto,
+        form_elapsed_seconds: formTimingSeconds(),
       });
 
+      submittedRef.current = true;
+      abandonmentTrackedRef.current = true;
+      startedAtRef.current = null;
+      lastFieldRef.current = null;
+      completedFieldsRef.current.clear();
       setForm(initialState);
       setWebsite("");
-      setFormStarted(false);
       setStatus("success");
       setStatusMessage(
         "Mensagem enviada. A equipe da Retífica Premium recebeu sua solicitação e vai responder em breve."
       );
     } catch (error) {
-      trackMarketingEvent("cta_click", {
-        event_category: "engagement",
-        event_label: `${leadLabel}_email_error`,
+      trackMarketingEvent("form_submit_error", {
+        event_category: "lead",
+        event_label: leadLabel,
         method: "email_form",
+        error_type: "delivery_or_network",
+        lead_subject: form.assunto,
+        ...formProgressParams(),
       });
 
       setStatus("error");
@@ -184,10 +351,24 @@ export function ContatoWhatsAppForm({
 
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit}
-      onFocusCapture={handleFormStart}
       className="space-y-4 max-[640px]:space-y-3 md:space-y-5"
     >
+      <div className="rounded-2xl border border-[#053282]/10 bg-white/80 px-4 py-3 text-[#17325d] shadow-sm">
+        <p
+          className="text-sm font-bold"
+          style={{ fontFamily: "var(--font-open-sans)" }}
+        >
+          Retorno rápido por WhatsApp ou ligação
+        </p>
+        <p
+          className="mt-1 text-xs leading-relaxed text-[#42526d]"
+          style={{ fontFamily: "var(--font-open-sans)" }}
+        >
+          Conte o que está acontecendo com o motor. Seu pedido vai direto para a equipe de atendimento.
+        </p>
+      </div>
       <div>
         <label
           htmlFor="nome"
@@ -204,6 +385,9 @@ export function ContatoWhatsAppForm({
           autoComplete="name"
           value={form.nome}
           onChange={(event) => updateField("nome", event.target.value)}
+          onFocus={() => handleFieldFocus("nome")}
+          onBlur={(event) => handleFieldComplete("nome", event.target.value)}
+          onInvalid={handleInvalid}
           className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
           placeholder="Seu nome completo"
           style={{ fontFamily: "var(--font-open-sans)" }}
@@ -226,6 +410,9 @@ export function ContatoWhatsAppForm({
           autoComplete="tel"
           value={form.telefone}
           onChange={(event) => updateField("telefone", event.target.value)}
+          onFocus={() => handleFieldFocus("telefone")}
+          onBlur={(event) => handleFieldComplete("telefone", event.target.value)}
+          onInvalid={handleInvalid}
           className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
           placeholder="(16) 99999-9999"
           style={{ fontFamily: "var(--font-open-sans)" }}
@@ -238,7 +425,7 @@ export function ContatoWhatsAppForm({
           className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
           style={{ fontFamily: "var(--font-open-sans)" }}
         >
-          E-mail
+          E-mail <span className="font-normal text-white/75">(opcional)</span>
         </label>
         <input
           type="email"
@@ -247,6 +434,9 @@ export function ContatoWhatsAppForm({
           autoComplete="email"
           value={form.email}
           onChange={(event) => updateField("email", event.target.value)}
+          onFocus={() => handleFieldFocus("email")}
+          onBlur={(event) => handleFieldComplete("email", event.target.value)}
+          onInvalid={handleInvalid}
           className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
           placeholder="seu@email.com"
           style={{ fontFamily: "var(--font-open-sans)" }}
@@ -267,6 +457,9 @@ export function ContatoWhatsAppForm({
           required
           value={form.assunto}
           onChange={(event) => updateField("assunto", event.target.value)}
+          onFocus={() => handleFieldFocus("assunto")}
+          onBlur={(event) => handleFieldComplete("assunto", event.target.value)}
+          onInvalid={handleInvalid}
           className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
           style={{ fontFamily: "var(--font-open-sans)" }}
         >
@@ -293,6 +486,9 @@ export function ContatoWhatsAppForm({
           required
           value={form.mensagem}
           onChange={(event) => updateField("mensagem", event.target.value)}
+          onFocus={() => handleFieldFocus("mensagem")}
+          onBlur={(event) => handleFieldComplete("mensagem", event.target.value)}
+          onInvalid={handleInvalid}
           className="min-h-[120px] w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 py-2.5 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:min-h-[100px] max-[640px]:px-3 md:min-h-[170px] md:px-4 md:py-3 md:text-base"
           placeholder="Conte o sintoma: motor fumando, baixando óleo, superaquecendo, perda de potência..."
           style={{ fontFamily: "var(--font-open-sans)" }}
@@ -358,8 +554,14 @@ export function ContatoWhatsAppForm({
             fontFamily: "var(--font-rajdhani)",
           }}
         >
-          {isSending ? "Enviando..." : "Enviar solicitação"}
+          {isSending ? "Enviando..." : "Quero receber meu orçamento"}
         </button>
+        <p
+          className="mt-3 text-center text-xs text-white/85"
+          style={{ fontFamily: "var(--font-open-sans)" }}
+        >
+          Sem compromisso. A equipe recebe seus dados por e-mail e responde pelo contato informado.
+        </p>
       </div>
     </form>
   );
