@@ -32,6 +32,7 @@ export function Header() {
             alt="Retífica Premium"
             width={729}
             height={551}
+            sizes="(max-width: 767px) 125px, 111px"
             className="h-auto w-[125px] object-contain md:h-[84px] md:w-auto"
           />
         </Link>

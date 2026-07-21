@@ -99,9 +99,7 @@ export default async function ProblemDetailPage({ params }: ProblemPageProps) {
               alt=""
               fill
               sizes="100vw"
-              className="object-cover opacity-20"
-              priority
-              fetchPriority="high"
+              className="hidden object-cover opacity-20 md:block"
               aria-hidden="true"
             />
             <div className="absolute inset-0 bg-linear-to-b from-[#051B3D]/95 via-[#051B3D]/88 to-[#020E1D]" />

@@ -494,11 +494,11 @@ export default function B2BPage() {
         <div className="absolute inset-0">
           <Image
             src="/oficina.jpeg"
-            alt="Fachada e rotina de oficina parceira da Retífica Premium"
+            alt=""
             fill
-            priority
             sizes="100vw"
-            className="object-cover opacity-22"
+            className="hidden object-cover opacity-22 md:block"
+            aria-hidden="true"
           />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(245,184,46,0.16),transparent_34%),linear-gradient(180deg,rgba(7,17,31,0.94)_0%,rgba(7,17,31,0.98)_78%,#0A1424_100%)]" />
         </div>

@@ -115,10 +115,8 @@ export default function HomePage() {
             src="/cabecote.webp"
             alt=""
             fill
-            priority
-            fetchPriority="high"
             sizes="100vw"
-            className="object-cover object-center opacity-[0.3]"
+            className="hidden object-cover object-center opacity-[0.3] md:block"
             aria-hidden="true"
           />
           <div className="absolute inset-0 bg-[rgba(2,14,29,0.82)]" />
@@ -340,7 +338,7 @@ export default function HomePage() {
                         alt={card.alt}
                         width={276}
                         height={209}
-                        sizes="(max-width: 768px) 90vw, 276px"
+                        sizes="(max-width: 768px) 214px, 276px"
                         quality={75}
                         className="h-full w-full object-cover object-center"
                         loading="lazy"

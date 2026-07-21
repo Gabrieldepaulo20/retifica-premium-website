@@ -395,9 +395,8 @@ export default function ServicosPage() {
             alt=""
             fill
             sizes="100vw"
-            className="object-cover object-center opacity-25"
+            className="hidden object-cover object-center opacity-25 md:block"
             aria-hidden="true"
-            priority
           />
           <div className="absolute inset-0 bg-[rgba(2,14,29,0.82)]" />
           <div className="absolute inset-0 bg-linear-to-b from-rp-navy via-rp-navy/70 to-rp-navy" />

@@ -50,6 +50,7 @@ export function Footer() {
                 alt="Retífica Premium"
                 width={729}
                 height={551}
+                sizes="180px"
                 className="h-auto w-[180px]"
               />
             </Link>
@@ -220,6 +221,7 @@ export function Footer() {
                   alt="Retífica Premium"
                   width={729}
                   height={551}
+                  sizes="140px"
                   className="h-auto w-[140px]"
                 />
               </Link>
