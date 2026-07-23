@@ -36,6 +36,8 @@ export type ExternalMarketingResult = {
   storedEventId?: string;
 };
 
+const EXTERNAL_REQUEST_TIMEOUT_MS = 10_000;
+
 export async function saveExternalMarketingEvent(
   event: ExternalMarketingEvent
 ): Promise<ExternalMarketingResult> {
@@ -55,7 +57,7 @@ export async function saveExternalMarketingEvent(
       },
       body: JSON.stringify({ ...event, siteKey }),
       cache: "no-store",
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(EXTERNAL_REQUEST_TIMEOUT_MS),
     });
 
     const result = (await response.json().catch(() => null)) as {
@@ -97,7 +99,7 @@ export async function updateExternalMarketingAlert(
         siteKey,
       }),
       cache: "no-store",
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(EXTERNAL_REQUEST_TIMEOUT_MS),
     });
   } catch {
     // O alerta já foi processado; a atualização de qualidade pode ser refeita.
