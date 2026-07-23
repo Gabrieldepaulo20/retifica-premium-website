@@ -15,6 +15,8 @@ frontend:
         - printf "SUPPORT_TO_EMAIL=%s\n" "$SUPPORT_TO_EMAIL" >> .env.production
         - printf "SUPPORT_REPLY_TO_EMAIL=%s\n" "$SUPPORT_REPLY_TO_EMAIL" >> .env.production
         - printf "CONTACT_EMAIL_TO=%s\n" "$CONTACT_EMAIL_TO" >> .env.production
+        - printf "EXTERNAL_MARKETING_EVENTS_URL=%s\n" "$EXTERNAL_MARKETING_EVENTS_URL" >> .env.production
+        - printf "EXTERNAL_MARKETING_SITE_KEY=%s\n" "$EXTERNAL_MARKETING_SITE_KEY" >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import {
   captureTrafficAttribution,
+  sendExternalMarketingEvent,
   trackMarketingEvent,
 } from "@/lib/trackingEvents";
 
@@ -11,6 +12,10 @@ const SCROLL_THRESHOLDS = [50, 75, 90] as const;
 export function AnalyticsRuntime() {
   useEffect(() => {
     captureTrafficAttribution();
+    sendExternalMarketingEvent("page_view", {
+      event_category: "navigation",
+      event_label: "page_view",
+    });
 
     const fired = new Set<number>();
 

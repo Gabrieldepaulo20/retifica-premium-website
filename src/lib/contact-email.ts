@@ -30,6 +30,7 @@ type ContactEmailDelivery = {
   assunto: string;
   text: string;
   html: string;
+  subjectLine?: string;
 };
 
 function escapeHtml(value: string) {
@@ -282,6 +283,7 @@ async function sendWithResend({
   assunto,
   text,
   html,
+  subjectLine,
 }: ContactEmailDelivery) {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.CONTACT_EMAIL_FROM;
@@ -301,7 +303,7 @@ async function sendWithResend({
       from,
       to,
       reply_to: replyToEmail(email, to),
-      subject: `[Site] ${assunto} - ${nome}`,
+      subject: subjectLine || `[Site] ${assunto} - ${nome}`,
       text,
       html,
     }),
@@ -318,6 +320,7 @@ async function sendWithSes({
   assunto,
   text,
   html,
+  subjectLine,
 }: ContactEmailDelivery) {
   const region =
     process.env.SES_REGION ||
@@ -352,7 +355,10 @@ async function sendWithSes({
       Destination: { ToAddresses: [recipient] },
       Content: {
         Simple: {
-          Subject: { Data: `[Site] ${assunto} - ${nome}`, Charset: "UTF-8" },
+          Subject: {
+            Data: subjectLine || `[Site] ${assunto} - ${nome}`,
+            Charset: "UTF-8",
+          },
           Body: {
             Text: { Data: text, Charset: "UTF-8" },
             Html: { Data: html, Charset: "UTF-8" },
@@ -443,4 +449,85 @@ export async function sendContactEmail(params: ContactEmailDelivery) {
   }
 
   throw new Error("CONTACT_EMAIL_NOT_CONFIGURED");
+}
+
+type MarketingAlertInput = {
+  leadCode: string;
+  occurredAt: string;
+  pageLocation: string;
+  source?: string;
+  medium?: string;
+  campaign?: string;
+  term?: string;
+  deviceType?: string;
+};
+
+export async function sendWhatsAppClickAlert({
+  leadCode,
+  occurredAt,
+  pageLocation,
+  source,
+  medium,
+  campaign,
+  term,
+  deviceType,
+}: MarketingAlertInput) {
+  const rows = [
+    ["Código", leadCode],
+    ["Horário", occurredAt],
+    ["Página", pageLocation],
+    ["Fonte", source || "direto"],
+    ["Mídia", medium || "não informada"],
+    ["Campanha", campaign || "não informada"],
+    ["Termo", term || "não informado"],
+    ["Dispositivo", deviceType || "não informado"],
+  ];
+  const text = [
+    "Clique único no WhatsApp pelo site",
+    "",
+    "Atenção: este alerta confirma somente o clique. Não comprova que a mensagem foi enviada.",
+    "",
+    ...rows.map(([label, value]) => `${label}: ${value}`),
+  ].join("\n");
+  const htmlRows = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:9px 12px;color:#64748b;border-bottom:1px solid #e5e7eb">${escapeHtml(
+          label
+        )}</td><td style="padding:9px 12px;color:#0f172a;font-weight:700;border-bottom:1px solid #e5e7eb">${escapeHtml(
+          value
+        )}</td></tr>`
+    )
+    .join("");
+  const html = `
+    <!doctype html>
+    <html lang="pt-BR">
+      <body style="margin:0;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;padding:24px">
+        <div style="max-width:680px;margin:auto;background:#fff;border-radius:16px;overflow:hidden">
+          <div style="background:#0f172a;color:#fff;padding:24px">
+            <div style="font-size:12px;color:#f8c454;font-weight:800;letter-spacing:.08em">RETÍFICA PREMIUM</div>
+            <h1 style="margin:10px 0 4px;font-size:24px">Clique único no WhatsApp</h1>
+            <p style="margin:0;color:#cbd5e1">Código ${escapeHtml(leadCode)}</p>
+          </div>
+          <div style="padding:24px">
+            <p style="margin:0 0 18px;padding:12px;border-radius:10px;background:#fff7ed;color:#9a3412;font-weight:700">
+              Este alerta confirma apenas o clique. A mensagem pode não ter sido enviada pelo visitante.
+            </p>
+            <table width="100%" cellspacing="0" cellpadding="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+              ${htmlRows}
+            </table>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  return sendContactEmail({
+    nome: leadCode,
+    email: "",
+    assunto: "Clique no WhatsApp",
+    subjectLine: `[Site] Clique no WhatsApp - ${leadCode}`,
+    text,
+    html,
+  });
 }

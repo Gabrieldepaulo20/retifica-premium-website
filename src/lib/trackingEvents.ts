@@ -46,7 +46,7 @@ type MarketingEventParams = {
   [key: string]: string | number | undefined;
 };
 
-type StoredAttribution = {
+export type StoredAttribution = {
   source?: string;
   medium?: string;
   campaign?: string;
@@ -60,6 +60,14 @@ type StoredAttribution = {
   capturedAt: string;
 };
 
+export type ContactIntent = {
+  eventId: string;
+  leadCode: string;
+  anonymousId: string;
+  sessionId: string;
+  createdAt: string;
+};
+
 type TrackingWindow = Window & {
   dataLayer?: Array<Record<string, unknown>>;
   clarity?: (command: "event", eventName: ClarityEventName) => void;
@@ -71,6 +79,12 @@ type TrackingWindow = Window & {
 };
 
 const ATTRIBUTION_KEY = "retifica_premium_attribution";
+const ANONYMOUS_ID_KEY = "retifica_premium_anonymous_id";
+const SESSION_ID_KEY = "retifica_premium_session_id";
+const CONTACT_INTENT_KEY = "retifica_premium_contact_intent";
+const REPORTED_EVENTS_KEY = "retifica_premium_reported_events";
+const CONTACT_INTENT_TTL_MS = 30 * 60 * 1000;
+const pendingEvents = new Set<string>();
 
 function storageAvailable() {
   try {
@@ -78,6 +92,224 @@ function storageAvailable() {
   } catch {
     return false;
   }
+}
+
+function sessionStorageAvailable() {
+  try {
+    return typeof window !== "undefined" && "sessionStorage" in window;
+  } catch {
+    return false;
+  }
+}
+
+function randomId() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+}
+
+export function createMarketingEventId() {
+  return randomId();
+}
+
+function getOrCreateBrowserId(
+  storage: Storage | null,
+  key: string,
+  prefix: string
+) {
+  const existing = storage?.getItem(key);
+  if (existing) return existing;
+
+  const value = `${prefix}-${randomId()}`;
+  storage?.setItem(key, value);
+  return value;
+}
+
+function leadCode() {
+  const date = new Date().toISOString().slice(0, 10).replaceAll("-", "");
+  const suffix = randomId().replaceAll("-", "").slice(0, 8).toUpperCase();
+  return `RP-${date}-${suffix}`;
+}
+
+export function getOrCreateContactIntent(): ContactIntent {
+  if (typeof window === "undefined") {
+    const now = new Date().toISOString();
+    return {
+      eventId: randomId(),
+      leadCode: leadCode(),
+      anonymousId: `anon-${randomId()}`,
+      sessionId: `session-${randomId()}`,
+      createdAt: now,
+    };
+  }
+
+  const localStorage = storageAvailable() ? window.localStorage : null;
+  const sessionStorage = sessionStorageAvailable()
+    ? window.sessionStorage
+    : null;
+
+  try {
+    const raw = sessionStorage?.getItem(CONTACT_INTENT_KEY);
+    if (raw) {
+      const existing = JSON.parse(raw) as ContactIntent;
+      const age = Date.now() - new Date(existing.createdAt).getTime();
+      if (
+        existing.eventId &&
+        existing.leadCode &&
+        Number.isFinite(age) &&
+        age >= 0 &&
+        age < CONTACT_INTENT_TTL_MS
+      ) {
+        return existing;
+      }
+    }
+  } catch {
+    sessionStorage?.removeItem(CONTACT_INTENT_KEY);
+  }
+
+  const intent: ContactIntent = {
+    eventId: randomId(),
+    leadCode: leadCode(),
+    anonymousId: getOrCreateBrowserId(
+      localStorage,
+      ANONYMOUS_ID_KEY,
+      "anon"
+    ),
+    sessionId: getOrCreateBrowserId(
+      sessionStorage,
+      SESSION_ID_KEY,
+      "session"
+    ),
+    createdAt: new Date().toISOString(),
+  };
+
+  sessionStorage?.setItem(CONTACT_INTENT_KEY, JSON.stringify(intent));
+  return intent;
+}
+
+function reportedEventKey(eventType: string, eventId: string) {
+  return `${eventType}:${eventId}`;
+}
+
+function wasReported(eventType: string, eventId: string) {
+  if (!sessionStorageAvailable()) return false;
+
+  try {
+    const raw = window.sessionStorage.getItem(REPORTED_EVENTS_KEY);
+    const reported = raw ? (JSON.parse(raw) as string[]) : [];
+    return reported.includes(reportedEventKey(eventType, eventId));
+  } catch {
+    return false;
+  }
+}
+
+function markAsReported(eventType: string, eventId: string) {
+  if (!sessionStorageAvailable()) return;
+
+  try {
+    const raw = window.sessionStorage.getItem(REPORTED_EVENTS_KEY);
+    const reported = raw ? (JSON.parse(raw) as string[]) : [];
+    const key = reportedEventKey(eventType, eventId);
+    if (reported.includes(key)) return;
+
+    window.sessionStorage.setItem(
+      REPORTED_EVENTS_KEY,
+      JSON.stringify([...reported.slice(-49), key])
+    );
+  } catch {
+    // A indisponibilidade do storage não pode afetar o contato.
+  }
+}
+
+function deviceType() {
+  if (typeof window === "undefined") return "unknown";
+  if (window.matchMedia("(max-width: 767px)").matches) return "mobile";
+  if (window.matchMedia("(max-width: 1024px)").matches) return "tablet";
+  return "desktop";
+}
+
+export function sendExternalMarketingEvent(
+  eventType: string,
+  params: MarketingEventParams = {},
+  contactIntent?: ContactIntent
+) {
+  if (typeof window === "undefined") return;
+
+  const baseIntent = contactIntent ?? getOrCreateContactIntent();
+  const intent =
+    eventType === "whatsapp_click"
+      ? baseIntent
+      : { ...baseIntent, eventId: createMarketingEventId() };
+  const pendingKey = reportedEventKey(eventType, intent.eventId);
+  if (wasReported(eventType, intent.eventId) || pendingEvents.has(pendingKey)) {
+    return;
+  }
+  pendingEvents.add(pendingKey);
+
+  const attribution = getStoredAttribution();
+  const payload = {
+    eventId: intent.eventId,
+    leadCode: intent.leadCode,
+    anonymousId: intent.anonymousId,
+    sessionId: intent.sessionId,
+    eventType,
+    channel:
+      eventType === "whatsapp_click"
+        ? "site_whatsapp"
+        : eventType === "phone_click"
+          ? "site_phone"
+          : "site",
+    occurredAt: new Date().toISOString(),
+    pagePath: window.location.pathname,
+    pageLocation: window.location.href,
+    pageTitle: document.title,
+    referrer: attribution?.referrer ?? document.referrer ?? undefined,
+    source: attribution?.source,
+    medium: attribution?.medium,
+    campaign: attribution?.campaign,
+    term: attribution?.term,
+    content: attribution?.content,
+    gclid: attribution?.gclid,
+    gbraid: attribution?.gbraid,
+    wbraid: attribution?.wbraid,
+    deviceType: deviceType(),
+    metadata: {
+      eventLabel: params.event_label,
+      method: params.method,
+      formName: params.form_name,
+      lastField: params.last_field,
+      validationReason: params.validation_reason,
+      elapsedSeconds: params.form_elapsed_seconds,
+      fieldsCompleted: params.fields_completed,
+      completionPercent: params.completion_percent,
+    },
+  };
+
+  void fetch("/api/marketing/event", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  })
+    .then(async (response) => {
+      const result = (await response.json().catch(() => null)) as {
+        alertStatus?: string;
+      } | null;
+      const alertAccepted =
+        eventType !== "whatsapp_click" ||
+        result?.alertStatus === "sent" ||
+        result?.alertStatus === "already_sent";
+
+      if (response.ok && alertAccepted) {
+        markAsReported(eventType, intent.eventId);
+      }
+    })
+    .catch(() => {
+      // Rastreamento nunca pode bloquear a navegação ou o contato.
+    })
+    .finally(() => pendingEvents.delete(pendingKey));
 }
 
 export function captureTrafficAttribution() {
@@ -166,9 +398,13 @@ export function buildWhatsAppUrlWithAttribution(
   phoneNumber: string,
   baseText: string
 ) {
-  const text = [...baseText.split("\n"), ...attributionMessageLines()].join(
-    "\n"
-  );
+  const intent = getOrCreateContactIntent();
+  const text = [
+    ...baseText.split("\n"),
+    "",
+    `Código do contato: ${intent.leadCode}`,
+    ...attributionMessageLines(),
+  ].join("\n");
 
   return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
 }
@@ -195,6 +431,19 @@ export function trackMarketingEvent(
 
   if (typeof trackingWindow.gtag === "function") {
     trackingWindow.gtag("event", eventName, eventParams);
+  }
+
+  if (
+    eventName === "whatsapp_click" ||
+    eventName === "phone_click" ||
+    eventName === "form_view" ||
+    eventName === "form_start" ||
+    eventName === "form_submit_attempt" ||
+    eventName === "form_validation_error" ||
+    eventName === "form_abandon" ||
+    eventName === "form_submit_error"
+  ) {
+    sendExternalMarketingEvent(eventName, eventParams);
   }
 }
 

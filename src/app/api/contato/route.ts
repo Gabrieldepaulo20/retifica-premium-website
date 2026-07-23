@@ -1,14 +1,20 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import {
   buildContactEmail,
   sendContactEmail,
   subjectLabels,
 } from "@/lib/contact-email";
+import { saveExternalMarketingEvent } from "@/lib/external-marketing";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type ContactPayload = {
+  eventId?: unknown;
+  leadCode?: unknown;
+  anonymousId?: unknown;
+  sessionId?: unknown;
   nome?: unknown;
   telefone?: unknown;
   email?: unknown;
@@ -97,6 +103,13 @@ export async function POST(request: Request) {
   const mensagem = cleanMultiline(payload.mensagem, 2000);
   const b2bLevel = cleanText(payload.b2bLevel, 160);
   const pageLocation = cleanText(payload.pageLocation, 400);
+  const eventId = cleanText(payload.eventId, 80) || randomUUID();
+  const leadCode =
+    cleanText(payload.leadCode, 40) ||
+    `RP-${new Date().toISOString().slice(0, 10).replaceAll("-", "")}-${randomUUID()
+      .replaceAll("-", "")
+      .slice(0, 8)
+      .toUpperCase()}`;
 
   if (!nome || nome.length < 2) {
     return NextResponse.json(
@@ -133,7 +146,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const sourceLines = attributionLines(payload);
+  const sourceLines = [`Código do contato: ${leadCode}`, ...attributionLines(payload)];
   const { text, html } = buildContactEmail({
     nome,
     telefone,
@@ -161,5 +174,42 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({ ok: true });
+  const attribution = payload.attribution ?? {};
+  const storage = await saveExternalMarketingEvent({
+    eventId,
+    leadCode,
+    anonymousId: cleanText(payload.anonymousId, 120) || undefined,
+    sessionId: cleanText(payload.sessionId, 120) || undefined,
+    eventType: "form_submit",
+    channel: "site_form",
+    occurredAt: new Date().toISOString(),
+    pagePath: (() => {
+      try {
+        return new URL(pageLocation).pathname;
+      } catch {
+        return "/";
+      }
+    })(),
+    pageLocation,
+    referrer: cleanText(attribution.referrer, 800) || undefined,
+    source: cleanText(attribution.source, 120) || "direto",
+    medium: cleanText(attribution.medium, 120) || undefined,
+    campaign: cleanText(attribution.campaign, 180) || undefined,
+    term: cleanText(attribution.term, 180) || undefined,
+    content: cleanText(attribution.content, 180) || undefined,
+    gclid: cleanText(attribution.gclid, 220) || undefined,
+    gbraid: cleanText(attribution.gbraid, 220) || undefined,
+    wbraid: cleanText(attribution.wbraid, 220) || undefined,
+    metadata: {
+      subject: assuntoKey,
+      b2bLevel: b2bLevel || undefined,
+    },
+    lead: {
+      name: nome,
+      email: email || undefined,
+      phone: telefone,
+    },
+  });
+
+  return NextResponse.json({ ok: true, leadCode, storage });
 }

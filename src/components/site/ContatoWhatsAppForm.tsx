@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { siteConfig } from "@/lib/site";
 import {
   buildWhatsAppUrlWithAttribution,
+  createMarketingEventId,
+  getOrCreateContactIntent,
   getStoredAttribution,
   trackEngagementEvent,
   trackMarketingEvent,
@@ -272,6 +274,7 @@ export function ContatoWhatsAppForm({
       siteConfig.whatsapp.number,
       buildLeadMessage(assunto, b2bLevel)
     );
+    const contactIntent = getOrCreateContactIntent();
 
     setFallbackUrl(whatsAppUrl);
     setStatus("sending");
@@ -292,6 +295,10 @@ export function ContatoWhatsAppForm({
         },
         body: JSON.stringify({
           ...form,
+          eventId: createMarketingEventId(),
+          leadCode: contactIntent.leadCode,
+          anonymousId: contactIntent.anonymousId,
+          sessionId: contactIntent.sessionId,
           b2bLevel,
           pageLocation: window.location.href,
           attribution: getStoredAttribution(),
