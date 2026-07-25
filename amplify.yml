@@ -17,6 +17,11 @@ frontend:
         - printf "CONTACT_EMAIL_TO=%s\n" "$CONTACT_EMAIL_TO" >> .env.production
         - printf "EXTERNAL_MARKETING_EVENTS_URL=%s\n" "$EXTERNAL_MARKETING_EVENTS_URL" >> .env.production
         - printf "EXTERNAL_MARKETING_SITE_KEY=%s\n" "$EXTERNAL_MARKETING_SITE_KEY" >> .env.production
+        - printf "NEXT_PUBLIC_GA_MEASUREMENT_ID=%s\n" "$NEXT_PUBLIC_GA_MEASUREMENT_ID" >> .env.production
+        - printf "NEXT_PUBLIC_GOOGLE_ADS_ID=%s\n" "$NEXT_PUBLIC_GOOGLE_ADS_ID" >> .env.production
+        - printf "NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO=%s\n" "$NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO" >> .env.production
+        - printf "NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO=%s\n" "$NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO" >> .env.production
+        - printf "NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO=%s\n" "$NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO" >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next

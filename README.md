@@ -53,9 +53,20 @@ npm run start
 - Open Graph e Twitter configurados
 
 ## Analytics
-- GA4 global via `next/script`
+- Google tag global via `next/script`, carregada em todas as paginas
+- GA4 para pageviews, navegacao interna, scroll, CTAs e funil do formulario
+- Google Ads com conversoes de formulario enviado, clique no WhatsApp e clique no telefone
+- `transaction_id` anonimo por intencao de contato para evitar conversoes duplicadas
+- Captura de UTM, GCLID, GBRAID e WBRAID para atribuicao
 - Microsoft Clarity global via `next/script`
-- Tracking de cliques nos CTAs principais de WhatsApp e Instagram
+- Tracking interno dos eventos de marketing em `/api/marketing/event`
+
+Os IDs publicos do Google tag ficam nas variaveis
+`NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_GOOGLE_ADS_ID`,
+`NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO`,
+`NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO` e
+`NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO`. Credenciais OAuth e chaves privadas
+nunca devem ser adicionadas ao site.
 
 ## Formulario de Contato
 - O formulario de `/contato` envia leads para `/api/contato`.

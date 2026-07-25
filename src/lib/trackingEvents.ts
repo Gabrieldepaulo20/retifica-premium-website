@@ -14,6 +14,7 @@ export type ClarityEventName =
   | "scroll_depth";
 
 type GaEventName =
+  | "page_view"
   | "whatsapp_click"
   | "instagram_click"
   | "phone_click"
@@ -43,7 +44,15 @@ type MarketingEventParams = {
   traffic_campaign?: string;
   traffic_term?: string;
   gclid?: string;
+  transaction_id?: string;
   [key: string]: string | number | undefined;
+};
+
+type GoogleAdsConversionParams = MarketingEventParams & {
+  send_to: string;
+  value: number;
+  currency: "BRL";
+  transaction_id: string;
 };
 
 export type StoredAttribution = {
@@ -73,8 +82,8 @@ type TrackingWindow = Window & {
   clarity?: (command: "event", eventName: ClarityEventName) => void;
   gtag?: (
     command: "event",
-    eventName: GaEventName,
-    params: MarketingEventParams
+    eventName: GaEventName | "conversion",
+    params: MarketingEventParams | GoogleAdsConversionParams
   ) => void;
 };
 
@@ -85,6 +94,11 @@ const CONTACT_INTENT_KEY = "retifica_premium_contact_intent";
 const REPORTED_EVENTS_KEY = "retifica_premium_reported_events";
 const CONTACT_INTENT_TTL_MS = 30 * 60 * 1000;
 const pendingEvents = new Set<string>();
+const GOOGLE_ADS_CONVERSIONS: Partial<Record<GaEventName, string>> = {
+  generate_lead: process.env.NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO,
+  whatsapp_click: process.env.NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO,
+  phone_click: process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO,
+};
 
 function storageAvailable() {
   try {
@@ -431,6 +445,19 @@ export function trackMarketingEvent(
 
   if (typeof trackingWindow.gtag === "function") {
     trackingWindow.gtag("event", eventName, eventParams);
+
+    const conversionSendTo = GOOGLE_ADS_CONVERSIONS[eventName];
+    if (conversionSendTo) {
+      const transactionId =
+        params.transaction_id || getOrCreateContactIntent().leadCode;
+
+      trackingWindow.gtag("event", "conversion", {
+        send_to: conversionSendTo,
+        value: 1,
+        currency: "BRL",
+        transaction_id: transactionId,
+      });
+    }
   }
 
   if (
@@ -441,7 +468,8 @@ export function trackMarketingEvent(
     eventName === "form_submit_attempt" ||
     eventName === "form_validation_error" ||
     eventName === "form_abandon" ||
-    eventName === "form_submit_error"
+    eventName === "form_submit_error" ||
+    eventName === "generate_lead"
   ) {
     sendExternalMarketingEvent(eventName, eventParams);
   }

@@ -113,7 +113,7 @@ export default function RootLayout({
       <head>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="lazyOnload"
+          strategy="afterInteractive"
           async
         />
         <Script id="ga4-init" strategy="afterInteractive">

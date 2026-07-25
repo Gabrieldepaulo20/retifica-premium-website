@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import {
   captureTrafficAttribution,
   sendExternalMarketingEvent,
@@ -10,12 +11,27 @@ import {
 const SCROLL_THRESHOLDS = [50, 75, 90] as const;
 
 export function AnalyticsRuntime() {
+  const pathname = usePathname();
+  const previousPathnameRef = useRef<string | null>(null);
+
   useEffect(() => {
     captureTrafficAttribution();
     sendExternalMarketingEvent("page_view", {
       event_category: "navigation",
       event_label: "page_view",
     });
+
+    if (
+      previousPathnameRef.current !== null &&
+      previousPathnameRef.current !== pathname
+    ) {
+      trackMarketingEvent("page_view", {
+        event_category: "navigation",
+        event_label: "spa_navigation",
+        page_location: window.location.href,
+      });
+    }
+    previousPathnameRef.current = pathname;
 
     const fired = new Set<number>();
 
@@ -45,7 +61,7 @@ export function AnalyticsRuntime() {
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
 
   return null;
 }

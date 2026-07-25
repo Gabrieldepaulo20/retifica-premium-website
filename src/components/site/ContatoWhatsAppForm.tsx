@@ -322,6 +322,7 @@ export function ContatoWhatsAppForm({
         form_name: leadLabel,
         lead_subject: form.assunto,
         form_elapsed_seconds: formTimingSeconds(),
+        transaction_id: contactIntent.leadCode,
       });
 
       submittedRef.current = true;
