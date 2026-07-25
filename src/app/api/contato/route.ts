@@ -175,6 +175,11 @@ export async function POST(request: Request) {
   }
 
   const attribution = payload.attribution ?? {};
+  const hasGoogleClickId = Boolean(
+    cleanText(attribution.gclid, 220) ||
+      cleanText(attribution.gbraid, 220) ||
+      cleanText(attribution.wbraid, 220)
+  );
   const storage = await saveExternalMarketingEvent({
     eventId,
     leadCode,
@@ -192,8 +197,12 @@ export async function POST(request: Request) {
     })(),
     pageLocation,
     referrer: cleanText(attribution.referrer, 800) || undefined,
-    source: cleanText(attribution.source, 120) || "direto",
-    medium: cleanText(attribution.medium, 120) || undefined,
+    source:
+      cleanText(attribution.source, 120) ||
+      (hasGoogleClickId ? "google" : "direto"),
+    medium:
+      cleanText(attribution.medium, 120) ||
+      (hasGoogleClickId ? "cpc" : undefined),
     campaign: cleanText(attribution.campaign, 180) || undefined,
     term: cleanText(attribution.term, 180) || undefined,
     content: cleanText(attribution.content, 180) || undefined,

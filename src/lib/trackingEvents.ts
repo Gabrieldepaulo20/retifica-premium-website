@@ -345,9 +345,12 @@ export function captureTrafficAttribution() {
 
   if (!hasTrackedParam && existing) return;
 
+  const hasGoogleClickId = Boolean(
+    params.get("gclid") || params.get("gbraid") || params.get("wbraid")
+  );
   const attribution: StoredAttribution = {
-    source: params.get("utm_source") || undefined,
-    medium: params.get("utm_medium") || undefined,
+    source: params.get("utm_source") || (hasGoogleClickId ? "google" : undefined),
+    medium: params.get("utm_medium") || (hasGoogleClickId ? "cpc" : undefined),
     campaign: params.get("utm_campaign") || undefined,
     term: params.get("utm_term") || undefined,
     content: params.get("utm_content") || undefined,
