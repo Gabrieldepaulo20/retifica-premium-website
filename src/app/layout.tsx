@@ -3,6 +3,7 @@ import { Rajdhani } from "next/font/google";
 import Script from "next/script";
 import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
 import { AnalyticsRuntime } from "@/components/site/AnalyticsRuntime";
+import { CookieConsent } from "@/components/site/CookieConsent";
 import { Header } from "@/components/site/Header";
 import { FloatingWhatsApp } from "@/components/site/FloatingWhatsApp";
 import { absoluteUrl, siteConfig } from "@/lib/site";
@@ -12,6 +13,7 @@ const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-HD00424MR7";
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
+const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || "ve74erf449";
 
 const rajdhani = Rajdhani({
   variable: "--font-rajdhani",
@@ -111,57 +113,39 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
+        <Script id="consent-mode-defaults" strategy="beforeInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  analytics_storage: 'granted',
+  wait_for_update: 500
+});
+gtag('set', 'ads_data_redaction', true);`}
+        </Script>
         <Script
+          id="retifica-google-tag"
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
           async
         />
-        <Script id="ga4-init" strategy="afterInteractive">
-          {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-
-gtag('config', '${GA_MEASUREMENT_ID}');${
-            GOOGLE_ADS_ID ? `\ngtag('config', '${GOOGLE_ADS_ID}');` : ""
-          }`}
+        <Script id="ga4-always-on" strategy="afterInteractive">
+          {`gtag('js', new Date());
+gtag('config', '${GA_MEASUREMENT_ID}');`}
         </Script>
-        {GTM_ID && (
-          <Script id="gtm-init" strategy="afterInteractive">
-            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${GTM_ID}');`}
-          </Script>
-        )}
       </head>
-      <body
-        className={`${rajdhani.variable} font-body antialiased`}
-      >
-        {GTM_ID && (
-          <noscript>
-            <iframe
-              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-              height="0"
-              width="0"
-              style={{ display: "none", visibility: "hidden" }}
-              title="Google Tag Manager"
-            />
-          </noscript>
-        )}
+      <body className={`${rajdhani.variable} font-body antialiased`}>
         <AnalyticsRuntime />
         <MaterialSymbolsLoader />
         <Header />
         {children}
-        <Script id="ms-clarity" strategy="lazyOnload">
-          {`
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "ve74erf449");
-  `}
-        </Script>
+        <CookieConsent
+          googleAdsId={GOOGLE_ADS_ID}
+          gtmId={GTM_ID}
+          clarityId={CLARITY_ID}
+        />
         <FloatingWhatsApp />
       </body>
     </html>

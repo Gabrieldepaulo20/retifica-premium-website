@@ -203,6 +203,12 @@ export function Footer() {
 
           <div className="border-t border-white/15 pt-6 text-center text-xs leading-relaxed text-white/70">
             <p>© 2026 Retífica Premium. Todos os direitos reservados.</p>
+            <Link
+              href="/privacidade"
+              className="mt-2 inline-flex underline decoration-white/30 underline-offset-4 transition-colors hover:text-white"
+            >
+              Privacidade e cookies
+            </Link>
           </div>
         </div>
 
@@ -389,6 +395,12 @@ export function Footer() {
           {/* Copyright */}
           <div className="pt-8 text-center text-sm leading-relaxed text-white/70">
             <p>© 2026 Retífica Premium. Todos os direitos reservados.</p>
+            <Link
+              href="/privacidade"
+              className="mt-2 inline-flex underline decoration-white/30 underline-offset-4 transition-colors hover:text-white"
+            >
+              Privacidade e cookies
+            </Link>
           </div>
         </div>
       </div>

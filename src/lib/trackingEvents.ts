@@ -1,3 +1,10 @@
+import {
+  hasAdvertisingConsent,
+  hasAnalyticsConsent,
+  hasMeasurementConsent,
+  privacySafePageLocation,
+} from "@/lib/consent";
+
 export type ClarityEventName =
   | "whatsapp_floating_click"
   | "whatsapp_home_cta_click"
@@ -67,6 +74,7 @@ export type StoredAttribution = {
   landingPage: string;
   referrer?: string;
   capturedAt: string;
+  expiresAt: string;
 };
 
 export type ContactIntent = {
@@ -93,6 +101,7 @@ const SESSION_ID_KEY = "retifica_premium_session_id";
 const CONTACT_INTENT_KEY = "retifica_premium_contact_intent";
 const REPORTED_EVENTS_KEY = "retifica_premium_reported_events";
 const CONTACT_INTENT_TTL_MS = 30 * 60 * 1000;
+const ATTRIBUTION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 const pendingEvents = new Set<string>();
 const GOOGLE_ADS_CONVERSIONS: Partial<Record<GaEventName, string>> = {
   generate_lead: process.env.NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO,
@@ -147,16 +156,19 @@ function leadCode() {
   return `RP-${date}-${suffix}`;
 }
 
+function createEphemeralContactIntent(): ContactIntent {
+  return {
+    eventId: randomId(),
+    leadCode: leadCode(),
+    anonymousId: "",
+    sessionId: "",
+    createdAt: new Date().toISOString(),
+  };
+}
+
 export function getOrCreateContactIntent(): ContactIntent {
-  if (typeof window === "undefined") {
-    const now = new Date().toISOString();
-    return {
-      eventId: randomId(),
-      leadCode: leadCode(),
-      anonymousId: `anon-${randomId()}`,
-      sessionId: `session-${randomId()}`,
-      createdAt: now,
-    };
+  if (typeof window === "undefined" || !hasMeasurementConsent()) {
+    return createEphemeralContactIntent();
   }
 
   const localStorage = storageAvailable() ? window.localStorage : null;
@@ -277,7 +289,7 @@ export function sendExternalMarketingEvent(
           : "site",
     occurredAt: new Date().toISOString(),
     pagePath: window.location.pathname,
-    pageLocation: window.location.href,
+    pageLocation: privacySafePageLocation(),
     pageTitle: document.title,
     referrer: attribution?.referrer ?? document.referrer ?? undefined,
     source: attribution?.source,
@@ -327,7 +339,13 @@ export function sendExternalMarketingEvent(
 }
 
 export function captureTrafficAttribution() {
-  if (typeof window === "undefined" || !storageAvailable()) return;
+  if (
+    typeof window === "undefined" ||
+    !storageAvailable() ||
+    !hasMeasurementConsent()
+  ) {
+    return;
+  }
 
   const params = new URLSearchParams(window.location.search);
   const trackedKeys = [
@@ -341,37 +359,74 @@ export function captureTrafficAttribution() {
     "wbraid",
   ];
   const hasTrackedParam = trackedKeys.some((key) => params.has(key));
-  const existing = window.localStorage.getItem(ATTRIBUTION_KEY);
+  const existing = getStoredAttribution();
 
   if (!hasTrackedParam && existing) return;
 
+  const advertisingConsent = hasAdvertisingConsent();
   const hasGoogleClickId = Boolean(
     params.get("gclid") || params.get("gbraid") || params.get("wbraid")
   );
+  const capturedAt = new Date();
   const attribution: StoredAttribution = {
     source: params.get("utm_source") || (hasGoogleClickId ? "google" : undefined),
     medium: params.get("utm_medium") || (hasGoogleClickId ? "cpc" : undefined),
     campaign: params.get("utm_campaign") || undefined,
     term: params.get("utm_term") || undefined,
     content: params.get("utm_content") || undefined,
-    gclid: params.get("gclid") || undefined,
-    gbraid: params.get("gbraid") || undefined,
-    wbraid: params.get("wbraid") || undefined,
-    landingPage: window.location.href,
+    gclid: advertisingConsent ? params.get("gclid") || undefined : undefined,
+    gbraid: advertisingConsent ? params.get("gbraid") || undefined : undefined,
+    wbraid: advertisingConsent ? params.get("wbraid") || undefined : undefined,
+    landingPage: privacySafePageLocation(),
     referrer: document.referrer || undefined,
-    capturedAt: new Date().toISOString(),
+    capturedAt: capturedAt.toISOString(),
+    expiresAt: new Date(capturedAt.getTime() + ATTRIBUTION_TTL_MS).toISOString(),
   };
 
   window.localStorage.setItem(ATTRIBUTION_KEY, JSON.stringify(attribution));
 }
 
 export function getStoredAttribution(): StoredAttribution | null {
-  if (typeof window === "undefined" || !storageAvailable()) return null;
+  if (
+    typeof window === "undefined" ||
+    !storageAvailable() ||
+    !hasMeasurementConsent()
+  ) {
+    return null;
+  }
 
   try {
     const raw = window.localStorage.getItem(ATTRIBUTION_KEY);
-    return raw ? (JSON.parse(raw) as StoredAttribution) : null;
+    if (!raw) return null;
+
+    const attribution = JSON.parse(raw) as Partial<StoredAttribution>;
+    const expiresAt = new Date(attribution.expiresAt ?? "").getTime();
+    if (
+      typeof attribution.landingPage !== "string" ||
+      typeof attribution.capturedAt !== "string" ||
+      !Number.isFinite(expiresAt) ||
+      expiresAt <= Date.now()
+    ) {
+      window.localStorage.removeItem(ATTRIBUTION_KEY);
+      return null;
+    }
+
+    const stored: StoredAttribution = {
+      ...attribution,
+      landingPage: attribution.landingPage,
+      capturedAt: attribution.capturedAt,
+      expiresAt: attribution.expiresAt as string,
+    };
+
+    if (!hasAdvertisingConsent()) {
+      delete stored.gclid;
+      delete stored.gbraid;
+      delete stored.wbraid;
+    }
+
+    return stored;
   } catch {
+    window.localStorage.removeItem(ATTRIBUTION_KEY);
     return null;
   }
 }
@@ -415,6 +470,10 @@ export function buildWhatsAppUrlWithAttribution(
   phoneNumber: string,
   baseText: string
 ) {
+  if (typeof window === "undefined" || !hasMeasurementConsent()) {
+    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(baseText)}`;
+  }
+
   const intent = getOrCreateContactIntent();
   const text = [
     ...baseText.split("\n"),
@@ -434,9 +493,9 @@ export function trackMarketingEvent(
 
   const trackingWindow = window as TrackingWindow;
   const eventParams = {
-    page_location: window.location.href,
     ...attributionEventParams(),
     ...params,
+    page_location: privacySafePageLocation(),
   };
 
   if (Array.isArray(trackingWindow.dataLayer)) {
@@ -448,19 +507,23 @@ export function trackMarketingEvent(
 
   if (typeof trackingWindow.gtag === "function") {
     trackingWindow.gtag("event", eventName, eventParams);
+  }
 
-    const conversionSendTo = GOOGLE_ADS_CONVERSIONS[eventName];
-    if (conversionSendTo) {
-      const transactionId =
-        params.transaction_id || getOrCreateContactIntent().leadCode;
+  const conversionSendTo = GOOGLE_ADS_CONVERSIONS[eventName];
+  if (
+    hasAdvertisingConsent() &&
+    conversionSendTo &&
+    typeof trackingWindow.gtag === "function"
+  ) {
+    const transactionId =
+      params.transaction_id || getOrCreateContactIntent().leadCode;
 
-      trackingWindow.gtag("event", "conversion", {
-        send_to: conversionSendTo,
-        value: 1,
-        currency: "BRL",
-        transaction_id: transactionId,
-      });
-    }
+    trackingWindow.gtag("event", "conversion", {
+      send_to: conversionSendTo,
+      value: 1,
+      currency: "BRL",
+      transaction_id: transactionId,
+    });
   }
 
   if (
@@ -488,7 +551,7 @@ export function trackEngagementEvent(
 
   const trackingWindow = window as TrackingWindow;
 
-  if (typeof trackingWindow.clarity === "function") {
+  if (hasAnalyticsConsent() && typeof trackingWindow.clarity === "function") {
     trackingWindow.clarity("event", clarityEventName);
   }
 

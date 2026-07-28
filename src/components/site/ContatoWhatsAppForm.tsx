@@ -1,7 +1,9 @@
 "use client";
 
 import type { FormEvent } from "react";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { privacySafePageLocation } from "@/lib/consent";
 import { siteConfig } from "@/lib/site";
 import {
   buildWhatsAppUrlWithAttribution,
@@ -300,7 +302,7 @@ export function ContatoWhatsAppForm({
           anonymousId: contactIntent.anonymousId,
           sessionId: contactIntent.sessionId,
           b2bLevel,
-          pageLocation: window.location.href,
+          pageLocation: privacySafePageLocation(),
           attribution: getStoredAttribution(),
           website,
         }),
@@ -568,7 +570,14 @@ export function ContatoWhatsAppForm({
           className="mt-3 text-center text-xs text-white/85"
           style={{ fontFamily: "var(--font-open-sans)" }}
         >
-          Sem compromisso. A equipe recebe seus dados por e-mail e responde pelo contato informado.
+          Sem compromisso. Usaremos seus dados para responder ao pedido pelo
+          contato informado.{" "}
+          <Link
+            href="/privacidade"
+            className="font-bold underline decoration-white/40 underline-offset-2 hover:text-white"
+          >
+            Saiba como cuidamos dos seus dados.
+          </Link>
         </p>
       </div>
     </form>

@@ -1,7 +1,12 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  CONSENT_CHANGED_EVENT,
+  hasAnalyticsConsent,
+  hasMeasurementConsent,
+} from "@/lib/consent";
 import {
   captureTrafficAttribution,
   sendExternalMarketingEvent,
@@ -13,26 +18,39 @@ const SCROLL_THRESHOLDS = [50, 75, 90] as const;
 export function AnalyticsRuntime() {
   const pathname = usePathname();
   const previousPathnameRef = useRef<string | null>(null);
+  const [consentRevision, setConsentRevision] = useState(0);
 
   useEffect(() => {
-    captureTrafficAttribution();
-    sendExternalMarketingEvent("page_view", {
-      event_category: "navigation",
-      event_label: "page_view",
-    });
+    const handleConsentChanged = () => {
+      setConsentRevision((current) => current + 1);
+    };
 
-    if (
-      previousPathnameRef.current !== null &&
-      previousPathnameRef.current !== pathname
-    ) {
+    window.addEventListener(CONSENT_CHANGED_EVENT, handleConsentChanged);
+    return () =>
+      window.removeEventListener(CONSENT_CHANGED_EVENT, handleConsentChanged);
+  }, []);
+
+  useEffect(() => {
+    const previousPathname = previousPathnameRef.current;
+    previousPathnameRef.current = pathname;
+
+    if (hasMeasurementConsent()) {
+      captureTrafficAttribution();
+    }
+
+    if (hasAnalyticsConsent()) {
+      sendExternalMarketingEvent("page_view", {
+        event_category: "navigation",
+        event_label: "page_view",
+      });
+    }
+
+    if (previousPathname !== null && previousPathname !== pathname) {
       trackMarketingEvent("page_view", {
         event_category: "navigation",
         event_label: "spa_navigation",
-        page_location: window.location.href,
       });
     }
-    previousPathnameRef.current = pathname;
-
     const fired = new Set<number>();
 
     function handleScroll() {
@@ -61,7 +79,7 @@ export function AnalyticsRuntime() {
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [pathname]);
+  }, [consentRevision, pathname]);
 
   return null;
 }

@@ -1,9 +1,28 @@
 # Rastreamento Google Ads
 
-## Cobertura
+## Consentimento e cobertura
 
-O layout raiz carrega uma única Google tag em todas as páginas e configura dois
-destinos:
+O Google Analytics 4 é carregado desde a entrada no site para preservar a
+medição estatística básica. O Google Consent Mode v2 inicia
+`analytics_storage` como `granted`, enquanto `ad_storage`, `ad_user_data` e
+`ad_personalization` permanecem como `denied`.
+
+Antes da escolha do visitante, Google Ads, GTM, Clarity e a atribuição local
+opcional não são carregados nem armazenados.
+
+O visitante pode aceitar ou recusar separadamente:
+
+- **Análise avançada da experiência:** Microsoft Clarity, pageviews e métricas
+  detalhadas de navegação e formulário no Retiflow.
+- **Anúncios e conversões:** Google Ads, origem/campanha, identificadores de
+  clique e conversões de WhatsApp, telefone e formulário.
+
+As opções facultativas começam desmarcadas. O botão `Privacidade`, no canto
+inferior esquerdo, permite alterar ou revogar a escolha. A personalização de
+anúncios permanece desativada mesmo quando a medição de anúncios é aceita.
+
+Após a autorização correspondente, o site carrega uma única Google tag e
+configura dois destinos:
 
 - GA4 `G-HD00424MR7`.
 - Google Ads `AW-18268630627`.
@@ -31,10 +50,11 @@ O código não contém nome, e-mail, telefone ou outro dado pessoal.
 
 ## Atribuição
 
-O site preserva `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`,
-`utm_content`, `gclid`, `gbraid` e `wbraid`. O auto-tagging da conta do Google
-Ads deve permanecer ativado para que o `gclid` seja anexado aos acessos vindos
-dos anúncios.
+Com pelo menos uma categoria opcional autorizada, o site preserva por até 90
+dias `utm_source`, `utm_medium`, `utm_campaign`, `utm_term` e `utm_content`.
+`gclid`, `gbraid` e `wbraid` só são mantidos com autorização de anúncios. O
+auto-tagging da conta do Google Ads deve permanecer ativado para que o `gclid`
+seja anexado aos acessos vindos dos anúncios.
 
 ## Variáveis públicas
 
@@ -54,11 +74,19 @@ pertencem ao site e nunca devem ser versionados.
 
 ## Validação em produção
 
-1. Abrir o Tag Assistant no domínio de produção.
-2. Confirmar os destinos `G-HD00424MR7` e `AW-18268630627`.
-3. Abrir páginas diferentes sem recarregar e verificar `page_view`.
-4. Testar WhatsApp, telefone e um envio bem-sucedido do formulário.
-5. Conferir os eventos no DebugView do GA4 e o diagnóstico das conversões no
+1. Em uma janela limpa, confirmar que o GA4 carrega e que Ads, GTM e Clarity
+   permanecem bloqueados antes da escolha.
+2. Recusar opcionais e confirmar que o GA4 continua medindo, sem scripts nem
+   conversões de Ads e sem Clarity.
+3. Aceitar apenas análise avançada e confirmar GA4/Clarity, sem conversões de
+   Ads.
+4. Aceitar anúncios e confirmar os destinos `G-HD00424MR7` e
+   `AW-18268630627` no Tag Assistant.
+5. Abrir páginas diferentes sem recarregar e verificar `page_view`.
+6. Testar WhatsApp, telefone e um envio bem-sucedido do formulário.
+7. Revogar as categorias opcionais e confirmar a atualização para `denied` e a
+   remoção dos dados locais correspondentes.
+8. Conferir os eventos no DebugView do GA4 e o diagnóstico das conversões no
    Google Ads. A interface do Ads pode levar algumas horas para refletir os
    primeiros eventos.
 

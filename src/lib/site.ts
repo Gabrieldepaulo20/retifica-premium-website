@@ -71,7 +71,7 @@ export function absoluteUrl(path = "") {
   return `${siteConfig.url}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-export const siteContentLastModified = "2026-07-21T00:00:00-03:00";
+export const siteContentLastModified = "2026-07-28T00:00:00-03:00";
 
 export const sitePages = [
   {
@@ -115,6 +115,13 @@ export const sitePages = [
     priority: 0.85,
     changeFrequency: "weekly",
     images: ["/cabecotefundo.jpg"],
+  },
+  {
+    path: "/privacidade",
+    name: "Privacidade e cookies",
+    priority: 0.3,
+    changeFrequency: "yearly",
+    images: [],
   },
   ...serviceDetailPages.map((page) => ({
     path: servicePath(page.slug),
