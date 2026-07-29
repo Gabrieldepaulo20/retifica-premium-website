@@ -62,10 +62,10 @@ export default function ContatoPage() {
           <div className="absolute inset-0 bg-linear-to-b from-[#2E5AA7]/80 via-[#1E3B73]/70 to-black/70" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-6 md:py-20 lg:px-8">
+          <div className="grid items-start gap-7 lg:grid-cols-2 lg:gap-x-16 lg:gap-y-8">
             {/* Esquerda — Texto, contatos e informações */}
-            <div className="text-center lg:text-left">
+            <div className="text-center lg:col-start-1 lg:row-start-1 lg:text-left">
               <h1
                 className="text-4xl font-bold text-white md:text-5xl lg:text-6xl"
                 style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.15 }}
@@ -101,41 +101,45 @@ export default function ContatoPage() {
                 </TrackedPhoneLink>
               </div>
 
-              {/* Mini-cards de informação */}
-              <div className="mt-8 grid gap-4 text-left sm:grid-cols-2">
-                <div className="rounded-2xl border border-white/15 bg-white/8 p-5 backdrop-blur-sm">
-                  <p className="text-xs font-bold uppercase tracking-wide text-[#F3B839]">
-                    Endereço
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-white/85">
-                    Av. Fioravante Magro, 1059 — Jardim Boa Vista, Sertãozinho-SP
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-white/15 bg-white/8 p-5 backdrop-blur-sm">
-                  <p className="text-xs font-bold uppercase tracking-wide text-[#F3B839]">
-                    Horário
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-white/85">
-                    Seg a Qui: 08h–11h30 e 13h–18h
-                    <br />
-                    Sexta: 08h–12h e 13h–17h30
-                  </p>
-                </div>
-              </div>
             </div>
 
             {/* Direita — Formulário */}
             <div
               id="formulario"
-              className="scroll-mt-24 rounded-3xl bg-[#F8B628] p-6 shadow-2xl md:p-8"
+              className="scroll-mt-24 rounded-3xl bg-[#F8B628] p-5 shadow-2xl sm:p-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 md:p-7"
             >
               <h2
-                className="mb-6 text-center text-xl font-bold uppercase text-white md:text-2xl lg:text-3xl"
+                className="mb-1 text-center text-xl font-bold uppercase text-white md:text-2xl lg:text-3xl"
                 style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
               >
                 Solicite seu orçamento
               </h2>
+              <p className="mb-4 text-center text-xs font-semibold text-[#17325d] md:text-sm">
+                Três informações e a equipe retorna pelo WhatsApp ou ligação.
+              </p>
               <ContatoWhatsAppForm />
+            </div>
+
+            {/* Informações ficam depois do formulário no celular */}
+            <div className="grid gap-3 text-left sm:grid-cols-2 lg:col-start-1 lg:row-start-2">
+              <div className="rounded-2xl border border-white/15 bg-white/8 p-4 backdrop-blur-sm">
+                <p className="text-xs font-bold uppercase tracking-wide text-[#F3B839]">
+                  Endereço
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-white/85">
+                  Av. Fioravante Magro, 1059 — Jardim Boa Vista, Sertãozinho-SP
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/15 bg-white/8 p-4 backdrop-blur-sm">
+                <p className="text-xs font-bold uppercase tracking-wide text-[#F3B839]">
+                  Horário
+                </p>
+                <p className="mt-1.5 text-sm leading-relaxed text-white/85">
+                  Seg a Qui: 08h–11h30 e 13h–18h
+                  <br />
+                  Sexta: 08h–12h e 13h–17h30
+                </p>
+              </div>
             </div>
           </div>
         </div>

@@ -26,18 +26,24 @@ export function FloatingWhatsApp() {
           "floating"
         );
       }}
-      className="fixed bottom-[calc(60px+env(safe-area-inset-bottom))] right-4 z-[999] animate-bounce-subtle transition-transform duration-300 hover:scale-110 active:scale-105 max-[640px]:bottom-[calc(96px+env(safe-area-inset-bottom))] md:bottom-5 md:right-5"
-      aria-label="Chamar no WhatsApp"
+      className="group fixed bottom-[calc(60px+env(safe-area-inset-bottom))] right-3 z-[999] inline-flex min-h-11 items-center gap-2 rounded-full border border-white/70 bg-[#25D366] py-1.5 pl-1.5 pr-3 text-[#052E16] shadow-[0_12px_30px_rgba(5,46,22,0.28)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(5,46,22,0.36)] active:translate-y-0 max-[640px]:bottom-[calc(96px+env(safe-area-inset-bottom))] md:bottom-5 md:right-5 md:min-h-14 md:gap-2.5 md:py-2 md:pl-2 md:pr-5"
+      aria-label="Fale conosco no WhatsApp"
     >
-      <div className="relative h-[52px] w-[52px] overflow-hidden rounded-full shadow-lg ring-2 ring-white/20 transition-all hover:shadow-2xl hover:ring-white/40 md:h-[68px] md:w-[68px]">
+      <span className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/5 md:h-10 md:w-10">
         <Image
           src="/whatsapprodape.png"
           alt="WhatsApp"
-          width={68}
-          height={68}
-          className="h-full w-full object-cover"
+          width={40}
+          height={40}
+          className="h-7 w-7 object-contain md:h-9 md:w-9"
         />
-      </div>
+      </span>
+      <span
+        className="whitespace-nowrap text-[11px] font-extrabold leading-none tracking-[-0.01em] md:text-sm"
+        style={{ fontFamily: "var(--font-open-sans)" }}
+      >
+        Fale no WhatsApp
+      </span>
     </Link>
   );
 }

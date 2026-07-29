@@ -32,13 +32,7 @@ const baseState: ContactFormState = {
   mensagem: "",
 };
 
-const trackedFields: ContactField[] = [
-  "nome",
-  "telefone",
-  "email",
-  "assunto",
-  "mensagem",
-];
+const trackedFields: ContactField[] = ["nome", "telefone", "mensagem"];
 
 const subjectLabels: Record<string, string> = {
   orcamento: "Solicitar orçamento",
@@ -65,9 +59,10 @@ export function ContatoWhatsAppForm({
   defaultSubject,
   leadLabel = "contact_form",
 }: ContatoWhatsAppFormProps = {}) {
+  const isB2B = defaultSubject === "b2b";
   const initialState: ContactFormState = {
     ...baseState,
-    assunto: defaultSubject ?? "",
+    assunto: defaultSubject ?? "orcamento",
   };
   const [form, setForm] = useState(initialState);
   const [website, setWebsite] = useState("");
@@ -363,144 +358,88 @@ export function ContatoWhatsAppForm({
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="space-y-4 max-[640px]:space-y-3 md:space-y-5"
+      className="space-y-3.5"
     >
-      <div className="rounded-2xl border border-[#053282]/10 bg-white/80 px-4 py-3 text-[#17325d] shadow-sm">
-        <p
-          className="text-sm font-bold"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        >
-          Retorno rápido por WhatsApp ou ligação
-        </p>
-        <p
-          className="mt-1 text-xs leading-relaxed text-[#42526d]"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        >
-          Conte o que está acontecendo com o motor. Seu pedido vai direto para a equipe de atendimento.
-        </p>
-      </div>
-      <div>
-        <label
-          htmlFor="nome"
-          className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        >
-          Nome completo
-        </label>
-        <input
-          type="text"
-          id="nome"
-          name="nome"
-          required
-          autoComplete="name"
-          value={form.nome}
-          onChange={(event) => updateField("nome", event.target.value)}
-          onFocus={() => handleFieldFocus("nome")}
-          onBlur={(event) => handleFieldComplete("nome", event.target.value)}
-          onInvalid={handleInvalid}
-          className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
-          placeholder="Seu nome completo"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        />
-      </div>
+      <div className="grid gap-3.5 sm:grid-cols-2">
+        <div>
+          <label
+            htmlFor="nome"
+            className="mb-1.5 block text-xs font-semibold text-white md:text-sm"
+            style={{ fontFamily: "var(--font-open-sans)" }}
+          >
+            Seu nome
+          </label>
+          <input
+            type="text"
+            id="nome"
+            name="nome"
+            required
+            minLength={2}
+            autoComplete="name"
+            value={form.nome}
+            onChange={(event) => updateField("nome", event.target.value)}
+            onFocus={() => handleFieldFocus("nome")}
+            onBlur={(event) => handleFieldComplete("nome", event.target.value)}
+            onInvalid={handleInvalid}
+            className="h-11 w-full rounded-xl border border-black/10 bg-[#FFF0C8] px-3.5 text-sm text-gray-900 placeholder-gray-500 outline-none transition focus:border-white/60 focus:ring-2 focus:ring-white/45 md:h-12 md:text-base"
+            placeholder="Como podemos chamar você?"
+            style={{ fontFamily: "var(--font-open-sans)" }}
+          />
+        </div>
 
-      <div>
-        <label
-          htmlFor="telefone"
-          className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        >
-          Telefone/WhatsApp
-        </label>
-        <input
-          type="tel"
-          id="telefone"
-          name="telefone"
-          required
-          autoComplete="tel"
-          value={form.telefone}
-          onChange={(event) => updateField("telefone", event.target.value)}
-          onFocus={() => handleFieldFocus("telefone")}
-          onBlur={(event) => handleFieldComplete("telefone", event.target.value)}
-          onInvalid={handleInvalid}
-          className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
-          placeholder="(16) 99999-9999"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="email"
-          className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        >
-          E-mail <span className="font-normal text-white/75">(opcional)</span>
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          autoComplete="email"
-          value={form.email}
-          onChange={(event) => updateField("email", event.target.value)}
-          onFocus={() => handleFieldFocus("email")}
-          onBlur={(event) => handleFieldComplete("email", event.target.value)}
-          onInvalid={handleInvalid}
-          className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
-          placeholder="seu@email.com"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="assunto"
-          className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        >
-          Assunto
-        </label>
-        <select
-          id="assunto"
-          name="assunto"
-          required
-          value={form.assunto}
-          onChange={(event) => updateField("assunto", event.target.value)}
-          onFocus={() => handleFieldFocus("assunto")}
-          onBlur={(event) => handleFieldComplete("assunto", event.target.value)}
-          onInvalid={handleInvalid}
-          className="h-11 w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:h-10 max-[640px]:px-3 md:h-12 md:px-4 md:text-base"
-          style={{ fontFamily: "var(--font-open-sans)" }}
-        >
-          <option value="">Selecione um assunto</option>
-          <option value="orcamento">Solicitar orçamento</option>
-          <option value="duvidas">Tirar dúvidas</option>
-          <option value="b2b">Parceria para oficina</option>
-          <option value="outros">Outros assuntos</option>
-        </select>
+        <div>
+          <label
+            htmlFor="telefone"
+            className="mb-1.5 block text-xs font-semibold text-white md:text-sm"
+            style={{ fontFamily: "var(--font-open-sans)" }}
+          >
+            Telefone ou WhatsApp
+          </label>
+          <input
+            type="tel"
+            id="telefone"
+            name="telefone"
+            required
+            minLength={8}
+            maxLength={20}
+            inputMode="tel"
+            pattern="[0-9()+\s-]{8,20}"
+            autoComplete="tel"
+            value={form.telefone}
+            onChange={(event) => updateField("telefone", event.target.value)}
+            onFocus={() => handleFieldFocus("telefone")}
+            onBlur={(event) => handleFieldComplete("telefone", event.target.value)}
+            onInvalid={handleInvalid}
+            className="h-11 w-full rounded-xl border border-black/10 bg-[#FFF0C8] px-3.5 text-sm text-gray-900 placeholder-gray-500 outline-none transition focus:border-white/60 focus:ring-2 focus:ring-white/45 md:h-12 md:text-base"
+            placeholder="(16) 99999-9999"
+            style={{ fontFamily: "var(--font-open-sans)" }}
+          />
+        </div>
       </div>
 
       <div>
         <label
           htmlFor="mensagem"
-          className="mb-1.5 block text-xs font-medium text-white max-[640px]:mb-1 md:mb-2 md:text-sm"
+          className="mb-1.5 block text-xs font-semibold text-white md:text-sm"
           style={{ fontFamily: "var(--font-open-sans)" }}
         >
-          Mensagem
+          {isB2B ? "Conte sobre sua oficina" : "O que você precisa?"}
         </label>
         <textarea
           id="mensagem"
           name="mensagem"
-          rows={4}
+          rows={3}
           required
+          minLength={8}
           value={form.mensagem}
           onChange={(event) => updateField("mensagem", event.target.value)}
           onFocus={() => handleFieldFocus("mensagem")}
           onBlur={(event) => handleFieldComplete("mensagem", event.target.value)}
           onInvalid={handleInvalid}
-          className="min-h-[120px] w-full rounded-xl border border-black/10 bg-[#FFE3A6] px-3 py-2.5 text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 max-[640px]:min-h-[100px] max-[640px]:px-3 md:min-h-[170px] md:px-4 md:py-3 md:text-base"
-          placeholder="Conte o sintoma: motor fumando, baixando óleo, superaquecendo, perda de potência..."
+          className="min-h-[88px] w-full resize-y rounded-xl border border-black/10 bg-[#FFF0C8] px-3.5 py-3 text-sm text-gray-900 placeholder-gray-500 outline-none transition focus:border-white/60 focus:ring-2 focus:ring-white/45 md:min-h-[96px] md:text-base"
+          placeholder={isB2B
+            ? "Cidade, tipo de oficina e frequência de serviços de cabeçote."
+            : "Ex.: cabeçote, superaquecimento, fumaça ou perda de potência."}
           style={{ fontFamily: "var(--font-open-sans)" }}
         />
       </div>
@@ -554,24 +493,27 @@ export function ContatoWhatsAppForm({
         </div>
       ) : null}
 
-      <div className="pt-3 max-[640px]:pt-2 md:pt-4">
+      <div className="pt-1.5">
         <button
           type="submit"
           disabled={isSending}
-          className="w-full rounded-full px-8 py-2.5 text-base font-bold text-white shadow-lg transition-all hover:opacity-90 disabled:cursor-wait disabled:opacity-70 max-[640px]:px-6 max-[640px]:py-2 max-[640px]:text-sm md:px-10 md:py-3 md:text-lg"
+          className="min-h-11 w-full rounded-full px-6 py-2.5 text-base font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-wait disabled:opacity-70 disabled:hover:translate-y-0 md:min-h-12 md:text-lg"
           style={{
             background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)",
             fontFamily: "var(--font-rajdhani)",
           }}
         >
-          {isSending ? "Enviando..." : "Quero receber meu orçamento"}
+          {isSending
+            ? "Enviando..."
+            : isB2B
+              ? "Quero falar sobre parceria"
+              : "Pedir orçamento"}
         </button>
         <p
-          className="mt-3 text-center text-xs text-white/85"
+          className="mt-2.5 text-center text-[11px] leading-relaxed text-white/85"
           style={{ fontFamily: "var(--font-open-sans)" }}
         >
-          Sem compromisso. Usaremos seus dados para responder ao pedido pelo
-          contato informado.{" "}
+          Sem compromisso. Usaremos o contato apenas para responder.{" "}
           <Link
             href="/privacidade"
             className="font-bold underline decoration-white/40 underline-offset-2 hover:text-white"
