@@ -19,6 +19,7 @@ export function LocalBusinessSchema() {
     "@id": businessId,
     name: siteConfig.name,
     legalName: siteConfig.legalName,
+    taxID: siteConfig.cnpj,
     url: baseUrl,
     logo: absoluteUrl("/logo.png"),
     image: [absoluteUrl("/retificapremium.jpeg"), absoluteUrl("/oficina.jpeg")],

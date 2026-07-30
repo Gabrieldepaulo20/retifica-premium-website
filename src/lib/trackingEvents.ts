@@ -4,6 +4,7 @@ import {
   hasMeasurementConsent,
   privacySafePageLocation,
 } from "@/lib/consent";
+import { classifyTrafficAttribution } from "@/lib/traffic-attribution";
 
 export type ClarityEventName =
   | "whatsapp_floating_click"
@@ -360,17 +361,22 @@ export function captureTrafficAttribution() {
   ];
   const hasTrackedParam = trackedKeys.some((key) => params.has(key));
   const existing = getStoredAttribution();
+  const classifiedAttribution = classifyTrafficAttribution({
+    source: params.get("utm_source") || undefined,
+    medium: params.get("utm_medium") || undefined,
+    referrer: document.referrer || undefined,
+    hasGoogleClickId: Boolean(
+      params.get("gclid") || params.get("gbraid") || params.get("wbraid")
+    ),
+  });
 
-  if (!hasTrackedParam && existing) return;
+  if (!hasTrackedParam && !classifiedAttribution.aiEngine && existing) return;
 
   const advertisingConsent = hasAdvertisingConsent();
-  const hasGoogleClickId = Boolean(
-    params.get("gclid") || params.get("gbraid") || params.get("wbraid")
-  );
   const capturedAt = new Date();
   const attribution: StoredAttribution = {
-    source: params.get("utm_source") || (hasGoogleClickId ? "google" : undefined),
-    medium: params.get("utm_medium") || (hasGoogleClickId ? "cpc" : undefined),
+    source: classifiedAttribution.source,
+    medium: classifiedAttribution.medium,
     campaign: params.get("utm_campaign") || undefined,
     term: params.get("utm_term") || undefined,
     content: params.get("utm_content") || undefined,

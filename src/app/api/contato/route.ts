@@ -6,6 +6,7 @@ import {
   subjectLabels,
 } from "@/lib/contact-email";
 import { saveExternalMarketingEvent } from "@/lib/external-marketing";
+import { classifyTrafficAttribution } from "@/lib/traffic-attribution";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -180,6 +181,12 @@ export async function POST(request: Request) {
       cleanText(attribution.gbraid, 220) ||
       cleanText(attribution.wbraid, 220)
   );
+  const normalizedAttribution = classifyTrafficAttribution({
+    source: cleanText(attribution.source, 120) || undefined,
+    medium: cleanText(attribution.medium, 120) || undefined,
+    referrer: cleanText(attribution.referrer, 800) || undefined,
+    hasGoogleClickId,
+  });
   const storage = await saveExternalMarketingEvent({
     eventId,
     leadCode,
@@ -197,12 +204,8 @@ export async function POST(request: Request) {
     })(),
     pageLocation,
     referrer: cleanText(attribution.referrer, 800) || undefined,
-    source:
-      cleanText(attribution.source, 120) ||
-      (hasGoogleClickId ? "google" : "direto"),
-    medium:
-      cleanText(attribution.medium, 120) ||
-      (hasGoogleClickId ? "cpc" : undefined),
+    source: normalizedAttribution.source || "direto",
+    medium: normalizedAttribution.medium,
     campaign: cleanText(attribution.campaign, 180) || undefined,
     term: cleanText(attribution.term, 180) || undefined,
     content: cleanText(attribution.content, 180) || undefined,
