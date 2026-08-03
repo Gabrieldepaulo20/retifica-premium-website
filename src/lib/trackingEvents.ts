@@ -53,6 +53,7 @@ type MarketingEventParams = {
   traffic_term?: string;
   gclid?: string;
   transaction_id?: string;
+  engaged_seconds?: number;
   [key: string]: string | number | undefined;
 };
 
@@ -99,6 +100,7 @@ type TrackingWindow = Window & {
 const ATTRIBUTION_KEY = "retifica_premium_attribution";
 const ANONYMOUS_ID_KEY = "retifica_premium_anonymous_id";
 const SESSION_ID_KEY = "retifica_premium_session_id";
+const SESSION_ATTRIBUTION_KEY = "retifica_premium_session_attribution";
 const CONTACT_INTENT_KEY = "retifica_premium_contact_intent";
 const REPORTED_EVENTS_KEY = "retifica_premium_reported_events";
 const CONTACT_INTENT_TTL_MS = 30 * 60 * 1000;
@@ -108,6 +110,10 @@ const GOOGLE_ADS_CONVERSIONS: Partial<Record<GaEventName, string>> = {
   generate_lead: process.env.NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO,
   whatsapp_click: process.env.NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO,
   phone_click: process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO,
+};
+
+type SessionAttribution = {
+  originType: "paid" | "organic" | "other";
 };
 
 function storageAvailable() {
@@ -250,6 +256,30 @@ function markAsReported(eventType: string, eventId: string) {
   }
 }
 
+function storeSessionAttribution(attribution: SessionAttribution, replace = false) {
+  if (!sessionStorageAvailable()) return;
+  try {
+    if (!replace && window.sessionStorage.getItem(SESSION_ATTRIBUTION_KEY)) return;
+    window.sessionStorage.setItem(SESSION_ATTRIBUTION_KEY, JSON.stringify(attribution));
+  } catch {
+    // A origem da sessão também pode ser inferida no backend quando necessário.
+  }
+}
+
+function getSessionAttribution(): SessionAttribution | null {
+  if (!sessionStorageAvailable()) return null;
+  try {
+    const raw = window.sessionStorage.getItem(SESSION_ATTRIBUTION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<SessionAttribution>;
+    return ["paid", "organic", "other"].includes(parsed.originType ?? "")
+      ? parsed as SessionAttribution
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 function deviceType() {
   if (typeof window === "undefined") return "unknown";
   if (window.matchMedia("(max-width: 767px)").matches) return "mobile";
@@ -311,6 +341,8 @@ export function sendExternalMarketingEvent(
       elapsedSeconds: params.form_elapsed_seconds,
       fieldsCompleted: params.fields_completed,
       completionPercent: params.completion_percent,
+      engagedSeconds: params.engaged_seconds,
+      sessionOriginType: getSessionAttribution()?.originType,
     },
   };
 
@@ -369,6 +401,10 @@ export function captureTrafficAttribution() {
       params.get("gclid") || params.get("gbraid") || params.get("wbraid")
     ),
   });
+  storeSessionAttribution(
+    { originType: classifiedAttribution.originType },
+    hasTrackedParam
+  );
 
   if (!hasTrackedParam && !classifiedAttribution.aiEngine && existing) return;
 

@@ -22,6 +22,7 @@ const allowedEventTypes = new Set([
   "form_submit",
   "form_validation_error",
   "form_submit_error",
+  "custom",
 ]);
 const whatsappDedupe = new Map<string, { expiresAt: number }>();
 const DEDUPE_MS = 30 * 60 * 1000;
