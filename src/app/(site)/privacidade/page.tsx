@@ -18,17 +18,17 @@ export const metadata: Metadata = {
 const categories = [
   {
     number: "01",
-    title: "Dados essenciais",
-    status: "Sempre ativos",
+    title: "Medição básica da sessão",
+    status: "Sempre ativa",
     description:
-      "Guardam sua escolha, mantêm segurança e atendimento e incluem a medição estatística básica pelo Google Analytics 4. Não ativam publicidade personalizada.",
+      "Registra uma sessão temporária com as páginas acessadas, origem geral, tempo ativo e ações, sem cookie persistente, URL de consulta ou identificação direta.",
   },
   {
     number: "02",
     title: "Análise avançada da experiência",
     status: "Você escolhe",
     description:
-      "Acrescenta o Microsoft Clarity e métricas detalhadas do Retiflow para encontrar dificuldades de navegação e melhorar páginas e formulários.",
+      "Autoriza armazenamento do Google Analytics 4 e Microsoft Clarity para encontrar dificuldades de navegação e melhorar páginas e formulários.",
   },
   {
     number: "03",
@@ -69,7 +69,7 @@ export default function PrivacidadePage() {
             ideia quando quiser.
           </p>
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-white/50">
-            Última atualização: 28 de julho de 2026
+            Última atualização: 3 de agosto de 2026
           </p>
         </div>
       </section>
@@ -107,12 +107,14 @@ export default function PrivacidadePage() {
                   Quais informações podemos utilizar
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
-                  A medição básica do Google Analytics pode registrar página
-                  acessada, entrada, referência, dispositivo, data, hora e
-                  origem geral da visita. Conforme suas escolhas opcionais,
-                  também podemos registrar campanha, mídia, termo pesquisado e
-                  identificadores técnicos de clique. A atribuição local expira
-                  em até 90 dias e a preferência de privacidade em até 180 dias.
+                  A medição básica da sessão registra a URL sem parâmetros de
+                  consulta, a página de entrada, as páginas seguintes, origem
+                  geral, dispositivo, data, hora, tempo ativo e ações realizadas.
+                  O identificador aleatório existe somente durante a sessão da
+                  página e não identifica diretamente a pessoa. Conforme suas
+                  escolhas opcionais, também podemos registrar campanha, mídia,
+                  termo e identificadores técnicos de clique. A atribuição local
+                  expira em até 90 dias e a preferência de privacidade em até 180 dias.
                 </p>
               </section>
 
@@ -134,12 +136,10 @@ export default function PrivacidadePage() {
                   Com quem os dados podem ser processados
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
-                  O Google Analytics 4 é usado para a medição estatística básica.
-                  Dependendo das categorias autorizadas, também usamos serviços
-                  do Google para anúncios, Microsoft Clarity para entender a
-                  experiência de navegação e Retiflow para relacionar a origem
-                  do contato ao atendimento comercial. Não ativamos
-                  personalização de anúncios no consentimento atual.
+                  O Retiflow recebe a medição básica da sessão. Dependendo das
+                  categorias autorizadas, também usamos Google Analytics 4,
+                  serviços do Google para anúncios e Microsoft Clarity. Não
+                  ativamos personalização de anúncios no consentimento atual.
                 </p>
               </section>
 
@@ -152,9 +152,11 @@ export default function PrivacidadePage() {
                   de dados aplicável ao seu caso. Também pode mudar as
                   categorias opcionais a qualquer momento pelo botão
                   <strong> Privacidade</strong>, no canto inferior esquerdo do
-                  site. A medição básica do Google Analytics permanece ativa;
+                  site. A medição básica da sessão permanece ativa com fundamento
+                  no legítimo interesse de medir o funcionamento e a audiência;
                   ao revogar uma categoria opcional, limpamos do navegador os
-                  dados correspondentes que conseguirmos identificar.
+                  dados correspondentes que conseguirmos identificar. Você pode
+                  se opor ao tratamento básico pelo contato indicado nesta página.
                 </p>
               </section>
             </div>

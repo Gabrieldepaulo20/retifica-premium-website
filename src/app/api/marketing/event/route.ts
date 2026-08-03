@@ -6,6 +6,7 @@ import {
   updateExternalMarketingAlert,
 } from "@/lib/external-marketing";
 import { sendWhatsAppClickAlert } from "@/lib/contact-email";
+import { classifyTrafficAttribution } from "@/lib/traffic-attribution";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,6 +22,7 @@ const allowedEventTypes = new Set([
   "form_submit",
   "form_validation_error",
   "form_submit_error",
+  "custom",
 ]);
 const whatsappDedupe = new Map<string, { expiresAt: number }>();
 const DEDUPE_MS = 30 * 60 * 1000;
@@ -82,6 +84,12 @@ export async function POST(request: Request) {
   const hasGoogleClickId = Boolean(
     clean(body.gclid, 220) || clean(body.gbraid, 220) || clean(body.wbraid, 220)
   );
+  const attribution = classifyTrafficAttribution({
+    source: clean(body.source, 120) || undefined,
+    medium: clean(body.medium, 120) || undefined,
+    referrer: clean(body.referrer, 800) || undefined,
+    hasGoogleClickId,
+  });
   const event: ExternalMarketingEvent = {
     eventId: clean(body.eventId, 80) || randomUUID(),
     leadCode: clean(body.leadCode, 40),
@@ -94,8 +102,8 @@ export async function POST(request: Request) {
     pageLocation: clean(body.pageLocation, 800) || undefined,
     pageTitle: clean(body.pageTitle, 300) || undefined,
     referrer: clean(body.referrer, 800) || undefined,
-    source: clean(body.source, 120) || (hasGoogleClickId ? "google" : "direto"),
-    medium: clean(body.medium, 120) || (hasGoogleClickId ? "cpc" : undefined),
+    source: attribution.source || "direto",
+    medium: attribution.medium,
     campaign: clean(body.campaign, 180) || undefined,
     term: clean(body.term, 180) || undefined,
     content: clean(body.content, 180) || undefined,

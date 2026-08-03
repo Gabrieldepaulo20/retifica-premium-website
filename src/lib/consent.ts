@@ -15,15 +15,17 @@ type ConsentWindow = Window & {
 
 export const CONSENT_STORAGE_KEY = "retifica_premium_consent";
 export const CONSENT_CHANGED_EVENT = "retifica:consent-changed";
-export const CONSENT_POLICY_VERSION = "2026-07-28";
+export const CONSENT_POLICY_VERSION = "2026-08-03";
 
 const CONSENT_TTL_MS = 180 * 24 * 60 * 60 * 1000;
 const TRACKING_STORAGE_KEYS = [
   "retifica_premium_attribution",
   "retifica_premium_anonymous_id",
   "retifica_premium_session_id",
+  "retifica_premium_session_attribution",
   "retifica_premium_contact_intent",
   "retifica_premium_reported_events",
+  "retifica_premium_active_time_ms",
 ] as const;
 const EXPERIENCE_COOKIE_PREFIXES = ["_clck", "_clsk"] as const;
 const ADVERTISING_COOKIE_PREFIXES = ["_gcl"] as const;
@@ -131,8 +133,7 @@ export function updateGoogleConsent(preferences: ConsentPreferences | null) {
     };
 
   consentWindow.gtag("consent", "update", {
-    // O GA4 permanece ativo para a medição estatística básica do site.
-    analytics_storage: "granted",
+    analytics_storage: preferences?.analytics ? "granted" : "denied",
     ad_storage: preferences?.advertising ? "granted" : "denied",
     ad_user_data: preferences?.advertising ? "granted" : "denied",
     // A Retífica Premium ainda não utiliza remarketing personalizado.

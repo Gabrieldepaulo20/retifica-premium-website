@@ -4,6 +4,7 @@ import {
   hasMeasurementConsent,
   privacySafePageLocation,
 } from "@/lib/consent";
+import { classifyTrafficAttribution } from "@/lib/traffic-attribution";
 
 export type ClarityEventName =
   | "whatsapp_floating_click"
@@ -52,6 +53,7 @@ type MarketingEventParams = {
   traffic_term?: string;
   gclid?: string;
   transaction_id?: string;
+  engaged_seconds?: number;
   [key: string]: string | number | undefined;
 };
 
@@ -77,6 +79,10 @@ export type StoredAttribution = {
   expiresAt: string;
 };
 
+type RuntimeAttribution = StoredAttribution & {
+  originType: "paid" | "organic" | "other";
+};
+
 export type ContactIntent = {
   eventId: string;
   leadCode: string;
@@ -98,15 +104,22 @@ type TrackingWindow = Window & {
 const ATTRIBUTION_KEY = "retifica_premium_attribution";
 const ANONYMOUS_ID_KEY = "retifica_premium_anonymous_id";
 const SESSION_ID_KEY = "retifica_premium_session_id";
+const SESSION_ATTRIBUTION_KEY = "retifica_premium_session_attribution";
 const CONTACT_INTENT_KEY = "retifica_premium_contact_intent";
 const REPORTED_EVENTS_KEY = "retifica_premium_reported_events";
 const CONTACT_INTENT_TTL_MS = 30 * 60 * 1000;
 const ATTRIBUTION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 const pendingEvents = new Set<string>();
+let anonymousRuntimeIntent: ContactIntent | null = null;
+let runtimeAttribution: RuntimeAttribution | null = null;
 const GOOGLE_ADS_CONVERSIONS: Partial<Record<GaEventName, string>> = {
   generate_lead: process.env.NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO,
   whatsapp_click: process.env.NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO,
   phone_click: process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO,
+};
+
+type SessionAttribution = {
+  originType: "paid" | "organic" | "other";
 };
 
 function storageAvailable() {
@@ -140,12 +153,13 @@ export function createMarketingEventId() {
 function getOrCreateBrowserId(
   storage: Storage | null,
   key: string,
-  prefix: string
+  prefix: string,
+  preferredValue?: string
 ) {
   const existing = storage?.getItem(key);
   if (existing) return existing;
 
-  const value = `${prefix}-${randomId()}`;
+  const value = preferredValue || `${prefix}-${randomId()}`;
   storage?.setItem(key, value);
   return value;
 }
@@ -157,13 +171,16 @@ function leadCode() {
 }
 
 function createEphemeralContactIntent(): ContactIntent {
-  return {
+  if (anonymousRuntimeIntent) return anonymousRuntimeIntent;
+
+  anonymousRuntimeIntent = {
     eventId: randomId(),
     leadCode: leadCode(),
     anonymousId: "",
-    sessionId: "",
+    sessionId: `session-anonymous-${randomId()}`,
     createdAt: new Date().toISOString(),
   };
+  return anonymousRuntimeIntent;
 }
 
 export function getOrCreateContactIntent(): ContactIntent {
@@ -206,7 +223,8 @@ export function getOrCreateContactIntent(): ContactIntent {
     sessionId: getOrCreateBrowserId(
       sessionStorage,
       SESSION_ID_KEY,
-      "session"
+      "session",
+      anonymousRuntimeIntent?.sessionId
     ),
     createdAt: new Date().toISOString(),
   };
@@ -220,7 +238,7 @@ function reportedEventKey(eventType: string, eventId: string) {
 }
 
 function wasReported(eventType: string, eventId: string) {
-  if (!sessionStorageAvailable()) return false;
+  if (!hasMeasurementConsent() || !sessionStorageAvailable()) return false;
 
   try {
     const raw = window.sessionStorage.getItem(REPORTED_EVENTS_KEY);
@@ -232,7 +250,7 @@ function wasReported(eventType: string, eventId: string) {
 }
 
 function markAsReported(eventType: string, eventId: string) {
-  if (!sessionStorageAvailable()) return;
+  if (!hasMeasurementConsent() || !sessionStorageAvailable()) return;
 
   try {
     const raw = window.sessionStorage.getItem(REPORTED_EVENTS_KEY);
@@ -249,11 +267,82 @@ function markAsReported(eventType: string, eventId: string) {
   }
 }
 
+function storeSessionAttribution(attribution: SessionAttribution, replace = false) {
+  if (!sessionStorageAvailable()) return;
+  try {
+    if (!replace && window.sessionStorage.getItem(SESSION_ATTRIBUTION_KEY)) return;
+    window.sessionStorage.setItem(SESSION_ATTRIBUTION_KEY, JSON.stringify(attribution));
+  } catch {
+    // A origem da sessão também pode ser inferida no backend quando necessário.
+  }
+}
+
+function getSessionAttribution(): SessionAttribution | null {
+  if (!sessionStorageAvailable()) return null;
+  try {
+    const raw = window.sessionStorage.getItem(SESSION_ATTRIBUTION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<SessionAttribution>;
+    return ["paid", "organic", "other"].includes(parsed.originType ?? "")
+      ? parsed as SessionAttribution
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 function deviceType() {
   if (typeof window === "undefined") return "unknown";
   if (window.matchMedia("(max-width: 767px)").matches) return "mobile";
   if (window.matchMedia("(max-width: 1024px)").matches) return "tablet";
   return "desktop";
+}
+
+function safeReferrerOrigin() {
+  if (typeof document === "undefined" || !document.referrer) return undefined;
+  try {
+    return new URL(document.referrer).origin;
+  } catch {
+    return undefined;
+  }
+}
+
+function captureRuntimeAttribution() {
+  if (typeof window === "undefined") return null;
+
+  const params = new URLSearchParams(window.location.search);
+  const hasTrackedParam = [
+    "utm_source",
+    "utm_medium",
+    "gclid",
+    "gbraid",
+    "wbraid",
+  ].some((key) => params.has(key));
+  if (runtimeAttribution && !hasTrackedParam) return runtimeAttribution;
+
+  const classified = classifyTrafficAttribution({
+    source: params.get("utm_source") || undefined,
+    medium: params.get("utm_medium") || undefined,
+    referrer: safeReferrerOrigin(),
+    hasGoogleClickId: Boolean(
+      params.get("gclid") || params.get("gbraid") || params.get("wbraid")
+    ),
+  });
+  const capturedAt = new Date();
+  runtimeAttribution = {
+    source: classified.source,
+    medium: classified.medium,
+    originType: classified.originType,
+    landingPage: `${window.location.origin}${window.location.pathname}`,
+    referrer: safeReferrerOrigin(),
+    capturedAt: capturedAt.toISOString(),
+    expiresAt: new Date(capturedAt.getTime() + CONTACT_INTENT_TTL_MS).toISOString(),
+  };
+  return runtimeAttribution;
+}
+
+function effectiveEventAttribution() {
+  return getStoredAttribution() ?? captureRuntimeAttribution();
 }
 
 export function sendExternalMarketingEvent(
@@ -274,7 +363,10 @@ export function sendExternalMarketingEvent(
   }
   pendingEvents.add(pendingKey);
 
-  const attribution = getStoredAttribution();
+  const attribution = effectiveEventAttribution();
+  const measurementConsented = hasMeasurementConsent();
+  const sessionOriginType = getSessionAttribution()?.originType
+    ?? runtimeAttribution?.originType;
   const payload = {
     eventId: intent.eventId,
     leadCode: intent.leadCode,
@@ -291,7 +383,7 @@ export function sendExternalMarketingEvent(
     pagePath: window.location.pathname,
     pageLocation: privacySafePageLocation(),
     pageTitle: document.title,
-    referrer: attribution?.referrer ?? document.referrer ?? undefined,
+    referrer: attribution?.referrer,
     source: attribution?.source,
     medium: attribution?.medium,
     campaign: attribution?.campaign,
@@ -310,6 +402,10 @@ export function sendExternalMarketingEvent(
       elapsedSeconds: params.form_elapsed_seconds,
       fieldsCompleted: params.fields_completed,
       completionPercent: params.completion_percent,
+      engagedSeconds: params.engaged_seconds,
+      percentScrolled: params.percent_scrolled,
+      sessionOriginType,
+      measurementMode: measurementConsented ? "consented" : "anonymous",
     },
   };
 
@@ -339,13 +435,7 @@ export function sendExternalMarketingEvent(
 }
 
 export function captureTrafficAttribution() {
-  if (
-    typeof window === "undefined" ||
-    !storageAvailable() ||
-    !hasMeasurementConsent()
-  ) {
-    return;
-  }
+  if (typeof window === "undefined") return;
 
   const params = new URLSearchParams(window.location.search);
   const trackedKeys = [
@@ -359,26 +449,42 @@ export function captureTrafficAttribution() {
     "wbraid",
   ];
   const hasTrackedParam = trackedKeys.some((key) => params.has(key));
+  const anonymousAttribution = captureRuntimeAttribution();
+  if (!storageAvailable() || !hasMeasurementConsent()) return;
+
   const existing = getStoredAttribution();
+  const classifiedAttribution = classifyTrafficAttribution({
+    source: params.get("utm_source") || undefined,
+    medium: params.get("utm_medium") || undefined,
+    referrer: document.referrer || undefined,
+    hasGoogleClickId: Boolean(
+      params.get("gclid") || params.get("gbraid") || params.get("wbraid")
+    ),
+  });
+  storeSessionAttribution(
+    { originType: anonymousAttribution?.originType ?? classifiedAttribution.originType },
+    hasTrackedParam
+  );
 
   if (!hasTrackedParam && existing) return;
 
   const advertisingConsent = hasAdvertisingConsent();
-  const hasGoogleClickId = Boolean(
-    params.get("gclid") || params.get("gbraid") || params.get("wbraid")
-  );
   const capturedAt = new Date();
   const attribution: StoredAttribution = {
-    source: params.get("utm_source") || (hasGoogleClickId ? "google" : undefined),
-    medium: params.get("utm_medium") || (hasGoogleClickId ? "cpc" : undefined),
+    source: hasTrackedParam
+      ? classifiedAttribution.source
+      : anonymousAttribution?.source,
+    medium: hasTrackedParam
+      ? classifiedAttribution.medium
+      : anonymousAttribution?.medium,
     campaign: params.get("utm_campaign") || undefined,
     term: params.get("utm_term") || undefined,
     content: params.get("utm_content") || undefined,
     gclid: advertisingConsent ? params.get("gclid") || undefined : undefined,
     gbraid: advertisingConsent ? params.get("gbraid") || undefined : undefined,
     wbraid: advertisingConsent ? params.get("wbraid") || undefined : undefined,
-    landingPage: privacySafePageLocation(),
-    referrer: document.referrer || undefined,
+    landingPage: anonymousAttribution?.landingPage ?? privacySafePageLocation(),
+    referrer: document.referrer || anonymousAttribution?.referrer,
     capturedAt: capturedAt.toISOString(),
     expiresAt: new Date(capturedAt.getTime() + ATTRIBUTION_TTL_MS).toISOString(),
   };

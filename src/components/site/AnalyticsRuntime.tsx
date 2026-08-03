@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   CONSENT_CHANGED_EVENT,
-  hasAnalyticsConsent,
   hasMeasurementConsent,
 } from "@/lib/consent";
 import {
@@ -14,10 +13,13 @@ import {
 } from "@/lib/trackingEvents";
 
 const SCROLL_THRESHOLDS = [50, 75, 90] as const;
+const ACTIVE_TIME_STORAGE_KEY = "retifica_premium_active_time_ms";
+const ENGAGEMENT_PULSE_MS = 30_000;
 
 export function AnalyticsRuntime() {
   const pathname = usePathname();
   const previousPathnameRef = useRef<string | null>(null);
+  const accumulatedActiveMsRef = useRef(0);
   const [consentRevision, setConsentRevision] = useState(0);
 
   useEffect(() => {
@@ -31,17 +33,91 @@ export function AnalyticsRuntime() {
   }, []);
 
   useEffect(() => {
-    const previousPathname = previousPathnameRef.current;
-    previousPathnameRef.current = pathname;
+    let activeStartedAt =
+      document.visibilityState === "visible" ? Date.now() : null;
+    let lastReportedSeconds = -1;
 
     if (hasMeasurementConsent()) {
-      captureTrafficAttribution();
+      try {
+        const stored = Number(
+          window.sessionStorage.getItem(ACTIVE_TIME_STORAGE_KEY)
+        );
+        if (Number.isFinite(stored) && stored >= 0) {
+          accumulatedActiveMsRef.current = Math.max(
+            accumulatedActiveMsRef.current,
+            stored
+          );
+        }
+      } catch {
+        // A medição continua somente em memória quando o storage está indisponível.
+      }
     }
 
-    if (hasAnalyticsConsent()) {
+    const persistActiveTime = () => {
+      if (!hasMeasurementConsent()) return;
+      try {
+        window.sessionStorage.setItem(
+          ACTIVE_TIME_STORAGE_KEY,
+          String(Math.round(accumulatedActiveMsRef.current))
+        );
+      } catch {
+        // A indisponibilidade do storage não pode afetar o site.
+      }
+    };
+
+    const reportActiveTime = () => {
+      const now = Date.now();
+      if (activeStartedAt !== null) {
+        accumulatedActiveMsRef.current += Math.max(0, now - activeStartedAt);
+        activeStartedAt = now;
+      }
+      persistActiveTime();
+
+      const engagedSeconds = Math.floor(accumulatedActiveMsRef.current / 1000);
+      if (engagedSeconds <= 0 || engagedSeconds === lastReportedSeconds) {
+        return;
+      }
+      lastReportedSeconds = engagedSeconds;
+      sendExternalMarketingEvent("custom", {
+        event_category: "engagement",
+        event_label: "session_engagement",
+        engaged_seconds: engagedSeconds,
+      });
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        reportActiveTime();
+        activeStartedAt = null;
+        return;
+      }
+      activeStartedAt = Date.now();
+    };
+
+    const intervalId = window.setInterval(reportActiveTime, ENGAGEMENT_PULSE_MS);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pagehide", reportActiveTime);
+
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", reportActiveTime);
+      reportActiveTime();
+    };
+  }, [consentRevision]);
+
+  useEffect(() => {
+    const previousPathname = previousPathnameRef.current;
+    previousPathnameRef.current = pathname;
+    const pathnameChanged =
+      previousPathname === null || previousPathname !== pathname;
+
+    captureTrafficAttribution();
+
+    if (pathnameChanged) {
       sendExternalMarketingEvent("page_view", {
         event_category: "navigation",
-        event_label: "page_view",
+        event_label: previousPathname === null ? "page_view" : "spa_navigation",
       });
     }
 
@@ -66,6 +142,11 @@ export function AnalyticsRuntime() {
       for (const threshold of SCROLL_THRESHOLDS) {
         if (percentScrolled >= threshold && !fired.has(threshold)) {
           fired.add(threshold);
+          sendExternalMarketingEvent("custom", {
+            event_category: "engagement",
+            event_label: `scroll_${threshold}`,
+            percent_scrolled: threshold,
+          });
           trackMarketingEvent("scroll_depth", {
             event_category: "engagement",
             event_label: `scroll_${threshold}`,
