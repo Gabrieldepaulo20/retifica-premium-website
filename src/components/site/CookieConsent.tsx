@@ -237,9 +237,9 @@ export function CookieConsent({
                   Você escolhe como podemos aprender com sua visita
                 </h2>
                 <p className="mt-1.5 text-sm leading-relaxed text-white/72">
-                  Mantemos a medição básica de acessos pelo Google Analytics.
-                  Com sua autorização, também analisamos a experiência e quais
-                  anúncios ajudam de verdade.
+                  Registramos uma sessão técnica mínima, com página acessada,
+                  origem geral e tempo ativo, sem identificação direta.
+                  Com sua autorização, ampliamos a análise da experiência e dos anúncios.
                 </p>
                 <Link
                   href="/privacidade"
@@ -280,14 +280,14 @@ export function CookieConsent({
               <div className="mt-4 border-t border-white/10 pt-4">
                 <div className="grid gap-2.5 md:grid-cols-3">
                   <ChoiceRow
-                    title="Essenciais"
-                    description="Mantêm segurança, atendimento, sua preferência e a medição básica pelo Google Analytics."
+                    title="Medição básica da sessão"
+                    description="Registra páginas, origem geral e tempo sem cookie persistente, URL de consulta ou identificador de anúncio."
                     checked
                     disabled
                   />
                   <ChoiceRow
                     title="Análise avançada da experiência"
-                    description="Clarity e métricas detalhadas do Retiflow para melhorar páginas e formulários."
+                    description="Autoriza armazenamento do Google Analytics e Microsoft Clarity para melhorar páginas e formulários."
                     checked={analytics}
                     onChange={setAnalytics}
                   />
