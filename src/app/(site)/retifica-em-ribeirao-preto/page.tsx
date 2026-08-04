@@ -17,19 +17,19 @@ import { absoluteUrl, siteConfig } from "@/lib/site";
 const pagePath = "/retifica-em-ribeirao-preto";
 
 const whatsappMessage =
-  "Olá, sou de Ribeirão Preto e vim pelo site da Retífica Premium. Gostaria de um orçamento para retífica de cabeçote ou motor.";
+  "Olá, sou de Ribeirão Preto e vim pelo site da Retífica Premium. Gostaria de um orçamento para retífica de cabeçote.";
 
 export const metadata: Metadata = {
-  title: "Retífica em Ribeirão Preto | Motores e Cabeçotes",
+  title: "Retífica de Cabeçote em Ribeirão Preto | Sertãozinho-SP",
   description:
-    "Retífica de motores e cabeçotes para Ribeirão Preto, a 19 km, em Sertãozinho. Diagnóstico técnico, garantia e orçamento pelo WhatsApp.",
+    "Retífica de cabeçote para Ribeirão Preto, a 19 km, em Sertãozinho. Diagnóstico técnico, garantia e orçamento pelo WhatsApp.",
   alternates: {
     canonical: pagePath,
   },
   openGraph: {
-    title: "Retífica em Ribeirão Preto | Motores e Cabeçotes",
+    title: "Retífica de Cabeçote em Ribeirão Preto | Sertãozinho-SP",
     description:
-      "Retífica de cabeçote, retífica de motor, plaina e teste de trinca para motoristas, oficinas e frotas de Ribeirão Preto. Oficina a 19 km, em Sertãozinho-SP.",
+      "Retífica de cabeçote, plaina e teste de trinca para motoristas, oficinas e frotas de Ribeirão Preto. Oficina a 19 km, em Sertãozinho-SP.",
     url: absoluteUrl(pagePath),
     siteName: siteConfig.name,
     locale: siteConfig.locale,
@@ -45,9 +45,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Retífica em Ribeirão Preto | Motores e Cabeçotes",
+    title: "Retífica de Cabeçote em Ribeirão Preto | Sertãozinho-SP",
     description:
-      "Retífica de cabeçote, retífica de motor, plaina e teste de trinca para Ribeirão Preto. Oficina a 19 km, em Sertãozinho-SP.",
+      "Retífica de cabeçote, plaina e teste de trinca para Ribeirão Preto. Oficina a 19 km, em Sertãozinho-SP.",
     images: ["/oficina.jpeg"],
   },
 };
@@ -63,7 +63,7 @@ const steps = [
   },
   {
     title: "Envio da peça",
-    desc: "Você traz o cabeçote ou motor até a oficina em Sertãozinho, ou combinamos retirada e entrega conforme a rota.",
+    desc: "Você traz o cabeçote até a oficina em Sertãozinho, ou combinamos retirada e entrega conforme a rota.",
   },
   {
     title: "Serviço e devolução",
@@ -97,7 +97,7 @@ const faq = [
       "Sim. A oficina fica em Sertãozinho-SP, a cerca de 19 km de Ribeirão Preto, e atende motoristas, oficinas mecânicas e frotas da cidade todos os dias úteis.",
   },
   {
-    question: "Como envio meu cabeçote ou motor de Ribeirão Preto?",
+    question: "Como envio meu cabeçote de Ribeirão Preto?",
     answer:
       "Você pode trazer a peça até a oficina em Sertãozinho ou combinar retirada e entrega conforme a rota. O combinado é feito pelo WhatsApp junto com o orçamento.",
   },
@@ -140,13 +140,13 @@ export default function RetificaRibeiraoPretoPage() {
               Atendimento a Ribeirão Preto
             </p>
             <h1 className="font-heading text-3xl font-extrabold leading-tight md:text-5xl">
-              Retífica de motores e cabeçotes para Ribeirão Preto
+              Retífica de cabeçote para Ribeirão Preto
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/82 md:text-lg">
               A Retífica Premium fica em Sertãozinho-SP, a cerca de 19 km de
               Ribeirão Preto, e atende motoristas, oficinas mecânicas e frotas
-              da cidade com retífica de cabeçote, retífica de motor, plaina,
-              teste de trinca e montagem técnica.
+              da cidade com retífica de cabeçote, plaina, teste de trinca e
+              montagem técnica.
             </p>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">
               O diagnóstico vem antes da troca de peças: você envia o sintoma

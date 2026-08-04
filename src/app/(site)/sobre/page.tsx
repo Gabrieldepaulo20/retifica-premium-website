@@ -173,7 +173,7 @@ export default function SobrePage() {
               >
                 <p className="font-bold">
                   Fundada em 2004, a Retífica Premium nasceu do sonho de
-                  oferecer serviços de retífica de motores com excelência
+                  oferecer serviços de retífica de cabeçotes com excelência
                   técnica e atendimento diferenciado.
                 </p>
 
@@ -188,11 +188,11 @@ export default function SobrePage() {
                 <p>
                   Ao longo dos anos, investimos continuamente em tecnologia e
                   capacitação profissional, tornando-nos referência no mercado
-                  de retífica de motores.
+                  de retífica de cabeçotes.
                 </p>
 
                 <p className="font-bold uppercase text-rp-accent">
-                  NOSSA FILOSOFIA É SIMPLES: TRATAR CADA MOTOR COM O MESMO
+                  NOSSA FILOSOFIA É SIMPLES: TRATAR CADA CABEÇOTE COM O MESMO
                   CUIDADO E PRECISÃO QUE GOSTARÍAMOS QUE TRATASSEM O NOSSO.
                 </p>
 
@@ -290,8 +290,9 @@ export default function SobrePage() {
                     className="text-base leading-relaxed text-white md:text-lg"
                     style={{ fontFamily: "var(--font-open-sans)" }}
                   >
-                    Restaurar a performance e a confiabilidade dos motores com
-                    qualidade técnica, agilidade e atendimento humano.
+                    Restaurar a performance e a confiabilidade do motor a
+                    partir do cabeçote, com qualidade técnica, agilidade e
+                    atendimento humano.
                   </p>
                 </div>
                 <div className="shrink-0">
@@ -506,7 +507,7 @@ export default function SobrePage() {
             <StatsCounter
               endValue={5000}
               suffix="+"
-              label="Motores Retificados"
+              label="Cabeçotes Retificados"
             />
 
             {/* Métrica 3 */}
@@ -553,7 +554,7 @@ export default function SobrePage() {
                 className="font-rajdhani text-4xl font-bold text-gray-900 md:text-5xl"
                 style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.2 }}
               >
-                Pessoas que entendem de motores —{" "}
+                Pessoas que entendem de cabeçote —{" "}
                 <span className="text-rp-accent">e de confiança.</span>
               </h2>
               <div
@@ -580,7 +581,7 @@ export default function SobrePage() {
                   Combinamos experiência prática com equipamentos modernos,
                   garantindo resultados que superam as expectativas. Cada membro
                   da nossa equipe compartilha o compromisso com a excelência e o
-                  cuidado com cada motor que passa por nossas mãos.
+                  cuidado com cada cabeçote que passa por nossas mãos.
                 </p>
               </div>
               <div className="flex flex-col gap-3 pt-2 sm:flex-row">

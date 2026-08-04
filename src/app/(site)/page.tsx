@@ -20,15 +20,15 @@ import { videos } from "@/lib/videos";
 
 export const metadata: Metadata = {
   title:
-    "Retífica de Motor e Cabeçote | Sertãozinho e Ribeirão Preto",
+    "Retífica de Cabeçote | Sertãozinho e Ribeirão Preto",
   description:
-    "Retífica de motores e cabeçotes em Sertãozinho-SP, com atendimento a Ribeirão Preto e região. Diagnóstico técnico e orçamento pelo WhatsApp.",
+    "Retífica de cabeçote em Sertãozinho-SP, com atendimento a Ribeirão Preto e região. Diagnóstico técnico e orçamento pelo WhatsApp.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title:
-      "Retífica de Motor e Cabeçote | Sertãozinho e Ribeirão Preto",
+      "Retífica de Cabeçote | Sertãozinho e Ribeirão Preto",
     description:
       "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo. Atende Sertãozinho, Ribeirão Preto e região.",
     url: "https://www.premiumretifica.com.br",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Retífica de Motor e Cabeçote | Sertãozinho e Ribeirão Preto",
+      "Retífica de Cabeçote | Sertãozinho e Ribeirão Preto",
     description:
       "Retífica de cabeçote, usinagem e diagnóstico técnico para motor fumando, baixando óleo ou superaquecendo. Atende Sertãozinho, Ribeirão Preto e região.",
     images: ["/retificapremium.jpeg"],
@@ -161,7 +161,7 @@ export default function HomePage() {
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-rp-gold" />
-                  +5.000 motores retificados
+                  +5.000 cabeçotes retificados
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-rp-gold" />
@@ -217,7 +217,7 @@ export default function HomePage() {
               DIFERENCIAIS
             </p>
             <h2 className="font-heading text-[26px] font-bold leading-tight text-white md:text-4xl">
-              Por que a Retífica Premium é a escolha certa para seu motor?
+              Por que a Retífica Premium é a escolha certa para seu cabeçote?
             </h2>
             <div className="mx-auto mt-5 flex justify-center gap-2">
               <div className="h-1 w-12 rounded-full bg-rp-gold" />
@@ -689,15 +689,15 @@ export default function HomePage() {
               },
               {
                 q: "Quanto tempo demora a retífica?",
-                a: "Retífica simples de cabeçote leva de 2 a 4 dias úteis. Montagem completa de motor pode levar de 5 a 10 dias. Informamos o prazo exato após diagnóstico técnico.",
+                a: "Retífica simples de cabeçote leva de 2 a 4 dias úteis. Retífica completa, com troca de guias e válvulas, pode levar de 5 a 10 dias. Informamos o prazo exato após diagnóstico técnico.",
               },
               {
                 q: "Retífica de cabeçote tem garantia?",
                 a: "Sim. Oferecemos garantia documentada conforme o tipo de serviço realizado. Tudo é registrado e entregue junto com o laudo técnico.",
               },
               {
-                q: "Quando o motor precisa de retífica?",
-                a: "Principais sinais: superaquecimento constante, perda de potência, consumo alto de óleo, fumaça branca ou azul, junta queimada, cabeçote trincado, motor batendo ou falhando.",
+                q: "Quando o cabeçote precisa de retífica?",
+                a: "Principais sinais: superaquecimento constante, perda de potência, consumo alto de óleo, fumaça branca ou azul, junta queimada ou cabeçote trincado. Esses sintomas podem ter origem no cabeçote ou na parte inferior do motor — o diagnóstico técnico confirma se o reparo é conosco.",
               },
               {
                 q: "Atendem caminhão e motor diesel?",
@@ -755,8 +755,8 @@ export default function HomePage() {
           </h2>
           <p className="mx-auto mb-6 max-w-[520px] text-[14px] leading-relaxed text-gray-300 md:mb-8 md:max-w-3xl md:text-lg">
             A Retífica Premium fica em Sertãozinho e atende motoristas,
-            oficinas e frotas que procuram retífica de cabeçote, retífica de
-            motor, plaina, banho químico e diagnóstico técnico em{" "}
+            oficinas e frotas que procuram retífica de cabeçote, plaina,
+            banho químico e diagnóstico técnico em{" "}
             <Link
               href="/retifica-em-ribeirao-preto"
               className="font-semibold text-rp-gold underline-offset-4 hover:underline"
@@ -819,7 +819,7 @@ export default function HomePage() {
           {
             question: "Quanto tempo demora a retífica?",
             answer:
-              "Retífica simples de cabeçote leva de 2 a 4 dias úteis. Montagem completa de motor pode levar de 5 a 10 dias. Informamos o prazo exato após diagnóstico técnico.",
+              "Retífica simples de cabeçote leva de 2 a 4 dias úteis. Retífica completa, com troca de guias e válvulas, pode levar de 5 a 10 dias. Informamos o prazo exato após diagnóstico técnico.",
           },
           {
             question: "Retífica de cabeçote tem garantia?",
@@ -827,9 +827,9 @@ export default function HomePage() {
               "Sim. Oferecemos garantia documentada conforme o tipo de serviço realizado. Tudo é registrado e entregue junto com o laudo técnico.",
           },
           {
-            question: "Quando o motor precisa de retífica?",
+            question: "Quando o cabeçote precisa de retífica?",
             answer:
-              "Principais sinais: superaquecimento constante, perda de potência, consumo alto de óleo, fumaça branca ou azul, junta queimada, cabeçote trincado, motor batendo ou falhando.",
+              "Principais sinais: superaquecimento constante, perda de potência, consumo alto de óleo, fumaça branca ou azul, junta queimada ou cabeçote trincado. Esses sintomas podem ter origem no cabeçote ou na parte inferior do motor — o diagnóstico técnico confirma se o reparo é conosco.",
           },
           {
             question: "Atendem caminhão e motor diesel?",

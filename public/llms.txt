@@ -1,6 +1,6 @@
 # Retífica Premium
 
-> Retífica de cabeçotes, motores e usinagem automotiva em Sertãozinho-SP, com atendimento a Ribeirão Preto e cidades da região.
+> Retífica de cabeçotes e usinagem automotiva em Sertãozinho-SP, com atendimento a Ribeirão Preto e cidades da região.
 
 ## Informações oficiais
 
@@ -16,7 +16,6 @@
 ## Serviços
 
 - Retífica de cabeçote
-- Retífica de motor
 - Plaina de cabeçote
 - Limpeza química
 - Retífica de sedes e válvulas
@@ -29,7 +28,7 @@
 
 ## Atendimento
 
-A oficina atende motoristas, oficinas mecânicas, frotas e empresas. Trabalha com cabeçotes e motores de carros, caminhões, ônibus, tratores e aplicações diesel, gasolina e etanol. A área principal inclui Sertãozinho, Ribeirão Preto e cidades próximas.
+A oficina atende motoristas, oficinas mecânicas, frotas e empresas. Trabalha com cabeçotes de carros, caminhões, ônibus, tratores e aplicações diesel, gasolina e etanol. A área principal inclui Sertãozinho, Ribeirão Preto e cidades próximas.
 
 ## Diferenciais verificáveis no site
 
@@ -44,7 +43,6 @@ A oficina atende motoristas, oficinas mecânicas, frotas e empresas. Trabalha co
 - Início: https://www.premiumretifica.com.br/
 - Serviços: https://www.premiumretifica.com.br/servicos
 - Retífica de cabeçote: https://www.premiumretifica.com.br/servicos/retifica-de-cabecote
-- Retífica de motor: https://www.premiumretifica.com.br/servicos/retifica-de-motor
 - Atendimento a Ribeirão Preto: https://www.premiumretifica.com.br/retifica-em-ribeirao-preto
 - Sobre a empresa: https://www.premiumretifica.com.br/sobre
 - Parcerias com oficinas e frotas: https://www.premiumretifica.com.br/b2b

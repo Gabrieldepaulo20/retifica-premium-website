@@ -25,7 +25,7 @@ const rajdhani = Rajdhani({
 export const metadata: Metadata = {
   title: {
     default:
-      "Retífica de Motor e Cabeçote | Sertãozinho e Ribeirão Preto",
+      "Retífica de Cabeçote | Sertãozinho e Ribeirão Preto",
     template: "%s",
   },
   description:

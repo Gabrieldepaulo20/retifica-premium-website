@@ -299,10 +299,10 @@ export function RibeiraoPretoServiceSchema() {
     "@context": "https://schema.org",
     "@type": "Service",
     "@id": `${pageUrl}#service`,
-    name: "Retífica de motores e cabeçotes para Ribeirão Preto",
+    name: "Retífica de cabeçote para Ribeirão Preto",
     serviceType: "Retífica de Cabeçote e Usinagem Automotiva",
     description:
-      "Retífica de cabeçote, retífica de motor, plaina, teste de trinca e montagem técnica para motoristas, oficinas e frotas de Ribeirão Preto-SP, com oficina a cerca de 19 km, em Sertãozinho.",
+      "Retífica de cabeçote, plaina, teste de trinca e montagem técnica para motoristas, oficinas e frotas de Ribeirão Preto-SP, com oficina a cerca de 19 km, em Sertãozinho.",
     url: pageUrl,
     image: absoluteUrl("/oficina.jpeg"),
     provider: {
@@ -347,7 +347,7 @@ export function RegionalServiceAreaSchema() {
     "@context": "https://schema.org",
     "@type": "WebPage",
     "@id": `${servicesUrl}#regiao-webpage`,
-    name: "Retífica de cabeçote e motor na região de Ribeirão Preto",
+    name: "Retífica de cabeçote na região de Ribeirão Preto",
     url: pageUrl,
     isPartOf: {
       "@type": "WebSite",
@@ -385,7 +385,6 @@ export function RegionalServiceAreaSchema() {
     keywords: [
       "retífica Ribeirão Preto",
       "retífica de cabeçote Ribeirão Preto",
-      "retífica de motor Ribeirão Preto",
       ...primaryRegionalCities.map((city) => `retífica ${city}`),
     ],
   };

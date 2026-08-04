@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
         destination: "/retifica-em-ribeirao-preto",
         permanent: true,
       },
+      {
+        // Retífica de motor não é um serviço real (a oficina só trabalha no
+        // cabeçote). Preserva backlinks/indexação antigos redirecionando
+        // para o serviço equivalente mais próximo.
+        source: "/servicos/retifica-de-motor",
+        destination: "/servicos/retifica-de-cabecote",
+        permanent: true,
+      },
     ];
   },
   async headers() {

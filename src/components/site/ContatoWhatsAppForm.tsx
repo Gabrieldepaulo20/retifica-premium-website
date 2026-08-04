@@ -331,7 +331,22 @@ export function ContatoWhatsAppForm({
       setWebsite("");
       setStatus("success");
       setStatusMessage(
-        "Mensagem enviada. A equipe da Retífica Premium recebeu sua solicitação e vai responder em breve."
+        "Mensagem enviada e recebida pela equipe. Abrimos o WhatsApp pra você confirmar o atendimento agora — se não abrir, use o botão abaixo."
+      );
+
+      // O pedido já foi salvo no CRM acima, mas quem precisa de retífica de
+      // cabeçote está com o carro quebrado agora — esperar a equipe notar o
+      // formulário e responder por e-mail é lento demais pra emergência.
+      // Manda direto pro WhatsApp com a mensagem já preenchida.
+      window.open(whatsAppUrl, "_blank", "noopener,noreferrer");
+      trackEngagementEvent(
+        "whatsapp_contact_form_submit",
+        "whatsapp_click",
+        "contact_form_handoff",
+        {
+          link_url: whatsAppUrl,
+          method: "whatsapp",
+        }
       );
     } catch (error) {
       trackMarketingEvent("form_submit_error", {
@@ -469,7 +484,7 @@ export function ContatoWhatsAppForm({
           style={{ fontFamily: "var(--font-open-sans)" }}
         >
           <p>{statusMessage}</p>
-          {status === "error" ? (
+          {status === "error" || status === "success" ? (
             <a
               href={fallbackUrl}
               target="_blank"
@@ -478,7 +493,9 @@ export function ContatoWhatsAppForm({
                 trackEngagementEvent(
                   "whatsapp_contact_form_submit",
                   "whatsapp_click",
-                  "contact_form_fallback",
+                  status === "success"
+                    ? "contact_form_handoff_fallback"
+                    : "contact_form_fallback",
                   {
                     link_url: event.currentTarget.href,
                     method: "whatsapp",

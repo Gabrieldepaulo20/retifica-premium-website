@@ -74,8 +74,8 @@ export const problemDetailPages = [
       "guias, retentores, válvulas, junta e superfície do cabeçote",
     ],
     whenRectification:
-      "A retífica entra no reparo quando medições confirmam desgaste, perda de vedação, empeno, trinca ou dano em componentes internos. Se a origem estiver em injeção, ignição, mangueira ou vazamento externo, o caminho pode ser outro. Por isso o orçamento correto depende do diagnóstico.",
-    relatedServiceSlug: "retifica-de-motor",
+      "A Retífica Premium atua na retífica de cabeçote: guias, retentores de válvula, vedação e superfície. Quando o diagnóstico confirma desgaste ou empeno nesses pontos, o reparo é com a gente. Se a causa estiver na parte inferior do motor — anéis, cilindros ou bloco —, ou em injeção, ignição e vazamento externo, esse reparo fica fora do que fazemos, e o diagnóstico é o que aponta o caminho certo.",
+    relatedServiceSlug: "retifica-de-cabecote",
     relatedGuideSlugs: ["motor-baixando-oleo", "motor-superaquecendo"],
     faq: [
       {
@@ -144,8 +144,8 @@ export const problemDetailPages = [
       "compressão, cilindros, anéis, guias e retentores de válvula",
     ],
     whenRectification:
-      "Pode haver necessidade de retífica quando testes mostram desgaste em cilindros, anéis, guias, válvulas ou superfícies do cabeçote. Vazamentos externos e falhas de ventilação costumam exigir outro tipo de reparo. Completar o nível sem descobrir a causa apenas adia o problema.",
-    relatedServiceSlug: "retifica-de-motor",
+      "A Retífica Premium faz a retífica do cabeçote: guias, retentores de válvula e superfície de vedação. Se o teste confirmar desgaste nesses pontos, o reparo é com a gente. Quando a causa está em anéis, cilindros ou outro componente da parte inferior do motor, ou em vazamentos externos e falhas de ventilação, o reparo é de outra natureza — o diagnóstico aponta o caminho certo antes de fechar o serviço.",
+    relatedServiceSlug: "retifica-de-cabecote",
     relatedGuideSlugs: ["motor-fumando", "junta-do-cabecote-queimada"],
     faq: [
       {

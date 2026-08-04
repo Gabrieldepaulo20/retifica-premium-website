@@ -67,53 +67,6 @@ export const serviceDetailPages = [
     ],
   },
   {
-    slug: "retifica-de-motor",
-    title: "Retífica de motor",
-    shortTitle: "Retífica de motor",
-    metaTitle:
-      "Retífica de Motor em Sertãozinho e Ribeirão Preto",
-    metaDescription:
-      "Diagnóstico e retífica de motor para motor fumando, baixando óleo, superaquecendo, sem compressão ou fundido. Sertãozinho-SP, Ribeirão Preto e região.",
-    hero: "Retífica de motor com diagnóstico antes da troca de peças",
-    intro:
-      "Nem todo problema no motor exige retífica completa, mas sintomas como fumaça, consumo de óleo, superaquecimento e perda de potência pedem avaliação técnica. A Retífica Premium orienta o reparo correto para recuperar vedação, compressão e confiabilidade.",
-    image: "/retificademotor.jpg",
-    imageAlt: "Motor em bancada para diagnóstico e retífica",
-    primaryIntent: "alta-intencao",
-    symptoms: [
-      "motor fumando",
-      "motor baixando óleo",
-      "motor fundido",
-      "motor sem compressão",
-      "motor falhando ou fraco",
-    ],
-    includes: [
-      "análise do sintoma antes da indicação do reparo",
-      "avaliação de cabeçote, vedação e componentes relacionados",
-      "orientação sobre serviços necessários e itens que não precisam ser trocados",
-      "suporte técnico para oficinas mecânicas e frotas",
-      "retorno por WhatsApp com caminho sugerido para orçamento",
-    ],
-    process: [
-      "Entendemos o sintoma, uso do veículo e histórico de manutenção.",
-      "Indicamos quais peças precisam ser avaliadas na retífica.",
-      "Conferimos medidas, desgaste, vedação e sinais de superaquecimento.",
-      "Explicamos o serviço recomendado para evitar orçamento no escuro.",
-    ],
-    faq: [
-      {
-        question: "Motor fumando sempre precisa de retífica?",
-        answer:
-          "Não sempre. Pode envolver cabeçote, guias, retentores, anéis, vedação, junta ou outros componentes. O ideal é avaliar antes de fechar o serviço.",
-      },
-      {
-        question: "Motor baixando óleo pode ser cabeçote?",
-        answer:
-          "Pode ser, principalmente quando há desgaste em guias, retentores ou falha de vedação. Também pode envolver parte inferior do motor, por isso o diagnóstico é essencial.",
-      },
-    ],
-  },
-  {
     slug: "plaina-de-cabecote",
     title: "Plaina de cabeçote",
     shortTitle: "Plaina de cabeçote",

@@ -21,7 +21,7 @@ import { videos } from "@/lib/videos";
 
 export const metadata: Metadata = {
   title:
-    "Serviços de Retífica de Cabeçote e Motor | Retífica Premium",
+    "Serviços de Retífica de Cabeçote | Retífica Premium",
   description:
     "Retífica de cabeçote, plaina, sedes, válvulas, guias e diagnóstico para motor fumando, baixando óleo ou superaquecendo em Sertãozinho-SP.",
   alternates: {
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "Serviços de Retífica de Cabeçote e Diagnóstico de Motor | Retífica Premium",
+      "Serviços de Retífica de Cabeçote | Retífica Premium",
     description:
       "Retífica de cabeçote, plaina, sedes, válvulas, guias e diagnóstico para motor fumando, baixando óleo ou superaquecendo.",
     url: "https://www.premiumretifica.com.br/servicos",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Serviços de Retífica de Cabeçote e Diagnóstico de Motor | Retífica Premium",
+      "Serviços de Retífica de Cabeçote | Retífica Premium",
     description:
       "Retífica de cabeçote, plaina, sedes, válvulas, guias e diagnóstico para motor fumando, baixando óleo ou superaquecendo.",
     images: ["/retificapremium.jpeg"],
@@ -96,7 +96,7 @@ const whyPremium = [
   },
   {
     title: "20+ anos de experiência",
-    desc: "Equipe especializada desde 2004, com mais de 5.000 motores retificados para motoristas e oficinas.",
+    desc: "Equipe especializada desde 2004, com mais de 5.000 cabeçotes retificados para motoristas e oficinas.",
     icon: (
       <svg viewBox="0 0 24 24" className="h-8 w-8" {...trustIconStroke}>
         <path d="M7 4h10v3a5 5 0 01-10 0V4z" />
@@ -193,13 +193,6 @@ const symptomCards = [
     description:
       "Superaquecimento recorrente pode empenar o cabeçote, queimar junta e comprometer a vedação entre bloco e cabeçote.",
     href: problemPath("motor-superaquecendo"),
-  },
-  {
-    slug: "perda-de-potencia",
-    title: "Perda de potência",
-    description:
-      "Falhas de compressão, válvulas sem vedação e desgaste em componentes podem deixar o motor fraco ou irregular.",
-    href: servicePath("retifica-de-motor"),
   },
   {
     slug: "junta-do-cabecote-queimada",
@@ -412,7 +405,7 @@ export default function ServicosPage() {
             style={{ fontFamily: "var(--font-rajdhani)", lineHeight: 1.15 }}
           >
             Serviços de{" "}
-            <span className="text-rp-accent">Retífica de Cabeçote e Motor</span>
+            <span className="text-rp-accent">Retífica de Cabeçote</span>
           </h1>
 
           <p
@@ -421,14 +414,14 @@ export default function ServicosPage() {
           >
             Equipamentos de precisão, equipe especializada e diagnóstico antes do
             orçamento — para recuperar vedação, compressão e confiança do seu
-            motor, sem troca desnecessária de peças.
+            cabeçote, sem troca desnecessária de peças.
           </p>
 
           {/* Chips de confiança */}
           <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
             {[
               "Garantia documentada",
-              "+5.000 motores retificados",
+              "+5.000 cabeçotes retificados",
               "Desde 2004",
               "Carro, caminhão, ônibus e trator",
             ].map((chip) => (
@@ -496,8 +489,8 @@ export default function ServicosPage() {
               style={{ fontFamily: "var(--font-open-sans)" }}
             >
               Antes de indicar retífica, avaliamos o sintoma e a causa provável.
-              Isso evita troca desnecessária de peças e ajuda a escolher o
-              serviço correto para o cabeçote ou motor.
+              Isso evita troca desnecessária de peças e ajuda a confirmar se o
+              reparo está no cabeçote — a nossa especialidade.
             </p>
           </div>
 
@@ -598,7 +591,7 @@ export default function ServicosPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-rp-accent">
-              Por que confiar o seu motor à Retífica Premium
+              Por que confiar o seu cabeçote à Retífica Premium
             </p>
             <h2
               className="text-3xl font-bold text-gray-900 md:text-5xl"

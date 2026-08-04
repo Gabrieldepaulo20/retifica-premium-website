@@ -60,7 +60,6 @@ export const regionalSearchTerms = [
   "retífica Dumont",
   "retífica Cravinhos",
   "retífica de cabeçote Ribeirão Preto",
-  "retífica de motor Ribeirão Preto",
   "plaina de cabeçote na região de Ribeirão Preto",
 ] as const;
 
