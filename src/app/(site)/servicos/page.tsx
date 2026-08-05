@@ -20,8 +20,7 @@ import { siteConfig, whatsappBudgetUrl } from "@/lib/site";
 import { videos } from "@/lib/videos";
 
 export const metadata: Metadata = {
-  title:
-    "Serviços de Retífica de Cabeçote | Retífica Premium",
+  title: "Serviços de Retífica de Cabeçote",
   description:
     "Retífica de cabeçote, plaina, sedes, válvulas, guias e diagnóstico para motor fumando, baixando óleo ou superaquecendo em Sertãozinho-SP.",
   alternates: {

@@ -29,7 +29,7 @@ export const problemDetailPages = [
     slug: "motor-fumando",
     title: "Motor fumando",
     shortTitle: "Motor fumando",
-    metaTitle: "Motor Fumando: Cores da Fumaça, Causas e Diagnóstico",
+    metaTitle: "Motor Fumando: Causas e Diagnóstico",
     metaDescription:
       "Motor fumando com fumaça azul, branca ou preta? Veja causas prováveis, sinais de risco e quando cabeçote ou motor precisam de avaliação técnica.",
     hero: "Motor fumando: o que a cor da fumaça pode indicar?",
@@ -99,7 +99,7 @@ export const problemDetailPages = [
     slug: "motor-baixando-oleo",
     title: "Motor baixando óleo",
     shortTitle: "Motor baixando óleo",
-    metaTitle: "Motor Baixando Óleo: Causas, Riscos e o Que Fazer",
+    metaTitle: "Motor Baixando Óleo: Causas e o Que Fazer",
     metaDescription:
       "Óleo do motor baixando rápido, com ou sem fumaça? Entenda vazamentos, queima de óleo, desgaste interno e quando procurar diagnóstico técnico.",
     hero: "Motor baixando óleo: onde o lubrificante pode estar indo?",
@@ -169,7 +169,7 @@ export const problemDetailPages = [
     slug: "motor-superaquecendo",
     title: "Motor superaquecendo",
     shortTitle: "Motor superaquecendo",
-    metaTitle: "Motor Superaquecendo: Causas e Quando Parar o Carro",
+    metaTitle: "Motor Superaquecendo: Quando Parar o Carro",
     metaDescription:
       "Temperatura do motor subindo ou luz acesa? Veja causas de superaquecimento, o que fazer com segurança e quando cabeçote e junta precisam de avaliação.",
     hero: "Motor superaquecendo: pare antes que o cabeçote seja danificado",
@@ -239,7 +239,7 @@ export const problemDetailPages = [
     slug: "junta-do-cabecote-queimada",
     title: "Junta do cabeçote queimada",
     shortTitle: "Junta do cabeçote queimada",
-    metaTitle: "Junta do Cabeçote Queimada: Sintomas e Diagnóstico",
+    metaTitle: "Junta do Cabeçote Queimada: Sintomas",
     metaDescription:
       "Veja sintomas de junta do cabeçote queimada, testes usados no diagnóstico e quando é preciso plainar ou retificar o cabeçote antes da montagem.",
     hero: "Junta do cabeçote queimada: sintomas não substituem os testes",

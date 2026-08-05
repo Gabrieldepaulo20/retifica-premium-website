@@ -20,7 +20,7 @@ const whatsappMessage =
   "Olá, sou de Ribeirão Preto e vim pelo site da Retífica Premium. Gostaria de um orçamento para retífica de cabeçote.";
 
 export const metadata: Metadata = {
-  title: "Retífica de Cabeçote em Ribeirão Preto | Sertãozinho-SP",
+  title: "Retífica de Cabeçote em Ribeirão Preto",
   description:
     "Retífica de cabeçote para Ribeirão Preto, a 19 km, em Sertãozinho. Diagnóstico técnico, garantia e orçamento pelo WhatsApp.",
   alternates: {

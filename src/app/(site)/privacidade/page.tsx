@@ -3,7 +3,7 @@ import Link from "next/link";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Privacidade e Cookies | Retífica Premium",
+  title: "Privacidade e Cookies",
   description:
     "Entenda quais dados a Retífica Premium utiliza no site, para quais finalidades e como alterar suas preferências.",
   alternates: {

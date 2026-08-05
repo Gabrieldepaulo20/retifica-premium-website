@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { BreadcrumbSchema } from "@/components/site/StructuredData";
 
 export const metadata: Metadata = {
-  title: "Retífica Premium: Sobre a Oficina em Sertãozinho-SP",
+  title: "Sobre a Oficina em Sertãozinho-SP",
   description:
     "Conheça a Retífica Premium: retífica de cabeçotes, diagnóstico de motor e usinagem automotiva em Sertãozinho-SP, com experiência desde 2004.",
   alternates: {

@@ -23,8 +23,7 @@ export const serviceDetailPages = [
     slug: "retifica-de-cabecote",
     title: "Retífica de cabeçote",
     shortTitle: "Retífica de cabeçote",
-    metaTitle:
-      "Retífica de Cabeçote em Sertãozinho e Ribeirão Preto",
+    metaTitle: "Retífica de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Retífica de cabeçote com plaina, sedes, válvulas, guias, limpeza química e montagem técnica em Sertãozinho-SP. Atende Ribeirão Preto e região.",
     hero: "Retífica de cabeçote com diagnóstico e usinagem de precisão",
@@ -70,8 +69,7 @@ export const serviceDetailPages = [
     slug: "plaina-de-cabecote",
     title: "Plaina de cabeçote",
     shortTitle: "Plaina de cabeçote",
-    metaTitle:
-      "Plaina de Cabeçote em Sertãozinho-SP | Correção de Empeno",
+    metaTitle: "Plaina de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Serviço de plaina de cabeçote para corrigir empeno, melhorar vedação e preparar a peça para montagem. Sertãozinho-SP, Ribeirão Preto e região.",
     hero: "Plaina de cabeçote para corrigir empeno e vedação",
@@ -117,8 +115,7 @@ export const serviceDetailPages = [
     slug: "banho-quimico",
     title: "Banho químico de cabeçote",
     shortTitle: "Banho químico",
-    metaTitle:
-      "Banho Químico de Cabeçote em Sertãozinho-SP",
+    metaTitle: "Banho Químico de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Banho químico e limpeza técnica de cabeçote para remover carbonização, óleo, ferrugem e resíduos antes da usinagem. Atende Ribeirão Preto e região.",
     hero: "Banho químico e limpeza técnica para cabeçote",
@@ -164,8 +161,7 @@ export const serviceDetailPages = [
     slug: "teste-de-trinca",
     title: "Inspeção de trincas no cabeçote",
     shortTitle: "Trincas no cabeçote",
-    metaTitle:
-      "Cabeçote Trincado Tem Conserto? Teste de Trinca",
+    metaTitle: "Cabeçote Trincado Tem Conserto?",
     metaDescription:
       "Cabeçote trincado tem conserto em muitos casos. Inspeção de trincas, solda e reparo técnico em Sertãozinho-SP, com avaliação para vazamento e superaquecimento.",
     hero: "Inspeção de trincas e reparo técnico em cabeçote",
@@ -211,8 +207,7 @@ export const serviceDetailPages = [
     slug: "montagem-de-cabecote",
     title: "Montagem e regulagem de cabeçote",
     shortTitle: "Montagem de cabeçote",
-    metaTitle:
-      "Montagem de Cabeçote e Regulagem em Sertãozinho-SP",
+    metaTitle: "Montagem de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Montagem e regulagem de cabeçote com conferência de componentes, vedação, válvulas e orientação para instalação correta. Atende Ribeirão Preto e região.",
     hero: "Montagem e regulagem de cabeçote com conferência técnica",

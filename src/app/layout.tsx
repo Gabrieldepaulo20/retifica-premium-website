@@ -26,8 +26,8 @@ const rajdhani = Rajdhani({
 export const metadata: Metadata = {
   title: {
     default:
-      "Retífica de Cabeçote | Sertãozinho e Ribeirão Preto",
-    template: "%s",
+      "Retífica de Cabeçote em Sertãozinho-SP | Retífica Premium",
+    template: "%s | Retífica Premium",
   },
   description:
     "Retífica de cabeçote, diagnóstico de motor e usinagem automotiva em Sertãozinho-SP. Atendimento a Ribeirão Preto e região para oficinas, motoristas e frotas.",

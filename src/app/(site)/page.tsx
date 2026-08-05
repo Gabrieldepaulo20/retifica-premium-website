@@ -19,8 +19,7 @@ import { whatsappBudgetUrl } from "@/lib/site";
 import { videos } from "@/lib/videos";
 
 export const metadata: Metadata = {
-  title:
-    "Retífica de Cabeçote | Sertãozinho e Ribeirão Preto",
+  title: "Retífica de Cabeçote em Sertãozinho-SP",
   description:
     "Retífica de cabeçote em Sertãozinho-SP, com atendimento a Ribeirão Preto e região. Diagnóstico técnico e orçamento pelo WhatsApp.",
   alternates: {

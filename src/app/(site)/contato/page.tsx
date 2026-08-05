@@ -11,7 +11,7 @@ import {
 import { siteConfig, whatsappBudgetUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Contato e Orçamento | Retífica Premium Sertãozinho-SP",
+  title: "Contato e Orçamento em Sertãozinho-SP",
   description:
     "Fale com a Retífica Premium pelo WhatsApp ou telefone para orçamento de retífica de cabeçote, diagnóstico de motor e usinagem em Sertãozinho-SP.",
   alternates: {
