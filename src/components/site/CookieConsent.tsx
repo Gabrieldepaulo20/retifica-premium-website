@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   clearDisallowedTrackingStorage,
   clearTrackingStorage,
@@ -19,6 +19,8 @@ type CookieConsentProps = {
   gtmId?: string;
   clarityId: string;
 };
+
+const AUTO_ACCEPT_DELAY_MS = 5_000;
 
 type RuntimeWindow = Window & {
   dataLayer?: unknown[];
@@ -107,7 +109,11 @@ function ChoiceRow({
   onChange?: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-start justify-between gap-4 rounded-xl border border-white/10 bg-white/[0.055] p-3.5 transition-colors hover:bg-white/[0.08]">
+    <label
+      className={`flex items-start justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.055] p-3 transition-colors sm:gap-4 sm:p-3.5 ${
+        disabled ? "cursor-default" : "cursor-pointer hover:bg-white/[0.08]"
+      }`}
+    >
       <span>
         <span className="block font-heading text-base font-bold text-white">
           {title}
@@ -143,10 +149,13 @@ export function CookieConsent({
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [advertising, setAdvertising] = useState(false);
+  const configurationHeadingRef = useRef<HTMLHeadingElement>(null);
+  const hasInteractedRef = useRef(false);
 
   useEffect(() => {
     const initializationTimer = window.setTimeout(() => {
       const stored = readConsentPreferences();
+      hasInteractedRef.current = Boolean(stored);
       setPreferences(stored);
       setAnalytics(stored?.analytics ?? false);
       setAdvertising(stored?.advertising ?? false);
@@ -170,31 +179,73 @@ export function CookieConsent({
     return () => window.clearTimeout(initializationTimer);
   }, [clarityId, googleAdsId, gtmId]);
 
-  function applyChoices(nextAnalytics: boolean, nextAdvertising: boolean) {
-    const next = createConsentPreferences({
-      analytics: nextAnalytics,
-      advertising: nextAdvertising,
-    });
+  useEffect(() => {
+    if (isCustomizing) {
+      configurationHeadingRef.current?.focus();
+    }
+  }, [isCustomizing]);
 
-    saveConsentPreferences(next);
-    updateGoogleConsent(next);
-    updateClarityConsent(next);
-    clearDisallowedTrackingStorage(next);
-    initializeGoogleTags(next, {
-      googleAdsId,
-      gtmId,
-    });
-    initializeClarity(next, clarityId);
-    dispatchConsentChanged(next);
+  const applyChoices = useCallback(
+    (
+      nextAnalytics: boolean,
+      nextAdvertising: boolean,
+      decisionMethod: NonNullable<ConsentPreferences["decisionMethod"]> = "explicit"
+    ) => {
+      const next = createConsentPreferences(
+        {
+          analytics: nextAnalytics,
+          advertising: nextAdvertising,
+        },
+        decisionMethod
+      );
 
-    setPreferences(next);
-    setAnalytics(next.analytics);
-    setAdvertising(next.advertising);
-    setIsCustomizing(false);
-    setIsOpen(false);
+      saveConsentPreferences(next);
+      updateGoogleConsent(next);
+      updateClarityConsent(next);
+      clearDisallowedTrackingStorage(next);
+      initializeGoogleTags(next, {
+        googleAdsId,
+        gtmId,
+      });
+      initializeClarity(next, clarityId);
+      dispatchConsentChanged(next);
+
+      setPreferences(next);
+      setAnalytics(next.analytics);
+      setAdvertising(next.advertising);
+      setIsCustomizing(false);
+      setIsOpen(false);
+    },
+    [clarityId, googleAdsId, gtmId]
+  );
+
+  useEffect(() => {
+    if (
+      preferences !== null ||
+      !isOpen ||
+      isCustomizing ||
+      hasInteractedRef.current
+    ) {
+      return;
+    }
+
+    const automaticAcceptanceTimer = window.setTimeout(() => {
+      if (hasInteractedRef.current) return;
+      applyChoices(true, true, "automatic_timeout");
+    }, AUTO_ACCEPT_DELAY_MS);
+
+    return () => window.clearTimeout(automaticAcceptanceTimer);
+  }, [applyChoices, isCustomizing, isOpen, preferences]);
+
+  function openConfiguration() {
+    hasInteractedRef.current = true;
+    setAnalytics(preferences?.analytics ?? true);
+    setAdvertising(preferences?.advertising ?? true);
+    setIsCustomizing(true);
   }
 
   function reopenPreferences() {
+    hasInteractedRef.current = true;
     setAnalytics(preferences?.analytics ?? false);
     setAdvertising(preferences?.advertising ?? false);
     setIsCustomizing(true);
@@ -207,77 +258,89 @@ export function CookieConsent({
     <>
       {isOpen ? (
         <section
-          className="fixed inset-x-3 bottom-3 z-[1100] mx-auto max-w-5xl overflow-hidden rounded-2xl border border-white/15 bg-[#06172e]/[0.985] text-white shadow-[0_24px_80px_rgba(2,14,29,0.48)] backdrop-blur-xl sm:inset-x-5 sm:bottom-5"
+          className="fixed inset-x-0 bottom-0 z-[1100] mx-auto max-h-[min(60dvh,calc(100dvh-0.75rem))] max-w-5xl overflow-y-auto overscroll-contain rounded-t-3xl border border-b-0 border-white/15 bg-[#06172e]/[0.985] text-white shadow-[0_24px_80px_rgba(2,14,29,0.48)] backdrop-blur-xl sm:inset-x-5 sm:bottom-5 sm:max-h-[calc(100dvh-2.5rem)] sm:rounded-2xl sm:border-b"
           role="region"
           aria-label="Preferências de privacidade"
         >
-          <div className="h-1 bg-gradient-to-r from-[#f3b839] via-[#f4891f] to-[#2563eb]" />
-          <div className="p-4 sm:p-5">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="sticky top-0 z-10 h-1 bg-gradient-to-r from-[#f3b839] via-[#f4891f] to-[#2563eb]" />
+          <div className="px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2.5 sm:p-5">
+            <div className="flex flex-col gap-2.5 sm:gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#f3b839]/35 bg-[#f3b839]/10 text-[#f3b839]">
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 3 5.5 5.5v5.3c0 4.4 2.7 8.3 6.5 10.2 3.8-1.9 6.5-5.8 6.5-10.2V5.5L12 3Z" />
-                      <path d="m9 12 2 2 4-4" />
-                    </svg>
-                  </span>
-                  <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#f3b839]">
-                    Controle dos seus dados
-                  </span>
-                </div>
-                <h2 className="font-heading text-xl font-bold leading-tight sm:text-2xl">
-                  Você escolhe como podemos aprender com sua visita
+                <h2 className="font-heading text-base font-bold leading-tight sm:text-xl">
+                  Só um segundo 👋
                 </h2>
-                <p className="mt-1.5 text-sm leading-relaxed text-white/72">
-                  Registramos uma sessão técnica mínima, com página acessada,
-                  origem geral e tempo ativo, sem identificação direta.
-                  Com sua autorização, ampliamos a análise da experiência e dos anúncios.
+                <p className="mt-1 text-[13px] leading-relaxed text-white/72 sm:text-sm">
+                  Usamos alguns dados da sua visita só para entender como te ajudar melhor.
+                  Sem susto, sem venda de dados —{" "}
+                  <Link
+                    href="/privacidade"
+                    onClick={() => {
+                      hasInteractedRef.current = true;
+                    }}
+                    className="font-bold text-white/85 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f3b839]"
+                  >
+                    veja como funciona
+                  </Link>
+                  .
                 </p>
-                <Link
-                  href="/privacidade"
-                  className="mt-2 inline-flex text-xs font-bold text-white/75 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f3b839]"
-                >
-                  Ver política de privacidade e cookies
-                </Link>
               </div>
 
               {!isCustomizing ? (
-                <div className="grid shrink-0 grid-cols-1 gap-2 sm:grid-cols-3 lg:w-auto">
+                <div className="grid shrink-0 grid-cols-2 gap-2 lg:w-auto">
                   <button
                     type="button"
-                    onClick={() => applyChoices(false, false)}
+                    onClick={openConfiguration}
                     className="min-h-11 rounded-full border border-white/20 px-4 text-sm font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
-                    Recusar opcionais
+                    Escolher
                   </button>
                   <button
                     type="button"
-                    onClick={() => setIsCustomizing(true)}
-                    className="min-h-11 rounded-full border border-white/20 px-4 text-sm font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                  >
-                    Configurar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => applyChoices(true, true)}
+                    onClick={() => {
+                      hasInteractedRef.current = true;
+                      applyChoices(true, true);
+                    }}
                     className="min-h-11 rounded-full bg-gradient-to-b from-[#f7c64f] to-[#f39a24] px-5 text-sm font-extrabold text-[#07172e] shadow-[0_8px_24px_rgba(243,184,57,0.2)] transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transform-none"
                   >
-                    Aceitar e continuar
+                    Tudo bem
                   </button>
                 </div>
               ) : null}
             </div>
 
             {isCustomizing ? (
-              <div className="mt-4 border-t border-white/10 pt-4">
+              <div
+                className="mt-3 border-t border-white/10 pt-3 sm:mt-4 sm:pt-4"
+                aria-labelledby="cookie-configuration-title"
+              >
+                <div className="mb-3 flex items-start justify-between gap-4">
+                  <div>
+                    <h3
+                      ref={configurationHeadingRef}
+                      id="cookie-configuration-title"
+                      tabIndex={-1}
+                      className="font-heading text-base font-bold text-white outline-none sm:text-lg"
+                    >
+                      Configure os cookies opcionais
+                    </h3>
+                    <p className="mt-0.5 text-xs leading-relaxed text-white/60">
+                      Desative o que não deseja. A medição básica permanece ativa.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAnalytics(preferences?.analytics ?? false);
+                      setAdvertising(preferences?.advertising ?? false);
+                      setIsCustomizing(false);
+                      if (preferences) setIsOpen(false);
+                    }}
+                    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 text-xl leading-none text-white/70 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    aria-label={preferences ? "Fechar configurações" : "Voltar"}
+                  >
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
                 <div className="grid gap-2.5 md:grid-cols-3">
                   <ChoiceRow
                     title="Medição básica da sessão"
@@ -287,36 +350,31 @@ export function CookieConsent({
                   />
                   <ChoiceRow
                     title="Análise avançada da experiência"
-                    description="Autoriza armazenamento do Google Analytics e Microsoft Clarity para melhorar páginas e formulários."
+                    description="Google Analytics e Microsoft Clarity para medir cidade e região aproximadas, páginas visitadas e uso dos formulários."
                     checked={analytics}
                     onChange={setAnalytics}
                   />
                   <ChoiceRow
                     title="Anúncios e conversões"
-                    description="Origem, campanha e identificadores de clique para medir o Google Ads."
+                    description="Preserva origem, campanha e identificadores de clique para medir quais anúncios geram contatos."
                     checked={advertising}
                     onChange={setAdvertising}
                   />
                 </div>
-                <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                  {preferences ? (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsCustomizing(false);
-                        setIsOpen(false);
-                      }}
-                      className="min-h-11 rounded-full border border-white/20 px-5 text-sm font-bold text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                    >
-                      Cancelar
-                    </button>
-                  ) : null}
+                <div className="mt-3 grid grid-cols-1 gap-2 sm:mt-4 sm:grid-cols-2 sm:justify-end md:ml-auto md:max-w-xl">
+                  <button
+                    type="button"
+                    onClick={() => applyChoices(false, false)}
+                    className="min-h-11 rounded-full border border-white/20 px-5 text-sm font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  >
+                    Usar só os obrigatórios
+                  </button>
                   <button
                     type="button"
                     onClick={() => applyChoices(analytics, advertising)}
                     className="min-h-11 rounded-full bg-[#f3b839] px-6 text-sm font-extrabold text-[#07172e] hover:bg-[#ffc94d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
-                    Salvar minhas escolhas
+                    Salvar preferências
                   </button>
                 </div>
               </div>

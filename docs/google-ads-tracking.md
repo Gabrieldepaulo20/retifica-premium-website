@@ -2,10 +2,11 @@
 
 ## Consentimento e cobertura
 
-O Google Analytics 4 é carregado desde a entrada no site para preservar a
-medição estatística básica. O Google Consent Mode v2 inicia
-`analytics_storage` como `granted`, enquanto `ad_storage`, `ad_user_data` e
-`ad_personalization` permanecem como `denied`.
+O script base do Google Analytics 4 é carregado desde a entrada no site, mas o
+Google Consent Mode v2 inicia `analytics_storage`, `ad_storage`, `ad_user_data`
+e `ad_personalization` como `denied`. Se não houver interação com o banner em
+cinco segundos, o site registra aceitação automática e atualiza análise e
+publicidade para `granted`.
 
 Antes da escolha do visitante, Google Ads, GTM, Clarity e a atribuição local
 opcional não são carregados nem armazenados.
@@ -13,13 +14,16 @@ opcional não são carregados nem armazenados.
 O visitante pode aceitar ou recusar separadamente:
 
 - **Análise avançada da experiência:** Microsoft Clarity, pageviews e métricas
-  detalhadas de navegação e formulário no Retiflow.
+  detalhadas de navegação e formulário no Retiflow, além de cidade e região
+  aproximadas disponibilizadas pelo Google Analytics.
 - **Anúncios e conversões:** Google Ads, origem/campanha, identificadores de
   clique e conversões de WhatsApp, telefone e formulário.
 
-As opções facultativas começam desmarcadas. O botão `Privacidade`, no canto
-inferior esquerdo, permite alterar ou revogar a escolha. A personalização de
-anúncios permanece desativada mesmo quando a medição de anúncios é aceita.
+Ao abrir `Configurar` no primeiro acesso, as opções facultativas começam
+marcadas e o visitante pode desligar o que não deseja antes de salvar. O botão
+`Privacidade`, no canto inferior esquerdo, permite alterar ou revogar a escolha.
+A personalização de anúncios permanece desativada mesmo quando a medição de
+anúncios é aceita.
 
 Após a autorização correspondente, o site carrega uma única Google tag e
 configura dois destinos:

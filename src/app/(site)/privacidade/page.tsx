@@ -28,7 +28,7 @@ const categories = [
     title: "Análise avançada da experiência",
     status: "Você escolhe",
     description:
-      "Autoriza armazenamento do Google Analytics 4 e Microsoft Clarity para encontrar dificuldades de navegação e melhorar páginas e formulários.",
+      "Autoriza Google Analytics 4 e Microsoft Clarity a estimar cidade e região pelo IP, encontrar dificuldades de navegação e melhorar páginas e formulários.",
   },
   {
     number: "03",
@@ -69,7 +69,7 @@ export default function PrivacidadePage() {
             ideia quando quiser.
           </p>
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-white/50">
-            Última atualização: 3 de agosto de 2026
+            Última atualização: 5 de agosto de 2026
           </p>
         </div>
       </section>
@@ -115,6 +115,16 @@ export default function PrivacidadePage() {
                   escolhas opcionais, também podemos registrar campanha, mídia,
                   termo e identificadores técnicos de clique. A atribuição local
                   expira em até 90 dias e a preferência de privacidade em até 180 dias.
+                  A cidade, o estado e o país podem ser estimados pelo endereço IP;
+                  essa localização é aproximada e não corresponde ao GPS da pessoa.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  No primeiro acesso, o banner oferece as opções
+                  <strong> Configurar</strong> e <strong>Aceitar</strong>. Se não
+                  houver interação em cinco segundos, as categorias de análise
+                  avançada e publicidade são registradas automaticamente como
+                  autorizadas. Em <strong>Configurar</strong>, os controles começam
+                  ligados e você pode desativar cada categoria antes de salvar.
                 </p>
               </section>
 

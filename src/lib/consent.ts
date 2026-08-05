@@ -3,6 +3,7 @@ export type ConsentPreferences = {
   necessary: true;
   analytics: boolean;
   advertising: boolean;
+  decisionMethod?: "explicit" | "automatic_timeout";
   savedAt: string;
   expiresAt: string;
 };
@@ -59,6 +60,9 @@ function isConsentPreferences(value: unknown): value is ConsentPreferences {
     preferences.necessary === true &&
     typeof preferences.analytics === "boolean" &&
     typeof preferences.advertising === "boolean" &&
+    (preferences.decisionMethod === undefined ||
+      preferences.decisionMethod === "explicit" ||
+      preferences.decisionMethod === "automatic_timeout") &&
     typeof preferences.savedAt === "string" &&
     typeof preferences.expiresAt === "string" &&
     Number.isFinite(new Date(preferences.expiresAt).getTime())
@@ -89,7 +93,8 @@ export function readConsentPreferences(): ConsentPreferences | null {
 }
 
 export function createConsentPreferences(
-  choices: Pick<ConsentPreferences, "analytics" | "advertising">
+  choices: Pick<ConsentPreferences, "analytics" | "advertising">,
+  decisionMethod: NonNullable<ConsentPreferences["decisionMethod"]> = "explicit"
 ): ConsentPreferences {
   const savedAt = new Date();
 
@@ -98,6 +103,7 @@ export function createConsentPreferences(
     necessary: true,
     analytics: choices.analytics,
     advertising: choices.advertising,
+    decisionMethod,
     savedAt: savedAt.toISOString(),
     expiresAt: new Date(savedAt.getTime() + CONSENT_TTL_MS).toISOString(),
   };
