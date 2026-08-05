@@ -39,6 +39,17 @@ recebe somente as ações que representam intenção real de contato:
 | `generate_lead` após formulário entregue | Lead - Envio de formulario | Uma por clique |
 | `whatsapp_click` | Lead - Clique no WhatsApp | Uma por clique |
 | `phone_click` | Lead - Clique no telefone | Uma por clique |
+| Ligação ao número dinâmico após anúncio | Lead - Ligação atendida pelo site (30s) | Uma por clique; conversão após 30s |
+
+`phone_click` mede somente o toque no link. A ação de ligação real usa um número
+de encaminhamento do Google para visitantes que chegaram por anúncio e deram
+consentimento de publicidade. Chamadas curtas ainda podem aparecer no relatório
+de chamadas, mas só viram conversão depois de 30 segundos. A ação começa como
+secundária para não alterar a otimização das campanhas antes da validação real.
+
+O número comercial permanece como fallback. Quando o Google fornece o número
+dinâmico, o site troca tanto o texto visível quanto o destino dos links `tel:`;
+ao revogar o consentimento, restaura o número original.
 
 Pageviews, scroll, início do formulário, erros de validação, abandono e cliques
 de navegação continuam disponíveis no GA4 sem inflar as conversões de lead.
@@ -71,6 +82,7 @@ NEXT_PUBLIC_GOOGLE_ADS_ID=AW-18268630627
 NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO=AW-18268630627/eRwrCNHCrsUcEOPclIdE
 NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO=AW-18268630627/_YlRCKbTxMUcEOPclIdE
 NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO=AW-18268630627/qlmYCMS9ldYcEOPclIdE
+NEXT_PUBLIC_GOOGLE_ADS_WEBSITE_CALL_SEND_TO=AW-18268630627/CwNLCK_qqdwcEOPclIdE
 ```
 
 Tokens OAuth, developer token e demais credenciais da API do Google Ads não
@@ -87,10 +99,14 @@ pertencem ao site e nunca devem ser versionados.
 4. Aceitar anúncios e confirmar os destinos `G-HD00424MR7` e
    `AW-18268630627` no Tag Assistant.
 5. Abrir páginas diferentes sem recarregar e verificar `page_view`.
-6. Testar WhatsApp, telefone e um envio bem-sucedido do formulário.
-7. Revogar as categorias opcionais e confirmar a atualização para `denied` e a
+6. Testar WhatsApp, clique no telefone e um envio bem-sucedido do formulário.
+7. Após um clique real no anúncio, confirmar que o telefone visível e o link
+   `tel:` recebem o mesmo número de encaminhamento do Google.
+8. Fazer uma chamada de teste e conferir no relatório de chamadas o status e a
+   duração; chamadas de pelo menos 30 segundos devem aparecer como conversão.
+9. Revogar as categorias opcionais e confirmar a atualização para `denied` e a
    remoção dos dados locais correspondentes.
-8. Conferir os eventos no DebugView do GA4 e o diagnóstico das conversões no
+10. Conferir os eventos no DebugView do GA4 e o diagnóstico das conversões no
    Google Ads. A interface do Ads pode levar algumas horas para refletir os
    primeiros eventos.
 

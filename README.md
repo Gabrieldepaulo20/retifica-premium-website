@@ -55,7 +55,7 @@ npm run start
 ## Analytics
 - Google tag global via `next/script`, carregada em todas as paginas
 - GA4 para pageviews, navegacao interna, scroll, CTAs e funil do formulario
-- Google Ads com conversoes de formulario enviado, clique no WhatsApp e clique no telefone
+- Google Ads com conversoes de formulario enviado, clique no WhatsApp, clique no telefone e ligacao real pelo site
 - `transaction_id` anonimo por intencao de contato para evitar conversoes duplicadas
 - Captura de UTM, GCLID, GBRAID e WBRAID para atribuicao
 - Microsoft Clarity global via `next/script`
@@ -65,7 +65,8 @@ Os IDs publicos do Google tag ficam nas variaveis
 `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_GOOGLE_ADS_ID`,
 `NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO`,
 `NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO` e
-`NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO`. Credenciais OAuth e chaves privadas
+`NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO` e
+`NEXT_PUBLIC_GOOGLE_ADS_WEBSITE_CALL_SEND_TO`. Credenciais OAuth e chaves privadas
 nunca devem ser adicionadas ao site.
 
 ## Formulario de Contato

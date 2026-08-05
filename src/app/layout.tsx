@@ -4,6 +4,7 @@ import Script from "next/script";
 import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
 import { AnalyticsRuntime } from "@/components/site/AnalyticsRuntime";
 import { CookieConsent } from "@/components/site/CookieConsent";
+import { GoogleAdsWebsiteCallRuntime } from "@/components/site/GoogleAdsWebsiteCallRuntime";
 import { Header } from "@/components/site/Header";
 import { FloatingWhatsApp } from "@/components/site/FloatingWhatsApp";
 import { absoluteUrl, siteConfig } from "@/lib/site";
@@ -138,6 +139,7 @@ gtag('config', '${GA_MEASUREMENT_ID}');`}
       </head>
       <body className={`${rajdhani.variable} font-body antialiased`}>
         <AnalyticsRuntime />
+        <GoogleAdsWebsiteCallRuntime />
         <MaterialSymbolsLoader />
         <Header />
         {children}
