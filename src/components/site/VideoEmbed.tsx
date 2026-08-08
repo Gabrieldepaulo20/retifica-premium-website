@@ -11,6 +11,21 @@ type VideoEmbedProps = {
 };
 
 /**
+ * Proporções suportadas.
+ *
+ * `mobileSquare` é a recomendada para o vídeo da primeira dobra: 74% do tráfego
+ * pago é celular e um 16:9 num aparelho de 375px de largura ocupa só ~211px de
+ * altura. Quadrado no celular ocupa 375px — quase o dobro de área — e volta a
+ * 16:9 no desktop, onde o layout é lado a lado.
+ */
+const aspectClass = {
+  wide: "aspect-video",
+  square: "aspect-square",
+  vertical: "aspect-[9/16]",
+  mobileSquare: "aspect-square sm:aspect-video",
+} as const;
+
+/**
  * Facade de vídeo do YouTube: mostra só a capa + botão de play.
  * O iframe pesado só carrega no clique (melhor LCP/INP e PageSpeed).
  * Renderiza null enquanto o slot não tiver `youtubeId`.
@@ -22,10 +37,11 @@ export function VideoEmbed({ slot, eventLabel, className = "" }: VideoEmbedProps
 
   const id = slot.youtubeId;
   const poster = slot.poster ?? `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+  const aspect = aspectClass[slot.aspect ?? "wide"];
 
   return (
     <div
-      className={`relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-[0_20px_50px_rgba(0,0,0,0.35)] ${className}`}
+      className={`relative ${aspect} w-full overflow-hidden rounded-2xl bg-black shadow-[0_20px_50px_rgba(0,0,0,0.35)] ${className}`}
     >
       {active ? (
         <iframe

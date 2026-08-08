@@ -19,6 +19,8 @@ import {
 } from "@/lib/problem-pages";
 import { servicePath } from "@/lib/service-pages";
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { problemVideos } from "@/lib/videos";
 
 type ProblemPageProps = {
   params: Promise<{
@@ -269,6 +271,17 @@ export default async function ProblemDetailPage({ params }: ProblemPageProps) {
               </TrackedCtaLink>
             </div>
           </div>
+
+          {/* Vídeo do sintoma. Aparece sozinho quando o slug tiver `youtubeId`
+              preenchido em `problemVideos` (src/lib/videos.ts). */}
+          {problemVideos[page.slug]?.youtubeId ? (
+            <div className="mx-auto mt-10 max-w-3xl px-4 sm:px-6 lg:px-8">
+              <VideoEmbed
+                slot={problemVideos[page.slug]}
+                eventLabel={`problem_${page.slug}_video`}
+              />
+            </div>
+          ) : null}
         </section>
 
         <section className="bg-white py-14 md:py-20">

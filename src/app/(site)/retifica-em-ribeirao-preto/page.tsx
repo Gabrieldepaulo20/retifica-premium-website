@@ -11,8 +11,10 @@ import {
   TrackedPhoneLink,
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
+import { VideoEmbed } from "@/components/site/VideoEmbed";
 import { serviceDetailPages, servicePath } from "@/lib/service-pages";
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import { videos } from "@/lib/videos";
 
 const pagePath = "/retifica-em-ribeirao-preto";
 
@@ -20,9 +22,9 @@ const whatsappMessage =
   "Olá, sou de Ribeirão Preto e vim pelo site da Retífica Premium. Gostaria de um orçamento para retífica de cabeçote.";
 
 export const metadata: Metadata = {
-  title: "Retífica de Cabeçote em Ribeirão Preto",
+  title: "Retífica de Cabeçote em Ribeirão Preto — Buscamos e Entregamos",
   description:
-    "Retífica de cabeçote para Ribeirão Preto, a 19 km, em Sertãozinho. Diagnóstico técnico, garantia e orçamento pelo WhatsApp.",
+    "Retífica de cabeçote para Ribeirão Preto: buscamos a peça, retificamos em Sertãozinho e devolvemos. Orçamento no WhatsApp em até 2 horas, com garantia por escrito.",
   alternates: {
     canonical: pagePath,
   },
@@ -52,6 +54,27 @@ export const metadata: Metadata = {
   },
 };
 
+/** Selos da primeira dobra. O tráfego pago rola 14% da página — o que estiver
+ *  abaixo da dobra, na prática, não existe. Estas três promessas ficam visíveis
+ *  sem rolar a tela. */
+const heroBadges = [
+  {
+    icon: "🚚",
+    title: "Buscamos e entregamos",
+    desc: "Em Ribeirão Preto, sem custo de deslocamento para você",
+  },
+  {
+    icon: "⏱",
+    title: "Orçamento em até 2h",
+    desc: "Pelo WhatsApp, em horário comercial",
+  },
+  {
+    icon: "🛡",
+    title: "Garantia por escrito",
+    desc: "Com laudo técnico. Desde 2004",
+  },
+];
+
 const steps = [
   {
     title: "Chame no WhatsApp",
@@ -62,12 +85,64 @@ const steps = [
     desc: "Avaliamos o caso e enviamos orçamento detalhado pelo WhatsApp, sem compromisso e sem orçamento no escuro.",
   },
   {
-    title: "Envio da peça",
-    desc: "Você traz o cabeçote até a oficina em Sertãozinho, ou combinamos retirada e entrega conforme a rota.",
+    title: "Buscamos a peça",
+    desc: "Combinamos a retirada em Ribeirão Preto e buscamos o cabeçote no endereço que você indicar. Você não precisa vir até Sertãozinho.",
   },
   {
     title: "Serviço e devolução",
-    desc: "Executamos a retífica com medição técnica e devolvemos a peça com garantia por escrito e orientação de montagem.",
+    desc: "Executamos a retífica com medição técnica e devolvemos a peça no mesmo endereço, com garantia por escrito e orientação de montagem.",
+  },
+];
+
+/** Bloco de conquista: fala com quem chegou buscando outra retífica de Ribeirão
+ *  Preto. Sem citar nome de concorrente — política do Google e bom senso. */
+const vantagens = [
+  {
+    title: "Você não perde o dia",
+    desc: "Buscamos e devolvemos o cabeçote em Ribeirão Preto. Enquanto a retífica do bairro te obriga a levar, esperar e voltar, aqui a peça vai e volta com a gente.",
+  },
+  {
+    title: "Só cabeçote, desde 2004",
+    desc: "Não somos uma retífica genérica que também faz cabeçote. É o que fazemos todos os dias, o dia inteiro, há mais de 20 anos.",
+  },
+  {
+    title: "Teste de trinca com equipamento próprio",
+    desc: "Trinca fina não aparece a olho nu. Testamos toda peça antes de liberar — é o que evita você montar o motor e o problema voltar em duas semanas.",
+  },
+  {
+    title: "Diagnóstico antes do orçamento",
+    desc: "Medimos empeno, sedes, guias e vedação antes de dizer preço. Você não recebe orçamento no escuro nem paga por serviço que a peça não precisava.",
+  },
+  {
+    title: "Laudo técnico por escrito",
+    desc: "Você recebe o que foi medido, o que foi feito e a garantia documentada. Se for oficina, é o documento que você repassa ao seu cliente.",
+  },
+  {
+    title: "19 km. 25 minutos.",
+    desc: "É mais perto do que a maioria imagina — e, como buscamos a peça, na prática a distância nem entra na conta.",
+  },
+];
+
+/** Diferencial técnico. É o argumento mais forte para justificar sair de
+ *  Ribeirão Preto: equipamento que a retífica de bairro não tem. */
+const tecnologia = [
+  {
+    title: "Teste de trinca",
+    desc: "Equipamento próprio para revelar trincas invisíveis a olho nu, inclusive nas regiões críticas entre válvulas e câmara. Peça com trinca não tratada volta para a bancada em semanas.",
+    href: "/servicos/teste-de-trinca",
+    cta: "Como funciona o teste",
+  },
+  {
+    title: "Medição de empeno",
+    desc: "Conferência da superfície de vedação com instrumento, não no olho. É o que define se a peça precisa de plaina e quanto pode ser retirado com segurança.",
+    href: "/servicos/plaina-de-cabecote",
+    cta: "Ver plaina de cabeçote",
+  },
+  {
+    title: "Banho químico",
+    desc: "Limpeza química antes de qualquer medição. Sem a peça limpa, nenhuma medida é confiável — e é aqui que muita retífica pula etapa.",
+    href: "/servicos/banho-quimico",
+    cta: "Ver limpeza química",
   },
 ];
 
@@ -97,9 +172,19 @@ const faq = [
       "Sim. A oficina fica em Sertãozinho-SP, a cerca de 19 km de Ribeirão Preto, e atende motoristas, oficinas mecânicas e frotas da cidade todos os dias úteis.",
   },
   {
-    question: "Como envio meu cabeçote de Ribeirão Preto?",
+    question: "Preciso levar o cabeçote até Sertãozinho?",
     answer:
-      "Você pode trazer a peça até a oficina em Sertãozinho ou combinar retirada e entrega conforme a rota. O combinado é feito pelo WhatsApp junto com o orçamento.",
+      "Não. Buscamos o cabeçote em Ribeirão Preto no endereço que você indicar e devolvemos no mesmo lugar depois do serviço. A retirada é combinada pelo WhatsApp junto com o orçamento. Se preferir trazer pessoalmente, também atendemos na oficina.",
+  },
+  {
+    question: "A busca e a entrega têm custo?",
+    answer:
+      "A retirada e a devolução em Ribeirão Preto estão incluídas no serviço. Como a rota já é feita, não repassamos custo de deslocamento — isso é combinado no orçamento, sem surpresa depois.",
+  },
+  {
+    question: "Vocês fazem teste de trinca?",
+    answer:
+      "Sim, com equipamento próprio. Trincas finas não aparecem a olho nu e são a principal causa de retrabalho: o motor é montado, roda algumas semanas e o problema volta. Por isso a peça é testada antes de ser liberada.",
   },
   {
     question: "Qual o prazo para quem está em Ribeirão Preto?",
@@ -135,25 +220,45 @@ export default function RetificaRibeiraoPretoPage() {
         </div>
 
         <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[1.05fr_0.95fr] md:items-center lg:px-8">
-          <div>
-            <p className="mb-6 text-sm font-semibold uppercase tracking-wide text-rp-gold">
-              Atendimento a Ribeirão Preto
+          <div className="flex flex-col">
+            <p className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-rp-gold/40 bg-rp-gold/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-rp-gold sm:text-sm">
+              Atendemos Ribeirão Preto · 19 km · buscamos e entregamos
             </p>
             <h1 className="font-heading text-3xl font-extrabold leading-tight md:text-5xl">
-              Retífica de cabeçote para Ribeirão Preto
+              Retífica de cabeçote em Ribeirão Preto —{" "}
+              <span className="text-rp-gold">a gente busca, retifica e devolve</span>
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/82 md:text-lg">
-              A Retífica Premium fica em Sertãozinho-SP, a cerca de 19 km de
-              Ribeirão Preto, e atende motoristas, oficinas mecânicas e frotas
-              da cidade com retífica de cabeçote, plaina, teste de trinca e
-              montagem técnica.
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">
+              Você não precisa levar nada. Buscamos o cabeçote em Ribeirão
+              Preto, fazemos o serviço na nossa oficina em Sertãozinho e
+              devolvemos no mesmo endereço, com garantia por escrito.
+              Orçamento pelo WhatsApp em até 2 horas.
             </p>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">
-              O diagnóstico vem antes da troca de peças: você envia o sintoma
-              pelo WhatsApp, recebe orientação técnica e um orçamento claro
-              antes de decidir.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+
+            {/* Selos: as três objeções de quem busca "retífica em Ribeirão Preto",
+                respondidas antes de qualquer rolagem.
+                No celular ficam DEPOIS dos botões (order-2): 74% do tráfego pago
+                é mobile e o WhatsApp não pode sair da primeira dobra. */}
+            <ul className="order-2 mt-6 grid gap-2 sm:order-none sm:mt-7 sm:gap-2.5 sm:grid-cols-3">
+              {heroBadges.map((badge) => (
+                <li
+                  key={badge.title}
+                  className="rounded-xl border border-white/15 bg-white/8 px-4 py-3 backdrop-blur-sm"
+                >
+                  <p className="font-heading text-sm font-bold text-white">
+                    <span aria-hidden="true" className="mr-1.5">
+                      {badge.icon}
+                    </span>
+                    {badge.title}
+                  </p>
+                  <p className="mt-0.5 text-xs leading-snug text-white/70">
+                    {badge.desc}
+                  </p>
+                </li>
+              ))}
+            </ul>
+
+            <div className="order-1 mt-7 flex flex-col gap-3 sm:order-none sm:mt-8 sm:flex-row">
               <TrackedWhatsAppLink
                 eventLabel="ribeirao_preto_hero_whatsapp"
                 message={whatsappMessage}
@@ -170,14 +275,128 @@ export default function RetificaRibeiraoPretoPage() {
             </div>
           </div>
 
-          <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px] overflow-hidden rounded-lg border border-white/15 bg-white/8 shadow-2xl">
-            <Image
-              src="/oficina.jpeg"
-              alt="Fachada da Retífica Premium em Sertãozinho-SP, que atende Ribeirão Preto"
-              fill
-              sizes="(max-width: 768px) 92vw, 560px"
-              className="object-cover"
-            />
+          {/* Assim que `videos.ribeiraoPretoHero.youtubeId` for preenchido, o vídeo
+              substitui a foto automaticamente. Sem vídeo, mantém a fachada. */}
+          {videos.ribeiraoPretoHero.youtubeId ? (
+            <div className="mx-auto w-full max-w-[560px]">
+              <VideoEmbed
+                slot={videos.ribeiraoPretoHero}
+                eventLabel="ribeirao_preto_hero_video"
+              />
+            </div>
+          ) : (
+            <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px] overflow-hidden rounded-lg border border-white/15 bg-white/8 shadow-2xl">
+              <Image
+                src="/oficina.jpeg"
+                alt="Fachada da Retífica Premium em Sertãozinho-SP, que atende Ribeirão Preto"
+                fill
+                sizes="(max-width: 768px) 92vw, 560px"
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* BLOCO DE CONQUISTA — primeira seção depois da dobra.
+          Fica aqui de propósito: é o argumento para quem chegou comparando com
+          outra retífica e precisa decidir em segundos. */}
+      <section className="bg-white py-14 md:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wide text-rp-accent">
+              Comparando retíficas?
+            </p>
+            <h2 className="mt-2 font-heading text-3xl font-bold leading-tight text-gray-900 md:text-5xl">
+              Por que sair de Ribeirão Preto compensa
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-gray-700 md:text-lg">
+              A retífica mais perto de você é a que fica no seu bairro. A
+              questão não é distância — é o que você recebe de volta.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {vantagens.map((item) => (
+              <article
+                key={item.title}
+                className="rounded-xl border border-[#E8EEF8] bg-[#F8FBFF] p-5 shadow-sm"
+              >
+                <h3 className="font-heading text-lg font-bold text-[#053282]">
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-700">
+                  {item.desc}
+                </p>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <TrackedWhatsAppLink
+              eventLabel="ribeirao_preto_vantagens_whatsapp"
+              message={whatsappMessage}
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 md:h-14 md:text-base"
+            >
+              Pedir orçamento no WhatsApp
+            </TrackedWhatsAppLink>
+            <TrackedPhoneLink
+              eventLabel="ribeirao_preto_vantagens_phone"
+              className="inline-flex h-12 items-center justify-center rounded-full border border-[#053282] px-8 text-sm font-bold text-[#053282] transition-all hover:bg-[#D9E7FF] md:h-14 md:text-base"
+            >
+              Ligar {siteConfig.phone.display}
+            </TrackedPhoneLink>
+          </div>
+        </div>
+      </section>
+
+      {/* TECNOLOGIA — o diferencial que a retífica de bairro não tem.
+          O vídeo do teste de trinca entra aqui quando estiver pronto. */}
+      <section className="bg-[#051B3D] py-14 text-white md:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-wide text-rp-gold">
+              Tecnologia e processo
+            </p>
+            <h2 className="mt-2 font-heading text-3xl font-bold leading-tight md:text-5xl">
+              O que a gente mede antes de liberar a peça
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-white/78 md:text-lg">
+              Retrabalho não acontece por azar. Acontece quando alguém monta o
+              motor sem ter testado o que não dá para ver.
+            </p>
+          </div>
+
+          {videos.tecnologiaTesteTrinca.youtubeId ? (
+            <div className="mx-auto mt-10 max-w-3xl">
+              <VideoEmbed
+                slot={videos.tecnologiaTesteTrinca}
+                eventLabel="ribeirao_preto_video_teste_trinca"
+              />
+            </div>
+          ) : null}
+
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {tecnologia.map((item) => (
+              <article
+                key={item.title}
+                className="flex flex-col rounded-xl border border-white/15 bg-white/8 p-5"
+              >
+                <h3 className="font-heading text-xl font-bold text-rp-gold">
+                  {item.title}
+                </h3>
+                <p className="mt-2 grow text-sm leading-relaxed text-white/80">
+                  {item.desc}
+                </p>
+                <Link
+                  href={item.href}
+                  className="mt-4 inline-block text-sm font-semibold text-white underline decoration-rp-gold underline-offset-4 hover:text-rp-gold"
+                >
+                  {item.cta} →
+                </Link>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -215,6 +434,15 @@ export default function RetificaRibeiraoPretoPage() {
               </article>
             ))}
           </div>
+
+          {videos.ribeiraoPretoLogistica.youtubeId ? (
+            <div className="mx-auto mt-10 max-w-3xl">
+              <VideoEmbed
+                slot={videos.ribeiraoPretoLogistica}
+                eventLabel="ribeirao_preto_video_logistica"
+              />
+            </div>
+          ) : null}
         </div>
       </section>
 

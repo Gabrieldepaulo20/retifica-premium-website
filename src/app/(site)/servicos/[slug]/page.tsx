@@ -18,6 +18,8 @@ import {
   servicePath,
 } from "@/lib/service-pages";
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { serviceVideos } from "@/lib/videos";
 
 type ServicePageProps = {
   params: Promise<{
@@ -243,6 +245,17 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 </h3>
               </article>
             ))}
+
+            {/* Vídeo do serviço. Aparece sozinho quando o slug tiver
+                `youtubeId` preenchido em `serviceVideos` (src/lib/videos.ts). */}
+            {serviceVideos[page.slug]?.youtubeId ? (
+              <div className="sm:col-span-2">
+                <VideoEmbed
+                  slot={serviceVideos[page.slug]}
+                  eventLabel={`service_${page.slug}_video`}
+                />
+              </div>
+            ) : null}
           </div>
         </div>
       </section>
