@@ -21,6 +21,30 @@ import { absoluteUrl, siteConfig } from "@/lib/site";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
 import { serviceVideos } from "@/lib/videos";
 
+/**
+ * Selos da primeira dobra. Só promessas verificáveis — o que muda a decisão de
+ * quem chegou por anúncio e ainda não sabe se vale a pena falar com a gente.
+ * A retirada e entrega tem escopo geográfico e por isso mora na página de
+ * Ribeirão Preto, não aqui.
+ */
+const heroBadges = [
+  {
+    icon: "⏱",
+    title: "Orçamento em até 2h",
+    desc: "Pelo WhatsApp, em horário comercial",
+  },
+  {
+    icon: "🛡",
+    title: "Garantia por escrito",
+    desc: "Com laudo técnico do serviço",
+  },
+  {
+    icon: "🔧",
+    title: "20+ anos só em cabeçote",
+    desc: "Não é retífica genérica. Desde 2004",
+  },
+];
+
 type ServicePageProps = {
   params: Promise<{
     slug: string;
@@ -100,13 +124,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         </div>
 
         <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[1.05fr_0.95fr] md:items-center lg:px-8">
-          <div>
-            <Link
-              href="/servicos"
-              className="mb-6 inline-flex text-sm font-semibold uppercase tracking-wide text-rp-gold transition-colors hover:text-white"
-            >
-              Voltar para serviços
-            </Link>
+          {/* Esta é a página que mais recebe clique pago (AG01 e AG02).
+              Ordem pensada para o celular, onde está 74% desse tráfego e o
+              scroll mediano é 14%: promessa → botões → selos. O link de voltar
+              saiu do topo — era o primeiro elemento da página e mandava a
+              pessoa embora antes de ela ler qualquer coisa. */}
+          <div className="flex flex-col">
             <h1 className="font-heading text-3xl font-extrabold leading-tight md:text-5xl">
               {page.hero}
             </h1>
@@ -121,16 +144,29 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               >
                 Ribeirão Preto
               </Link>{" "}
-              e{" "}
-              <Link
-                href="/servicos#regiao"
-                className="font-semibold text-rp-gold underline-offset-4 hover:underline"
-              >
-                cidades próximas
-              </Link>
-              , com orientação técnica para escolher o serviço correto.
+              e cidades da região.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+
+            <ul className="order-2 mt-6 grid gap-2 sm:order-none sm:mt-7 sm:gap-2.5 sm:grid-cols-3">
+              {heroBadges.map((badge) => (
+                <li
+                  key={badge.title}
+                  className="rounded-xl border border-white/15 bg-white/8 px-4 py-3 backdrop-blur-sm"
+                >
+                  <p className="font-heading text-sm font-bold text-white">
+                    <span aria-hidden="true" className="mr-1.5">
+                      {badge.icon}
+                    </span>
+                    {badge.title}
+                  </p>
+                  <p className="mt-0.5 text-xs leading-snug text-white/70">
+                    {badge.desc}
+                  </p>
+                </li>
+              ))}
+            </ul>
+
+            <div className="order-1 mt-7 flex flex-col gap-3 sm:order-none sm:mt-8 sm:flex-row">
               <TrackedWhatsAppLink
                 eventLabel={`service_${page.slug}_whatsapp`}
                 message={whatsappMessage}
@@ -145,6 +181,13 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 Ligar {siteConfig.phone.display}
               </TrackedPhoneLink>
             </div>
+
+            <Link
+              href="/servicos"
+              className="order-3 mt-6 inline-flex w-fit text-xs font-semibold uppercase tracking-wide text-white/45 transition-colors hover:text-rp-gold sm:order-none"
+            >
+              ← Ver todos os serviços
+            </Link>
           </div>
 
           <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px] overflow-hidden rounded-lg border border-white/15 bg-white/8 shadow-2xl">
