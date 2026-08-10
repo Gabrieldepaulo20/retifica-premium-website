@@ -53,16 +53,22 @@ export const sintomasAtalho = [
 export function AtalhoSintoma({ contexto }: { contexto: string }) {
   return (
     <div>
-      <p className="font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-white/45">
-        Ou toque no que está acontecendo
+      <p className="font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-white/40">
+        Toque no que está acontecendo
       </p>
-      <ul className="mt-3 flex flex-wrap gap-2">
+
+      {/* Grade de duas colunas, não `flex-wrap`.
+          Com wrap as larguras saíam irregulares (147, 127, 123, 134, 156, 139
+          px) e a borda direita ficava serrilhada — é o tipo de detalhe que faz
+          uma página parecer improvisada. Em grade todos os alvos têm a mesma
+          largura e a coluna fecha alinhada. */}
+      <ul className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
         {sintomasAtalho.map((s) => (
           <li key={s.rotulo}>
             <TrackedWhatsAppLink
               eventLabel={`${contexto}_atalho_${s.rotulo}`}
               message={s.zap}
-              className="inline-flex min-h-11 items-center rounded-full border border-white/20 bg-white/[0.04] px-4 text-sm font-semibold text-white/85 transition hover:border-[#25D366] hover:bg-[#25D366]/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
+              className="flex min-h-12 w-full items-center justify-center rounded-xl border border-white/15 bg-white/[0.04] px-3 text-center text-[13px] font-semibold leading-tight text-white/85 transition hover:border-[#25D366] hover:bg-[#25D366]/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366] sm:text-sm"
             >
               {s.chip}
             </TrackedWhatsAppLink>

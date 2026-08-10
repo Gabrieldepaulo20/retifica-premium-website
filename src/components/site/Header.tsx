@@ -17,7 +17,7 @@ export function Header() {
   return (
     <header className="w-full bg-[#020E1D]" role="banner">
       <nav
-        className="relative mx-auto flex h-auto max-w-7xl flex-col items-center justify-center gap-2 px-4 py-4 max-[640px]:pt-8 max-[640px]:pb-2 sm:px-6 md:h-[132px] md:flex-row md:items-center md:justify-between md:gap-0 md:py-0 lg:px-8"
+        className="relative mx-auto flex h-auto max-w-7xl flex-row items-center justify-between gap-3 px-4 py-3 sm:px-6 md:h-[132px] md:gap-0 md:py-0 lg:px-8"
         role="navigation"
         aria-label="Navegação principal"
       >
@@ -33,7 +33,7 @@ export function Header() {
             width={729}
             height={551}
             sizes="(max-width: 767px) 125px, 111px"
-            className="h-auto w-[125px] object-contain md:h-[84px] md:w-auto"
+            className="h-auto w-[104px] object-contain md:h-[84px] md:w-auto"
           />
         </Link>
 
@@ -71,7 +71,7 @@ export function Header() {
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="mt-1 flex h-[35px] w-[45px] items-center justify-center rounded-md border border-white/20 bg-white/5 text-white transition-all hover:border-white/40 hover:bg-white/10 max-[640px]:mt-2 max-[640px]:h-[38px] max-[640px]:w-[48px] md:hidden"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-white/20 bg-white/5 text-white transition-all hover:border-white/40 hover:bg-white/10 md:hidden"
           aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-menu"

@@ -210,7 +210,7 @@ export default function ServicosPage() {
 
         <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <p className="font-heading text-[11px] font-bold uppercase tracking-[0.24em] text-rp-gold">
-            Retífica de cabeçote · Sertãozinho-SP · atende Ribeirão Preto
+            Sertãozinho-SP · atende Ribeirão Preto
           </p>
 
           {/* Afirma, não pergunta. As remanufaturadoras de referência
@@ -222,12 +222,12 @@ export default function ServicosPage() {
             <span className="text-rp-gold">com laudo por escrito</span>
           </h1>
 
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/78 md:text-lg">
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
             Medimos a peça antes de dar preço. Orçamento no WhatsApp em{" "}
             <strong className="font-semibold text-white">até 2 horas</strong>.
           </p>
 
-          <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <TrackedWhatsAppLink
               eventLabel="servicos_hero_whatsapp"
               message={zapGeral}
@@ -245,11 +245,11 @@ export default function ServicosPage() {
 
           {/* Caminho curto: um toque abre a conversa já com o contexto dentro.
               Sem formulário, sem página intermediária, sem escrever. */}
-          <div className="mt-8">
+          <div className="mt-12">
             <AtalhoSintoma contexto="servicos_hero" />
           </div>
 
-          <NumerosProva numeros={numerosProva} tom="claro" className="mt-8" />
+          <NumerosProva numeros={numerosProva} tom="claro" className="mt-12" />
         </div>
       </section>
 
