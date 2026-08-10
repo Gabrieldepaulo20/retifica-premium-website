@@ -352,8 +352,7 @@ export function EstimativaGuiada() {
     });
     const url = buildWhatsAppUrlWithAttribution(
       siteConfig.whatsapp.number,
-      message,
-      { includeContactCode: false }
+      message
     );
     window.open(url, "_blank", "noopener,noreferrer");
   }

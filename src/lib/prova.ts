@@ -23,5 +23,5 @@ export const numerosProva: NumeroProva[] = [
   { valor: 1200, prefixo: "+", rotulo: "serviços nos últimos 12 meses" },
   { valor: 180, prefixo: "+", rotulo: "clientes e oficinas atendidos" },
   { valor: 22, rotulo: "anos de oficina" },
-  { valor: 6, sufixo: " meses", rotulo: "de garantia por escrito" },
+  { valor: 6, sufixo: " meses", rotulo: "de garantia no serviço" },
 ];

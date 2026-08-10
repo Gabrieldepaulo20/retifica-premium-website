@@ -595,12 +595,34 @@ export function attributionMessageLines() {
   ].filter(Boolean);
 }
 
+/**
+ * Monta a URL do WhatsApp com a mensagem que a pessoa vai enviar.
+ *
+ * A mensagem sai LIMPA por padrão. Antes ela vinha com um bloco de rastreamento
+ * colado embaixo do texto — código do contato, fonte, mídia, campanha, termo,
+ * GCLID e página de entrada. Quem abria o WhatsApp via aquilo no campo de
+ * digitação e apagava, ou desistia de enviar. É atrito no único ponto da
+ * jornada em que a pessoa já decidiu falar com a gente.
+ *
+ * Nada de medição se perde com isso: o `leadCode` e a atribuição completa
+ * seguem no evento (`trackEngagementEvent` → `attributionEventParams` e
+ * `intent.leadCode`), que é o caminho certo para dado de rastreamento. O
+ * `transaction_id` da conversão continua usando o mesmo código, então a
+ * deduplicação também não muda.
+ *
+ * `incluirRastreioNaMensagem` existe para quem precisar do comportamento
+ * antigo em algum canal específico, mas o padrão é não usar.
+ */
 export function buildWhatsAppUrlWithAttribution(
   phoneNumber: string,
   baseText: string,
-  options: { includeContactCode?: boolean } = {}
+  options: { incluirRastreioNaMensagem?: boolean } = {}
 ) {
-  if (typeof window === "undefined" || !hasMeasurementConsent()) {
+  if (
+    typeof window === "undefined"
+    || !hasMeasurementConsent()
+    || !options.incluirRastreioNaMensagem
+  ) {
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(baseText)}`;
   }
 
@@ -608,9 +630,7 @@ export function buildWhatsAppUrlWithAttribution(
   const text = [
     ...baseText.split("\n"),
     "",
-    ...(options.includeContactCode === false
-      ? []
-      : [`Código do contato: ${intent.leadCode}`]),
+    `Código do contato: ${intent.leadCode}`,
     ...attributionMessageLines(),
   ].join("\n");
 

@@ -220,12 +220,13 @@ export default function ServicosPage() {
               entregam e com que compromisso — nenhuma abre com uma pergunta.
               Pergunta adia a decisão; aqui a primeira linha já é a promessa. */}
           <h1 className="mt-4 max-w-3xl font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.4rem]">
-            Seu cabeçote medido, retificado e devolvido{" "}
-            <span className="text-rp-gold">com laudo por escrito</span>
+            A gente mede antes de{" "}
+            <span className="text-rp-gold">dar o preço</span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
-            Medimos a peça antes de dar preço. Orçamento no WhatsApp em{" "}
+            Seu cabeçote é limpo, medido e só então orçado. Você aprova
+            sabendo o que a peça precisa — e recebe a resposta pelo WhatsApp em{" "}
             <strong className="font-semibold text-white">até 2 horas</strong>.
           </p>
 
@@ -242,7 +243,7 @@ export default function ServicosPage() {
               </svg>
             </span>
             <span className="font-heading text-base font-bold text-rp-gold sm:text-lg">
-              6 meses de garantia por escrito
+              6 meses de garantia
             </span>
           </p>
 

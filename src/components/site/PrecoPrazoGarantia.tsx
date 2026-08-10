@@ -73,7 +73,7 @@ const cartoes: Cartao[] = [
   {
     titulo: "E se der problema",
     destaque: "6 meses de garantia",
-    texto: "Por escrito, com laudo do que foi medido e do que foi feito.",
+    texto: "Com laudo do que foi medido e do que foi feito na sua peça.",
     selo: true,
     icone: (
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
