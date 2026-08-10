@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import {
@@ -12,17 +13,17 @@ import {
   TrackedServiceLink,
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
+import { AtalhoSintoma } from "@/components/site/AtalhoSintoma";
 import { MidiaPlaceholder } from "@/components/site/MidiaPlaceholder";
 import { NumerosProva } from "@/components/site/NumerosProva";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
-import { TrilhaDiagnostico } from "@/components/site/TrilhaDiagnostico";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
 import { problemPath } from "@/lib/problem-pages";
 import { numerosProva } from "@/lib/prova";
 import { primaryRegionalCities } from "@/lib/regional";
 import { serviceDetailPages, servicePath } from "@/lib/service-pages";
 import { siteConfig } from "@/lib/site";
-import { videos } from "@/lib/videos";
+import { serviceVideos, videos } from "@/lib/videos";
 
 /**
  * PÁGINA DE SERVIÇOS
@@ -80,19 +81,6 @@ export const metadata: Metadata = {
   },
 };
 
-/** Estações da régua de cota. Precisam bater com os `id` das seções. */
-const estacoes = [
-  { id: "sintomas", rotulo: "Sintoma" },
-  { id: "orcamento", rotulo: "Orçamento" },
-  { id: "medicao", rotulo: "Medição" },
-  { id: "trinca", rotulo: "Teste de trinca" },
-  { id: "servicos", rotulo: "Serviços" },
-  { id: "processo", rotulo: "Processo" },
-  { id: "oficinas", rotulo: "Oficinas" },
-  { id: "regiao", rotulo: "Região" },
-  { id: "duvidas", rotulo: "Dúvidas" },
-];
-
 /**
  * Sintomas — a porta de entrada de quem não sabe o nome do serviço.
  * Cada um leva para a página de problema já publicada e carrega uma mensagem
@@ -135,6 +123,17 @@ const sintomas = [
     rotulo: "trincado",
   },
 ];
+
+/**
+ * Serviços cuja imagem em `service-pages.ts` é fotografia real da oficina.
+ * Os demais têm ilustração de marca, que precisa ser contida e não recortada —
+ * ícone esticado em moldura de foto ao lado de uma foto de verdade denuncia
+ * improviso. Quando a foto real de cada bancada existir, é só acrescentar o
+ * slug aqui.
+ *
+ * Pendência de mídia: 4 dos 5 serviços ainda não têm foto própria.
+ */
+const servicosComFotoReal = new Set(["retifica-de-cabecote"]);
 
 /** O que é conferido antes de sair um preço. Vocabulário de bancada. */
 const medicoes = [
@@ -237,8 +236,6 @@ function Etapa({ children, tom = "claro" }: { children: React.ReactNode; tom?: "
 export default function ServicosPage() {
   return (
     <main className="min-h-screen bg-white">
-      <TrilhaDiagnostico estacoes={estacoes} />
-
       {/* ═══ HERO — abre pelo sintoma, não pelo serviço ═══════════════════ */}
       <section className="relative overflow-hidden bg-rp-navy pb-14 pt-12 text-white md:pb-20 md:pt-20">
         <div
@@ -257,17 +254,23 @@ export default function ServicosPage() {
 
         <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <p className="font-heading text-[11px] font-bold uppercase tracking-[0.24em] text-rp-gold">
-            Retífica de cabeçote · Sertãozinho-SP
+            Retífica de cabeçote · Sertãozinho-SP · atende Ribeirão Preto
           </p>
 
+          {/* Afirma, não pergunta. As remanufaturadoras de referência
+              (Jasper nos EUA, Ivor Searle no Reino Unido) abrem dizendo o que
+              entregam e com que compromisso — nenhuma abre com uma pergunta.
+              Pergunta adia a decisão; aqui a primeira linha já é a promessa. */}
           <h1 className="mt-4 max-w-3xl font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.4rem]">
-            O que o seu motor está fazendo?
+            Seu cabeçote medido, retificado e devolvido{" "}
+            <span className="text-rp-gold">com laudo por escrito</span>
           </h1>
 
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">
-            Você não precisa saber o nome do serviço. Diz o sintoma que a gente
-            te diz o que costuma ser, o que precisa ser medido e quanto tempo
-            leva para você ter um orçamento.
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/78 md:text-lg">
+            Mais de <strong className="font-semibold text-white">1.200 serviços</strong> nos
+            últimos 12 meses. A peça é medida antes de sair qualquer valor, e o
+            orçamento chega pelo WhatsApp em{" "}
+            <strong className="font-semibold text-white">até 2 horas</strong> — nunca no escuro.
           </p>
 
           <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
@@ -276,7 +279,7 @@ export default function ServicosPage() {
               message={zapGeral}
               className="inline-flex h-13 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
             >
-              Descrever meu problema no WhatsApp
+              Pedir orçamento agora
             </TrackedWhatsAppLink>
             <TrackedPhoneLink
               eventLabel="servicos_hero_phone"
@@ -286,6 +289,13 @@ export default function ServicosPage() {
             </TrackedPhoneLink>
           </div>
 
+          {/* Caminho curto: um toque abre a conversa já com o contexto dentro.
+              Sem formulário, sem página intermediária, sem escrever. */}
+          <div className="mt-7">
+            <AtalhoSintoma contexto="servicos_hero" />
+          </div>
+
+          <NumerosProva numeros={numerosProva} tom="claro" className="mt-8" />
         </div>
       </section>
 
@@ -330,10 +340,6 @@ export default function ServicosPage() {
               </li>
             ))}
           </ul>
-
-          {/* A prova vem depois dos sintomas, não antes. No hero ela empurrava
-              a lista para fora da primeira tela — e a lista é a tese da página. */}
-          <NumerosProva numeros={numerosProva} tom="claro" className="mt-8" />
 
           <p className="mt-6 text-sm text-white/55">
             Não é nenhum desses?{" "}
@@ -488,30 +494,98 @@ export default function ServicosPage() {
             </p>
           </div>
 
-          <ul className="mt-9 border-t border-gray-200">
-            {serviceDetailPages.map((servico) => (
-              <li key={servico.slug} className="border-b border-gray-200">
-                <TrackedServiceLink
-                  href={servicePath(servico.slug)}
-                  serviceName={servico.shortTitle}
-                  className="group flex flex-col gap-2 py-6 transition-colors hover:bg-[#F8FBFF] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent md:flex-row md:items-baseline md:gap-8"
+          {/* Cards intercalados: mídia de um lado, explicação do outro,
+              alternando. Cada um mostra COMO o serviço é executado e leva para
+              a página completa. Antes isto era uma lista de links de texto —
+              não parecia levar a lugar nenhum. */}
+          <div className="mt-10 space-y-14 md:space-y-20">
+            {serviceDetailPages.map((servico, i) => {
+              const video = serviceVideos[servico.slug];
+              const invertido = i % 2 === 1;
+              const zapServico = `Olá! Vim pelo site e gostaria de um orçamento de ${servico.shortTitle.toLowerCase()}.`;
+
+              return (
+                <article
+                  key={servico.slug}
+                  className="grid items-center gap-7 md:grid-cols-2 md:gap-12"
                 >
-                  <h3 className="font-heading text-xl font-bold text-gray-900 transition-colors group-hover:text-rp-accent md:w-2/5 md:shrink-0 md:text-2xl">
-                    {servico.shortTitle}
-                  </h3>
-                  <p className="text-base leading-relaxed text-gray-600 md:flex-1">
-                    {servico.metaDescription}
-                  </p>
-                  <span
-                    aria-hidden="true"
-                    className="font-heading text-sm font-bold text-rp-accent transition-transform group-hover:translate-x-1"
-                  >
-                    →
-                  </span>
-                </TrackedServiceLink>
-              </li>
-            ))}
-          </ul>
+                  {/* Mídia */}
+                  <div className={invertido ? "md:order-2" : undefined}>
+                    {video?.youtubeId ? (
+                      <VideoEmbed
+                        slot={video}
+                        eventLabel={`servicos_card_${servico.slug}_video`}
+                      />
+                    ) : (
+                      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-gray-200 bg-[#F5F8FD]">
+                        <Image
+                          src={servico.image}
+                          alt={servico.imageAlt}
+                          fill
+                          sizes="(max-width: 768px) 92vw, 520px"
+                          className={
+                            servicosComFotoReal.has(servico.slug)
+                              ? "object-cover"
+                              : "object-contain p-10"
+                          }
+                          loading="lazy"
+                        />
+                        <span className="absolute bottom-3 left-3 rounded-full bg-rp-navy/85 px-3 py-1 font-heading text-[10px] font-bold uppercase tracking-[0.16em] text-rp-gold backdrop-blur-sm">
+                          {servicosComFotoReal.has(servico.slug)
+                            ? "Vídeo em produção"
+                            : "Foto e vídeo em produção"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Explicação */}
+                  <div className={invertido ? "md:order-1" : undefined}>
+                    <p className="font-heading text-[11px] font-bold uppercase tracking-[0.2em] text-rp-accent">
+                      {String(i + 1).padStart(2, "0")} · Serviço
+                    </p>
+                    <h3 className="mt-2 font-heading text-2xl font-bold leading-tight text-gray-900 md:text-[2rem]">
+                      {servico.shortTitle}
+                    </h3>
+                    <p className="mt-3 text-base leading-relaxed text-gray-600">
+                      {servico.intro}
+                    </p>
+
+                    <p className="mt-5 font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
+                      Como a gente executa
+                    </p>
+                    <ol className="mt-2.5 space-y-2">
+                      {servico.process.slice(0, 3).map((passo, p) => (
+                        <li key={passo} className="flex gap-3 text-sm leading-relaxed text-gray-700">
+                          <span className="font-heading font-bold tabular-nums text-rp-accent/60">
+                            {p + 1}
+                          </span>
+                          <span>{passo}</span>
+                        </li>
+                      ))}
+                    </ol>
+
+                    <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
+                      <TrackedServiceLink
+                        href={servicePath(servico.slug)}
+                        serviceName={servico.shortTitle}
+                        className="inline-flex h-12 items-center justify-center rounded-full bg-rp-accent px-6 font-heading text-sm font-bold text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent"
+                      >
+                        Ver {servico.shortTitle.toLowerCase()} completo →
+                      </TrackedServiceLink>
+                      <TrackedWhatsAppLink
+                        eventLabel={`servicos_card_${servico.slug}_whatsapp`}
+                        message={zapServico}
+                        className="inline-flex h-12 items-center justify-center rounded-full border border-[#25D366] px-6 font-heading text-sm font-bold text-[#0B7A3B] transition hover:bg-[#25D366] hover:text-[#04240F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
+                      >
+                        Orçamento deste serviço
+                      </TrackedWhatsAppLink>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </section>
 
