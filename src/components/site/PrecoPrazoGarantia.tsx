@@ -35,7 +35,17 @@ const traco = {
   strokeLinejoin: "round" as const,
 };
 
-const cartoes = [
+type Cartao = {
+  titulo: string;
+  destaque: string;
+  texto: string;
+  href?: string;
+  cta?: string;
+  selo?: boolean;
+  icone: React.ReactNode;
+};
+
+const cartoes: Cartao[] = [
   {
     titulo: "Quanto custa",
     destaque: "Simule em um toque",
@@ -62,8 +72,9 @@ const cartoes = [
   },
   {
     titulo: "E se der problema",
-    destaque: "Garantia por escrito",
-    texto: "Com laudo do que foi medido e do que foi feito.",
+    destaque: "6 meses de garantia",
+    texto: "Por escrito, com laudo do que foi medido e do que foi feito.",
+    selo: true,
     icone: (
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
         <path d="M16 4.5 6.5 8v7.5c0 6.2 3.9 11.7 9.5 14 5.6-2.3 9.5-7.8 9.5-14V8L16 4.5Z" />
@@ -86,13 +97,13 @@ export function PrecoPrazoGarantia({ contexto, whatsappMessage, fundo = "creme" 
             const conteudo = (
               <>
                 <span className="text-rp-accent">{c.icone}</span>
-                <h3 className="mt-4 font-heading text-[11px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                <h3 className="mt-4 font-heading text-xs font-bold uppercase tracking-[0.16em] text-gray-400">
                   {c.titulo}
                 </h3>
                 <p className="mt-1 font-heading text-xl font-bold leading-snug text-gray-900">
                   {c.destaque}
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-gray-600">{c.texto}</p>
+                <p className="mt-2 text-base leading-relaxed text-gray-600">{c.texto}</p>
                 {c.cta ? (
                   <span className="mt-4 inline-flex items-center gap-1.5 font-heading text-sm font-bold text-rp-accent">
                     {c.cta}
@@ -115,7 +126,11 @@ export function PrecoPrazoGarantia({ contexto, whatsappMessage, fundo = "creme" 
             ) : (
               <div
                 key={c.titulo}
-                className="flex flex-col rounded-2xl border border-[#E8EEF8] bg-white p-5 shadow-sm"
+                className={`flex flex-col rounded-2xl border bg-white p-5 shadow-sm ${
+                  c.selo
+                    ? "border-rp-gold/60 ring-1 ring-rp-gold/25"
+                    : "border-[#E8EEF8]"
+                }`}
               >
                 {conteudo}
               </div>

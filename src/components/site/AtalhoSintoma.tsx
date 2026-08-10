@@ -53,7 +53,7 @@ export const sintomasAtalho = [
 export function AtalhoSintoma({ contexto }: { contexto: string }) {
   return (
     <div>
-      <p className="font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-white/40">
+      <p className="font-heading text-xs font-bold uppercase tracking-[0.18em] text-white/60">
         Toque no que está acontecendo
       </p>
 
@@ -68,7 +68,7 @@ export function AtalhoSintoma({ contexto }: { contexto: string }) {
             <TrackedWhatsAppLink
               eventLabel={`${contexto}_atalho_${s.rotulo}`}
               message={s.zap}
-              className="flex min-h-12 w-full items-center justify-center rounded-xl border border-white/15 bg-white/[0.04] px-3 text-center text-[13px] font-semibold leading-tight text-white/85 transition hover:border-[#25D366] hover:bg-[#25D366]/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366] sm:text-sm"
+              className="flex min-h-12 w-full items-center justify-center rounded-xl border border-white/15 bg-white/[0.04] px-3 text-center text-[15px] font-semibold leading-tight text-white/85 transition hover:border-[#25D366] hover:bg-[#25D366]/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366] sm:text-sm"
             >
               {s.chip}
             </TrackedWhatsAppLink>

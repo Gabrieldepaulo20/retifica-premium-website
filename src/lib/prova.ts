@@ -12,6 +12,7 @@ import type { NumeroProva } from "@/components/site/NumerosProva";
  * | 180+ clientes           | 182 clientes cadastrados                               |
  * | 22 anos                 | fundação em 2004 (siteConfig.foundingDate)             |
  * | 2h para o orçamento     | compromisso operacional publicado no site              |
+ * | 6 meses de garantia     | confirmado pela proprietária em 10/08/2026             |
  *
  * Atenção ao redigir: são "serviços", não "cabeçotes". A base inclui plaina de
  * bloco, cabeçote a base de troca e outros. Dizer "1.200 cabeçotes retificados"
@@ -22,5 +23,5 @@ export const numerosProva: NumeroProva[] = [
   { valor: 1200, prefixo: "+", rotulo: "serviços nos últimos 12 meses" },
   { valor: 180, prefixo: "+", rotulo: "clientes e oficinas atendidos" },
   { valor: 22, rotulo: "anos de oficina" },
-  { valor: 2, sufixo: "h", rotulo: "para o orçamento no WhatsApp" },
+  { valor: 6, sufixo: " meses", rotulo: "de garantia por escrito" },
 ];

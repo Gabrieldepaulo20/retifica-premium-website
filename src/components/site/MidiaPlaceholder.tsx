@@ -61,15 +61,15 @@ export function MidiaPlaceholder({
 
       <div className="relative flex items-center justify-between gap-3">
         <span
-          className={`font-heading text-[10px] font-bold uppercase tracking-[0.2em] ${
+          className={`font-heading text-xs font-bold uppercase tracking-[0.2em] ${
             escuro ? "text-rp-gold" : "text-rp-accent"
           }`}
         >
           Substituir por mídia
         </span>
         <span
-          className={`font-heading text-[10px] font-bold uppercase tracking-[0.14em] ${
-            escuro ? "text-white/35" : "text-gray-400"
+          className={`font-heading text-xs font-bold uppercase tracking-[0.14em] ${
+            escuro ? "text-white/55" : "text-gray-400"
           }`}
         >
           {id}
@@ -81,8 +81,8 @@ export function MidiaPlaceholder({
           {resumo}
         </p>
         <p
-          className={`mt-2 font-mono text-[11px] ${
-            escuro ? "text-white/35" : "text-gray-400"
+          className={`mt-2 font-mono text-xs ${
+            escuro ? "text-white/55" : "text-gray-400"
           }`}
         >
           {arquivo}

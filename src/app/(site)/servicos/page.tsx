@@ -180,7 +180,7 @@ const zapGeral =
 function Etapa({ children, tom = "claro" }: { children: React.ReactNode; tom?: "claro" | "escuro" }) {
   return (
     <p
-      className={`font-heading text-[11px] font-bold uppercase tracking-[0.22em] ${
+      className={`font-heading text-xs font-bold uppercase tracking-[0.22em] ${
         tom === "escuro" ? "text-rp-gold" : "text-rp-accent"
       }`}
     >
@@ -209,7 +209,7 @@ export default function ServicosPage() {
         />
 
         <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <p className="font-heading text-[11px] font-bold uppercase tracking-[0.24em] text-rp-gold">
+          <p className="font-heading text-xs font-bold uppercase tracking-[0.24em] text-rp-gold">
             Sertãozinho-SP · atende Ribeirão Preto
           </p>
 
@@ -222,9 +222,26 @@ export default function ServicosPage() {
             <span className="text-rp-gold">com laudo por escrito</span>
           </h1>
 
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
             Medimos a peça antes de dar preço. Orçamento no WhatsApp em{" "}
             <strong className="font-semibold text-white">até 2 horas</strong>.
+          </p>
+
+          {/* Garantia com prazo é a prova principal deste mercado: quatro das
+              seis retíficas pesquisadas lideram com ela. Fica logo abaixo do
+              título, em selo, para ser lida sem esforço. */}
+          <p className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-rp-gold/50 bg-rp-gold/10 py-2.5 pl-3 pr-5">
+            <span
+              aria-hidden="true"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-rp-gold text-[#1A1200]"
+            >
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m5 12.5 4.5 4.5L19 7.5" />
+              </svg>
+            </span>
+            <span className="font-heading text-base font-bold text-rp-gold sm:text-lg">
+              6 meses de garantia por escrito
+            </span>
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -332,7 +349,7 @@ export default function ServicosPage() {
                 separa um serviço que dura de um retrabalho.
               </p>
 
-              <p className="mt-5 rounded-lg border border-dashed border-rp-gold/40 bg-rp-gold/5 px-4 py-3 font-mono text-[12px] leading-relaxed text-rp-gold/90">
+              <p className="mt-5 rounded-lg border border-dashed border-rp-gold/40 bg-rp-gold/5 px-4 py-3 font-mono text-[15px] leading-relaxed text-rp-gold/90">
                 [CONTEÚDO REAL NECESSÁRIO: nome e marca do equipamento de teste de
                 trinca, para citar pelo nome como fazem as retíficas de maior
                 autoridade]
@@ -425,7 +442,7 @@ export default function ServicosPage() {
                           }
                           loading="lazy"
                         />
-                        <span className="absolute bottom-3 left-3 rounded-full bg-rp-navy/85 px-3 py-1 font-heading text-[10px] font-bold uppercase tracking-[0.16em] text-rp-gold backdrop-blur-sm">
+                        <span className="absolute bottom-3 left-3 rounded-full bg-rp-navy/85 px-3 py-1 font-heading text-xs font-bold uppercase tracking-[0.16em] text-rp-gold backdrop-blur-sm">
                           {servicosComFotoReal.has(servico.slug)
                             ? "Vídeo em produção"
                             : "Foto e vídeo em produção"}
@@ -436,7 +453,7 @@ export default function ServicosPage() {
 
                   {/* Explicação */}
                   <div className={invertido ? "md:order-1" : undefined}>
-                    <p className="font-heading text-[11px] font-bold uppercase tracking-[0.2em] text-rp-accent">
+                    <p className="font-heading text-xs font-bold uppercase tracking-[0.2em] text-rp-accent">
                       {String(i + 1).padStart(2, "0")} · Serviço
                     </p>
                     <h3 className="mt-2 font-heading text-2xl font-bold leading-tight text-gray-900 md:text-[2rem]">
@@ -446,7 +463,7 @@ export default function ServicosPage() {
                       {servico.intro}
                     </p>
 
-                    <p className="mt-5 font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400">
+                    <p className="mt-5 font-heading text-xs font-bold uppercase tracking-[0.18em] text-gray-400">
                       Como a gente executa
                     </p>
                     <ol className="mt-2.5 space-y-2">

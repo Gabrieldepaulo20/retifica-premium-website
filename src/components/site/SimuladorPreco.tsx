@@ -40,7 +40,7 @@ export function SimuladorPreco() {
   return (
     <div className="mx-auto max-w-3xl">
       <fieldset>
-        <legend className="font-heading text-[11px] font-bold uppercase tracking-[0.2em] text-rp-gold">
+        <legend className="font-heading text-xs font-bold uppercase tracking-[0.2em] text-rp-gold">
           O que o seu cabeçote precisa?
         </legend>
 
@@ -107,14 +107,14 @@ export function SimuladorPreco() {
           </>
         ) : (
           <>
-            <p className="font-heading text-[11px] font-bold uppercase tracking-[0.2em] text-white/45">
+            <p className="font-heading text-xs font-bold uppercase tracking-[0.2em] text-white/60">
               Metade dos casos ficou entre
             </p>
             <p className="mt-2 font-heading text-3xl font-bold leading-none tabular-nums text-rp-gold md:text-5xl">
               {formatarReal(opcao.de)}{" "}
-              <span className="text-white/35">e</span> {formatarReal(opcao.ate)}
+              <span className="text-white/55">e</span> {formatarReal(opcao.ate)}
             </p>
-            <p className="mt-3 text-sm leading-relaxed text-white/60">
+            <p className="mt-3 text-[15px] leading-relaxed text-white/65">
               Baseado em <strong className="text-white/85">{opcao.casos} serviços reais</strong>{" "}
               da própria oficina. Um quarto ficou abaixo, um quarto acima — o seu
               depende do que a medição encontrar.
@@ -131,7 +131,7 @@ export function SimuladorPreco() {
         </TrackedWhatsAppLink>
       </div>
 
-      <p className="mt-4 text-center text-xs leading-relaxed text-white/40">
+      <p className="mt-4 text-center text-xs leading-relaxed text-white/60">
         Não é tabela de preço. São valores já praticados, apurados em{" "}
         {apuradoEm}, para você ter uma referência antes de conversar.
       </p>

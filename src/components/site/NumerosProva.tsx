@@ -81,7 +81,7 @@ function Item({ numero, ativo, tom }: { numero: NumeroProva; ativo: boolean; tom
       </p>
       {/* Altura fixa no rótulo: sem isso, legendas de uma e de duas linhas
           desalinham a base de cada coluna e a faixa inteira parece torta. */}
-      <p className={`mt-2 min-h-[2.4rem] text-[13px] leading-snug ${corRotulo}`}>
+      <p className={`mt-2 min-h-[2.4rem] text-[15px] leading-snug ${corRotulo}`}>
         {numero.rotulo}
       </p>
     </li>

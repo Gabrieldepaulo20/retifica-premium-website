@@ -79,7 +79,7 @@ export default function QuantoCustaPage() {
         />
 
         <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <p className="font-heading text-[11px] font-bold uppercase tracking-[0.24em] text-rp-gold">
+          <p className="font-heading text-xs font-bold uppercase tracking-[0.24em] text-rp-gold">
             Retífica de cabeçote · Sertãozinho-SP
           </p>
           <h1 className="mt-4 font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.2rem]">
@@ -98,7 +98,7 @@ export default function QuantoCustaPage() {
       {/* ═══ TODAS AS FAIXAS ═════════════════════════════════════════════ */}
       <section className="bg-white py-14 md:py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <p className="font-heading text-[11px] font-bold uppercase tracking-[0.22em] text-rp-accent">
+          <p className="font-heading text-xs font-bold uppercase tracking-[0.22em] text-rp-accent">
             Todas as faixas
           </p>
           <h2 className="mt-2 font-heading text-[1.7rem] font-bold leading-tight text-gray-900 md:text-[2.4rem]">
@@ -109,13 +109,13 @@ export default function QuantoCustaPage() {
             <table className="w-full min-w-[520px] border-collapse text-left">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="py-3 pr-4 font-heading text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500">
+                  <th className="py-3 pr-4 font-heading text-xs font-bold uppercase tracking-[0.14em] text-gray-500">
                     Serviço
                   </th>
-                  <th className="py-3 pr-4 text-right font-heading text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500">
+                  <th className="py-3 pr-4 text-right font-heading text-xs font-bold uppercase tracking-[0.14em] text-gray-500">
                     Metade dos casos
                   </th>
-                  <th className="py-3 text-right font-heading text-[11px] font-bold uppercase tracking-[0.14em] text-gray-500">
+                  <th className="py-3 text-right font-heading text-xs font-bold uppercase tracking-[0.14em] text-gray-500">
                     Base
                   </th>
                 </tr>
