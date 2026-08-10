@@ -267,3 +267,47 @@ export function getServicePageBySlug(slug: string) {
 export function servicePath(slug: string) {
   return `/servicos/${slug}`;
 }
+
+/**
+ * O que é medido em cada serviço, na linguagem da bancada.
+ *
+ * Alimenta a ficha de medição do topo da página. São os pontos que a peça
+ * realmente passa antes de sair um preço — não é lista de venda. Se um serviço
+ * não estiver aqui, a ficha simplesmente não aparece.
+ *
+ * Regra ao editar: nomear o que é conferido, nunca publicar tolerância em
+ * número. Número de tolerância varia por motor e publicar um valor fixo seria
+ * inventar precisão que a peça não tem.
+ */
+export const medicoesPorServico: Record<string, string[]> = {
+  "retifica-de-cabecote": [
+    "Empeno da face de vedação",
+    "Sedes e válvulas",
+    "Guias de válvula",
+    "Trincas na câmara",
+  ],
+  "plaina-de-cabecote": [
+    "Empeno da face",
+    "Altura restante da peça",
+    "Acabamento da superfície",
+    "Vedação após o corte",
+  ],
+  "banho-quimico": [
+    "Resíduo de carbonização",
+    "Canais de água e óleo",
+    "Superfície para leitura",
+    "Estado geral antes da medição",
+  ],
+  "teste-de-trinca": [
+    "Câmara de combustão",
+    "Assentos de válvula",
+    "Canais de arrefecimento",
+    "Face de vedação",
+  ],
+  "montagem-de-cabecote": [
+    "Folga de válvulas",
+    "Vedadores e retentores",
+    "Torque de montagem",
+    "Conferência do conjunto",
+  ],
+};

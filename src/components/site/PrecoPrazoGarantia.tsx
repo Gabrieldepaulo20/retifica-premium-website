@@ -1,33 +1,22 @@
+import Link from "next/link";
 import { TrackedPhoneLink, TrackedWhatsAppLink } from "@/components/site/TrackedLinks";
 import { siteConfig } from "@/lib/site";
 
 /**
- * Bloco "preço, prazo e garantia".
+ * Preço, prazo e garantia — as três perguntas que antecedem o contato.
  *
- * Existe por um motivo medido: as buscas por preço ("preço retífica de cabeçote",
- * "quanto custa retificar cabeçote") já colocam o anúncio em 1º lugar entre 68% e
- * 91% das vezes — e convertem ZERO. A causa é que as palavras "preço", "valor",
- * "quanto custa", "prazo" e "dias úteis" não apareciam nenhuma vez na página que
- * recebia esses cliques.
+ * Existe por um motivo medido: as buscas por preço ("preço retífica de
+ * cabeçote", "quanto custa retificar cabeçote") já colocam o anúncio em 1º
+ * lugar entre 68% e 91% das vezes e convertiam ZERO, porque as palavras
+ * "preço", "valor", "quanto custa" e "prazo" não apareciam nenhuma vez na
+ * página que recebia esses cliques.
  *
- * Este bloco responde as três perguntas que toda pessoa faz antes de mandar
- * mensagem, e coloca essas palavras na página — o que corrige tanto a conversão
- * quanto a correspondência entre a busca e a página, que é o componente da nota
- * de qualidade do Google onde estamos "abaixo da média".
+ * Reescrito para caber numa olhada: ícone, uma frase curta, um destaque. Quem
+ * chega com o carro parado não lê parágrafo — lê o que salta.
  *
- * SOBRE O PREÇO: hoje o bloco responde sem número. Os dados internos (1.227 O.S.
- * dos últimos 12 meses) mostram mediana de R$ 780 e metade dos casos entre R$ 590
- * e R$ 1.100. Publicar a faixa é decisão comercial da proprietária — quando ela
- * decidir, basta preencher `faixaPreco` abaixo e o parágrafo aparece sozinho.
- *
- * SOBRE O PRAZO: o site prometia "2 a 4 dias úteis". Os dados reais mostram prazo
- * interno mediano de 4,6 dias e 40% de atraso sobre esse prazo. Por isso aqui a
- * promessa é "prazo confirmado no orçamento" — que a operação cumpre sempre e
- * ainda vira diferencial de transparência.
+ * O card de preço leva para `/quanto-custa`, onde a pessoa toca no caso dela e
+ * vê a faixa real apurada sobre o histórico da oficina.
  */
-
-/** Preencha quando a faixa de preço for aprovada, ex.: "R$ 600 a R$ 1.100". */
-const faixaPreco: string | null = null;
 
 type Props = {
   /** Usado nos rótulos de evento, para medir qual página converte. */
@@ -38,82 +27,113 @@ type Props = {
   fundo?: "creme" | "branco";
 };
 
+const traco = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.6,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+};
+
+const cartoes = [
+  {
+    titulo: "Quanto custa",
+    destaque: "Simule em um toque",
+    texto: "Faixa real por tipo de serviço, apurada sobre o histórico da oficina.",
+    href: "/quanto-custa",
+    cta: "Ver faixas de preço",
+    icone: (
+      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
+        <circle cx="16" cy="16" r="11" />
+        <path d="M16 10v12M13 13.2c0-1.4 1.3-2.2 3-2.2s3 .8 3 2.2c0 2.9-6 1.9-6 5 0 1.4 1.3 2.2 3 2.2s3-.8 3-2.2" />
+      </svg>
+    ),
+  },
+  {
+    titulo: "Em quanto tempo",
+    destaque: "Prazo antes de você decidir",
+    texto: "Confirmado junto com o orçamento. Cada peça chega num estado.",
+    icone: (
+      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
+        <circle cx="16" cy="16" r="11" />
+        <path d="M16 9.5V16l4.5 3" />
+      </svg>
+    ),
+  },
+  {
+    titulo: "E se der problema",
+    destaque: "Garantia por escrito",
+    texto: "Com laudo do que foi medido e do que foi feito.",
+    icone: (
+      <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
+        <path d="M16 4.5 6.5 8v7.5c0 6.2 3.9 11.7 9.5 14 5.6-2.3 9.5-7.8 9.5-14V8L16 4.5Z" />
+        <path d="m11.8 15.8 3 3 5.4-5.6" />
+      </svg>
+    ),
+  },
+];
+
 export function PrecoPrazoGarantia({ contexto, whatsappMessage, fundo = "creme" }: Props) {
   return (
-    <section className={`${fundo === "creme" ? "bg-[#FFFBF2]" : "bg-white"} py-12 md:py-16`}>
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-rp-accent">
-            Antes de você perguntar
-          </p>
-          <h2 className="mt-2 font-heading text-2xl font-bold leading-tight text-gray-900 md:text-4xl">
-            Preço, prazo e garantia
-          </h2>
-        </div>
+    <section className={`${fundo === "creme" ? "bg-[#FFFBF2]" : "bg-white"} py-14 md:py-20`}>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <h2 className="max-w-xl font-heading text-[1.7rem] font-bold leading-tight tracking-[-0.01em] text-gray-900 md:text-[2.4rem]">
+          Preço, prazo e garantia
+        </h2>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <article className="rounded-xl border border-[#E8EEF8] bg-white p-5 shadow-sm">
-            <h3 className="font-heading text-lg font-bold text-[#053282]">
-              Quanto custa?
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-gray-700">
-              Depende do motor e do estado real da peça — por isso a gente mede
-              antes de dar preço. Você não paga por serviço que o cabeçote não
-              precisava, e não recebe orçamento no escuro.
-              {faixaPreco ? (
-                <>
-                  {" "}
-                  Para dar uma referência honesta, a maior parte dos cabeçotes
-                  que retificamos fica entre <strong>{faixaPreco}</strong>.
-                </>
-              ) : null}
-            </p>
-            <p className="mt-3 text-sm font-semibold text-[#053282]">
-              Orçamento pelo WhatsApp em até 2 horas, sem compromisso.
-            </p>
-          </article>
+          {cartoes.map((c) => {
+            const conteudo = (
+              <>
+                <span className="text-rp-accent">{c.icone}</span>
+                <h3 className="mt-4 font-heading text-[11px] font-bold uppercase tracking-[0.16em] text-gray-400">
+                  {c.titulo}
+                </h3>
+                <p className="mt-1 font-heading text-xl font-bold leading-snug text-gray-900">
+                  {c.destaque}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-gray-600">{c.texto}</p>
+                {c.cta ? (
+                  <span className="mt-4 inline-flex items-center gap-1.5 font-heading text-sm font-bold text-rp-accent">
+                    {c.cta}
+                    <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
+                      →
+                    </span>
+                  </span>
+                ) : null}
+              </>
+            );
 
-          <article className="rounded-xl border border-[#E8EEF8] bg-white p-5 shadow-sm">
-            <h3 className="font-heading text-lg font-bold text-[#053282]">
-              Em quanto tempo fica pronto?
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-gray-700">
-              O prazo é confirmado junto com o orçamento,{" "}
-              <strong>antes de você decidir</strong>. Cada cabeçote chega num
-              estado diferente: uns precisam só de plaina, outros de sedes,
-              guias e teste de trinca.
-            </p>
-            <p className="mt-3 text-sm font-semibold text-[#053282]">
-              Preferimos dar o prazo certo a dar o prazo bonito.
-            </p>
-          </article>
-
-          <article className="rounded-xl border border-[#E8EEF8] bg-white p-5 shadow-sm">
-            <h3 className="font-heading text-lg font-bold text-[#053282]">
-              E se der problema depois?
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-gray-700">
-              Garantia por escrito, com laudo técnico do que foi medido e do que
-              foi feito. Se for oficina, é o documento que você repassa ao seu
-              cliente.
-            </p>
-            <p className="mt-3 text-sm font-semibold text-[#053282]">
-              Trabalhamos com cabeçote desde 2004.
-            </p>
-          </article>
+            return c.href ? (
+              <Link
+                key={c.titulo}
+                href={c.href}
+                className="group flex flex-col rounded-2xl border border-rp-accent/25 bg-white p-5 shadow-sm transition hover:border-rp-accent hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent"
+              >
+                {conteudo}
+              </Link>
+            ) : (
+              <div
+                key={c.titulo}
+                className="flex flex-col rounded-2xl border border-[#E8EEF8] bg-white p-5 shadow-sm"
+              >
+                {conteudo}
+              </div>
+            );
+          })}
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="mt-8 flex flex-col gap-2.5 sm:flex-row">
           <TrackedWhatsAppLink
             eventLabel={`${contexto}_ppg_whatsapp`}
             message={whatsappMessage}
-            className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 sm:w-auto md:h-14 md:text-base"
+            className="inline-flex h-13 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 md:h-14"
           >
-            Pedir meu orçamento agora
+            Pedir meu orçamento
           </TrackedWhatsAppLink>
           <TrackedPhoneLink
             eventLabel={`${contexto}_ppg_phone`}
-            className="inline-flex h-12 w-full items-center justify-center rounded-full border border-[#053282] px-8 text-sm font-bold text-[#053282] transition-all hover:bg-[#D9E7FF] sm:w-auto md:h-14 md:text-base"
+            className="inline-flex h-13 items-center justify-center rounded-full border border-gray-300 px-7 font-heading text-base font-bold text-gray-800 transition hover:border-rp-accent hover:text-rp-accent md:h-14"
           >
             Ligar {siteConfig.phone.display}
           </TrackedPhoneLink>

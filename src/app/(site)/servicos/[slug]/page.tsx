@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -12,41 +11,47 @@ import {
   TrackedPhoneLink,
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
+import { FichaMedicao } from "@/components/site/FichaMedicao";
+import { NumerosProva } from "@/components/site/NumerosProva";
+import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
+import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { numerosProva } from "@/lib/prova";
 import {
   getServicePageBySlug,
+  medicoesPorServico,
   serviceDetailPages,
   servicePath,
 } from "@/lib/service-pages";
 import { absoluteUrl, siteConfig } from "@/lib/site";
-import { VideoEmbed } from "@/components/site/VideoEmbed";
-import { NumerosProva } from "@/components/site/NumerosProva";
-import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
-import { numerosProva } from "@/lib/prova";
 import { serviceVideos } from "@/lib/videos";
 
 /**
- * Selos da primeira dobra. Só promessas verificáveis — o que muda a decisão de
- * quem chegou por anúncio e ainda não sabe se vale a pena falar com a gente.
- * A retirada e entrega tem escopo geográfico e por isso mora na página de
- * Ribeirão Preto, não aqui.
+ * PÁGINA DE SERVIÇO
+ *
+ * Esta é a página que mais recebe clique pago: 48 das 49 sessões pagas que
+ * caem em /servicos vêm para as páginas de detalhe. Tudo aqui é decidido pelo
+ * comportamento medido nos primeiros 14 dias de campanha:
+ *
+ *   74% do tráfego pago é celular
+ *   61% sai em menos de 10 segundos
+ *   83% não passa da metade da página
+ *   quem passa de 30 segundos converte entre 29% e 50%
+ *
+ * Três consequências de projeto:
+ *
+ * 1. A conversão acontece na primeira tela. No celular a ordem é
+ *    título → promessa → botões → ficha → números. Os botões vêm antes de
+ *    qualquer prova, porque quem já decidiu não deve ter que rolar.
+ *
+ * 2. A ficha de medição substitui a foto genérica. É o objeto que a empresa
+ *    entrega de verdade e responde as três perguntas que antecedem o contato.
+ *    Fica logo abaixo dos botões, meio visível — o pedaço cortado é o que
+ *    convida a rolar.
+ *
+ * 3. As seções são rotuladas com o vocabulário do serviço — sintoma, correção,
+ *    entrega — porque essa é a ordem real do trabalho. Não é numeração
+ *    decorativa: quem lê está tentando entender onde o problema dele se encaixa.
  */
-const heroBadges = [
-  {
-    icon: "⏱",
-    title: "Orçamento em até 2h",
-    desc: "Pelo WhatsApp, em horário comercial",
-  },
-  {
-    icon: "🛡",
-    title: "Garantia por escrito",
-    desc: "Com laudo técnico do serviço",
-  },
-  {
-    icon: "🔧",
-    title: "20+ anos só em cabeçote",
-    desc: "Não é retífica genérica. Desde 2004",
-  },
-];
 
 type ServicePageProps = {
   params: Promise<{
@@ -103,6 +108,15 @@ export async function generateMetadata({
   };
 }
 
+/** Rótulo de seção. Usa o vocabulário da bancada, não numeração decorativa. */
+function Etapa({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="font-heading text-[11px] font-bold uppercase tracking-[0.22em] text-rp-accent">
+      {children}
+    </p>
+  );
+}
+
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const { slug } = await params;
   const page = getServicePageBySlug(slug);
@@ -110,252 +124,242 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   if (!page) notFound();
 
   const whatsappMessage = `Olá, vim pelo site da Retífica Premium e gostaria de orçamento para ${page.shortTitle}.`;
+  const medicoes = medicoesPorServico[page.slug] ?? [];
+  const video = serviceVideos[page.slug];
 
   return (
     <main className="min-h-screen bg-white">
-      <section className="relative overflow-hidden bg-[#051B3D] py-16 text-white md:py-24">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={page.image}
-            alt=""
-            fill
-            sizes="100vw"
-            className="hidden object-cover opacity-20 md:block"
-            aria-hidden="true"
-          />
-          <div className="absolute inset-0 bg-linear-to-b from-[#051B3D]/95 via-[#051B3D]/88 to-[#020E1D]" />
-        </div>
+      {/* ── PRIMEIRA TELA ──────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-rp-navy pb-12 pt-12 text-white md:pb-20 md:pt-20">
+        {/* Malha de cotas ao fundo: linhas finas de desenho técnico. Sem imagem,
+            sem requisição, sem custo de carregamento. */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-[0.5]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, rgba(251,191,36,0.055) 1px, transparent 1px), linear-gradient(to bottom, rgba(251,191,36,0.055) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-rp-gold/45 to-transparent"
+        />
 
-        <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[1.05fr_0.95fr] md:items-center lg:px-8">
-          {/* Esta é a página que mais recebe clique pago (AG01 e AG02).
-              Ordem pensada para o celular, onde está 74% desse tráfego e o
-              scroll mediano é 14%: promessa → botões → selos. O link de voltar
-              saiu do topo — era o primeiro elemento da página e mandava a
-              pessoa embora antes de ela ler qualquer coisa. */}
-          <div className="flex flex-col">
-            <h1 className="font-heading text-3xl font-extrabold leading-tight md:text-5xl">
+        {/* No celular tudo vira uma coluna só e a ficha se intercala entre os
+            botões e o texto — por isso a coluna da esquerda usa `contents`, que
+            dissolve o wrapper e deixa os filhos participarem da mesma ordenação
+            da ficha. A partir de `md` o wrapper volta a existir como coluna e a
+            ficha ocupa a segunda. */}
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col px-4 sm:px-6 md:grid md:grid-cols-[1.02fr_0.98fr] md:items-center md:gap-x-14 lg:px-8">
+          <div className="contents md:flex md:flex-col">
+            <p className="font-heading text-[11px] font-bold uppercase tracking-[0.24em] text-rp-gold">
+              Sertãozinho-SP · atende Ribeirão Preto e região
+            </p>
+
+            <h1 className="mt-4 font-heading text-[2.15rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.25rem]">
               {page.hero}
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/82 md:text-lg">
-              {page.intro}
-            </p>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">
-              Atendemos motoristas, oficinas, frotas e empresas em Sertãozinho,{" "}
-              <Link
-                href="/retifica-em-ribeirao-preto"
-                className="font-semibold text-rp-gold underline-offset-4 hover:underline"
-              >
-                Ribeirão Preto
-              </Link>{" "}
-              e cidades da região.
-            </p>
 
-            <ul className="order-2 mt-6 grid gap-2 sm:order-none sm:mt-7 sm:gap-2.5 sm:grid-cols-3">
-              {heroBadges.map((badge) => (
-                <li
-                  key={badge.title}
-                  className="rounded-xl border border-white/15 bg-white/8 px-4 py-3 backdrop-blur-sm"
-                >
-                  <p className="font-heading text-sm font-bold text-white">
-                    <span aria-hidden="true" className="mr-1.5">
-                      {badge.icon}
-                    </span>
-                    {badge.title}
-                  </p>
-                  <p className="mt-0.5 text-xs leading-snug text-white/70">
-                    {badge.desc}
-                  </p>
-                </li>
-              ))}
-            </ul>
-
-            <div className="order-1 mt-7 flex flex-col gap-3 sm:order-none sm:mt-8 sm:flex-row">
+            {/* Botões logo abaixo do título: quem já decidiu não deve precisar
+                rolar para achar onde clicar. */}
+            <div className="order-[1] mt-6 flex flex-col gap-2.5 md:order-none md:mt-7 md:flex-row">
               <TrackedWhatsAppLink
                 eventLabel={`service_${page.slug}_whatsapp`}
                 message={whatsappMessage}
-                className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 md:h-14 md:text-base"
+                className="inline-flex h-13 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
               >
                 Pedir orçamento no WhatsApp
               </TrackedWhatsAppLink>
               <TrackedPhoneLink
                 eventLabel={`service_${page.slug}_phone`}
-                className="inline-flex h-12 items-center justify-center rounded-full border border-white/45 px-8 text-sm font-bold text-white transition-all hover:bg-white/10 md:h-14 md:text-base"
+                className="inline-flex h-13 items-center justify-center rounded-full border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
               >
                 Ligar {siteConfig.phone.display}
               </TrackedPhoneLink>
             </div>
 
-            <NumerosProva numeros={numerosProva} tom="claro" className="order-4 mt-7 sm:order-none" />
+            <p className="order-[3] mt-7 max-w-xl text-base leading-relaxed text-white/72 md:order-none md:mt-5 md:text-lg">
+              {page.intro}
+            </p>
+
+            <NumerosProva
+              numeros={numerosProva}
+              tom="claro"
+              className="order-[4] mt-7 md:order-none"
+            />
 
             <Link
               href="/servicos"
-              className="order-5 mt-6 inline-flex w-fit text-xs font-semibold uppercase tracking-wide text-white/45 transition-colors hover:text-rp-gold sm:order-none"
+              className="order-[5] mt-6 inline-flex w-fit font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-white/40 transition-colors hover:text-rp-gold md:order-none"
             >
-              ← Ver todos os serviços
+              ← Todos os serviços
             </Link>
           </div>
 
-          <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px] overflow-hidden rounded-lg border border-white/15 bg-white/8 shadow-2xl">
-            <Image
-              src={page.image}
-              alt={page.imageAlt}
-              fill
-              sizes="(max-width: 768px) 92vw, 560px"
-              className="object-cover"
-            />
+          {/* No celular a ficha entra logo depois dos botões — o corte na base
+              da tela é o que convida a rolar. */}
+          <div className="order-[2] mt-7 md:order-none md:mt-0">
+            <FichaMedicao servico={page.shortTitle} medicoes={medicoes} />
           </div>
         </div>
       </section>
 
-      {/* Vem imediatamente depois da primeira dobra de propósito: 83% do tráfego
-          pago não passa da metade da página, então a resposta sobre preço, prazo
-          e garantia precisa estar o mais alto possível. */}
+      {/* ── PREÇO, PRAZO E GARANTIA ────────────────────────────────────── */}
       <PrecoPrazoGarantia
         contexto={`service_${page.slug}`}
         whatsappMessage={whatsappMessage}
         fundo="creme"
       />
 
+      {/* ── SINTOMA ────────────────────────────────────────────────────── */}
       <section className="bg-white py-14 md:py-20">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[0.9fr_1.1fr] lg:px-8">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-rp-accent">
-              Quando procurar
-            </p>
-            <h2 className="mt-2 font-heading text-3xl font-bold leading-tight text-gray-900 md:text-5xl">
-              Sintomas relacionados a {page.shortTitle.toLowerCase()}
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <Etapa>Sintoma</Etapa>
+            <h2 className="mt-2 font-heading text-3xl font-bold leading-tight tracking-[-0.01em] text-gray-900 md:text-[2.6rem]">
+              Reconhece algum destes?
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-gray-700 md:text-lg">
-              Se algum destes sinais aparece no veículo, vale conversar com uma
-              retífica antes de seguir rodando ou remontar o conjunto.
+            <p className="mt-3 text-base leading-relaxed text-gray-600">
+              Se o seu caso está aqui, manda uma mensagem descrevendo o que o
+              motor está fazendo. A gente já responde com a próxima etapa.
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <ul className="mt-8 grid gap-x-8 gap-y-0 sm:grid-cols-2">
             {page.symptoms.map((symptom) => (
-              <article
+              <li
                 key={symptom}
-                className="rounded-lg border border-[#D9E7FF] bg-white p-4 shadow-sm"
+                className="flex items-baseline gap-3 border-b border-gray-200 py-4 last:border-b-0 sm:[&:nth-last-child(2)]:border-b-0"
               >
-                <h3 className="font-heading text-xl font-bold text-[#053282]">
-                  {symptom}
-                </h3>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#FFFBF2] py-14 md:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-wide text-rp-accent">
-              Como trabalhamos
-            </p>
-            <h2 className="mt-2 font-heading text-3xl font-bold leading-tight text-gray-900 md:text-5xl">
-              Serviço técnico, sem orçamento no escuro
-            </h2>
-          </div>
-
-          <div className="mt-10 grid gap-5 md:grid-cols-2">
-            {page.includes.map((item) => (
-              <article
-                key={item}
-                className="rounded-lg border border-[#E8EEF8] bg-[#F8FBFF] p-5 shadow-sm"
-              >
-                <h3 className="font-heading text-xl font-bold text-[#053282]">
-                  {item}
-                </h3>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#0B2F6B] py-14 text-white md:py-20">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[0.85fr_1.15fr] lg:px-8">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-rp-gold">
-              Processo
-            </p>
-            <h2 className="mt-2 font-heading text-3xl font-bold leading-tight md:text-5xl">
-              Do diagnóstico à entrega orientada
-            </h2>
-            <p className="mt-4 text-base leading-relaxed text-white/78 md:text-lg">
-              O objetivo é resolver a causa provável do problema e orientar a
-              montagem correta, especialmente quando a peça vem de oficina
-              parceira.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {page.process.map((step, index) => (
-              <article
-                key={step}
-                className="rounded-lg border border-white/15 bg-white/8 p-5"
-              >
-                <p className="font-heading text-sm font-bold text-rp-gold">
-                  {String(index + 1).padStart(2, "0")}
-                </p>
-                <h3 className="mt-2 text-base font-semibold leading-relaxed text-white">
-                  {step}
-                </h3>
-              </article>
-            ))}
-
-            {/* Vídeo do serviço. Aparece sozinho quando o slug tiver
-                `youtubeId` preenchido em `serviceVideos` (src/lib/videos.ts). */}
-            {serviceVideos[page.slug]?.youtubeId ? (
-              <div className="sm:col-span-2">
-                <VideoEmbed
-                  slot={serviceVideos[page.slug]}
-                  eventLabel={`service_${page.slug}_video`}
+                <span
+                  aria-hidden="true"
+                  className="h-px w-4 shrink-0 translate-y-[-0.3em] bg-rp-accent"
                 />
-              </div>
-            ) : null}
-          </div>
+                <span className="font-heading text-lg font-semibold leading-snug text-gray-900 first-letter:uppercase">
+                  {symptom}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <TrackedWhatsAppLink
+            eventLabel={`service_${page.slug}_sintoma_whatsapp`}
+            message={whatsappMessage}
+            className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110"
+          >
+            É o meu caso — quero um orçamento
+          </TrackedWhatsAppLink>
         </div>
       </section>
 
-      <section className="bg-white py-14 md:py-20">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-center font-heading text-3xl font-bold text-gray-900 md:text-5xl">
-            Dúvidas sobre {page.shortTitle.toLowerCase()}
-          </h2>
-          <div className="mt-8 space-y-4">
-            {page.faq.map((item) => (
-              <details
-                key={item.question}
-                className="group rounded-lg border border-gray-200 bg-white p-5 shadow-sm"
+      {/* ── CORREÇÃO ───────────────────────────────────────────────────── */}
+      <section className="bg-[#FFFBF2] py-14 md:py-20">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 md:grid-cols-[0.85fr_1.15fr] lg:px-8">
+          <div>
+            <Etapa>Correção</Etapa>
+            <h2 className="mt-2 font-heading text-3xl font-bold leading-tight tracking-[-0.01em] text-gray-900 md:text-[2.6rem]">
+              O que entra no serviço
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-gray-600">
+              Nem toda peça precisa de tudo. O que a sua vai precisar sai da
+              medição — e vai escrito no orçamento, antes de você aprovar.
+            </p>
+          </div>
+
+          <ul className="space-y-0">
+            {page.includes.map((item) => (
+              <li
+                key={item}
+                className="border-b border-[#E5DCC6] py-4 text-base leading-relaxed text-gray-800 first-letter:uppercase last:border-b-0"
               >
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-3 font-semibold text-gray-900">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ── ENTREGA ────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-rp-navy py-14 text-white md:py-20">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-rp-gold/35 to-transparent"
+        />
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="font-heading text-[11px] font-bold uppercase tracking-[0.22em] text-rp-gold">
+              Entrega
+            </p>
+            <h2 className="mt-2 font-heading text-3xl font-bold leading-tight tracking-[-0.01em] md:text-[2.6rem]">
+              Do recebimento à devolução
+            </h2>
+          </div>
+
+          {/* Aqui a numeração é honesta: é a ordem real do trabalho, e saber em
+              que etapa a peça está é informação que o cliente pede. */}
+          <ol className="mt-9 grid gap-x-10 gap-y-0 sm:grid-cols-2">
+            {page.process.map((step, index) => (
+              <li
+                key={step}
+                className="flex items-baseline gap-4 border-b border-white/12 py-5 last:border-b-0 sm:[&:nth-last-child(2)]:border-b-0"
+              >
+                <span className="font-heading text-2xl font-bold tabular-nums leading-none text-rp-gold/70">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="text-base leading-relaxed text-white/85">
+                  {step}
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          {video?.youtubeId ? (
+            <div className="mx-auto mt-10 max-w-2xl">
+              <VideoEmbed slot={video} eventLabel={`service_${page.slug}_video`} />
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      {/* ── DÚVIDAS ────────────────────────────────────────────────────── */}
+      <section className="bg-white py-14 md:py-20">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <Etapa>Dúvidas</Etapa>
+          <h2 className="mt-2 font-heading text-3xl font-bold leading-tight tracking-[-0.01em] text-gray-900 md:text-[2.6rem]">
+            Perguntas que a gente ouve toda semana
+          </h2>
+
+          <div className="mt-8 divide-y divide-gray-200 border-y border-gray-200">
+            {page.faq.map((item) => (
+              <details key={item.question} className="group py-4">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-heading text-lg font-semibold text-gray-900 transition-colors hover:text-rp-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rp-accent">
                   <span>{item.question}</span>
                   <span
-                    className="text-rp-accent transition-transform group-open:rotate-180"
                     aria-hidden="true"
-                  >
-                    ▼
-                  </span>
+                    className="mt-1.5 h-px w-4 shrink-0 bg-rp-accent transition-transform duration-200 group-open:rotate-90"
+                  />
                 </summary>
-                <p className="mt-3 leading-relaxed text-gray-700">
+                <p className="mt-3 pr-8 leading-relaxed text-gray-600">
                   {item.answer}
                 </p>
               </details>
             ))}
           </div>
 
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <TrackedWhatsAppLink
               eventLabel={`service_${page.slug}_faq_whatsapp`}
               message={whatsappMessage}
-              className="inline-flex h-12 items-center justify-center rounded-full bg-rp-accent px-8 text-sm font-bold text-white transition-all hover:brightness-110 md:h-14 md:text-base"
+              className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 md:h-14"
             >
-              Falar com especialista
+              Minha dúvida não está aqui
             </TrackedWhatsAppLink>
             <TrackedCtaLink
               href="/contato"
               eventLabel={`service_${page.slug}_contact`}
-              className="inline-flex h-12 items-center justify-center rounded-full border border-[#053282] px-8 text-sm font-bold text-[#053282] transition-all hover:bg-[#D9E7FF] md:h-14 md:text-base"
+              className="inline-flex h-12 items-center justify-center rounded-full border border-gray-300 px-7 font-heading text-base font-bold text-gray-800 transition hover:border-rp-accent hover:text-rp-accent md:h-14"
             >
               Ver endereço e horário
             </TrackedCtaLink>

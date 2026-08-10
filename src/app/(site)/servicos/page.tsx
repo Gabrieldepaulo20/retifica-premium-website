@@ -18,7 +18,6 @@ import { MidiaPlaceholder } from "@/components/site/MidiaPlaceholder";
 import { NumerosProva } from "@/components/site/NumerosProva";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
-import { problemPath } from "@/lib/problem-pages";
 import { numerosProva } from "@/lib/prova";
 import { primaryRegionalCities } from "@/lib/regional";
 import { serviceDetailPages, servicePath } from "@/lib/service-pages";
@@ -80,49 +79,6 @@ export const metadata: Metadata = {
     images: ["/retificapremium.jpeg"],
   },
 };
-
-/**
- * Sintomas — a porta de entrada de quem não sabe o nome do serviço.
- * Cada um leva para a página de problema já publicada e carrega uma mensagem
- * de WhatsApp própria, para a conversa começar com contexto.
- */
-const sintomas = [
-  {
-    titulo: "Está soltando fumaça",
-    pista: "Fumaça azul, branca ou em excesso pelo escapamento",
-    href: problemPath("motor-fumando"),
-    zap: "Olá! Meu motor está soltando fumaça pelo escapamento. Vim pelo site e gostaria de uma orientação.",
-    rotulo: "motor_fumando",
-  },
-  {
-    titulo: "Está bebendo óleo",
-    pista: "Precisa completar o óleo com frequência, sem vazamento aparente",
-    href: problemPath("motor-baixando-oleo"),
-    zap: "Olá! Meu motor está consumindo óleo. Vim pelo site e gostaria de uma orientação.",
-    rotulo: "baixando_oleo",
-  },
-  {
-    titulo: "Está esquentando",
-    pista: "Ponteiro sobe, ventoinha não dá conta, perde água do reservatório",
-    href: problemPath("motor-superaquecendo"),
-    zap: "Olá! Meu motor está superaquecendo. Vim pelo site e gostaria de uma orientação.",
-    rotulo: "superaquecendo",
-  },
-  {
-    titulo: "Misturou água com óleo",
-    pista: "Óleo com aspecto de café com leite, pressão no reservatório",
-    href: problemPath("junta-do-cabecote-queimada"),
-    zap: "Olá! O motor está misturando água com óleo. Vim pelo site e gostaria de uma orientação.",
-    rotulo: "junta_queimada",
-  },
-  {
-    titulo: "Já disseram que trincou",
-    pista: "O problema voltou depois de trocar a junta",
-    href: servicePath("teste-de-trinca"),
-    zap: "Olá! Me disseram que meu cabeçote pode estar trincado. Vim pelo site e gostaria de uma avaliação.",
-    rotulo: "trincado",
-  },
-];
 
 /**
  * Serviços cuja imagem em `service-pages.ts` é fotografia real da oficina.
@@ -267,10 +223,8 @@ export default function ServicosPage() {
           </h1>
 
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/78 md:text-lg">
-            Mais de <strong className="font-semibold text-white">1.200 serviços</strong> nos
-            últimos 12 meses. A peça é medida antes de sair qualquer valor, e o
-            orçamento chega pelo WhatsApp em{" "}
-            <strong className="font-semibold text-white">até 2 horas</strong> — nunca no escuro.
+            Medimos a peça antes de dar preço. Orçamento no WhatsApp em{" "}
+            <strong className="font-semibold text-white">até 2 horas</strong>.
           </p>
 
           <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
@@ -291,67 +245,11 @@ export default function ServicosPage() {
 
           {/* Caminho curto: um toque abre a conversa já com o contexto dentro.
               Sem formulário, sem página intermediária, sem escrever. */}
-          <div className="mt-7">
+          <div className="mt-8">
             <AtalhoSintoma contexto="servicos_hero" />
           </div>
 
           <NumerosProva numeros={numerosProva} tom="claro" className="mt-8" />
-        </div>
-      </section>
-
-      {/* ═══ SINTOMAS ════════════════════════════════════════════════════ */}
-      <section id="sintomas" className="scroll-mt-20 bg-rp-navy pb-16 text-white md:pb-24">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <Etapa tom="escuro">Sintoma</Etapa>
-          <h2 className="mt-2 max-w-2xl font-heading text-[1.8rem] font-bold leading-tight tracking-[-0.01em] md:text-[2.6rem]">
-            Comece por onde dói
-          </h2>
-
-          <ul className="mt-8 border-t border-white/12">
-            {sintomas.map((sintoma) => (
-              <li
-                key={sintoma.titulo}
-                className="border-b border-white/12 py-5 md:py-6"
-              >
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <Link
-                    href={sintoma.href}
-                    className="group min-w-0 flex-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-rp-gold"
-                  >
-                    <p className="font-heading text-xl font-bold leading-snug transition-colors group-hover:text-rp-gold md:text-2xl">
-                      {sintoma.titulo}
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-white/60 md:text-base">
-                      {sintoma.pista}
-                    </p>
-                    <span className="mt-2 inline-block font-heading text-[11px] font-bold uppercase tracking-[0.16em] text-white/40 transition-colors group-hover:text-rp-gold">
-                      Entender esse sintoma →
-                    </span>
-                  </Link>
-
-                  <TrackedWhatsAppLink
-                    eventLabel={`servicos_sintoma_${sintoma.rotulo}_whatsapp`}
-                    message={sintoma.zap}
-                    className="inline-flex h-11 shrink-0 items-center justify-center rounded-full border border-[#25D366]/45 px-5 font-heading text-sm font-bold text-[#25D366] transition hover:bg-[#25D366] hover:text-[#04240F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
-                  >
-                    É o meu caso
-                  </TrackedWhatsAppLink>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <p className="mt-6 text-sm text-white/55">
-            Não é nenhum desses?{" "}
-            <TrackedWhatsAppLink
-              eventLabel="servicos_sintoma_outro_whatsapp"
-              message="Olá! Meu motor está com um problema diferente dos que aparecem no site. Posso descrever?"
-              className="font-semibold text-rp-gold underline underline-offset-4 hover:text-white"
-            >
-              Descreve para a gente
-            </TrackedWhatsAppLink>
-            .
-          </p>
         </div>
       </section>
 
@@ -369,9 +267,7 @@ export default function ServicosPage() {
               O que a gente confere antes de dar preço
             </h2>
             <p className="mt-3 text-base leading-relaxed text-gray-600">
-              Orçamento no escuro é o que faz um serviço custar duas vezes. Cada
-              peça passa por estes pontos antes de sair um valor — e o que ela
-              precisou vai escrito no laudo.
+              Cada peça passa por estes pontos antes de sair um valor.
             </p>
           </div>
 
@@ -489,8 +385,7 @@ export default function ServicosPage() {
               O que a gente executa
             </h2>
             <p className="mt-3 text-base leading-relaxed text-gray-600">
-              Nem toda peça precisa de tudo. O que a sua vai precisar sai da
-              medição.
+              Nem toda peça precisa de tudo. O que a sua precisa sai da medição.
             </p>
           </div>
 

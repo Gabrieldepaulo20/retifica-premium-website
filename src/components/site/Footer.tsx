@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { LinkPrivacidade } from "@/components/site/LinkPrivacidade";
 import { siteConfig, whatsappBudgetText } from "@/lib/site";
 import {
   buildWhatsAppUrlWithAttribution,
@@ -203,12 +204,7 @@ export function Footer() {
 
           <div className="border-t border-white/15 pt-6 text-center text-xs leading-relaxed text-white/70">
             <p>© 2026 Retífica Premium. Todos os direitos reservados.</p>
-            <Link
-              href="/privacidade"
-              className="mt-2 inline-flex underline decoration-white/30 underline-offset-4 transition-colors hover:text-white"
-            >
-              Privacidade e cookies
-            </Link>
+            <LinkPrivacidade className="mt-2 inline-flex underline decoration-white/30 underline-offset-4 transition-colors hover:text-white" />
           </div>
         </div>
 
@@ -395,12 +391,7 @@ export function Footer() {
           {/* Copyright */}
           <div className="pt-8 text-center text-sm leading-relaxed text-white/70">
             <p>© 2026 Retífica Premium. Todos os direitos reservados.</p>
-            <Link
-              href="/privacidade"
-              className="mt-2 inline-flex underline decoration-white/30 underline-offset-4 transition-colors hover:text-white"
-            >
-              Privacidade e cookies
-            </Link>
+            <LinkPrivacidade className="mt-2 inline-flex underline decoration-white/30 underline-offset-4 transition-colors hover:text-white" />
           </div>
         </div>
       </div>

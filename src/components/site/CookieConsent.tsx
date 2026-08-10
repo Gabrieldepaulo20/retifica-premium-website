@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+
+/** Evento que reabre as preferências de privacidade a partir do rodapé. */
+export const ABRIR_PREFERENCIAS_EVENTO = "retifica:abrir-preferencias";
 import {
   clearDisallowedTrackingStorage,
   clearTrackingStorage,
@@ -244,13 +247,25 @@ export function CookieConsent({
     setIsCustomizing(true);
   }
 
-  function reopenPreferences() {
+  const reopenPreferences = useCallback(() => {
     hasInteractedRef.current = true;
     setAnalytics(preferences?.analytics ?? false);
     setAdvertising(preferences?.advertising ?? false);
     setIsCustomizing(true);
     setIsOpen(true);
-  }
+  }, [preferences]);
+
+  /**
+   * O botão flutuante de privacidade saiu: no celular ele disputava a base da
+   * tela com o WhatsApp e cobria conteúdo. A LGPD exige que dê para rever o
+   * consentimento a qualquer momento, então o caminho passou a ser o link
+   * "Privacidade e cookies" do rodapé, que dispara este evento.
+   */
+  useEffect(() => {
+    const abrir = () => reopenPreferences();
+    window.addEventListener(ABRIR_PREFERENCIAS_EVENTO, abrir);
+    return () => window.removeEventListener(ABRIR_PREFERENCIAS_EVENTO, abrir);
+  }, [reopenPreferences]);
 
   if (preferences === undefined) return null;
 
@@ -381,27 +396,7 @@ export function CookieConsent({
             ) : null}
           </div>
         </section>
-      ) : (
-        <button
-          type="button"
-          onClick={reopenPreferences}
-          className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 z-[998] inline-flex min-h-10 items-center gap-2 rounded-full border border-[#053282]/15 bg-white/95 px-3.5 text-xs font-bold text-[#053282] shadow-lg backdrop-blur-sm transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#053282] motion-reduce:transform-none sm:left-5"
-          aria-label="Reabrir preferências de privacidade"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            aria-hidden="true"
-          >
-            <path d="M12 3 5.5 5.5v5.3c0 4.4 2.7 8.3 6.5 10.2 3.8-1.9 6.5-5.8 6.5-10.2V5.5L12 3Z" />
-            <path d="M9.5 12h5" />
-          </svg>
-          Privacidade
-        </button>
-      )}
+      ) : null}
     </>
   );
 }

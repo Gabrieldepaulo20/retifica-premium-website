@@ -26,23 +26,28 @@ export function FloatingWhatsApp() {
           "floating"
         );
       }}
-      className="group fixed bottom-[calc(60px+env(safe-area-inset-bottom))] right-3 z-[999] inline-flex min-h-11 items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4 text-white shadow-[0_10px_26px_rgba(2,14,29,0.32)] ring-1 ring-black/10 transition duration-300 hover:-translate-y-1 hover:shadow-[0_14px_32px_rgba(2,14,29,0.4)] hover:brightness-110 active:translate-y-0 max-[640px]:bottom-[calc(96px+env(safe-area-inset-bottom))] md:bottom-5 md:right-5 md:min-h-14 md:gap-2.5 md:py-2 md:pl-2 md:pr-5"
-      style={{ background: "linear-gradient(0deg, #F3B839 0%, #F4891F 100%)" }}
+      /* Verde do WhatsApp, não o gradiente dourado. O dourado é a cor de dado e
+         de rótulo técnico no site inteiro — usá-lo aqui fazia o botão brigar
+         com o conteúdo em vez de se destacar dele, e é o que deixava a leitura
+         confusa no celular.
+
+         Colado na base: antes ficava 96px acima dela no celular, o que fazia o
+         botão pairar no meio da tela e cobrir texto. E maior, para o polegar
+         acertar sem mira. */
+      className="group fixed bottom-[max(0.9rem,env(safe-area-inset-bottom))] right-3 z-[999] inline-flex min-h-13 items-center gap-2.5 rounded-full bg-[#25D366] py-2 pl-2 pr-5 text-[#04240F] shadow-[0_12px_30px_rgba(4,36,15,0.45)] ring-1 ring-black/10 transition duration-300 hover:-translate-y-1 hover:brightness-110 active:translate-y-0 md:bottom-5 md:right-5 md:min-h-14"
       aria-label="Fale conosco no WhatsApp"
     >
-      <span className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm md:h-10 md:w-10">
+      <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm md:h-10 md:w-10">
         <Image
           src="/whatsapprodape.png"
-          alt="WhatsApp"
+          alt=""
           width={40}
           height={40}
-          className="h-6 w-6 object-contain md:h-8 md:w-8"
+          className="h-7 w-7 object-contain md:h-8 md:w-8"
+          aria-hidden="true"
         />
       </span>
-      <span
-        className="whitespace-nowrap text-[11px] font-bold leading-none tracking-[-0.01em] md:text-sm"
-        style={{ fontFamily: "var(--font-open-sans)" }}
-      >
+      <span className="whitespace-nowrap font-heading text-sm font-bold leading-none md:text-base">
         Fale no WhatsApp
       </span>
     </Link>
