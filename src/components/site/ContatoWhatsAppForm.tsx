@@ -3,7 +3,10 @@
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { privacySafePageLocation } from "@/lib/consent";
+import {
+  privacySafePageLocation,
+  readConsentPreferences,
+} from "@/lib/consent";
 import { siteConfig } from "@/lib/site";
 import {
   buildWhatsAppUrlWithAttribution,
@@ -305,6 +308,14 @@ export function ContatoWhatsAppForm({
     });
 
     try {
+      const consent = readConsentPreferences();
+      const measurementMode = consent?.analytics
+        ? consent.advertising
+          ? "analytics_and_advertising"
+          : "analytics"
+        : consent?.advertising
+          ? "advertising"
+          : undefined;
       const requestPayload = {
         ...form,
         eventId: createMarketingEventId(),
@@ -313,6 +324,7 @@ export function ContatoWhatsAppForm({
         sessionId: contactIntent.sessionId,
         b2bLevel,
         pageLocation: privacySafePageLocation(),
+        measurementMode,
         attribution: getStoredAttribution(),
         website,
       };

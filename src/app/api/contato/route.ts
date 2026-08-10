@@ -21,6 +21,11 @@ const contactRequests = new Map<
 >();
 const CONTACT_RATE_WINDOW_MS = 10 * 60 * 1000;
 const CONTACT_RATE_MAX = 5;
+const measurementModes = new Set([
+  "analytics",
+  "advertising",
+  "analytics_and_advertising",
+]);
 
 type ContactPayload = {
   eventId?: unknown;
@@ -35,6 +40,7 @@ type ContactPayload = {
   mensagem?: unknown;
   b2bLevel?: unknown;
   pageLocation?: unknown;
+  measurementMode?: unknown;
   website?: unknown;
   storageOnly?: unknown;
   attribution?: {
@@ -195,6 +201,10 @@ export async function POST(request: Request) {
   const mensagem = cleanMultiline(payload.mensagem, 2000);
   const b2bLevel = cleanText(payload.b2bLevel, 160);
   const pageLocation = cleanText(payload.pageLocation, 400);
+  const submittedMeasurementMode = cleanText(payload.measurementMode, 40);
+  const measurementMode = measurementModes.has(submittedMeasurementMode)
+    ? submittedMeasurementMode
+    : undefined;
   const eventId = cleanText(payload.eventId, 80) || randomUUID();
   const storageOnly = payload.storageOnly === true;
   const submittedLeadCode = cleanText(payload.leadCode, 40).toUpperCase();
@@ -300,6 +310,7 @@ export async function POST(request: Request) {
     metadata: {
       subject: assuntoKey,
       b2bLevel: b2bLevel || undefined,
+      measurementMode,
     },
     lead: {
       name: nome,
