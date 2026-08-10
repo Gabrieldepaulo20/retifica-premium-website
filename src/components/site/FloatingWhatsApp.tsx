@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { CONSENT_BANNER_VISIBILITY_EVENT, readConsentPreferences } from "@/lib/consent";
 import {
   buildWhatsAppUrlWithAttribution,
   trackEngagementEvent,
@@ -9,6 +11,26 @@ import {
 import { siteConfig, whatsappBudgetText, whatsappBudgetUrl } from "@/lib/site";
 
 export function FloatingWhatsApp() {
+  const [consentBannerOpen, setConsentBannerOpen] = useState(true);
+
+  useEffect(() => {
+    const handleVisibility = (event: Event) => {
+      const customEvent = event as CustomEvent<{ open?: boolean }>;
+      setConsentBannerOpen(Boolean(customEvent.detail?.open));
+    };
+    window.addEventListener(CONSENT_BANNER_VISIBILITY_EVENT, handleVisibility);
+    const initializationTimer = window.setTimeout(
+      () => setConsentBannerOpen(!readConsentPreferences()),
+      0
+    );
+    return () => {
+      window.clearTimeout(initializationTimer);
+      window.removeEventListener(CONSENT_BANNER_VISIBILITY_EVENT, handleVisibility);
+    };
+  }, []);
+
+  if (consentBannerOpen) return null;
+
   return (
     <Link
       href={whatsappBudgetUrl}
@@ -23,7 +45,8 @@ export function FloatingWhatsApp() {
         trackEngagementEvent(
           "whatsapp_floating_click",
           "whatsapp_click",
-          "floating"
+          "floating",
+          { component_id: "floating_whatsapp", position: "floating" }
         );
       }}
       /* Verde do WhatsApp, não o gradiente dourado. O dourado é a cor de dado e

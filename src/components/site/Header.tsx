@@ -129,6 +129,7 @@ export function Header() {
       {/* Mobile Menu - Push-down (não overlay) */}
       <div
         id="mobile-menu"
+        hidden={!mobileMenuOpen}
         className={cn(
           "border-t border-[#1E3B73] bg-[#020E1D] shadow-lg md:hidden",
           "overflow-hidden transition-all duration-300 ease-out",

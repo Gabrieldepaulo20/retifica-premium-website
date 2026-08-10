@@ -9,6 +9,7 @@ import {
 import {
   captureTrafficAttribution,
   sendExternalMarketingEvent,
+  trackFunnelEvent,
   trackMarketingEvent,
 } from "@/lib/trackingEvents";
 
@@ -31,6 +32,52 @@ export function AnalyticsRuntime() {
     return () =>
       window.removeEventListener(CONSENT_CHANGED_EVENT, handleConsentChanged);
   }, []);
+
+  useEffect(() => {
+    if (!hasMeasurementConsent()) return;
+
+    let visibleStartedAt = document.visibilityState === "visible" ? performance.now() : null;
+    let activeMs = 0;
+    const fired = new Set<number>();
+
+    const update = () => {
+      const now = performance.now();
+      if (visibleStartedAt !== null) {
+        activeMs += Math.max(0, now - visibleStartedAt);
+        visibleStartedAt = now;
+      }
+
+      for (const seconds of [5, 10] as const) {
+        if (activeMs >= seconds * 1000 && !fired.has(seconds)) {
+          fired.add(seconds);
+          trackFunnelEvent(seconds === 5 ? "engagement_5s" : "engagement_10s", {
+            component_id: "page_active_time",
+            position: "page",
+            page_type: pathname.startsWith("/servicos/")
+              ? "service_detail"
+              : pathname === "/servicos"
+                ? "service_catalog"
+                : pathname === "/quanto-custa"
+                  ? "estimate"
+                  : "other",
+            engaged_seconds: seconds,
+          });
+        }
+      }
+    };
+
+    const handleVisibility = () => {
+      update();
+      visibleStartedAt = document.visibilityState === "visible" ? performance.now() : null;
+    };
+    const interval = window.setInterval(update, 250);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [consentRevision, pathname]);
 
   useEffect(() => {
     let activeStartedAt =

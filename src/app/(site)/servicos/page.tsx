@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import {
   BreadcrumbSchema,
   FAQSchema,
@@ -14,13 +15,14 @@ import {
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
 import { AtalhoSintoma } from "@/components/site/AtalhoSintoma";
+import { ExperimentHeroCtas } from "@/components/site/ExperimentHeroCtas";
 import { MidiaPlaceholder } from "@/components/site/MidiaPlaceholder";
 import { NumerosProva } from "@/components/site/NumerosProva";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
 import { numerosProva } from "@/lib/prova";
 import { primaryRegionalCities } from "@/lib/regional";
-import { serviceDetailPages, servicePath } from "@/lib/service-pages";
+import { serviceCatalog, serviceDetailPages, servicePath } from "@/lib/service-pages";
 import { siteConfig } from "@/lib/site";
 import { serviceVideos, videos } from "@/lib/videos";
 
@@ -244,21 +246,13 @@ export default function ServicosPage() {
             </span>
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <TrackedWhatsAppLink
-              eventLabel="servicos_hero_whatsapp"
-              message={zapGeral}
-              className="inline-flex h-13 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
-            >
-              Pedir orçamento agora
-            </TrackedWhatsAppLink>
-            <TrackedPhoneLink
-              eventLabel="servicos_hero_phone"
-              className="inline-flex h-13 items-center justify-center rounded-full border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
-            >
-              Ligar {siteConfig.phone.display}
-            </TrackedPhoneLink>
-          </div>
+          <Suspense
+            fallback={
+              <div className="mt-8 h-14 w-full max-w-xl animate-pulse rounded-full bg-white/10 motion-reduce:animate-none" />
+            }
+          >
+            <ExperimentHeroCtas whatsappMessage={zapGeral} />
+          </Suspense>
 
           {/* Caminho curto: um toque abre a conversa já com o contexto dentro.
               Sem formulário, sem página intermediária, sem escrever. */}
@@ -404,6 +398,37 @@ export default function ServicosPage() {
             <p className="mt-3 text-base leading-relaxed text-gray-600">
               Nem toda peça precisa de tudo. O que a sua precisa sai da medição.
             </p>
+          </div>
+
+          <div className="mt-8 rounded-2xl border border-gray-200 bg-[#F8FAFD] p-4 sm:p-6">
+            <p className="font-heading text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
+              Acesso rápido aos 10 serviços
+            </p>
+            <nav aria-label="Catálogo completo de serviços" className="mt-4">
+              <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {serviceCatalog.map((service, index) => (
+                  <li key={service.id}>
+                    <TrackedServiceLink
+                      href={service.href}
+                      serviceName={service.title}
+                      className="group flex min-h-20 gap-3 rounded-xl border border-gray-200 bg-white p-3.5 transition hover:border-rp-accent hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent"
+                    >
+                      <span className="font-heading text-sm font-bold tabular-nums text-rp-accent/55">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span>
+                        <span className="block font-heading text-base font-bold leading-tight text-gray-900 group-hover:text-rp-accent">
+                          {service.title}
+                        </span>
+                        <span className="mt-1 block text-xs leading-relaxed text-gray-500">
+                          {service.description}
+                        </span>
+                      </span>
+                    </TrackedServiceLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
 
           {/* Cards intercalados: mídia de um lado, explicação do outro,

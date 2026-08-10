@@ -3,7 +3,7 @@ export type ConsentPreferences = {
   necessary: true;
   analytics: boolean;
   advertising: boolean;
-  decisionMethod?: "explicit" | "automatic_timeout";
+  decisionMethod?: "explicit";
   savedAt: string;
   expiresAt: string;
 };
@@ -16,7 +16,8 @@ type ConsentWindow = Window & {
 
 export const CONSENT_STORAGE_KEY = "retifica_premium_consent";
 export const CONSENT_CHANGED_EVENT = "retifica:consent-changed";
-export const CONSENT_POLICY_VERSION = "2026-08-03";
+export const CONSENT_BANNER_VISIBILITY_EVENT = "retifica:consent-banner-visibility";
+export const CONSENT_POLICY_VERSION = "2026-08-10";
 
 const CONSENT_TTL_MS = 180 * 24 * 60 * 60 * 1000;
 const TRACKING_STORAGE_KEYS = [
@@ -61,8 +62,7 @@ function isConsentPreferences(value: unknown): value is ConsentPreferences {
     typeof preferences.analytics === "boolean" &&
     typeof preferences.advertising === "boolean" &&
     (preferences.decisionMethod === undefined ||
-      preferences.decisionMethod === "explicit" ||
-      preferences.decisionMethod === "automatic_timeout") &&
+      preferences.decisionMethod === "explicit") &&
     typeof preferences.savedAt === "string" &&
     typeof preferences.expiresAt === "string" &&
     Number.isFinite(new Date(preferences.expiresAt).getTime())

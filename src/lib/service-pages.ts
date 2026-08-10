@@ -249,7 +249,158 @@ export const serviceDetailPages = [
       },
     ],
   },
+  {
+    slug: "retifica-de-sedes-e-valvulas",
+    title: "Retífica de sedes e válvulas",
+    shortTitle: "Sedes e válvulas",
+    metaTitle: "Retífica de Sedes e Válvulas em Sertãozinho-SP",
+    metaDescription:
+      "Retífica de sedes, válvulas e esmerilhamento com conferência de vedação e desgaste. Atendimento em Sertãozinho, Ribeirão Preto e região.",
+    hero: "Sedes e válvulas conferidas para recuperar vedação e compressão",
+    intro:
+      "Sedes e válvulas trabalham juntas para vedar a câmara. Desgaste, queima ou assentamento irregular podem causar falhas, perda de potência e baixa compressão. A correção começa medindo cada ponto, não apenas esmerilhando por rotina.",
+    image: "/sedeseguias.png",
+    imageAlt: "Ilustração técnica de sedes e válvulas de cabeçote",
+    primaryIntent: "servico-especifico",
+    symptoms: [
+      "perda de compressão",
+      "motor falhando",
+      "perda de potência",
+      "válvula queimada",
+      "vedação irregular",
+    ],
+    includes: [
+      "conferência de assentamento e contato das válvulas",
+      "avaliação de desgaste das sedes",
+      "retífica ou correção somente quando necessária",
+      "esmerilhamento para acabamento e conferência de vedação",
+      "orientação quando válvulas ou sedes precisam ser substituídas",
+    ],
+    process: [
+      "Limpamos e inspecionamos sedes, válvulas e câmaras.",
+      "Medimos desgaste, contato e condição de vedação.",
+      "Retificamos as superfícies indicadas e fazemos o assentamento.",
+      "Conferimos a vedação antes de liberar para montagem.",
+    ],
+    faq: [
+      {
+        question: "Esmerilhar válvula é o mesmo que retificar a sede?",
+        answer:
+          "Não. O esmerilhamento é uma etapa de acabamento e conferência de contato. Quando há desgaste ou deformação, a sede ou a válvula pode precisar de retífica antes.",
+      },
+      {
+        question: "Sede ou válvula ruim causa perda de potência?",
+        answer:
+          "Pode causar, porque a câmara perde vedação e compressão. A confirmação depende de teste e medição do conjunto.",
+      },
+    ],
+  },
+  {
+    slug: "troca-e-adaptacao-de-guias",
+    title: "Troca e adaptação de guias de válvula",
+    shortTitle: "Troca e adaptação de guias",
+    metaTitle: "Troca e Adaptação de Guias de Válvula",
+    metaDescription:
+      "Troca e adaptação de guias de válvula com medição de folga e alinhamento em Sertãozinho-SP. Atende oficinas de Ribeirão Preto e região.",
+    hero: "Guias de válvula com folga, medida e alinhamento corretos",
+    intro:
+      "A guia mantém a válvula alinhada durante o funcionamento. Folga excessiva pode aumentar consumo de óleo e fumaça; uma adaptação incorreta pode travar, desalinha a vedação e cria retrabalho.",
+    image: "/adaptacaodeguias.png",
+    imageAlt: "Ilustração de troca e adaptação de guias de válvula",
+    primaryIntent: "servico-especifico",
+    symptoms: [
+      "fumaça azul",
+      "consumo de óleo",
+      "folga lateral de válvula",
+      "retentor danificado",
+      "desgaste de guia",
+    ],
+    includes: [
+      "medição da folga entre haste e guia",
+      "avaliação de alinhamento com sede e válvula",
+      "remoção e instalação conforme condição da peça",
+      "adaptação quando a aplicação exige solução técnica compatível",
+      "conferência final antes do assentamento das válvulas",
+    ],
+    process: [
+      "Conferimos a folga e o estado de cada guia.",
+      "Definimos troca, reparo ou adaptação compatível.",
+      "Executamos a instalação preservando alinhamento e medida.",
+      "Revisamos sedes e válvulas antes da montagem.",
+    ],
+    faq: [
+      {
+        question: "Guia gasta faz o motor fumar?",
+        answer:
+          "Pode contribuir para fumaça azul e consumo de óleo, mas anéis, retentores e outros pontos também precisam ser considerados.",
+      },
+      {
+        question: "Toda guia com folga precisa ser trocada?",
+        answer:
+          "A decisão depende da medida, do material e da aplicação. A peça é avaliada antes de indicar troca ou adaptação.",
+      },
+    ],
+  },
+  {
+    slug: "usinagem-de-roscas",
+    title: "Usinagem e recuperação de roscas",
+    shortTitle: "Usinagem de roscas",
+    metaTitle: "Usinagem de Roscas em Cabeçote",
+    metaDescription:
+      "Recuperação e usinagem de roscas de cabeçote com alinhamento e inspeção técnica em Sertãozinho-SP, Ribeirão Preto e região.",
+    hero: "Roscas recuperadas com alinhamento e fixação seguros",
+    intro:
+      "Rosca espanada ou danificada compromete aperto, vedação e montagem. A recuperação precisa respeitar posição, profundidade e material do cabeçote para não transformar um reparo localizado em dano maior.",
+    image: "/usinagemderoscas.png",
+    imageAlt: "Ilustração técnica de usinagem e recuperação de roscas",
+    primaryIntent: "servico-especifico",
+    symptoms: [
+      "rosca espanada",
+      "parafuso sem aperto",
+      "rosca de vela danificada",
+      "fixação irregular",
+      "vazamento após montagem",
+    ],
+    includes: [
+      "inspeção do dano e do material ao redor",
+      "conferência de alinhamento e profundidade",
+      "definição do método de recuperação adequado",
+      "usinagem e acabamento da fixação",
+      "orientação de montagem para evitar reincidência",
+    ],
+    process: [
+      "Avaliamos o dano e a função daquela fixação.",
+      "Conferimos eixo, profundidade e material disponível.",
+      "Executamos a recuperação indicada para o conjunto.",
+      "Testamos encaixe e aperto antes de liberar a peça.",
+    ],
+    faq: [
+      {
+        question: "Rosca de vela espanada tem conserto?",
+        answer:
+          "Muitos casos permitem recuperação, mas o método depende do dano e da espessura de material disponível. A inspeção define a solução segura.",
+      },
+      {
+        question: "Dá para recuperar a rosca sem desmontar?",
+        answer:
+          "Depende da posição e do risco de resíduos entrarem no motor. A Retífica Premium orienta a forma segura depois de entender o caso.",
+      },
+    ],
+  },
 ] as const satisfies readonly ServiceDetailPage[];
+
+export const serviceCatalog = [
+  { id: "head-rebuild", title: "Retífica de cabeçote", href: "/servicos/retifica-de-cabecote", description: "Inspeção, medição e correções conforme o estado real da peça." },
+  { id: "seats-valves", title: "Retífica de sedes e válvulas", href: "/servicos/retifica-de-sedes-e-valvulas", description: "Vedação e assentamento para recuperar compressão." },
+  { id: "surfacing", title: "Plaina de cabeçote", href: "/servicos/plaina-de-cabecote", description: "Correção da face após medir empeno e altura disponível." },
+  { id: "chemical-cleaning", title: "Limpeza química", href: "/servicos/banho-quimico", description: "Remove resíduos para permitir inspeção e usinagem confiáveis." },
+  { id: "valve-guides", title: "Troca e adaptação de guias", href: "/servicos/troca-e-adaptacao-de-guias", description: "Folga e alinhamento conferidos antes da montagem." },
+  { id: "valve-lapping", title: "Esmerilhamento de válvulas", href: "/servicos/retifica-de-sedes-e-valvulas#esmerilhamento", description: "Acabamento e conferência de contato após a medição." },
+  { id: "thread-machining", title: "Usinagem de roscas", href: "/servicos/usinagem-de-roscas", description: "Recuperação de fixações com eixo e profundidade corretos." },
+  { id: "crack-welding", title: "Solda de trincas", href: "/servicos/teste-de-trinca#solda", description: "Reparo somente quando a inspeção indicar condição segura." },
+  { id: "final-assembly", title: "Montagem e regulagem final", href: "/servicos/montagem-de-cabecote", description: "Conferência do conjunto antes de voltar ao veículo." },
+  { id: "technical-diagnosis", title: "Diagnóstico técnico de motor", href: "/quanto-custa", description: "Triagem por veículo, situação e sintomas sem exigir conhecimento técnico." },
+] as const;
 
 type ServiceDetailPageEntry = (typeof serviceDetailPages)[number];
 
@@ -309,5 +460,23 @@ export const medicoesPorServico: Record<string, string[]> = {
     "Vedadores e retentores",
     "Torque de montagem",
     "Conferência do conjunto",
+  ],
+  "retifica-de-sedes-e-valvulas": [
+    "Contato entre sede e válvula",
+    "Desgaste das sedes",
+    "Condição das válvulas",
+    "Vedação após assentamento",
+  ],
+  "troca-e-adaptacao-de-guias": [
+    "Folga entre haste e guia",
+    "Alinhamento com a sede",
+    "Condição do alojamento",
+    "Vedação com retentores",
+  ],
+  "usinagem-de-roscas": [
+    "Eixo e profundidade",
+    "Material ao redor da rosca",
+    "Condição da fixação",
+    "Encaixe após recuperação",
   ],
 };

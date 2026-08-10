@@ -52,6 +52,7 @@ export function TrackedWhatsAppLink({
           {
             link_url: event.currentTarget.href,
             method: "whatsapp",
+            component_id: eventLabel,
           }
         );
       }}
@@ -77,6 +78,7 @@ export function TrackedPhoneLink({
         trackEngagementEvent("phone_click", "phone_click", eventLabel, {
           link_url: event.currentTarget.href,
           method: "phone",
+          component_id: eventLabel,
         });
       }}
     >
@@ -111,6 +113,7 @@ export function TrackedDirectionsLink({
           {
             link_url: event.currentTarget.href,
             method: "maps",
+            component_id: eventLabel,
           }
         );
       }}
@@ -139,6 +142,12 @@ export function TrackedServiceLink({
           event_label: serviceName,
           link_url: event.currentTarget.href,
           service_name: serviceName,
+          component_id: `service_${serviceName
+            .toLocaleLowerCase("pt-BR")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "_")
+            .replace(/^_|_$/g, "")}`,
         });
       }}
     >
@@ -165,6 +174,7 @@ export function TrackedCtaLink({
           event_category: "engagement",
           event_label: eventLabel,
           link_url: event.currentTarget.href,
+          component_id: eventLabel,
         });
       }}
     >

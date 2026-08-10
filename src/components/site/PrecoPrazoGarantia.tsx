@@ -14,8 +14,8 @@ import { siteConfig } from "@/lib/site";
  * Reescrito para caber numa olhada: ícone, uma frase curta, um destaque. Quem
  * chega com o carro parado não lê parágrafo — lê o que salta.
  *
- * O card de preço leva para `/quanto-custa`, onde a pessoa toca no caso dela e
- * vê a faixa real apurada sobre o histórico da oficina.
+ * O card de preço leva para `/quanto-custa`, onde a pessoa faz uma triagem sem
+ * precisar conhecer o nome do serviço. Faixas só voltam após auditoria.
  */
 
 type Props = {
@@ -48,10 +48,10 @@ type Cartao = {
 const cartoes: Cartao[] = [
   {
     titulo: "Quanto custa",
-    destaque: "Simule em um toque",
-    texto: "Faixa real por tipo de serviço, apurada sobre o histórico da oficina.",
+    destaque: "Entenda o que pode precisar",
+    texto: "Triagem guiada em cerca de 2 minutos, sem preço inventado antes da medição.",
     href: "/quanto-custa",
-    cta: "Ver faixas de preço",
+    cta: "Começar estimativa guiada",
     icone: (
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
         <circle cx="16" cy="16" r="11" />

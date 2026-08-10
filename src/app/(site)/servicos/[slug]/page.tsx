@@ -8,7 +8,6 @@ import {
 } from "@/components/site/StructuredData";
 import {
   TrackedCtaLink,
-  TrackedPhoneLink,
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
 import { FichaMedicao } from "@/components/site/FichaMedicao";
@@ -172,12 +171,13 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               >
                 Pedir orçamento no WhatsApp
               </TrackedWhatsAppLink>
-              <TrackedPhoneLink
-                eventLabel={`service_${page.slug}_phone`}
+              <TrackedCtaLink
+                href={`/quanto-custa?service=${encodeURIComponent(page.slug)}`}
+                eventLabel={`service_${page.slug}_guided_estimate`}
                 className="inline-flex h-13 items-center justify-center rounded-full border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
               >
-                Ligar {siteConfig.phone.display}
-              </TrackedPhoneLink>
+                Descobrir o que pode precisar
+              </TrackedCtaLink>
             </div>
 
             <p className="order-[3] mt-7 max-w-xl text-base leading-relaxed text-white/72 md:order-none md:mt-5 md:text-lg">
@@ -255,7 +255,16 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       </section>
 
       {/* ── CORREÇÃO ───────────────────────────────────────────────────── */}
-      <section className="bg-[#FFFBF2] py-14 md:py-20">
+      <section
+        id={
+          page.slug === "retifica-de-sedes-e-valvulas"
+            ? "esmerilhamento"
+            : page.slug === "teste-de-trinca"
+              ? "solda"
+              : undefined
+        }
+        className="scroll-mt-20 bg-[#FFFBF2] py-14 md:py-20"
+      >
         <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 md:grid-cols-[0.85fr_1.15fr] lg:px-8">
           <div>
             <Etapa>Correção</Etapa>

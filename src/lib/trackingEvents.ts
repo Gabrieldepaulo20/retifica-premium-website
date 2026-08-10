@@ -23,6 +23,9 @@ export type ClarityEventName =
 
 type GaEventName =
   | "page_view"
+  | "engagement_5s"
+  | "engagement_10s"
+  | "cta_impression"
   | "whatsapp_click"
   | "instagram_click"
   | "phone_click"
@@ -37,7 +40,18 @@ type GaEventName =
   | "form_abandon"
   | "form_submit_error"
   | "generate_lead"
-  | "scroll_depth";
+  | "scroll_depth"
+  | "quiz_start"
+  | "quiz_flow_selected"
+  | "quiz_step_view"
+  | "quiz_step_complete"
+  | "quiz_unknown_selected"
+  | "quiz_back"
+  | "quiz_file_intent"
+  | "quiz_result_view"
+  | "quiz_estimate_state"
+  | "quiz_whatsapp_prepared"
+  | "quiz_whatsapp_click";
 
 type MarketingEventParams = {
   event_category?: "engagement" | "lead" | "navigation";
@@ -350,7 +364,7 @@ export function sendExternalMarketingEvent(
   params: MarketingEventParams = {},
   contactIntent?: ContactIntent
 ) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || !hasMeasurementConsent()) return;
 
   const baseIntent = contactIntent ?? getOrCreateContactIntent();
   const intent =
@@ -404,6 +418,15 @@ export function sendExternalMarketingEvent(
       completionPercent: params.completion_percent,
       engagedSeconds: params.engaged_seconds,
       percentScrolled: params.percent_scrolled,
+      experimentId: params.experiment_id,
+      variantId: params.variant_id,
+      componentId: params.component_id,
+      position: params.position,
+      pageType: params.page_type,
+      serviceId: params.service_id,
+      flowType: params.flow_type,
+      stepId: params.step_id,
+      estimateState: params.estimate_state,
       sessionOriginType,
       measurementMode: measurementConsented ? "consented" : "anonymous",
     },
@@ -574,7 +597,8 @@ export function attributionMessageLines() {
 
 export function buildWhatsAppUrlWithAttribution(
   phoneNumber: string,
-  baseText: string
+  baseText: string,
+  options: { includeContactCode?: boolean } = {}
 ) {
   if (typeof window === "undefined" || !hasMeasurementConsent()) {
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(baseText)}`;
@@ -584,7 +608,9 @@ export function buildWhatsAppUrlWithAttribution(
   const text = [
     ...baseText.split("\n"),
     "",
-    `Código do contato: ${intent.leadCode}`,
+    ...(options.includeContactCode === false
+      ? []
+      : [`Código do contato: ${intent.leadCode}`]),
     ...attributionMessageLines(),
   ].join("\n");
 
@@ -595,7 +621,7 @@ export function trackMarketingEvent(
   eventName: GaEventName,
   params: MarketingEventParams = {}
 ) {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || !hasMeasurementConsent()) return;
 
   const trackingWindow = window as TrackingWindow;
   const eventParams = {
@@ -645,6 +671,47 @@ export function trackMarketingEvent(
   ) {
     sendExternalMarketingEvent(eventName, eventParams);
   }
+}
+
+export type FunnelEventName = Extract<
+  GaEventName,
+  | "engagement_5s"
+  | "engagement_10s"
+  | "cta_impression"
+  | "cta_click"
+  | "quiz_start"
+  | "quiz_flow_selected"
+  | "quiz_step_view"
+  | "quiz_step_complete"
+  | "quiz_unknown_selected"
+  | "quiz_back"
+  | "quiz_file_intent"
+  | "quiz_result_view"
+  | "quiz_estimate_state"
+  | "quiz_whatsapp_prepared"
+  | "quiz_whatsapp_click"
+>;
+
+/**
+ * Evento de funil com nome estável no GA4 e espelho não-PII no Retiflow.
+ * O helper respeita a escolha de consentimento e nunca recebe texto livre.
+ */
+export function trackFunnelEvent(
+  eventName: FunnelEventName,
+  params: MarketingEventParams = {}
+) {
+  if (typeof window === "undefined" || !hasMeasurementConsent()) return;
+
+  trackMarketingEvent(eventName, {
+    event_category: "engagement",
+    event_label: eventName,
+    ...params,
+  });
+  sendExternalMarketingEvent("custom", {
+    event_category: "engagement",
+    event_label: eventName,
+    ...params,
+  });
 }
 
 export function trackEngagementEvent(

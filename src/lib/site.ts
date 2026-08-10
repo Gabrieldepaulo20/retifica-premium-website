@@ -89,6 +89,13 @@ export const sitePages = [
     images: ["/retificademotor.jpg", "/montagemdemotores.jpg"],
   },
   {
+    path: "/quanto-custa",
+    name: "Estimativa guiada",
+    priority: 0.9,
+    changeFrequency: "weekly",
+    images: [],
+  },
+  {
     path: "/retifica-em-ribeirao-preto",
     name: "Retífica em Ribeirão Preto",
     priority: 0.88,

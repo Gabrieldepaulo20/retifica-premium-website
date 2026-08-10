@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 const categories = [
   {
     number: "01",
-    title: "Medição básica da sessão",
+    title: "Funcionamento essencial",
     status: "Sempre ativa",
     description:
-      "Registra uma sessão temporária com as páginas acessadas, origem geral, tempo ativo e ações, sem cookie persistente, URL de consulta ou identificação direta.",
+      "Guarda sua escolha de privacidade e, se você usar a estimativa, permite restaurar as respostas neste aparelho. Não mede marketing.",
   },
   {
     number: "02",
@@ -69,7 +69,7 @@ export default function PrivacidadePage() {
             ideia quando quiser.
           </p>
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-white/50">
-            Última atualização: 5 de agosto de 2026
+            Última atualização: 10 de agosto de 2026
           </p>
         </div>
       </section>
@@ -107,24 +107,22 @@ export default function PrivacidadePage() {
                   Quais informações podemos utilizar
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
-                  A medição básica da sessão registra a URL sem parâmetros de
-                  consulta, a página de entrada, as páginas seguintes, origem
-                  geral, dispositivo, data, hora, tempo ativo e ações realizadas.
-                  O identificador aleatório existe somente durante a sessão da
-                  página e não identifica diretamente a pessoa. Conforme suas
-                  escolhas opcionais, também podemos registrar campanha, mídia,
-                  termo e identificadores técnicos de clique. A atribuição local
-                  expira em até 90 dias e a preferência de privacidade em até 180 dias.
+                  Antes da sua decisão, o site usa apenas o armazenamento necessário
+                  para guardar a preferência de privacidade e restaurar uma triagem
+                  iniciada neste aparelho. Eventos de navegação, tempo ativo e cliques
+                  não são enviados ao Retiflow, Google ou Clarity sem autorização.
+                  Conforme suas escolhas opcionais, podemos registrar página, origem,
+                  dispositivo, campanha e identificadores técnicos de clique. A
+                  atribuição local expira em até 90 dias e a preferência de privacidade
+                  em até 180 dias.
                   A cidade, o estado e o país podem ser estimados pelo endereço IP;
                   essa localização é aproximada e não corresponde ao GPS da pessoa.
                 </p>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
-                  No primeiro acesso, o banner oferece as opções
-                  <strong> Configurar</strong> e <strong>Aceitar</strong>. Se não
-                  houver interação em cinco segundos, as categorias de análise
-                  avançada e publicidade são registradas automaticamente como
-                  autorizadas. Em <strong>Configurar</strong>, os controles começam
-                  ligados e você pode desativar cada categoria antes de salvar.
+                  No primeiro acesso, o banner oferece as opções de aceitar, rejeitar
+                  ou personalizar. Não existe aceite automático por tempo ou por
+                  continuar navegando. Na personalização, os controles opcionais
+                  começam desligados.
                 </p>
               </section>
 
@@ -146,10 +144,10 @@ export default function PrivacidadePage() {
                   Com quem os dados podem ser processados
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
-                  O Retiflow recebe a medição básica da sessão. Dependendo das
-                  categorias autorizadas, também usamos Google Analytics 4,
-                  serviços do Google para anúncios e Microsoft Clarity. Não
-                  ativamos personalização de anúncios no consentimento atual.
+                  Quando há autorização de medição, o Retiflow pode receber eventos
+                  não identificados da jornada. Dependendo das categorias escolhidas,
+                  também usamos Google Analytics 4, serviços do Google para anúncios
+                  e Microsoft Clarity. Não ativamos personalização de anúncios.
                 </p>
               </section>
 
@@ -160,13 +158,10 @@ export default function PrivacidadePage() {
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
                   Você pode solicitar confirmação, acesso, correção ou exclusão
                   de dados aplicável ao seu caso. Também pode mudar as
-                  categorias opcionais a qualquer momento pelo botão
-                  <strong> Privacidade</strong>, no canto inferior esquerdo do
-                  site. A medição básica da sessão permanece ativa com fundamento
-                  no legítimo interesse de medir o funcionamento e a audiência;
-                  ao revogar uma categoria opcional, limpamos do navegador os
-                  dados correspondentes que conseguirmos identificar. Você pode
-                  se opor ao tratamento básico pelo contato indicado nesta página.
+                  categorias opcionais a qualquer momento pelo link
+                  <strong> Privacidade e cookies</strong> no rodapé. Ao revogar uma
+                  categoria opcional, interrompemos os novos eventos e limpamos do
+                  navegador os dados correspondentes que conseguirmos identificar.
                 </p>
               </section>
             </div>

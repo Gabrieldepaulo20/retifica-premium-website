@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /** Evento que reabre as preferências de privacidade a partir do rodapé. */
 export const ABRIR_PREFERENCIAS_EVENTO = "retifica:abrir-preferencias";
 import {
+  CONSENT_BANNER_VISIBILITY_EVENT,
   clearDisallowedTrackingStorage,
   clearTrackingStorage,
   createConsentPreferences,
@@ -22,8 +22,6 @@ type CookieConsentProps = {
   gtmId?: string;
   clarityId: string;
 };
-
-const AUTO_ACCEPT_DELAY_MS = 5_000;
 
 type RuntimeWindow = Window & {
   dataLayer?: unknown[];
@@ -222,28 +220,10 @@ export function CookieConsent({
     [clarityId, googleAdsId, gtmId]
   );
 
-  useEffect(() => {
-    if (
-      preferences !== null ||
-      !isOpen ||
-      isCustomizing ||
-      hasInteractedRef.current
-    ) {
-      return;
-    }
-
-    const automaticAcceptanceTimer = window.setTimeout(() => {
-      if (hasInteractedRef.current) return;
-      applyChoices(true, true, "automatic_timeout");
-    }, AUTO_ACCEPT_DELAY_MS);
-
-    return () => window.clearTimeout(automaticAcceptanceTimer);
-  }, [applyChoices, isCustomizing, isOpen, preferences]);
-
   function openConfiguration() {
     hasInteractedRef.current = true;
-    setAnalytics(preferences?.analytics ?? true);
-    setAdvertising(preferences?.advertising ?? true);
+    setAnalytics(preferences?.analytics ?? false);
+    setAdvertising(preferences?.advertising ?? false);
     setIsCustomizing(true);
   }
 
@@ -267,36 +247,44 @@ export function CookieConsent({
     return () => window.removeEventListener(ABRIR_PREFERENCIAS_EVENTO, abrir);
   }, [reopenPreferences]);
 
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent(CONSENT_BANNER_VISIBILITY_EVENT, {
+        detail: { open: isOpen },
+      })
+    );
+  }, [isOpen]);
+
   if (preferences === undefined) return null;
 
   return (
     <>
       {isOpen ? (
         <section
-          className="fixed inset-x-0 bottom-0 z-[1100] mx-auto max-h-[min(60dvh,calc(100dvh-0.75rem))] max-w-5xl overflow-y-auto overscroll-contain rounded-t-3xl border border-b-0 border-white/15 bg-[#06172e]/[0.985] text-white shadow-[0_24px_80px_rgba(2,14,29,0.48)] backdrop-blur-xl sm:inset-x-5 sm:bottom-5 sm:max-h-[calc(100dvh-2.5rem)] sm:rounded-2xl sm:border-b"
+          className="fixed inset-x-2 bottom-2 z-[1100] mx-auto max-h-[min(72dvh,calc(100dvh-1rem))] max-w-5xl overflow-y-auto overscroll-contain rounded-2xl border border-white/15 bg-[#06172e]/[0.985] text-white shadow-[0_24px_80px_rgba(2,14,29,0.48)] backdrop-blur-xl sm:inset-x-5 sm:bottom-5 sm:max-h-[calc(100dvh-2.5rem)]"
           role="region"
           aria-label="Preferências de privacidade"
         >
-          <div className="sticky top-0 z-10 h-1 bg-gradient-to-r from-[#f3b839] via-[#f4891f] to-[#2563eb]" />
-          <div className="px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2.5 sm:p-5">
-            <div className="flex flex-col gap-2.5 sm:gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="h-1 bg-rp-gold" />
+          <div className="px-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2.5 sm:p-5">
+            <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
-                <h2 className="font-heading text-base font-bold leading-tight sm:text-xl">
-                  Só um segundo 👋
-                </h2>
+                <div className="flex items-center justify-between gap-4">
+                  <h2 className="font-heading text-base font-bold leading-tight sm:text-lg">
+                    Sua escolha de privacidade
+                  </h2>
+                  {!isCustomizing ? (
+                    <button
+                      type="button"
+                      onClick={openConfiguration}
+                      className="min-h-8 shrink-0 text-xs font-bold text-white/80 underline decoration-white/30 underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    >
+                      Personalizar
+                    </button>
+                  ) : null}
+                </div>
                 <p className="mt-1 text-[13px] leading-relaxed text-white/72 sm:text-sm">
-                  Usamos alguns dados da sua visita só para entender como te ajudar melhor.
-                  Sem susto, sem venda de dados —{" "}
-                  <Link
-                    href="/privacidade"
-                    onClick={() => {
-                      hasInteractedRef.current = true;
-                    }}
-                    className="font-bold text-white/85 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f3b839]"
-                  >
-                    veja como funciona
-                  </Link>
-                  .
+                  Cookies opcionais medem a experiência e os anúncios. Ficam desligados até sua escolha.
                 </p>
               </div>
 
@@ -304,10 +292,13 @@ export function CookieConsent({
                 <div className="grid shrink-0 grid-cols-2 gap-2 lg:w-auto">
                   <button
                     type="button"
-                    onClick={openConfiguration}
-                    className="min-h-11 rounded-full border border-white/20 px-4 text-sm font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    onClick={() => {
+                      hasInteractedRef.current = true;
+                      applyChoices(false, false);
+                    }}
+                    className="min-h-10 whitespace-nowrap rounded-full border border-white/20 px-3 text-xs font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-11 sm:px-4 sm:text-sm"
                   >
-                    Escolher
+                    Rejeitar não necessários
                   </button>
                   <button
                     type="button"
@@ -315,9 +306,9 @@ export function CookieConsent({
                       hasInteractedRef.current = true;
                       applyChoices(true, true);
                     }}
-                    className="min-h-11 rounded-full bg-gradient-to-b from-[#f7c64f] to-[#f39a24] px-5 text-sm font-extrabold text-[#07172e] shadow-[0_8px_24px_rgba(243,184,57,0.2)] transition-transform hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-reduce:transform-none"
+                    className="min-h-10 whitespace-nowrap rounded-full border border-rp-gold bg-rp-gold px-3 text-xs font-extrabold text-[#07172e] transition-colors hover:bg-[#ffd45c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-11 sm:px-5 sm:text-sm"
                   >
-                    Tudo bem
+                    Aceitar opcionais
                   </button>
                 </div>
               ) : null}
@@ -339,7 +330,7 @@ export function CookieConsent({
                       Configure os cookies opcionais
                     </h3>
                     <p className="mt-0.5 text-xs leading-relaxed text-white/60">
-                      Desative o que não deseja. A medição básica permanece ativa.
+                      Cookies não necessários continuam desligados por padrão.
                     </p>
                   </div>
                   <button
@@ -358,8 +349,8 @@ export function CookieConsent({
                 </div>
                 <div className="grid gap-2.5 md:grid-cols-3">
                   <ChoiceRow
-                    title="Medição básica da sessão"
-                    description="Registra páginas, origem geral e tempo sem cookie persistente, URL de consulta ou identificador de anúncio."
+                    title="Funcionamento essencial"
+                    description="Guarda sua escolha de privacidade e as respostas da triagem neste aparelho. Não mede marketing."
                     checked
                     disabled
                   />
