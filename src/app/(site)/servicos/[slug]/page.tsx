@@ -19,6 +19,9 @@ import {
 } from "@/lib/service-pages";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { NumerosProva } from "@/components/site/NumerosProva";
+import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
+import { numerosProva } from "@/lib/prova";
 import { serviceVideos } from "@/lib/videos";
 
 /**
@@ -182,9 +185,11 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               </TrackedPhoneLink>
             </div>
 
+            <NumerosProva numeros={numerosProva} tom="claro" className="order-4 mt-7 sm:order-none" />
+
             <Link
               href="/servicos"
-              className="order-3 mt-6 inline-flex w-fit text-xs font-semibold uppercase tracking-wide text-white/45 transition-colors hover:text-rp-gold sm:order-none"
+              className="order-5 mt-6 inline-flex w-fit text-xs font-semibold uppercase tracking-wide text-white/45 transition-colors hover:text-rp-gold sm:order-none"
             >
               ← Ver todos os serviços
             </Link>
@@ -202,7 +207,16 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         </div>
       </section>
 
-      <section className="bg-[#FFFBF2] py-14 md:py-20">
+      {/* Vem imediatamente depois da primeira dobra de propósito: 83% do tráfego
+          pago não passa da metade da página, então a resposta sobre preço, prazo
+          e garantia precisa estar o mais alto possível. */}
+      <PrecoPrazoGarantia
+        contexto={`service_${page.slug}`}
+        whatsappMessage={whatsappMessage}
+        fundo="creme"
+      />
+
+      <section className="bg-white py-14 md:py-20">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[0.9fr_1.1fr] lg:px-8">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wide text-rp-accent">
@@ -232,7 +246,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         </div>
       </section>
 
-      <section className="bg-white py-14 md:py-20">
+      <section className="bg-[#FFFBF2] py-14 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-sm font-semibold uppercase tracking-wide text-rp-accent">

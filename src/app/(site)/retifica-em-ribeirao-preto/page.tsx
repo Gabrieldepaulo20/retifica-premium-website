@@ -12,6 +12,9 @@ import {
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { NumerosProva } from "@/components/site/NumerosProva";
+import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
+import { numerosProva } from "@/lib/prova";
 import { serviceDetailPages, servicePath } from "@/lib/service-pages";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import { videos } from "@/lib/videos";
@@ -273,6 +276,8 @@ export default function RetificaRibeiraoPretoPage() {
                 Ligar {siteConfig.phone.display}
               </TrackedPhoneLink>
             </div>
+
+            <NumerosProva numeros={numerosProva} tom="claro" className="order-4 mt-7 sm:order-none" />
           </div>
 
           {/* Assim que `videos.ribeiraoPretoHero.youtubeId` for preenchido, o vídeo
@@ -299,9 +304,16 @@ export default function RetificaRibeiraoPretoPage() {
         </div>
       </section>
 
-      {/* BLOCO DE CONQUISTA — primeira seção depois da dobra.
-          Fica aqui de propósito: é o argumento para quem chegou comparando com
-          outra retífica e precisa decidir em segundos. */}
+      {/* Preço, prazo e garantia vêm logo depois da dobra: 83% do tráfego pago
+          não passa da metade da página. */}
+      <PrecoPrazoGarantia
+        contexto="ribeirao_preto"
+        whatsappMessage={whatsappMessage}
+        fundo="creme"
+      />
+
+      {/* BLOCO DE CONQUISTA — o argumento para quem chegou comparando com outra
+          retífica e precisa decidir em segundos. */}
       <section className="bg-white py-14 md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
