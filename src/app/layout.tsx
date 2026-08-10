@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Rajdhani } from "next/font/google";
 import Script from "next/script";
-import { MaterialSymbolsLoader } from "@/components/MaterialSymbolsLoader";
 import { AnalyticsRuntime } from "@/components/site/AnalyticsRuntime";
 import { CookieConsent } from "@/components/site/CookieConsent";
 import { GoogleAdsWebsiteCallRuntime } from "@/components/site/GoogleAdsWebsiteCallRuntime";
@@ -12,7 +11,6 @@ import "./globals.css";
 
 const GA_MEASUREMENT_ID =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-HD00424MR7";
-const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
 const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || "ve74erf449";
 
@@ -126,26 +124,15 @@ gtag('consent', 'default', {
 });
 gtag('set', 'ads_data_redaction', true);`}
         </Script>
-        <Script
-          id="retifica-google-tag"
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-          async
-        />
-        <Script id="ga4-always-on" strategy="afterInteractive">
-          {`gtag('js', new Date());
-gtag('config', '${GA_MEASUREMENT_ID}');`}
-        </Script>
       </head>
       <body className={`${rajdhani.variable} font-body antialiased`}>
         <AnalyticsRuntime />
         <GoogleAdsWebsiteCallRuntime />
-        <MaterialSymbolsLoader />
         <Header />
         {children}
         <CookieConsent
+          gaMeasurementId={GA_MEASUREMENT_ID}
           googleAdsId={GOOGLE_ADS_ID}
-          gtmId={GTM_ID}
           clarityId={CLARITY_ID}
         />
         <FloatingWhatsApp />

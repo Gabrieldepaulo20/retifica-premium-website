@@ -11,10 +11,9 @@ import {
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
 import { FichaMedicao } from "@/components/site/FichaMedicao";
-import { NumerosProva } from "@/components/site/NumerosProva";
+import { MidiaPlaceholder } from "@/components/site/MidiaPlaceholder";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
-import { numerosProva } from "@/lib/prova";
 import {
   getServicePageBySlug,
   medicoesPorServico,
@@ -29,12 +28,9 @@ import { serviceVideos } from "@/lib/videos";
  *
  * Esta é a página que mais recebe clique pago: 48 das 49 sessões pagas que
  * caem em /servicos vêm para as páginas de detalhe. Tudo aqui é decidido pelo
- * comportamento medido nos primeiros 14 dias de campanha:
- *
- *   74% do tráfego pago é celular
- *   61% sai em menos de 10 segundos
- *   83% não passa da metade da página
- *   quem passa de 30 segundos converte entre 29% e 50%
+ * comportamento observado: o tráfego pago é majoritariamente móvel e a
+ * cobertura de duração ainda é parcial. Por isso a primeira tela prioriza uma
+ * decisão clara sem transformar a estimativa de abandono em fato global.
  *
  * Três consequências de projeto:
  *
@@ -167,6 +163,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               <TrackedWhatsAppLink
                 eventLabel={`service_${page.slug}_whatsapp`}
                 message={whatsappMessage}
+                serviceId={page.serviceId}
                 className="inline-flex h-13 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
               >
                 Pedir orçamento no WhatsApp
@@ -174,9 +171,10 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               <TrackedCtaLink
                 href={`/quanto-custa?service=${encodeURIComponent(page.slug)}`}
                 eventLabel={`service_${page.slug}_guided_estimate`}
+                serviceId={page.serviceId}
                 className="inline-flex h-13 items-center justify-center rounded-full border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
               >
-                Descobrir o que pode precisar
+                Fazer triagem deste caso
               </TrackedCtaLink>
             </div>
 
@@ -184,15 +182,9 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               {page.intro}
             </p>
 
-            <NumerosProva
-              numeros={numerosProva}
-              tom="claro"
-              className="order-[4] mt-7 md:order-none"
-            />
-
             <Link
               href="/servicos"
-              className="order-[5] mt-6 inline-flex w-fit font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-white/40 transition-colors hover:text-rp-gold md:order-none"
+              className="order-[4] mt-6 inline-flex min-h-6 w-fit items-center font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-white/55 transition-colors hover:text-rp-gold md:order-none"
             >
               ← Todos os serviços
             </Link>
@@ -209,6 +201,8 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       {/* ── PREÇO, PRAZO E GARANTIA ────────────────────────────────────── */}
       <PrecoPrazoGarantia
         contexto={`service_${page.slug}`}
+        serviceId={page.serviceId}
+        serviceSlug={page.slug}
         whatsappMessage={whatsappMessage}
         fundo="creme"
       />
@@ -247,6 +241,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           <TrackedWhatsAppLink
             eventLabel={`service_${page.slug}_sintoma_whatsapp`}
             message={whatsappMessage}
+            serviceId={page.serviceId}
             className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110"
           >
             É o meu caso — quero um orçamento
@@ -324,11 +319,21 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             ))}
           </ol>
 
-          {video?.youtubeId ? (
-            <div className="mx-auto mt-10 max-w-2xl">
+          <div className="mx-auto mt-10 max-w-2xl">
+            {video?.youtubeId ? (
               <VideoEmbed slot={video} eventLabel={`service_${page.slug}_video`} />
-            </div>
-          ) : null}
+            ) : (
+              <MidiaPlaceholder
+                id={`service-${page.slug}`}
+                arquivo={`${page.slug}.mp4`}
+                resumo={`Vídeo real do processo de ${page.shortTitle.toLowerCase()}.`}
+                proporcao="aspect-video"
+                tom="escuro"
+                title={`${page.shortTitle} na prática`}
+                caption="Limpeza, medição, execução e conferência final apresentadas na sequência real do serviço."
+              />
+            )}
+          </div>
         </div>
       </section>
 
@@ -361,6 +366,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             <TrackedWhatsAppLink
               eventLabel={`service_${page.slug}_faq_whatsapp`}
               message={whatsappMessage}
+              serviceId={page.serviceId}
               className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 md:h-14"
             >
               Minha dúvida não está aqui
@@ -368,6 +374,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             <TrackedCtaLink
               href="/contato"
               eventLabel={`service_${page.slug}_contact`}
+              serviceId={page.serviceId}
               className="inline-flex h-12 items-center justify-center rounded-full border border-gray-300 px-7 font-heading text-base font-bold text-gray-800 transition hover:border-rp-accent hover:text-rp-accent md:h-14"
             >
               Ver endereço e horário

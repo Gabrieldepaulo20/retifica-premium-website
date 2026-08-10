@@ -6,7 +6,7 @@ import { siteConfig } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Quanto Custa Retificar um Cabeçote",
   description:
-    "Estimativa guiada para entender o que seu cabeçote pode precisar. Responda sem conhecer o nome do serviço e envie o resumo para a Retífica Premium.",
+    "Triagem guiada para entender o que pode influenciar o orçamento do cabeçote. Responda sem conhecer o nome do serviço e envie o resumo para a Retífica Premium.",
   alternates: { canonical: "/quanto-custa" },
   openGraph: {
     title: "Descubra o que seu cabeçote pode precisar | Retífica Premium",
@@ -16,6 +16,21 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     locale: siteConfig.locale,
     type: "website",
+    images: [
+      {
+        url: "/cabecote.webp",
+        width: 1200,
+        height: 630,
+        alt: "Estimativa guiada para entender o que verificar no cabeçote",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Descubra o que seu cabeçote pode precisar | Retífica Premium",
+    description:
+      "Triagem guiada em cerca de 2 minutos, sem exigir conhecimento técnico ou contato antes do resultado.",
+    images: ["/cabecote.webp"],
   },
 };
 
@@ -26,9 +41,9 @@ const faq = [
       "Não. Ela organiza os sinais, mostra o que pode estar relacionado e indica o que precisa ser verificado. O diagnóstico depende da inspeção do veículo e da peça.",
   },
   {
-    question: "Por que ainda não aparece uma faixa de preço?",
+    question: "Como o orçamento é confirmado?",
     answer:
-      "As faixas antigas estavam baseadas em descrições livres de ordens de serviço. A Retífica Premium está reclassificando os itens, peças e serviços para só publicar valores comparáveis e aprovados.",
+      "O valor depende do motor, das medições e das peças ou materiais necessários. A triagem adianta o contexto, e a equipe confirma o orçamento depois de identificar o conjunto e o que precisa ser verificado.",
   },
   {
     question: "Preciso saber o código do motor?",
@@ -57,7 +72,7 @@ export default function QuantoCustaPage() {
         />
         <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <p className="font-heading text-xs font-bold uppercase tracking-[0.24em] text-rp-gold">
-            Estimativa guiada · cerca de 2 minutos
+            Triagem guiada · cerca de 2 minutos
           </p>
           <h1 className="mt-3 max-w-3xl font-heading text-[2.15rem] font-bold leading-[1.04] tracking-[-0.015em] md:text-[3.35rem]">
             Descubra o que seu cabeçote pode precisar
@@ -77,7 +92,7 @@ export default function QuantoCustaPage() {
             Transparência
           </p>
           <h2 className="mt-2 font-heading text-[1.8rem] font-bold leading-tight text-gray-900 md:text-[2.35rem]">
-            O que esta estimativa faz — e o que não faz
+            O que esta triagem faz — e o que não faz
           </h2>
           <div className="mt-7 divide-y divide-[#E5DCC6] border-y border-[#E5DCC6]">
             {faq.map((item) => (

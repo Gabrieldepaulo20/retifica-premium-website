@@ -15,6 +15,45 @@ export type FuelType =
   | "unknown";
 export type Urgency = "urgent" | "this_week" | "researching" | "no_deadline";
 export type ContactPreference = "whatsapp" | "phone" | "take_part";
+export type QuizStepId =
+  | "requester"
+  | "vehicle"
+  | "situation"
+  | "symptoms"
+  | "known_information"
+  | "contact"
+  | "result";
+
+export const quizStepOrders: Record<QuizFlow, readonly QuizStepId[]> = {
+  vehicle_known: [
+    "requester",
+    "vehicle",
+    "situation",
+    "symptoms",
+    "known_information",
+    "contact",
+    "result",
+  ],
+  problem_unknown: [
+    "symptoms",
+    "situation",
+    "known_information",
+    "requester",
+    "vehicle",
+    "contact",
+    "result",
+  ],
+};
+
+export const quizStepTitles: Record<QuizStepId, string> = {
+  requester: "Quem está solicitando?",
+  vehicle: "Qual é o veículo?",
+  situation: "Como o veículo ou a peça está agora?",
+  symptoms: "Quais sinais você percebeu?",
+  known_information: "O que já foi indicado?",
+  contact: "Onde e para quando você precisa?",
+  result: "Sua triagem está pronta",
+};
 
 export type QuizAnswers = {
   flow: QuizFlow | null;
@@ -41,6 +80,8 @@ export type QuizAnswers = {
   contactPreference: ContactPreference | null;
   approximateQuantity: string;
   partAvailability: string;
+  serviceContextId: string;
+  serviceContextLabel: string;
 };
 
 export type EstimateResult = {
@@ -82,6 +123,8 @@ export const initialQuizAnswers: QuizAnswers = {
   contactPreference: null,
   approximateQuantity: "",
   partAvailability: "",
+  serviceContextId: "",
+  serviceContextLabel: "",
 };
 
 export const profileLabels: Record<CustomerProfile, string> = {
@@ -148,6 +191,36 @@ export const diagnosisOptions = [
   ["other", "Outro"],
 ] as const;
 
+const serviceContexts: Record<string, string> = {
+  "retifica-de-cabecote": "Retífica de cabeçote",
+  "retifica-de-sedes-e-valvulas": "Retífica de sedes e válvulas",
+  "plaina-de-cabecote": "Plaina de cabeçote",
+  "banho-quimico": "Limpeza química",
+  "limpeza-quimica": "Limpeza química",
+  "troca-e-adaptacao-de-guias": "Troca e adaptação de guias",
+  "esmerilhamento-de-valvulas": "Esmerilhamento de válvulas",
+  "usinagem-de-roscas": "Usinagem de roscas",
+  "teste-de-trinca": "Inspeção e teste de trinca",
+  "solda-de-trincas": "Solda de trincas",
+  "montagem-de-cabecote": "Montagem e regulagem final",
+  "montagem-e-regulagem-final": "Montagem e regulagem final",
+  "diagnostico-tecnico-de-motor": "Diagnóstico técnico de motor",
+};
+
+const canonicalServiceContextIds: Record<string, string> = {
+  "banho-quimico": "limpeza-quimica",
+  "teste-de-trinca": "solda-de-trincas",
+  "montagem-de-cabecote": "montagem-e-regulagem-final",
+};
+
+export function getServiceContext(value: string | null) {
+  if (!value) return null;
+  const requestedId = value.trim().toLowerCase();
+  const label = serviceContexts[requestedId];
+  const id = canonicalServiceContextIds[requestedId] ?? requestedId;
+  return label ? { id, label } : null;
+}
+
 const symptomLabel = new Map<string, string>(symptomOptions);
 const diagnosisLabel = new Map<string, string>(diagnosisOptions);
 const seriousSymptoms = new Set([
@@ -156,6 +229,111 @@ const seriousSymptoms = new Set([
   "reservoir_pressure",
   "returned_problem",
 ]);
+
+type SymptomRule = {
+  related: string[];
+  checks: string[];
+  services: string[];
+};
+
+const symptomRules: Record<string, SymptomRule> = {
+  overheating: {
+    related: [
+      "alteração de vedação, empeno ou uma causa no sistema de arrefecimento",
+    ],
+    checks: [
+      "medir face e altura do cabeçote",
+      "verificar estanqueidade e separar causas externas ao cabeçote",
+    ],
+    services: ["Retífica de cabeçote", "Plaina de cabeçote", "Limpeza química"],
+  },
+  water_loss: {
+    related: [
+      "vazamento externo, vedação da junta ou passagem interna que precisa ser localizada",
+    ],
+    checks: ["testar estanqueidade e conferir galerias de água e face de vedação"],
+    services: ["Retífica de cabeçote", "Inspeção e teste de trinca"],
+  },
+  oil_water_mix: {
+    related: [
+      "comunicação entre passagens, vedação da junta ou outra origem no motor",
+    ],
+    checks: [
+      "limpar a peça, testar trincas e conferir canais de óleo e água",
+      "separar outras fontes possíveis de contaminação",
+    ],
+    services: ["Limpeza química", "Inspeção e teste de trinca", "Retífica de cabeçote"],
+  },
+  white_smoke: {
+    related: [
+      "entrada de líquido na combustão, condição de funcionamento ou outra causa ainda não confirmada",
+    ],
+    checks: ["verificar vedação, estanqueidade e sinais de passagem de líquido"],
+    services: ["Retífica de cabeçote", "Inspeção e teste de trinca"],
+  },
+  blue_smoke: {
+    related: [
+      "folga em guias, retentores, sedes ou válvulas",
+      "consumo de óleo na parte inferior do motor, que precisa ser separado do cabeçote",
+    ],
+    checks: ["conferir folga das guias, vedação das válvulas e origem do consumo de óleo"],
+    services: ["Troca e adaptação de guias", "Retífica de sedes e válvulas"],
+  },
+  power_loss: {
+    related: [
+      "perda de vedação ou compressão, sincronismo ou outra causa fora do cabeçote",
+    ],
+    checks: ["testar vedação de sedes e válvulas e confirmar a origem da perda de desempenho"],
+    services: ["Retífica de sedes e válvulas", "Esmerilhamento de válvulas"],
+  },
+  misfires: {
+    related: [
+      "vedação de válvulas, compressão, ignição ou alimentação",
+    ],
+    checks: ["comparar compressão e vedação antes de indicar usinagem"],
+    services: ["Retífica de sedes e válvulas", "Diagnóstico técnico de motor"],
+  },
+  reservoir_pressure: {
+    related: [
+      "gases no sistema, superaquecimento ou falha de circulação ainda não localizada",
+    ],
+    checks: ["testar estanqueidade, face e passagens do cabeçote junto ao sistema de arrefecimento"],
+    services: ["Inspeção e teste de trinca", "Plaina de cabeçote", "Retífica de cabeçote"],
+  },
+  head_gasket: {
+    related: [
+      "vedação da junta, empeno ou a causa que levou ao superaquecimento",
+    ],
+    checks: ["medir face e altura e investigar por que a vedação foi comprometida"],
+    services: ["Retífica de cabeçote", "Plaina de cabeçote"],
+  },
+  noise: {
+    related: [
+      "folgas, regulagem, montagem ou outra origem que deve ser identificada antes de usinar",
+    ],
+    checks: ["conferir componentes, folgas e regulagem do conjunto"],
+    services: ["Montagem e regulagem final", "Diagnóstico técnico de motor"],
+  },
+  returned_problem: {
+    related: [
+      "limite dimensional, causa original não eliminada, montagem ou componente associado",
+    ],
+    checks: [
+      "revisar o serviço anterior, repetir medições e conferir o sistema que causou a falha",
+    ],
+    services: ["Diagnóstico técnico de motor", "Retífica de cabeçote", "Inspeção e teste de trinca"],
+  },
+  other: {
+    related: ["mais de uma causa possível, conforme o relato e o estado da peça"],
+    checks: ["interpretar o relato e definir a medição inicial mais segura"],
+    services: ["Diagnóstico técnico de motor"],
+  },
+  unknown: {
+    related: ["uma condição que precisa de triagem antes de associar qualquer serviço"],
+    checks: ["começar por identificação, inspeção visual e medições básicas"],
+    services: ["Diagnóstico técnico de motor"],
+  },
+};
 
 function addUnique(target: string[], ...values: string[]) {
   for (const value of values) {
@@ -169,40 +347,12 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
   const services: string[] = [];
   const pending: string[] = [];
 
-  if (answers.symptoms.some((item) => seriousSymptoms.has(item))) {
-    addUnique(
-      related,
-      "vedação da junta, empeno ou passagem interna no cabeçote",
-      "trinca que só aparece após limpeza e teste"
-    );
-    addUnique(
-      checks,
-      "medir a face de vedação",
-      "fazer o teste de trinca e conferir os canais de água e óleo"
-    );
-    addUnique(services, "Retífica de cabeçote", "Plaina de cabeçote", "Solda de trincas");
-  }
-
-  if (answers.symptoms.includes("blue_smoke")) {
-    addUnique(
-      related,
-      "folga em guias, retentores, sedes ou válvulas",
-      "desgaste na parte inferior do motor, que precisa ser separado do cabeçote"
-    );
-    addUnique(checks, "conferir folga das guias, vedação das válvulas e origem do consumo de óleo");
-    addUnique(services, "Troca e adaptação de guias", "Retífica de sedes e válvulas");
-  }
-
-  if (answers.symptoms.some((item) => ["power_loss", "misfires"].includes(item))) {
-    addUnique(related, "perda de vedação ou compressão no conjunto de válvulas");
-    addUnique(checks, "testar vedação de sedes e válvulas");
-    addUnique(services, "Retífica de sedes e válvulas", "Esmerilhamento de válvulas");
-  }
-
-  if (answers.symptoms.includes("noise")) {
-    addUnique(related, "folgas ou montagem que exigem inspeção antes de usinar");
-    addUnique(checks, "conferir componentes, folgas e regulagem do conjunto");
-    addUnique(services, "Montagem e regulagem final");
+  for (const symptom of answers.symptoms) {
+    const rule = symptomRules[symptom];
+    if (!rule) continue;
+    addUnique(related, ...rule.related);
+    addUnique(checks, ...rule.checks);
+    addUnique(services, ...rule.services);
   }
 
   const knownServiceMap: Record<string, string[]> = {
@@ -214,6 +364,7 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
     assembly: ["Montagem e regulagem final"],
   };
   addUnique(services, ...(knownServiceMap[answers.knownDiagnosis ?? ""] ?? []));
+  if (answers.serviceContextLabel) addUnique(services, answers.serviceContextLabel);
 
   if (services.length === 0) {
     addUnique(services, "Diagnóstico técnico de motor", "Retífica de cabeçote");
@@ -225,13 +376,13 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
     addUnique(related, "mais de uma causa possível; o sintoma sozinho não confirma o serviço");
   }
 
-  if (answers.vehicle.unknown) pending.push("identificar veículo, motor ou família compatível");
-  if (!answers.vehicle.engine.trim()) pending.push("confirmar a motorização");
-  if (!answers.vehicle.engineCode.trim()) pending.push("confirmar o código do motor, se estiver disponível");
+  if (answers.vehicle.unknown) addUnique(pending, "identificar veículo, motor ou família compatível");
+  if (!answers.vehicle.engine.trim()) addUnique(pending, "confirmar a motorização");
+  if (!answers.vehicle.engineCode.trim()) addUnique(pending, "confirmar o código do motor, se estiver disponível");
   if (answers.situation !== "head_removed" && answers.situation !== "engine_disassembled") {
-    pending.push("inspecionar o cabeçote após a remoção");
+    addUnique(pending, "inspecionar o cabeçote após a remoção");
   }
-  pending.push("medir a peça e separar serviços, peças e materiais necessários");
+  addUnique(pending, "medir a peça e separar serviços, peças e materiais necessários");
 
   const vehicleDescription = answers.vehicle.unknown
     ? "Veículo e motor ainda não informados"
@@ -248,6 +399,12 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
       `${profileLabels[answers.profile ?? "owner"]}: ${vehicleDescription}.`,
       `Situação atual: ${answers.situation ? situationLabels[answers.situation] : "não informada"}.`,
       `Sinais relatados: ${symptoms.length ? symptoms.join(", ") : "não informados"}.`,
+      ...(answers.serviceContextLabel
+        ? [`Contexto de entrada: ${answers.serviceContextLabel}.`]
+        : []),
+      ...(answers.mechanicAssessment.trim()
+        ? ["A orientação recebida do mecânico foi registrada no resumo."]
+        : []),
     ],
     related,
     checks,
@@ -255,12 +412,11 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
     services,
     inclusions: [
       "triagem explicativa com os pontos que merecem verificação",
-      "resumo pronto para continuar o atendimento no WhatsApp",
+      "resumo do caso para continuar no canal escolhido",
     ],
     exclusions: [
       "diagnóstico mecânico confirmado sem inspecionar a peça",
       "peças, materiais, frete e serviços que ainda não foram medidos",
-      "preço público antes da auditoria e aprovação da base comercial",
     ],
     valueFactors: [
       "modelo e família do motor",
@@ -269,7 +425,11 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
       "peças, solda, montagem, urgência e logística necessárias",
     ],
     nextStep:
-      "Envie este resumo pelo WhatsApp. A equipe confirma o que precisa ser avaliado e orienta como levar ou enviar a peça.",
+      answers.contactPreference === "phone"
+        ? "Ligue para a Retífica Premium e informe o código da triagem. Deixe este resumo aberto para consultar os pontos principais."
+        : answers.contactPreference === "take_part"
+          ? "Abra a rota da Retífica Premium e leve o código da triagem junto com a peça ou as informações que tiver."
+          : "Envie este resumo pelo WhatsApp. A equipe confirma o que precisa ser avaliado e orienta como levar ou enviar a peça.",
     safetyWarning:
       answers.situation === "running" &&
       answers.symptoms.some((item) => seriousSymptoms.has(item)),
@@ -324,15 +484,21 @@ export function buildWhatsAppEstimateMessage(
     `Veículo: ${vehicle}`,
     `Motor/combustível: ${engine}`,
     `Situação atual: ${answers.situation ? situationLabels[answers.situation] : "não informada"}`,
+    ...(answers.mechanicAssessment.trim()
+      ? [`Avaliação do mecânico: ${answers.mechanicAssessment.trim()}`]
+      : []),
     `Sintomas: ${symptoms}`,
+    ...(answers.serviceContextLabel
+      ? [`Contexto de entrada: ${answers.serviceContextLabel}`]
+      : []),
     `Diagnóstico/serviço informado: ${diagnosis}`,
     `Cidade e prioridade: ${answers.city || "não informada"} · ${answers.urgency ? urgencyLabels[answers.urgency] : "não informada"}`,
     `Preferência de contato: ${answers.contactPreference ? contactPreferenceLabels[answers.contactPreference] : "não informada"}`,
     ...(businessDetails ? [`Volume/disponibilidade: ${businessDetails}`] : []),
     "",
-    "Resultado preliminar: avaliação necessária",
+    "Resultado: triagem inicial concluída",
     `Possíveis verificações: ${result.checks.join("; ")}`,
-    "Faixa apresentada: avaliação necessária",
+    `Serviços relacionados: ${result.services.join("; ")}`,
     `Tenho fotos/documentos para enviar: ${answers.hasFiles === null ? "não informado" : answers.hasFiles ? "sim" : "não"}`,
     "",
     `Código do atendimento: ${attendanceCode}`,

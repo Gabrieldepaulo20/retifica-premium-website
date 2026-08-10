@@ -71,12 +71,14 @@ export function absoluteUrl(path = "") {
   return `${siteConfig.url}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-export const siteContentLastModified = "2026-07-28T00:00:00-03:00";
+export const siteContentLastModified = "2026-08-10T00:00:00-03:00";
+const guideContentLastModified = "2026-07-21T00:00:00-03:00";
 
 export const sitePages = [
   {
     path: "/",
     name: "Página inicial",
+    lastModified: siteContentLastModified,
     priority: 1,
     changeFrequency: "weekly",
     images: ["/retificapremium.jpeg", "/cabecote.webp"],
@@ -84,6 +86,7 @@ export const sitePages = [
   {
     path: "/servicos",
     name: "Serviços",
+    lastModified: siteContentLastModified,
     priority: 0.9,
     changeFrequency: "weekly",
     images: ["/retificademotor.jpg", "/montagemdemotores.jpg"],
@@ -91,6 +94,7 @@ export const sitePages = [
   {
     path: "/quanto-custa",
     name: "Estimativa guiada",
+    lastModified: siteContentLastModified,
     priority: 0.9,
     changeFrequency: "weekly",
     images: [],
@@ -98,6 +102,7 @@ export const sitePages = [
   {
     path: "/retifica-em-ribeirao-preto",
     name: "Retífica em Ribeirão Preto",
+    lastModified: siteContentLastModified,
     priority: 0.88,
     changeFrequency: "weekly",
     images: ["/oficina.jpeg", "/retificapremium.jpeg"],
@@ -105,6 +110,7 @@ export const sitePages = [
   {
     path: "/sobre",
     name: "Sobre",
+    lastModified: siteContentLastModified,
     priority: 0.75,
     changeFrequency: "monthly",
     images: ["/quemsomos.png", "/oficina.jpeg"],
@@ -112,6 +118,7 @@ export const sitePages = [
   {
     path: "/b2b",
     name: "Parceria B2B",
+    lastModified: siteContentLastModified,
     priority: 0.8,
     changeFrequency: "monthly",
     images: ["/oficina.jpeg", "/retificapremium.jpeg"],
@@ -119,6 +126,7 @@ export const sitePages = [
   {
     path: "/contato",
     name: "Contato",
+    lastModified: siteContentLastModified,
     priority: 0.85,
     changeFrequency: "weekly",
     images: ["/cabecotefundo.jpg"],
@@ -126,6 +134,7 @@ export const sitePages = [
   {
     path: "/privacidade",
     name: "Privacidade e cookies",
+    lastModified: siteContentLastModified,
     priority: 0.3,
     changeFrequency: "yearly",
     images: [],
@@ -133,6 +142,7 @@ export const sitePages = [
   ...serviceDetailPages.map((page) => ({
     path: servicePath(page.slug),
     name: page.shortTitle,
+    lastModified: siteContentLastModified,
     priority: 0.82,
     changeFrequency: "monthly" as const,
     images: [page.image],
@@ -140,6 +150,7 @@ export const sitePages = [
   ...problemDetailPages.map((page) => ({
     path: problemPath(page.slug),
     name: page.shortTitle,
+    lastModified: guideContentLastModified,
     priority: 0.8,
     changeFrequency: "monthly" as const,
     images: [page.image],

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CONSENT_BANNER_VISIBILITY_EVENT, readConsentPreferences } from "@/lib/consent";
 import {
@@ -11,6 +12,7 @@ import {
 import { siteConfig, whatsappBudgetText, whatsappBudgetUrl } from "@/lib/site";
 
 export function FloatingWhatsApp() {
+  const pathname = usePathname();
   const [consentBannerOpen, setConsentBannerOpen] = useState(true);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export function FloatingWhatsApp() {
     };
   }, []);
 
-  if (consentBannerOpen) return null;
+  if (consentBannerOpen || pathname === "/quanto-custa") return null;
 
   return (
     <Link
@@ -46,7 +48,12 @@ export function FloatingWhatsApp() {
           "whatsapp_floating_click",
           "whatsapp_click",
           "floating",
-          { component_id: "floating_whatsapp", position: "floating" }
+          {
+            component_id: "floating_whatsapp",
+            position: "floating",
+            destination_type: "whatsapp",
+            destination_path: "/whatsapp",
+          }
         );
       }}
       /* Verde do WhatsApp, não o gradiente dourado. O dourado é a cor de dado e

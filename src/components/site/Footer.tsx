@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { LinkPrivacidade } from "@/components/site/LinkPrivacidade";
 import { siteConfig, whatsappBudgetText } from "@/lib/site";
 import {
   buildWhatsAppUrlWithAttribution,
   trackEngagementEvent,
+  trackMarketingEvent,
 } from "@/lib/trackingEvents";
 
 const HORARIOS = [
@@ -18,6 +20,84 @@ const HORARIOS = [
   { dia: "Sábado", horario: "Fechado" },
   { dia: "Domingo", horario: "Fechado" },
 ] as const;
+
+const FOOTER_LINKS = [
+  { id: "about", href: "/sobre", label: "Sobre a Retífica" },
+  { id: "services", href: "/servicos", label: "Nossos Serviços" },
+  {
+    id: "ribeirao",
+    href: "/retifica-em-ribeirao-preto",
+    label: "Retífica em Ribeirão Preto",
+  },
+  { id: "region", href: "/servicos#regiao", label: "Região atendida" },
+  { id: "b2b", href: "/b2b", label: "Parceria B2B (Oficinas)" },
+  { id: "contact", href: "/contato", label: "Fale Conosco" },
+] as const;
+
+function FooterNavLink({
+  id,
+  href,
+  position,
+  children,
+}: {
+  id: string;
+  href: string;
+  position: string;
+  children: ReactNode;
+}) {
+  const destinationPath = href.split(/[?#]/, 1)[0] || "/";
+  const destinationType = destinationPath.startsWith("/servicos")
+    ? "service"
+    : destinationPath === "/contato"
+      ? "contact"
+      : "other";
+
+  return (
+    <Link
+      href={href}
+      onClick={() =>
+        trackMarketingEvent("cta_click", {
+          event_category: "navigation",
+          event_label: `footer_${id}`,
+          component_id: `footer_nav_${id}`,
+          position,
+          destination_type: destinationType,
+          destination_path: destinationPath,
+        })
+      }
+      className="transition-colors hover:text-rp-gold md:hover:text-white"
+    >
+      {children}
+    </Link>
+  );
+}
+
+function trackFooterEmail(position: string) {
+  trackMarketingEvent("cta_click", {
+    event_category: "lead",
+    event_label: `${position}_email`,
+    method: "email",
+    component_id: `${position}_email`,
+    position,
+    destination_type: "contact",
+    destination_path: "/email",
+  });
+}
+
+function trackFooterInstagram(position: string) {
+  trackEngagementEvent(
+    "instagram_footer_click",
+    "instagram_click",
+    `${position}_instagram`,
+    {
+      method: "instagram",
+      component_id: `${position}_instagram`,
+      position,
+      destination_type: "other",
+      destination_path: "/instagram",
+    }
+  );
+}
 
 export function Footer() {
   return (
@@ -60,12 +140,16 @@ export function Footer() {
               experiência.
             </p>
             <nav className="flex flex-col gap-2 mt-4 text-sm font-medium">
-              <Link href="/sobre" className="transition-colors hover:text-rp-gold">Sobre a Retífica</Link>
-              <Link href="/servicos" className="transition-colors hover:text-rp-gold">Nossos Serviços</Link>
-              <Link href="/retifica-em-ribeirao-preto" className="transition-colors hover:text-rp-gold">Retífica em Ribeirão Preto</Link>
-              <Link href="/servicos#regiao" className="transition-colors hover:text-rp-gold">Região atendida</Link>
-              <Link href="/b2b" className="transition-colors hover:text-rp-gold">Parceria B2B Oficinas</Link>
-              <Link href="/contato" className="transition-colors hover:text-rp-gold">Fale Conosco</Link>
+              {FOOTER_LINKS.map((item) => (
+                <FooterNavLink
+                  key={item.id}
+                  id={item.id}
+                  href={item.href}
+                  position="footer_mobile_navigation"
+                >
+                  {item.label.replace(" (Oficinas)", " Oficinas")}
+                </FooterNavLink>
+              ))}
             </nav>
           </div>
 
@@ -90,6 +174,10 @@ export function Footer() {
                       {
                         link_url: e.currentTarget.href,
                         method: "phone",
+                        component_id: "footer_mobile_phone",
+                        position: "footer_mobile_contact",
+                        destination_type: "phone",
+                        destination_path: "/phone",
                       }
                     );
                   }}
@@ -112,7 +200,14 @@ export function Footer() {
                     trackEngagementEvent(
                       "whatsapp_footer_click",
                       "whatsapp_click",
-                      "footer"
+                      "footer_mobile_whatsapp_text",
+                      {
+                        method: "whatsapp",
+                        component_id: "footer_mobile_whatsapp_text",
+                        position: "footer_mobile_contact",
+                        destination_type: "whatsapp",
+                        destination_path: "/whatsapp",
+                      }
                     );
                   }}
                   className="transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
@@ -124,6 +219,7 @@ export function Footer() {
               <li>
                 <a
                   href="mailto:retificapremium5@gmail.com"
+                  onClick={() => trackFooterEmail("footer_mobile_contact")}
                   className="break-all transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
                 >
                   retificapremium5@gmail.com
@@ -161,7 +257,14 @@ export function Footer() {
                 trackEngagementEvent(
                   "whatsapp_footer_click",
                   "whatsapp_click",
-                  "footer"
+                  "footer_mobile_whatsapp_icon",
+                  {
+                    method: "whatsapp",
+                    component_id: "footer_mobile_whatsapp_icon",
+                    position: "footer_mobile_social",
+                    destination_type: "whatsapp",
+                    destination_path: "/whatsapp",
+                  }
                 );
               }}
               className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
@@ -182,11 +285,7 @@ export function Footer() {
               rel="noreferrer"
               onClick={(e) => {
                 e.stopPropagation();
-                trackEngagementEvent(
-                  "instagram_footer_click",
-                  "instagram_click",
-                  "footer"
-                );
+                trackFooterInstagram("footer_mobile_social");
               }}
               className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
               aria-label="Instagram"
@@ -235,12 +334,16 @@ export function Footer() {
               <div className="pt-2">
                 <h3 className="mb-3 text-sm font-bold uppercase tracking-widest text-white">Links Rápidos</h3>
                 <nav className="flex flex-col gap-2.5 text-sm text-white/80">
-                  <Link href="/sobre" className="transition-colors hover:text-white">Sobre a Retífica</Link>
-                  <Link href="/servicos" className="transition-colors hover:text-white">Nossos Serviços</Link>
-                  <Link href="/retifica-em-ribeirao-preto" className="transition-colors hover:text-white">Retífica em Ribeirão Preto</Link>
-                  <Link href="/servicos#regiao" className="transition-colors hover:text-white">Região atendida</Link>
-                  <Link href="/b2b" className="transition-colors hover:text-white">Parceria B2B (Oficinas)</Link>
-                  <Link href="/contato" className="transition-colors hover:text-white">Fale Conosco</Link>
+                  {FOOTER_LINKS.map((item) => (
+                    <FooterNavLink
+                      key={item.id}
+                      id={item.id}
+                      href={item.href}
+                      position="footer_desktop_navigation"
+                    >
+                      {item.label}
+                    </FooterNavLink>
+                  ))}
                 </nav>
               </div>
             </div>
@@ -267,6 +370,10 @@ export function Footer() {
                         {
                           link_url: e.currentTarget.href,
                           method: "phone",
+                          component_id: "footer_desktop_phone",
+                          position: "footer_desktop_contact",
+                          destination_type: "phone",
+                          destination_path: "/phone",
                         }
                       );
                     }}
@@ -289,7 +396,14 @@ export function Footer() {
                       trackEngagementEvent(
                         "whatsapp_footer_click",
                         "whatsapp_click",
-                        "footer"
+                        "footer_desktop_whatsapp_text",
+                        {
+                          method: "whatsapp",
+                          component_id: "footer_desktop_whatsapp_text",
+                          position: "footer_desktop_contact",
+                          destination_type: "whatsapp",
+                          destination_path: "/whatsapp",
+                        }
                       );
                     }}
                     className="transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
@@ -301,6 +415,7 @@ export function Footer() {
                 <li>
                   <a
                     href="mailto:retificapremium5@gmail.com"
+                    onClick={() => trackFooterEmail("footer_desktop_contact")}
                     className="break-all transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
                   >
                     retificapremium5@gmail.com
@@ -324,7 +439,14 @@ export function Footer() {
                     trackEngagementEvent(
                       "whatsapp_footer_click",
                       "whatsapp_click",
-                      "footer"
+                      "footer_desktop_whatsapp_icon",
+                      {
+                        method: "whatsapp",
+                        component_id: "footer_desktop_whatsapp_icon",
+                        position: "footer_desktop_social",
+                        destination_type: "whatsapp",
+                        destination_path: "/whatsapp",
+                      }
                     );
                   }}
                   className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
@@ -345,11 +467,7 @@ export function Footer() {
                   rel="noreferrer"
                   onClick={(e) => {
                     e.stopPropagation();
-                    trackEngagementEvent(
-                      "instagram_footer_click",
-                      "instagram_click",
-                      "footer"
-                    );
+                    trackFooterInstagram("footer_desktop_social");
                   }}
                   className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-[#053282] rounded"
                   aria-label="Instagram"

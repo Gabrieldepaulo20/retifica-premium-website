@@ -16,6 +16,7 @@ type ContactEmailContent = {
 type ContactEmailInput = {
   nome: string;
   telefone: string;
+  cidade?: string;
   email: string;
   assunto: string;
   mensagem: string;
@@ -132,6 +133,7 @@ function amzDates(now = new Date()) {
 export function buildContactEmail({
   nome,
   telefone,
+  cidade,
   email,
   assunto,
   mensagem,
@@ -143,6 +145,7 @@ export function buildContactEmail({
   const leadRows = [
     ["Nome", nome],
     ["Telefone/WhatsApp", telefone],
+    ["Cidade", cidade || "Não informada"],
     ["E-mail", email || "Não informado"],
     ["Assunto", assunto],
     ...(b2bLevel ? [["Nível B2B escolhido", b2bLevel]] : []),
@@ -153,6 +156,7 @@ export function buildContactEmail({
     "",
     `Nome: ${nome}`,
     `Telefone/WhatsApp: ${telefone}`,
+    cidade ? `Cidade: ${cidade}` : "Cidade: Não informada",
     email ? `E-mail: ${email}` : "E-mail: Não informado",
     `Assunto: ${assunto}`,
     b2bLevel ? `Nível B2B escolhido: ${b2bLevel}` : "",

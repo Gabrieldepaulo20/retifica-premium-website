@@ -24,18 +24,18 @@ export const sintomasAtalho = [
     rotulo: "fumaca",
   },
   {
-    chip: "Bebendo óleo",
-    zap: "Olá! Meu motor está consumindo óleo. Vim pelo site e queria um orçamento.",
+    chip: "Baixando óleo",
+    zap: "Olá! Meu motor está baixando óleo. Vim pelo site e queria orientação para avaliar a causa.",
     rotulo: "oleo",
   },
   {
-    chip: "Esquentando",
-    zap: "Olá! Meu motor está superaquecendo. Vim pelo site e queria um orçamento.",
+    chip: "Superaquecendo",
+    zap: "Olá! Meu motor está superaquecendo. Vim pelo site e queria orientação sobre o próximo passo.",
     rotulo: "aquecendo",
   },
   {
-    chip: "Água com óleo",
-    zap: "Olá! O motor está misturando água com óleo. Vim pelo site e queria um orçamento.",
+    chip: "Misturando água e óleo",
+    zap: "Olá! O motor parece estar misturando água e óleo. Vim pelo site e queria orientação para avaliar a causa.",
     rotulo: "agua_oleo",
   },
   {

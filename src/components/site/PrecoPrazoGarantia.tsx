@@ -1,5 +1,8 @@
-import Link from "next/link";
-import { TrackedPhoneLink, TrackedWhatsAppLink } from "@/components/site/TrackedLinks";
+import {
+  TrackedCtaLink,
+  TrackedPhoneLink,
+  TrackedWhatsAppLink,
+} from "@/components/site/TrackedLinks";
 import { siteConfig } from "@/lib/site";
 
 /**
@@ -21,6 +24,10 @@ import { siteConfig } from "@/lib/site";
 type Props = {
   /** Usado nos rótulos de evento, para medir qual página converte. */
   contexto: string;
+  /** Serviço canônico enviado em todos os eventos do bloco. */
+  serviceId?: string;
+  /** Slug da página usado para pré-selecionar a triagem. */
+  serviceSlug?: string;
   /** Mensagem que já vai preenchida no WhatsApp. */
   whatsappMessage: string;
   /** Alterna com a seção vizinha para as faixas não se fundirem. */
@@ -48,10 +55,10 @@ type Cartao = {
 const cartoes: Cartao[] = [
   {
     titulo: "Quanto custa",
-    destaque: "Entenda o que pode precisar",
-    texto: "Triagem guiada em cerca de 2 minutos, sem preço inventado antes da medição.",
+    destaque: "Organize o seu caso primeiro",
+    texto: "A triagem leva cerca de 2 minutos e mostra o que vale verificar, sem transformar suspeita em diagnóstico.",
     href: "/quanto-custa",
-    cta: "Começar estimativa guiada",
+    cta: "Fazer a triagem",
     icone: (
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
         <circle cx="16" cy="16" r="11" />
@@ -61,8 +68,8 @@ const cartoes: Cartao[] = [
   },
   {
     titulo: "Em quanto tempo",
-    destaque: "Prazo antes de você decidir",
-    texto: "Confirmado junto com o orçamento. Cada peça chega num estado.",
+    destaque: "Prazo antes de aprovar",
+    texto: "A equipe confirma o prazo junto com o orçamento, depois de entender o estado e o escopo da peça.",
     icone: (
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
         <circle cx="16" cy="16" r="11" />
@@ -73,7 +80,7 @@ const cartoes: Cartao[] = [
   {
     titulo: "E se der problema",
     destaque: "6 meses de garantia",
-    texto: "Com laudo do que foi medido e do que foi feito na sua peça.",
+    texto: "Aplicada ao serviço executado. A cobertura e as condições são confirmadas no atendimento.",
     selo: true,
     icone: (
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
@@ -84,12 +91,18 @@ const cartoes: Cartao[] = [
   },
 ];
 
-export function PrecoPrazoGarantia({ contexto, whatsappMessage, fundo = "creme" }: Props) {
+export function PrecoPrazoGarantia({
+  contexto,
+  serviceId,
+  serviceSlug,
+  whatsappMessage,
+  fundo = "creme",
+}: Props) {
   return (
     <section className={`${fundo === "creme" ? "bg-[#FFFBF2]" : "bg-white"} py-14 md:py-20`}>
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <h2 className="max-w-xl font-heading text-[1.7rem] font-bold leading-tight tracking-[-0.01em] text-gray-900 md:text-[2.4rem]">
-          Preço, prazo e garantia
+          O que você sabe antes de aprovar
         </h2>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -116,13 +129,20 @@ export function PrecoPrazoGarantia({ contexto, whatsappMessage, fundo = "creme" 
             );
 
             return c.href ? (
-              <Link
+              <TrackedCtaLink
                 key={c.titulo}
-                href={c.href}
+                href={
+                  serviceSlug
+                    ? `${c.href}?service=${encodeURIComponent(serviceSlug)}`
+                    : c.href
+                }
+                eventLabel={`${contexto}_price_quiz`}
+                serviceId={serviceId}
+                trackingPosition={`${contexto}_price_card`}
                 className="group flex flex-col rounded-2xl border border-rp-accent/25 bg-white p-5 shadow-sm transition hover:border-rp-accent hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent"
               >
                 {conteudo}
-              </Link>
+              </TrackedCtaLink>
             ) : (
               <div
                 key={c.titulo}
@@ -142,12 +162,14 @@ export function PrecoPrazoGarantia({ contexto, whatsappMessage, fundo = "creme" 
           <TrackedWhatsAppLink
             eventLabel={`${contexto}_ppg_whatsapp`}
             message={whatsappMessage}
+            serviceId={serviceId}
             className="inline-flex h-13 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 md:h-14"
           >
-            Pedir meu orçamento
+            Pedir orientação no WhatsApp
           </TrackedWhatsAppLink>
           <TrackedPhoneLink
             eventLabel={`${contexto}_ppg_phone`}
+            serviceId={serviceId}
             className="inline-flex h-13 items-center justify-center rounded-full border border-gray-300 px-7 font-heading text-base font-bold text-gray-800 transition hover:border-rp-accent hover:text-rp-accent md:h-14"
           >
             Ligar {siteConfig.phone.display}

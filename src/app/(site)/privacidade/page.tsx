@@ -28,14 +28,14 @@ const categories = [
     title: "Análise avançada da experiência",
     status: "Você escolhe",
     description:
-      "Autoriza Google Analytics 4 e Microsoft Clarity a estimar cidade e região pelo IP, encontrar dificuldades de navegação e melhorar páginas e formulários.",
+      "Autoriza Google Analytics 4 e Clarity a analisar páginas e estimar região; o Retiflow registra a jornada e a cidade que você informar. Não acessa o GPS.",
   },
   {
     number: "03",
     title: "Anúncios e conversões",
     status: "Você escolhe",
     description:
-      "Registra a origem, a campanha e identificadores de clique, como GCLID, quando existirem. Isso permite relacionar contatos aos anúncios e entender quais campanhas trazem resultados.",
+      "Permite que Google Ads e Retiflow registrem origem, campanha e identificadores de clique, como GCLID, quando existirem, para relacionar contatos aos anúncios.",
   },
 ] as const;
 
@@ -115,14 +115,18 @@ export default function PrivacidadePage() {
                   dispositivo, campanha e identificadores técnicos de clique. A
                   atribuição local expira em até 90 dias e a preferência de privacidade
                   em até 180 dias.
-                  A cidade, o estado e o país podem ser estimados pelo endereço IP;
-                  essa localização é aproximada e não corresponde ao GPS da pessoa.
+                  Com análise autorizada, cidade, estado e país podem aparecer de
+                  forma aproximada e agregada nos relatórios dos provedores. Essa
+                  estimativa não corresponde ao GPS e não identifica com precisão
+                  onde a pessoa está.
                 </p>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
                   No primeiro acesso, o banner oferece as opções de aceitar, rejeitar
                   ou personalizar. Não existe aceite automático por tempo ou por
                   continuar navegando. Na personalização, os controles opcionais
-                  começam desligados.
+                  começam desligados. O banner de cookies não concede permissão de
+                  localização do navegador; se um recurso desse tipo for oferecido no
+                  futuro, ele deverá pedir uma confirmação própria no momento do uso.
                 </p>
               </section>
 
@@ -135,7 +139,10 @@ export default function PrivacidadePage() {
                   voluntariamente no formulário são usados para responder ao
                   seu pedido e registrar o atendimento no Retiflow. Esses dados
                   de contato não são enviados ao Google como conversões
-                  otimizadas nesta versão do site.
+                  otimizadas nesta versão do site. A URL completa do WhatsApp não é
+                  enviada aos provedores de medição; registramos somente o destino
+                  genérico, para impedir que nome, telefone, relato ou dados do
+                  veículo escapem pela mensagem preenchida.
                 </p>
               </section>
 
@@ -144,10 +151,40 @@ export default function PrivacidadePage() {
                   Com quem os dados podem ser processados
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
-                  Quando há autorização de medição, o Retiflow pode receber eventos
-                  não identificados da jornada. Dependendo das categorias escolhidas,
-                  também usamos Google Analytics 4, serviços do Google para anúncios
-                  e Microsoft Clarity. Não ativamos personalização de anúncios.
+                  Quando a análise é autorizada, o Retiflow pode receber eventos
+                  da jornada sem nome, telefone, e-mail ou relato livre. Esses
+                  eventos podem incluir a cidade que você informar voluntariamente
+                  no quiz. Se apenas anúncios forem autorizados, o Retiflow recebe
+                  somente as intenções de contato necessárias para atribuição.
+                  Dependendo das categorias escolhidas, também usamos Google
+                  Analytics 4, serviços do Google para anúncios e Microsoft
+                  Clarity. Não ativamos personalização de anúncios.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="font-heading text-2xl font-bold text-[#06172e]">
+                  Por quanto tempo mantemos os registros
+                </h2>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  A preferência de privacidade fica neste navegador por até 180
+                  dias, e os identificadores locais de atribuição, por até 90
+                  dias. Se o servidor estiver temporariamente indisponível, uma
+                  fila limitada de eventos de jornada pode permanecer neste
+                  navegador por até 24 horas para nova tentativa; ela é apagada
+                  ao revogar a categoria correspondente. Para os eventos de
+                  jornada enviados ao servidor, a política operacional desta
+                  versão é revisar e remover os registros manualmente em até 12
+                  meses. Ainda não existe uma rotina automática de expurgo; até
+                  sua implantação, esse prazo depende da revisão operacional da
+                  Retífica Premium.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  Dados de contato, orçamento e ordem de serviço seguem os
+                  períodos necessários ao atendimento, às obrigações legais e
+                  ao histórico comercial aplicável. Solicitações de exclusão
+                  são avaliadas conforme o tipo de registro e a obrigação de
+                  conservação existente.
                 </p>
               </section>
 

@@ -4,7 +4,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   CONSENT_CHANGED_EVENT,
+  CONSENT_RUNTIME_READY_EVENT,
+  canSendTrackingRequests,
   hasAdvertisingConsent,
+  isConsentRuntimeReady,
 } from "@/lib/consent";
 import { siteConfig } from "@/lib/site";
 
@@ -107,7 +110,12 @@ function restoreBusinessPhone() {
 function configureWebsiteCallTracking() {
   const revision = ++configurationRevision;
 
-  if (!WEBSITE_CALL_SEND_TO || !hasAdvertisingConsent()) {
+  if (
+    !WEBSITE_CALL_SEND_TO ||
+    !isConsentRuntimeReady() ||
+    !hasAdvertisingConsent() ||
+    !canSendTrackingRequests()
+  ) {
     restoreBusinessPhone();
     return;
   }
@@ -142,16 +150,23 @@ function configureWebsiteCallTracking() {
 
 export function GoogleAdsWebsiteCallRuntime() {
   const pathname = usePathname();
+  const [consentReady, setConsentReady] = useState(false);
   const [consentRevision, setConsentRevision] = useState(0);
 
   useEffect(() => {
     const handleConsentChanged = () => {
       setConsentRevision((current) => current + 1);
     };
+    const handleRuntimeReady = () => setConsentReady(true);
 
     window.addEventListener(CONSENT_CHANGED_EVENT, handleConsentChanged);
-    return () =>
+    window.addEventListener(CONSENT_RUNTIME_READY_EVENT, handleRuntimeReady);
+    if (isConsentRuntimeReady()) handleRuntimeReady();
+
+    return () => {
       window.removeEventListener(CONSENT_CHANGED_EVENT, handleConsentChanged);
+      window.removeEventListener(CONSENT_RUNTIME_READY_EVENT, handleRuntimeReady);
+    };
   }, []);
 
   useEffect(() => {
@@ -163,7 +178,7 @@ export function GoogleAdsWebsiteCallRuntime() {
       window.cancelAnimationFrame(animationFrame);
       configurationRevision += 1;
     };
-  }, [consentRevision, pathname]);
+  }, [consentReady, consentRevision, pathname]);
 
   return null;
 }

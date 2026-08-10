@@ -13,10 +13,9 @@ type VideoEmbedProps = {
 /**
  * Proporções suportadas.
  *
- * `mobileSquare` é a recomendada para o vídeo da primeira dobra: 74% do tráfego
- * pago é celular e um 16:9 num aparelho de 375px de largura ocupa só ~211px de
- * altura. Quadrado no celular ocupa 375px — quase o dobro de área — e volta a
- * 16:9 no desktop, onde o layout é lado a lado.
+ * `mobileSquare` é a recomendada para o vídeo da primeira dobra: o tráfego pago
+ * é majoritariamente móvel e um 16:9 fica pequeno em telas estreitas. O slot
+ * volta a 16:9 no desktop, onde o layout é lado a lado.
  */
 const aspectClass = {
   wide: "aspect-video",
@@ -36,7 +35,6 @@ export function VideoEmbed({ slot, eventLabel, className = "" }: VideoEmbedProps
   if (!slot.youtubeId) return null;
 
   const id = slot.youtubeId;
-  const poster = slot.poster ?? `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
   const aspect = aspectClass[slot.aspect ?? "wide"];
 
   return (
@@ -61,19 +59,30 @@ export function VideoEmbed({ slot, eventLabel, className = "" }: VideoEmbedProps
               trackMarketingEvent("cta_click", {
                 event_category: "engagement",
                 event_label: eventLabel,
+                component_id: eventLabel,
+                destination_type: "video",
+                destination_path: "/video",
               });
             }
           }}
           className="group absolute inset-0 h-full w-full"
           aria-label={`Reproduzir vídeo: ${slot.title}`}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={poster}
-            alt=""
-            className="h-full w-full object-cover"
-            loading="lazy"
-          />
+          {slot.poster ? (
+            // O poster precisa ser local para não consultar o YouTube antes do clique.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={slot.poster}
+              alt=""
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(255,184,0,0.18),transparent_38%),linear-gradient(145deg,#07192f,#020e1d_62%)]"
+            />
+          )}
           <span className="absolute inset-0 bg-black/30 transition-colors group-hover:bg-black/20" />
           <span className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-rp-gold shadow-lg transition-transform group-hover:scale-110 md:h-20 md:w-20">
             <svg

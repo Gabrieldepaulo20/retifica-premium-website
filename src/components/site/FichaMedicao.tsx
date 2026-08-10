@@ -3,10 +3,9 @@
  *
  * Por que existe: o diferencial real da Retífica Premium é medir antes de dar
  * preço. Toda concorrente pesquisada abre com foto de oficina e texto
- * institucional; nenhuma mostra o que de fato entrega. Este cartão imita o
- * laudo técnico que sai junto com a peça e responde, em um só objeto, as três
- * perguntas que antecedem o contato: o que vocês olham, quanto demora para eu
- * ter um preço, e o que acontece se der problema.
+ * institucional; poucas mostram o que de fato conferem. Este cartão organiza,
+ * em um só objeto, os pontos que antecedem o contato: o que é medido, quando o
+ * prazo é definido e qual é o limite da garantia informada.
  *
  * No lugar da foto genérica que ocupava esta metade do hero.
  *
@@ -22,9 +21,9 @@ type Props = {
 };
 
 const linhas = [
-  { rotulo: "Orçamento", valor: "em até 2h no WhatsApp" },
-  { rotulo: "Prazo", valor: "confirmado no orçamento" },
-  { rotulo: "Garantia", valor: "por escrito, com laudo" },
+  { rotulo: "Definição", valor: "depois de limpar e medir" },
+  { rotulo: "Prazo", valor: "confirmado antes da aprovação" },
+  { rotulo: "Garantia", valor: "6 meses no serviço executado" },
 ];
 
 export function FichaMedicao({ servico, medicoes }: Props) {

@@ -15,7 +15,7 @@ import { siteConfig } from "@/lib/site";
 import { videos } from "@/lib/videos";
 
 export const metadata: Metadata = {
-  title: "Parceria B2B para Oficinas | Retífica Premium",
+  title: "Parceria B2B para Oficinas",
   description:
     "Parceria B2B para oficinas: logística de cabeçotes, apoio técnico, materiais comerciais e automação para crescer com a Retífica Premium.",
   alternates: {
@@ -55,7 +55,7 @@ const b2bWhatsAppUrl = `https://wa.me/${
 
 const heroProofs = [
   "Retirada e entrega combinadas",
-  "Garantia por escrito para apresentar ao cliente",
+  "Garantia e condições confirmadas no atendimento",
   "Site, sistema e apoio comercial para a oficina parceira",
 ];
 
@@ -110,9 +110,9 @@ const benefitShowcases = [
       "Garantia e explicação mais clara para apresentar ao cliente.",
       "Material para mostrar o problema e o serviço feito.",
     ],
-    videoTitle: "Vídeo futuro: explicação do cabeçote na bancada",
+    videoTitle: "Cabeçote explicado na bancada",
     videoHint:
-      "Coloque aqui um vídeo curto mostrando peça, medição, plaina ou teste, com legenda simples para o dono da oficina usar na venda.",
+      "Medição, plaina e teste traduzidos em uma explicação que a oficina pode repassar ao cliente.",
   },
   {
     icon: "route",
@@ -125,9 +125,9 @@ const benefitShowcases = [
       "Menos tempo perdido levando peça de um lado para outro.",
       "Mais previsibilidade para avisar o cliente final.",
     ],
-    videoTitle: "Vídeo futuro: retirada, entrega e fluxo da peça",
+    videoTitle: "O caminho da peça, sem etapa escondida",
     videoHint:
-      "Reserve um vídeo com a rotina de coleta, conferência e devolução do cabeçote para mostrar que a operação tem processo.",
+      "Recebimento, conferência, execução e logística combinada em uma sequência fácil de acompanhar.",
   },
   {
     icon: "search",
@@ -140,9 +140,9 @@ const benefitShowcases = [
       "Chamadas claras para WhatsApp, ligação e orçamento.",
       "Estrutura para campanhas e melhoria de presença local.",
     ],
-    videoTitle: "Vídeo futuro: cliente pesquisando no Google",
+    videoTitle: "Da busca local ao primeiro contato",
     videoHint:
-      "Aqui cabe um mini vídeo: alguém pesquisa por mecânica/retífica, encontra a oficina bem posicionada, clica e chama no WhatsApp.",
+      "Uma presença clara ajuda a pessoa a entender o serviço e escolher como falar com a oficina.",
   },
   {
     icon: "inbox",
@@ -155,9 +155,9 @@ const benefitShowcases = [
       "Histórico básico para não depender de memória.",
       "Mais clareza sobre quem pediu preço e pode fechar.",
     ],
-    videoTitle: "Vídeo futuro: sistema organizando orçamentos",
+    videoTitle: "Orçamentos e retornos em uma só visão",
     videoHint:
-      "Use este espaço para um vídeo do sistema mostrando cards de orçamento, status de retorno e clientes que precisam de resposta.",
+      "Etapas e pendências organizadas para a equipe saber quem precisa de resposta.",
   },
   {
     icon: "megaphone",
@@ -170,9 +170,9 @@ const benefitShowcases = [
       "Fotos e textos que passam mais profissionalismo.",
       "Conteúdo para WhatsApp, site e campanha.",
     ],
-    videoTitle: "Vídeo futuro: antes e depois da apresentação",
+    videoTitle: "Explicar o serviço antes de discutir preço",
     videoHint:
-      "Coloque um vídeo comparando uma explicação fraca com uma apresentação profissional do serviço e da garantia.",
+      "Medições e escopo apresentados em linguagem simples para reduzir dúvidas na aprovação.",
   },
   {
     icon: "growth",
@@ -185,9 +185,9 @@ const benefitShowcases = [
       "Benefícios avançam junto com previsibilidade e recorrência.",
       "A oficina cresce com processo, não só com comissão.",
     ],
-    videoTitle: "Vídeo futuro: evolução da oficina parceira",
+    videoTitle: "Da primeira peça a uma rotina organizada",
     videoHint:
-      "Aqui pode entrar um vídeo com a jornada do parceiro: primeiro serviço, recorrência, organização, campanha e mais contatos.",
+      "A parceria começa pelo processo real e só avança conforme recorrência e necessidades confirmadas.",
   },
 ];
 
@@ -252,7 +252,7 @@ const tiers = [
     benefits: [
       "Canal direto para cabeçotes e dúvidas técnicas",
       "Retirada e entrega combinadas conforme rota",
-      "Garantia por escrito para apoiar a venda",
+      "Garantia e condições confirmadas no atendimento",
       "Página simples ou presença digital inicial da oficina",
     ],
   },
@@ -451,16 +451,18 @@ function VideoPlaceholder({
         <div className="flex h-full flex-col justify-between">
           <div className="flex items-center justify-between gap-4">
             <span className="rounded-full border border-white/16 bg-white/8 px-3 py-1 font-body text-xs font-bold uppercase text-white/72">
-              Espaço para vídeo
+              Processo em foco
             </span>
-            <span className="grid h-11 w-11 place-items-center rounded-full bg-[#F5B82E] text-[#07111F]">
+            <span className="grid h-11 w-11 place-items-center rounded-full border border-[#F5B82E]/45 text-[#F5B82E]">
               <svg
                 viewBox="0 0 24 24"
                 className="h-5 w-5"
-                fill="currentColor"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
                 aria-hidden="true"
               >
-                <path d="M8 5v14l11-7z" />
+                <path d="M4 7h16v10H4zM8 7V4h8v3M8 12h8" />
               </svg>
             </span>
           </div>

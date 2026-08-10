@@ -1,7 +1,11 @@
 import {
+  canSendTrackingRequests,
+  currentTrackingEnvironment,
+  currentTrackingHostname,
   hasAdvertisingConsent,
   hasAnalyticsConsent,
   hasMeasurementConsent,
+  isConsentRuntimeReady,
   privacySafePageLocation,
 } from "@/lib/consent";
 import { classifyTrafficAttribution } from "@/lib/traffic-attribution";
@@ -53,7 +57,7 @@ type GaEventName =
   | "quiz_whatsapp_prepared"
   | "quiz_whatsapp_click";
 
-type MarketingEventParams = {
+export type MarketingEventParams = {
   event_category?: "engagement" | "lead" | "navigation";
   event_label?: string;
   link_url?: string;
@@ -68,6 +72,10 @@ type MarketingEventParams = {
   gclid?: string;
   transaction_id?: string;
   engaged_seconds?: number;
+  destination_type?: string;
+  destination_path?: string;
+  /** Cidade informada de forma explícita; é enviada apenas ao Retiflow. */
+  visitor_city?: string;
   [key: string]: string | number | undefined;
 };
 
@@ -118,19 +126,108 @@ type TrackingWindow = Window & {
 const ATTRIBUTION_KEY = "retifica_premium_attribution";
 const ANONYMOUS_ID_KEY = "retifica_premium_anonymous_id";
 const SESSION_ID_KEY = "retifica_premium_session_id";
+const SESSION_ACTIVITY_KEY = "retifica_premium_session_activity";
 const SESSION_ATTRIBUTION_KEY = "retifica_premium_session_attribution";
 const CONTACT_INTENT_KEY = "retifica_premium_contact_intent";
 const REPORTED_EVENTS_KEY = "retifica_premium_reported_events";
 const CONTACT_INTENT_TTL_MS = 30 * 60 * 1000;
+const SESSION_INACTIVITY_TTL_MS = 30 * 60 * 1000;
 const ATTRIBUTION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
+const EXTERNAL_EVENT_OUTBOX_KEY = "retifica_premium_event_outbox";
+const EXTERNAL_EVENT_OUTBOX_MAX = 40;
+const EXTERNAL_EVENT_OUTBOX_TTL_MS = 24 * 60 * 60 * 1000;
+export const MEASUREMENT_SESSION_ROTATED_EVENT =
+  "retifica:measurement-session-rotated";
 const pendingEvents = new Set<string>();
 let anonymousRuntimeIntent: ContactIntent | null = null;
 let runtimeAttribution: RuntimeAttribution | null = null;
+let externalEventOutboxFlushInProgress = false;
 const GOOGLE_ADS_CONVERSIONS: Partial<Record<GaEventName, string>> = {
   generate_lead: process.env.NEXT_PUBLIC_GOOGLE_ADS_FORM_SEND_TO,
   whatsapp_click: process.env.NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO,
   phone_click: process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO,
 };
+// `generate_lead` continua no GA4/Ads após sucesso, mas não é espelhado aqui:
+// o endpoint do formulário já persiste o evento canônico `form_submit` com PII
+// autorizada. Espelhar os dois criaria dois leads para a mesma solicitação.
+const RETIFLOW_DIRECT_EVENTS = new Set<GaEventName>([
+  "page_view",
+  "whatsapp_click",
+  "instagram_click",
+  "phone_click",
+  "directions_click",
+  "cta_click",
+  "service_detail_click",
+  "form_view",
+  "form_start",
+  "form_field_complete",
+  "form_submit_attempt",
+  "form_validation_error",
+  "form_abandon",
+  "form_submit_error",
+  "scroll_depth",
+]);
+const ADVERTISING_MEASUREMENT_EVENTS = new Set([
+  "whatsapp_click",
+  "phone_click",
+  "generate_lead",
+]);
+const GOOGLE_SAFE_STRING_PARAMS = new Set([
+  "event_category",
+  "event_label",
+  "link_url",
+  "method",
+  "service_name",
+  "page_location",
+  "traffic_source",
+  "traffic_medium",
+  "traffic_campaign",
+  "traffic_term",
+  "gclid",
+  "transaction_id",
+  "experiment_id",
+  "variant_id",
+  "component_id",
+  "position",
+  "page_type",
+  "service_id",
+  "flow_type",
+  "step_id",
+  "estimate_state",
+  "form_name",
+  "last_field",
+  "validation_reason",
+  "abandon_reason",
+  "transport_type",
+  "field_name",
+  "lead_subject",
+  "b2b_level",
+  "error_type",
+]);
+const DESTINATION_TYPES = new Set([
+  "whatsapp",
+  "phone",
+  "estimate",
+  "service",
+  "contact",
+  "directions",
+  "video",
+  "other",
+]);
+const GOOGLE_SAFE_NUMBER_PARAMS = new Set([
+  "percent_scrolled",
+  "engaged_seconds",
+  "form_elapsed_seconds",
+  "fields_completed",
+  "completion_percent",
+]);
+const GOOGLE_QUERY_DERIVED_PARAMS = new Set([
+  "traffic_source",
+  "traffic_medium",
+  "traffic_campaign",
+  "traffic_term",
+  "gclid",
+]);
 
 type SessionAttribution = {
   originType: "paid" | "organic" | "other";
@@ -160,6 +257,180 @@ function randomId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 }
 
+function compactString(value: unknown, max = 180) {
+  if (typeof value !== "string") return undefined;
+  const compact = value.replace(/[\u0000-\u001F\u007F]+/g, " ").replace(/\s+/g, " ").trim();
+  return compact ? compact.slice(0, max) : undefined;
+}
+
+function containsHighConfidencePersonalData(value: string) {
+  if (/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i.test(value)) return true;
+
+  const digits = value.replace(/\D/g, "");
+  return digits.length >= 8 && digits.length <= 14;
+}
+
+function privacySafeLinkUrl(value: unknown) {
+  const compact = compactString(value, 800);
+  if (!compact || typeof window === "undefined") return undefined;
+
+  try {
+    const url = new URL(compact, window.location.origin);
+    if (url.protocol === "tel:") return undefined;
+    if (url.protocol !== "http:" && url.protocol !== "https:") return undefined;
+    if (url.hostname === "wa.me" || url.hostname.endsWith(".whatsapp.com")) {
+      return undefined;
+    }
+    return `${url.origin}${url.pathname}`;
+  } catch {
+    return undefined;
+  }
+}
+
+function privacySafeGooglePageLocation(value: unknown) {
+  const compact = compactString(value, 800);
+  if (!compact || typeof window === "undefined") return undefined;
+
+  try {
+    const url = new URL(compact, window.location.origin);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return undefined;
+    return `${url.origin}${url.pathname}`;
+  } catch {
+    return undefined;
+  }
+}
+
+type SafeDestination = {
+  type?: string;
+  path?: string;
+};
+
+function relativeDestinationPath(value: unknown) {
+  const compact = compactString(value, 240);
+  if (!compact) return undefined;
+
+  try {
+    const url = new URL(compact, "https://destination.invalid");
+    const path = url.pathname.replace(/\/{2,}/g, "/").slice(0, 180);
+    return path.startsWith("/") && /^\/[a-z0-9/_-]*$/i.test(path)
+      ? path
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function safeDestination(params: MarketingEventParams): SafeDestination {
+  const explicitType = compactString(params.destination_type, 32)?.toLowerCase();
+  const type = explicitType && DESTINATION_TYPES.has(explicitType)
+    ? explicitType
+    : undefined;
+
+  if (type === "whatsapp") return { type, path: "/whatsapp" };
+  if (type === "phone") return { type, path: "/phone" };
+  if (type === "directions") return { type, path: "/directions" };
+  if (type === "estimate" && !params.destination_path) {
+    return { type, path: "/quanto-custa" };
+  }
+  if (type === "contact" && !params.destination_path) {
+    return { type, path: "/contato" };
+  }
+
+  const explicitPath = relativeDestinationPath(params.destination_path);
+  if (explicitPath) return { type, path: explicitPath };
+
+  const link = compactString(params.link_url, 800);
+  if (!link || typeof window === "undefined") return { type };
+
+  try {
+    const url = new URL(link, window.location.origin);
+    if (url.protocol === "tel:") return { type: "phone", path: "/phone" };
+    if (url.hostname === "wa.me" || url.hostname.endsWith(".whatsapp.com")) {
+      return { type: "whatsapp", path: "/whatsapp" };
+    }
+    if (url.hostname.endsWith("google.com") && url.pathname.startsWith("/maps")) {
+      return { type: "directions", path: "/directions" };
+    }
+    if (url.hostname === "www.instagram.com" || url.hostname === "instagram.com") {
+      return { type: "other", path: relativeDestinationPath(url.pathname) };
+    }
+    const path = relativeDestinationPath(url.pathname);
+    const inferredType = url.origin !== window.location.origin
+      ? "other"
+      : path === "/quanto-custa"
+        ? "estimate"
+        : path === "/contato"
+          ? "contact"
+          : path?.startsWith("/servicos/")
+            ? "service"
+            : "other";
+    return {
+      type: type ?? inferredType,
+      path,
+    };
+  } catch {
+    return { type };
+  }
+}
+
+/**
+ * Contrato central dos parâmetros enviados ao Google. Campos desconhecidos são
+ * descartados e URLs perdem query/hash, impedindo que mensagens de WhatsApp,
+ * telefone, nome, relato livre ou dados do veículo escapem por `link_url`.
+ */
+export function sanitizeGoogleEventParams(params: MarketingEventParams) {
+  const safe: MarketingEventParams = {};
+  const destination = safeDestination(params);
+  if (destination.type) safe.destination_type = destination.type;
+  if (destination.path) safe.destination_path = destination.path;
+
+  for (const [key, value] of Object.entries(params)) {
+    if (key === "destination_type" || key === "destination_path") continue;
+    if (key === "page_location") {
+      const pageLocation = privacySafeGooglePageLocation(value);
+      if (pageLocation) safe.page_location = pageLocation;
+      continue;
+    }
+    if (key === "link_url") {
+      const link = privacySafeLinkUrl(value);
+      if (link) safe.link_url = link;
+      continue;
+    }
+
+    if (GOOGLE_SAFE_STRING_PARAMS.has(key)) {
+      const compact = compactString(value, key === "gclid" ? 220 : 180);
+      if (
+        compact &&
+        GOOGLE_QUERY_DERIVED_PARAMS.has(key) &&
+        containsHighConfidencePersonalData(compact)
+      ) {
+        continue;
+      }
+      if (compact) safe[key] = compact;
+      continue;
+    }
+
+    if (GOOGLE_SAFE_NUMBER_PARAMS.has(key) && typeof value === "number" && Number.isFinite(value)) {
+      safe[key] = value;
+    }
+  }
+
+  return safe;
+}
+
+function explicitCity(value: unknown) {
+  const compact = compactString(value, 60);
+  if (!compact || !/^[\p{L}\s.'-]+$/u.test(compact)) return undefined;
+  return compact;
+}
+
+function hasExternalEventConsent(eventType: string) {
+  return (
+    hasAnalyticsConsent() ||
+    (hasAdvertisingConsent() && ADVERTISING_MEASUREMENT_EVENTS.has(eventType))
+  );
+}
+
 export function createMarketingEventId() {
   return randomId();
 }
@@ -178,10 +449,75 @@ function getOrCreateBrowserId(
   return value;
 }
 
+function getOrCreateSessionId(
+  storage: Storage | null,
+  preferredValue?: string
+) {
+  if (!storage) {
+    return preferredValue || `session-${randomId()}`;
+  }
+
+  const now = Date.now();
+  const existingId = storage.getItem(SESSION_ID_KEY);
+
+  try {
+    const raw = storage.getItem(SESSION_ACTIVITY_KEY);
+    const activity = raw
+      ? (JSON.parse(raw) as { sessionId?: string; lastActivityAt?: number })
+      : null;
+    const inactivity = now - (activity?.lastActivityAt ?? Number.NaN);
+
+    if (
+      existingId &&
+      activity?.sessionId === existingId &&
+      Number.isFinite(inactivity) &&
+      inactivity >= 0 &&
+      inactivity < SESSION_INACTIVITY_TTL_MS
+    ) {
+      storage.setItem(
+        SESSION_ACTIVITY_KEY,
+        JSON.stringify({ sessionId: existingId, lastActivityAt: now })
+      );
+      return existingId;
+    }
+  } catch {
+    // Um registro corrompido é tratado como sessão expirada.
+  }
+
+  const nextId = existingId
+    ? `session-${randomId()}`
+    : preferredValue || `session-${randomId()}`;
+  storage.setItem(SESSION_ID_KEY, nextId);
+  storage.setItem(
+    SESSION_ACTIVITY_KEY,
+    JSON.stringify({ sessionId: nextId, lastActivityAt: now })
+  );
+  storage.removeItem(CONTACT_INTENT_KEY);
+  storage.removeItem(REPORTED_EVENTS_KEY);
+  storage.removeItem(SESSION_ATTRIBUTION_KEY);
+  storage.removeItem("retifica_premium_active_time_ms");
+
+  if (existingId && typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent(MEASUREMENT_SESSION_ROTATED_EVENT, {
+        detail: { previousSessionId: existingId, sessionId: nextId },
+      })
+    );
+  }
+
+  return nextId;
+}
+
 function leadCode() {
   const date = new Date().toISOString().slice(0, 10).replaceAll("-", "");
   const suffix = randomId().replaceAll("-", "").slice(0, 8).toUpperCase();
   return `RP-${date}-${suffix}`;
+}
+
+function isSupportedLeadCode(value: string) {
+  return /^RP-(?:\d{8}-[A-Z0-9]{4,16}|\d{4}-\d{2}-[A-Z0-9]{4,16})$/i.test(
+    value
+  );
 }
 
 function createEphemeralContactIntent(): ContactIntent {
@@ -206,18 +542,19 @@ export function getOrCreateContactIntent(): ContactIntent {
   const sessionStorage = sessionStorageAvailable()
     ? window.sessionStorage
     : null;
+  const sessionId = getOrCreateSessionId(
+    sessionStorage,
+    anonymousRuntimeIntent?.sessionId
+  );
 
   try {
     const raw = sessionStorage?.getItem(CONTACT_INTENT_KEY);
     if (raw) {
       const existing = JSON.parse(raw) as ContactIntent;
-      const age = Date.now() - new Date(existing.createdAt).getTime();
       if (
         existing.eventId &&
         existing.leadCode &&
-        Number.isFinite(age) &&
-        age >= 0 &&
-        age < CONTACT_INTENT_TTL_MS
+        existing.sessionId === sessionId
       ) {
         return existing;
       }
@@ -234,12 +571,7 @@ export function getOrCreateContactIntent(): ContactIntent {
       ANONYMOUS_ID_KEY,
       "anon"
     ),
-    sessionId: getOrCreateBrowserId(
-      sessionStorage,
-      SESSION_ID_KEY,
-      "session",
-      anonymousRuntimeIntent?.sessionId
-    ),
+    sessionId,
     createdAt: new Date().toISOString(),
   };
 
@@ -278,6 +610,202 @@ function markAsReported(eventType: string, eventId: string) {
     );
   } catch {
     // A indisponibilidade do storage não pode afetar o contato.
+  }
+}
+
+type ExternalMarketingPayload = {
+  eventId: string;
+  eventType: string;
+  [key: string]: unknown;
+};
+
+type QueuedExternalMarketingEvent = {
+  queuedAt: number;
+  payload: ExternalMarketingPayload;
+};
+
+type ExternalMarketingDelivery = {
+  delivered: boolean;
+  retryable: boolean;
+};
+
+function readExternalEventOutbox(): QueuedExternalMarketingEvent[] {
+  if (!storageAvailable() || !hasMeasurementConsent()) return [];
+
+  try {
+    const raw = window.localStorage.getItem(EXTERNAL_EVENT_OUTBOX_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      window.localStorage.removeItem(EXTERNAL_EVENT_OUTBOX_KEY);
+      return [];
+    }
+
+    const minimumQueuedAt = Date.now() - EXTERNAL_EVENT_OUTBOX_TTL_MS;
+    return parsed
+      .filter((item): item is QueuedExternalMarketingEvent => {
+        if (!item || typeof item !== "object" || Array.isArray(item)) return false;
+        const entry = item as Partial<QueuedExternalMarketingEvent>;
+        return (
+          typeof entry.queuedAt === "number" &&
+          entry.queuedAt >= minimumQueuedAt &&
+          Boolean(entry.payload) &&
+          typeof entry.payload?.eventId === "string" &&
+          typeof entry.payload?.eventType === "string"
+        );
+      })
+      .slice(-EXTERNAL_EVENT_OUTBOX_MAX);
+  } catch {
+    window.localStorage.removeItem(EXTERNAL_EVENT_OUTBOX_KEY);
+    return [];
+  }
+}
+
+function writeExternalEventOutbox(entries: QueuedExternalMarketingEvent[]) {
+  if (!storageAvailable()) return;
+
+  try {
+    if (!hasMeasurementConsent() || entries.length === 0) {
+      window.localStorage.removeItem(EXTERNAL_EVENT_OUTBOX_KEY);
+      return;
+    }
+
+    window.localStorage.setItem(
+      EXTERNAL_EVENT_OUTBOX_KEY,
+      JSON.stringify(entries.slice(-EXTERNAL_EVENT_OUTBOX_MAX))
+    );
+  } catch {
+    // A fila é uma proteção complementar; storage cheio não pode bloquear o site.
+  }
+}
+
+function queueExternalMarketingEvent(payload: ExternalMarketingPayload) {
+  if (!hasExternalEventConsent(payload.eventType)) return;
+
+  const consentSafePayload = consentSafeExternalMarketingPayload(payload);
+  const entries = readExternalEventOutbox();
+  if (
+    entries.some(
+      (entry) => entry.payload.eventId === consentSafePayload.eventId
+    )
+  ) {
+    return;
+  }
+
+  writeExternalEventOutbox([
+    ...entries,
+    { queuedAt: Date.now(), payload: consentSafePayload },
+  ]);
+}
+
+function consentSafeExternalMarketingPayload(
+  payload: ExternalMarketingPayload
+): ExternalMarketingPayload {
+  const safePayload = { ...payload };
+
+  if (!hasAnalyticsConsent()) {
+    delete safePayload.city;
+    delete safePayload.visitorCity;
+    const metadata = safePayload.metadata;
+    if (metadata && typeof metadata === "object" && !Array.isArray(metadata)) {
+      const safeMetadata = { ...(metadata as Record<string, unknown>) };
+      delete safeMetadata.visitorCity;
+      safePayload.metadata = safeMetadata;
+    }
+  }
+
+  if (!hasAdvertisingConsent()) {
+    delete safePayload.gclid;
+    delete safePayload.gbraid;
+    delete safePayload.wbraid;
+  }
+
+  return safePayload;
+}
+
+async function deliverExternalMarketingEvent(
+  payload: ExternalMarketingPayload
+): Promise<ExternalMarketingDelivery> {
+  try {
+    const consentSafePayload = consentSafeExternalMarketingPayload(payload);
+    const response = await fetch("/api/marketing/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(consentSafePayload),
+      keepalive: true,
+    });
+    const result = (await response.json().catch(() => null)) as {
+      ok?: boolean;
+      storageSaved?: boolean;
+      storage?: { saved?: boolean };
+    } | null;
+    const storageSaved =
+      result?.storageSaved === true || result?.storage?.saved === true;
+
+    if (response.ok && result?.ok === true && storageSaved) {
+      return { delivered: true, retryable: false };
+    }
+
+    const retryable =
+      response.status === 408 ||
+      response.status === 429 ||
+      response.status >= 500 ||
+      (response.ok && !storageSaved);
+    return { delivered: false, retryable };
+  } catch {
+    return { delivered: false, retryable: true };
+  }
+}
+
+/**
+ * Reenvia o payload técnico consentido sem nome, telefone, e-mail ou relato
+ * livre. Ele ainda pode conter cidade voluntária e identificadores de
+ * atribuição; por isso a fila é limitada a 40 itens/24h e apagada com o
+ * consentimento.
+ */
+export async function flushExternalMarketingEventOutbox() {
+  if (
+    externalEventOutboxFlushInProgress ||
+    typeof window === "undefined" ||
+    !isConsentRuntimeReady() ||
+    !canSendTrackingRequests()
+  ) {
+    return;
+  }
+
+  const snapshot = readExternalEventOutbox();
+  if (snapshot.length === 0) return;
+
+  externalEventOutboxFlushInProgress = true;
+  const snapshotIds = new Set(snapshot.map((entry) => entry.payload.eventId));
+  const remaining: QueuedExternalMarketingEvent[] = [];
+  let deliveryBlocked = false;
+
+  try {
+    for (const entry of snapshot) {
+      if (!hasExternalEventConsent(entry.payload.eventType)) continue;
+      if (deliveryBlocked) {
+        remaining.push(entry);
+        continue;
+      }
+
+      const delivery = await deliverExternalMarketingEvent(entry.payload);
+      if (delivery.delivered) {
+        markAsReported(entry.payload.eventType, entry.payload.eventId);
+        continue;
+      }
+      if (delivery.retryable) {
+        remaining.push(entry);
+        deliveryBlocked = true;
+      }
+    }
+  } finally {
+    const addedDuringFlush = readExternalEventOutbox().filter(
+      (entry) => !snapshotIds.has(entry.payload.eventId)
+    );
+    writeExternalEventOutbox([...remaining, ...addedDuringFlush]);
+    externalEventOutboxFlushInProgress = false;
   }
 }
 
@@ -364,13 +892,20 @@ export function sendExternalMarketingEvent(
   params: MarketingEventParams = {},
   contactIntent?: ContactIntent
 ) {
-  if (typeof window === "undefined" || !hasMeasurementConsent()) return;
+  if (
+    typeof window === "undefined" ||
+    !isConsentRuntimeReady() ||
+    !hasExternalEventConsent(eventType) ||
+    !canSendTrackingRequests()
+  ) {
+    return;
+  }
 
   const baseIntent = contactIntent ?? getOrCreateContactIntent();
-  const intent =
-    eventType === "whatsapp_click"
-      ? baseIntent
-      : { ...baseIntent, eventId: createMarketingEventId() };
+  // Cada ocorrência precisa de ID próprio para a jornada mostrar todos os
+  // cliques. O `leadCode` continua estável e deduplica somente a conversão e o
+  // alerta comercial, não a telemetria da sessão.
+  const intent = { ...baseIntent, eventId: createMarketingEventId() };
   const pendingKey = reportedEventKey(eventType, intent.eventId);
   if (wasReported(eventType, intent.eventId) || pendingEvents.has(pendingKey)) {
     return;
@@ -378,12 +913,21 @@ export function sendExternalMarketingEvent(
   pendingEvents.add(pendingKey);
 
   const attribution = effectiveEventAttribution();
-  const measurementConsented = hasMeasurementConsent();
+  const analyticsConsented = hasAnalyticsConsent();
+  const advertisingConsented = hasAdvertisingConsent();
   const sessionOriginType = getSessionAttribution()?.originType
     ?? runtimeAttribution?.originType;
-  const payload = {
+  const destination = safeDestination(params);
+  const suppliedLeadCode = compactString(params.transaction_id, 40);
+  const eventLeadCode =
+    suppliedLeadCode && isSupportedLeadCode(suppliedLeadCode)
+      ? suppliedLeadCode
+      : intent.leadCode;
+  const payload: ExternalMarketingPayload = {
     eventId: intent.eventId,
-    leadCode: intent.leadCode,
+    // No quiz, o código exibido no WhatsApp precisa ser o mesmo pesquisável
+    // no Retiflow. Fora dele, preservamos o código estável da intenção.
+    leadCode: eventLeadCode,
     anonymousId: intent.anonymousId,
     sessionId: intent.sessionId,
     eventType,
@@ -427,32 +971,34 @@ export function sendExternalMarketingEvent(
       flowType: params.flow_type,
       stepId: params.step_id,
       estimateState: params.estimate_state,
+      destinationType: destination.type,
+      destinationPath: destination.path,
+      visitorCity: analyticsConsented
+        ? explicitCity(params.visitor_city)
+        : undefined,
       sessionOriginType,
-      measurementMode: measurementConsented ? "consented" : "anonymous",
+      siteHostname: currentTrackingHostname(),
+      environment: currentTrackingEnvironment(),
+      measurementMode:
+        analyticsConsented && advertisingConsented
+          ? "analytics_and_advertising"
+          : analyticsConsented
+            ? "analytics"
+            : "advertising",
+      eventContractVersion: "site-events-v2",
     },
   };
 
-  void fetch("/api/marketing/event", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-    keepalive: true,
-  })
-    .then(async (response) => {
-      const result = (await response.json().catch(() => null)) as {
-        alertStatus?: string;
-      } | null;
-      const alertAccepted =
-        eventType !== "whatsapp_click" ||
-        result?.alertStatus === "sent" ||
-        result?.alertStatus === "already_sent";
-
-      if (response.ok && alertAccepted) {
+  void flushExternalMarketingEventOutbox();
+  void deliverExternalMarketingEvent(payload)
+    .then((delivery) => {
+      if (delivery.delivered) {
         markAsReported(eventType, intent.eventId);
+        return;
       }
-    })
-    .catch(() => {
-      // Rastreamento nunca pode bloquear a navegação ou o contato.
+      if (delivery.retryable) {
+        queueExternalMarketingEvent(payload);
+      }
     })
     .finally(() => pendingEvents.delete(pendingKey));
 }
@@ -507,7 +1053,7 @@ export function captureTrafficAttribution() {
     gbraid: advertisingConsent ? params.get("gbraid") || undefined : undefined,
     wbraid: advertisingConsent ? params.get("wbraid") || undefined : undefined,
     landingPage: anonymousAttribution?.landingPage ?? privacySafePageLocation(),
-    referrer: document.referrer || anonymousAttribution?.referrer,
+    referrer: safeReferrerOrigin() || anonymousAttribution?.referrer,
     capturedAt: capturedAt.toISOString(),
     expiresAt: new Date(capturedAt.getTime() + ATTRIBUTION_TTL_MS).toISOString(),
   };
@@ -641,24 +1187,34 @@ export function trackMarketingEvent(
   eventName: GaEventName,
   params: MarketingEventParams = {}
 ) {
-  if (typeof window === "undefined" || !hasMeasurementConsent()) return;
+  if (
+    typeof window === "undefined" ||
+    !isConsentRuntimeReady() ||
+    !hasMeasurementConsent()
+  ) {
+    return;
+  }
 
   const trackingWindow = window as TrackingWindow;
-  const eventParams = {
+  const eventParams = sanitizeGoogleEventParams({
     ...attributionEventParams(),
     ...params,
     page_location: privacySafePageLocation(),
-  };
+  });
 
-  if (Array.isArray(trackingWindow.dataLayer)) {
+  if (
+    hasAnalyticsConsent() &&
+    typeof trackingWindow.gtag === "function"
+  ) {
+    trackingWindow.gtag("event", eventName, eventParams);
+  } else if (
+    hasAnalyticsConsent() &&
+    Array.isArray(trackingWindow.dataLayer)
+  ) {
     trackingWindow.dataLayer.push({
       event: eventName,
       ...eventParams,
     });
-  }
-
-  if (typeof trackingWindow.gtag === "function") {
-    trackingWindow.gtag("event", eventName, eventParams);
   }
 
   const conversionSendTo = GOOGLE_ADS_CONVERSIONS[eventName];
@@ -667,8 +1223,11 @@ export function trackMarketingEvent(
     conversionSendTo &&
     typeof trackingWindow.gtag === "function"
   ) {
+    const suppliedTransactionId = compactString(params.transaction_id, 80);
     const transactionId =
-      params.transaction_id || getOrCreateContactIntent().leadCode;
+      suppliedTransactionId && isSupportedLeadCode(suppliedTransactionId)
+        ? suppliedTransactionId
+        : getOrCreateContactIntent().leadCode;
 
     trackingWindow.gtag("event", "conversion", {
       send_to: conversionSendTo,
@@ -678,18 +1237,8 @@ export function trackMarketingEvent(
     });
   }
 
-  if (
-    eventName === "whatsapp_click" ||
-    eventName === "phone_click" ||
-    eventName === "form_view" ||
-    eventName === "form_start" ||
-    eventName === "form_submit_attempt" ||
-    eventName === "form_validation_error" ||
-    eventName === "form_abandon" ||
-    eventName === "form_submit_error" ||
-    eventName === "generate_lead"
-  ) {
-    sendExternalMarketingEvent(eventName, eventParams);
+  if (RETIFLOW_DIRECT_EVENTS.has(eventName)) {
+    sendExternalMarketingEvent(eventName, params);
   }
 }
 
@@ -727,11 +1276,13 @@ export function trackFunnelEvent(
     event_label: eventName,
     ...params,
   });
-  sendExternalMarketingEvent("custom", {
-    event_category: "engagement",
-    event_label: eventName,
-    ...params,
-  });
+  if (!RETIFLOW_DIRECT_EVENTS.has(eventName)) {
+    sendExternalMarketingEvent("custom", {
+      event_category: "engagement",
+      event_label: eventName,
+      ...params,
+    });
+  }
 }
 
 export function trackEngagementEvent(

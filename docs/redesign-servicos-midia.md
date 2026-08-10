@@ -1,102 +1,103 @@
-# Briefing de mídia — /servicos
+# Guia de mídia — serviços e estimativa guiada
 
-Duas peças foram marcadas na página como `SUBSTITUIR POR MÍDIA`. Cada placeholder
-mostra na tela o id (`img-01`, `vid-01`), o nome do arquivo e um resumo, para
-quem for produzir não precisar abrir este documento.
+Os espaços de mídia já reservam a proporção final para não causar salto de
+layout. Enquanto os arquivos não existem, o visitante vê uma visualização
+técnica neutra; nomes de arquivos e instruções de produção nunca aparecem no
+site público.
 
-**Regra que vale para as duas:** a bancada, as máquinas e as mãos precisam ser
-da Retífica Premium. Imagem gerada por IA apresentada como se fosse a oficina é
-propaganda enganosa e destrói justamente a credibilidade que a página existe para
-construir. Use o Veo para plano de contexto e transição; use o celular para o que
-é da casa.
+## Regra de autenticidade
 
----
+Oficina, profissionais, máquinas, instrumentos e peças apresentadas como prova
+da Retífica Premium precisam ser filmados ou fotografados na própria empresa.
+Veo pode gerar apenas ilustração técnica claramente não documental. Não use IA
+para inventar estrutura, equipe, resultado, trinca encontrada ou serviço real.
 
-## img-01 — Medição de empeno
+## Foto principal de medição
 
-**Onde:** seção "Medição", coluna direita, ao lado da lista de pontos conferidos.
-**Componente:** `MidiaPlaceholder id="img-01"`
-**Arquivo:** `public/medicao-empeno-cabecote.webp`
+- Espaço: `/servicos`, seção **Medição**, slot `img-01`.
+- Arquivo final: `public/media/servicos/medicao-empeno-cabecote.webp`.
+- Formato: WebP, 1600 × 1200 px, proporção 4:3, alvo de até 220 KB.
+- Cena: cabeçote real na bancada, instrumento em primeiro plano e mão do técnico
+  realizando a medição.
+- Composição: peça ocupando cerca de dois terços do quadro, luz lateral marcando
+  a superfície, fundo da própria oficina discretamente desfocado.
+- Evitar: foto de catálogo, bancada de terceiro, pose olhando para a câmera,
+  logotipos de parceiros não autorizados e instrumento apenas decorativo.
 
-| Item | Definição |
-| --- | --- |
-| Objetivo | Provar que a medição existe de verdade. É a imagem que sustenta a frase "a gente confere antes de dar preço" |
-| Cena | Bancada da oficina, cabeçote apoiado, relógio comparador (ou régua de precisão) sobre a face de vedação |
-| Instrumentos | Relógio comparador, base magnética, régua de precisão, calibrador de lâminas |
-| Ação | Mão do mecânico posicionando o instrumento. Movimento contido, não posado |
-| Composição | Peça ocupando dois terços do quadro, na diagonal. Instrumento em primeiro plano nítido |
-| Enquadramento | Plano médio fechado, câmera ligeiramente acima da bancada |
-| Lente | Sensação de 50 mm. Profundidade rasa, fundo da oficina desfocado |
-| Iluminação | Luz lateral dura marcando a superfície usinada, com preenchimento suave do outro lado |
-| Cor e textura | Alumínio frio, resíduo de óleo, azul do navy no fundo desfocado. Nada higienizado demais |
-| Realismo | Fotografia documental. Sem retoque publicitário |
-| Proporção | 4:3 |
-| Espaço para texto | Não precisa — o texto fica ao lado, não sobreposto |
-| Evitar | Peça nova de catálogo, bancada vazia, luva branca impecável, fundo branco de estúdio |
-| Nome do arquivo | `medicao-empeno-cabecote.webp` |
+Essa foto deve ser documental. Não gerar no Veo.
 
-**Como produzir:** celular, 20 minutos na oficina. Não vale gerar no Veo.
+## Vídeo real do teste de trinca
 
----
+- Espaço: `/servicos`, seção **Teste de trinca**, slot `vid-01`.
+- Arquivo recomendado: `public/media/videos/teste-de-trinca-retifica-premium-16x9.mp4`.
+- Poster: `public/media/servicos/teste-de-trinca-poster.webp`.
+- Formato: MP4 H.264, 1920 × 1080, 24–30 fps, 30–45 segundos, até 10 MB.
+- Poster: WebP 1600 × 900, alvo de até 180 KB.
+- Reprodução: somente após interação, sem autoplay, com legendas e compreensão
+  completa sem som.
 
-## vid-01 — Teste de trinca
+Roteiro seguro:
 
-**Onde:** seção "Teste de trinca", coluna direita. Enquanto o vídeo não existir, o
-placeholder ocupa o espaço em 16:9.
-**Componente:** `MidiaPlaceholder id="vid-01"` — quando o vídeo estiver no YouTube,
-preencher `videos.tecnologiaTesteTrinca.youtubeId` em `src/lib/videos.ts` e o
-`VideoEmbed` assume o lugar automaticamente.
-**Arquivo:** `public/teste-de-trinca.mp4` (ou só o id do YouTube)
+1. Recebimento e identificação da peça.
+2. Limpeza real.
+3. Medição da superfície.
+4. Equipamento real de teste em operação.
+5. Técnico interpretando o resultado, sem dramatização.
+6. Próximo passo sendo explicado antes de reparo, solda ou substituição.
 
-| Item | Definição |
-| --- | --- |
-| Objetivo narrativo | Mostrar que existe uma etapa que os outros pulam — e que é ela que evita o retrabalho |
-| Duração | 45 segundos |
-| Proporção | 16:9, 1920×1080 |
-| Cena inicial | Cabeçote sujo chegando na bancada |
-| Cena final | Peça limpa e liberada, com o laudo ao lado |
-| Movimento de câmera | Estático com leve aproximação nos closes. Nada de câmera girando |
-| Ritmo | Seis planos de ~8 s. Corte seco entre eles |
-| Iluminação | Luz de oficina real, com um ponto dirigido no momento da trinca aparecer |
-| Direção de arte | Sem trilha épica, sem transição gráfica. O silêncio da bancada vende mais |
-| Som | Som ambiente da oficina. **Precisa funcionar mudo** — 85% assiste sem som |
-| Loop | Não. Tem começo e fim |
-| Texto no vídeo | Legenda queimada, sans-serif bold, branco sobre faixa escura. Sem texto gerado por IA |
-| Poster | Frame do plano 4 (a trinca revelada) — é o quadro que faz clicar |
+Não afirmar no vídeo que todo sintoma é trinca, que o teste elimina qualquer
+retrabalho ou que uma peça está liberada sem a conferência real.
 
-### Roteiro, plano a plano
+Para publicar pelo componente atual, envie o vídeo ao YouTube, preencha
+`videos.tecnologiaTesteTrinca.youtubeId` em `src/lib/videos.ts` e configure o
+poster. O player permanece descarregado até o clique.
 
-| Plano | Tempo | Imagem | Legenda na tela |
-| --- | --- | --- | --- |
-| 1 | 0–8 s | Cabeçote sujo chegando | **"Essa trinca você não vê a olho nu"** |
-| 2 | 8–16 s | Banho químico, peça saindo limpa | "Primeiro a peça é limpa. Sem isso nenhuma medida é confiável" |
-| 3 | 16–24 s | Equipamento de teste em operação | "Depois vai para o teste de trinca" |
-| 4 | 24–32 s | **Close na trinca revelada** | **"Aqui está. Invisível a olho nu"** |
-| 5 | 32–40 s | Reparo ou peça separada | "Com trinca, a gente conserta ou avisa antes — nunca monta por cima" |
-| 6 | 40–45 s | Peça pronta + logo | **"É por isso que o problema não volta"** |
+## Vídeos das páginas individuais
 
-**Todos os seis planos são filmagem real.** É o vídeo com maior valor de prova da
-página; imagem gerada aqui destruiria o efeito. O plano 4 é o decisivo.
+Todos os slots e nomes finais estão em `src/lib/videos.ts`. Padrão recomendado:
 
-**Se precisar de um plano de contexto gerado** (por exemplo, um carro parado na rua
-para abrir a peça), use este prompt no Veo — e só para contexto, nunca para a oficina:
+- enquadramento 16:9 e 1920 × 1080;
+- 30–60 segundos;
+- H.264, entre 8 e 10 MB;
+- poster WebP 1600 × 900;
+- cortes estáveis, sem giro de câmera;
+- legenda gravada e som ambiente controlado;
+- mostrar a medição antes da correção;
+- terminar com o que ainda precisa ser confirmado, não com promessa absoluta.
 
-```
-8s, 16:9, 1080p. Cinematic documentary shot of a Brazilian countryside street,
-a car stopped with the hood open, white steam rising slowly from the engine bay,
-late afternoon light. Static camera, shallow depth of field, realistic colors.
-No text, no logos, no readable signage, no people looking at camera.
+Há slots para retífica, plaina, limpeza química, teste de trinca, montagem,
+sedes e válvulas, guias e roscas. Esmerilhamento e solda aparecem dentro das
+páginas relacionadas, conforme o catálogo canônico.
+
+## Prompt Veo — ilustração técnica do quiz
+
+Uso permitido: loop curto dentro da estimativa guiada, identificado visualmente
+como ilustração técnica. Ele nunca substitui a foto ou o vídeo real da oficina.
+
+```text
+Create a 6-second seamless technical visualization, 1080x1080, of an aluminum automotive cylinder head floating over a deep navy engineering background. Show thin amber measurement lines and restrained highlights moving progressively across the sealing face, valve seats, valve guides and coolant passages. Precise industrial visualization, realistic metal surface, orthographic-inspired camera, slow controlled motion, no dramatic rotation, no people, no workshop, no company logo, no text, no diagnosis claim. The animation must remain understandable without sound and loop without a visible cut. High contrast but restrained palette: navy, aluminum gray and amber only.
 ```
 
-Negative prompt: `text, watermark, logo, distorted hands, extra fingers, cartoon,
-CGI look, oversaturated, studio white background, stock photo aesthetic`
+Negative prompt:
 
----
+```text
+fake workshop, mechanic, hands, logo, text, watermark, fire, smoke, sparks, excessive glow, sci-fi interface, oversaturated colors, rapid camera movement, parallax, shaky camera, deformed engine parts
+```
 
-## Pendências de conteúdo que não são mídia
+Entrega do Veo:
 
-| Pendência | Onde aparece na página |
-| --- | --- |
-| **Nome e marca do equipamento de teste de trinca** | Bloco marcado `[CONTEÚDO REAL NECESSÁRIO]` na seção de trinca |
-| **Garantia com prazo e quilometragem** | Ainda não publicada. 4 dos 6 concorrentes publicam |
-| **Faixa de preço** | `faixaPreco` em `PrecoPrazoGarantia.tsx` |
+- `public/media/quiz/cabecote-medicao-ilustracao.mp4`;
+- 1080 × 1080, 6 segundos, loop sem corte, H.264, alvo de até 3 MB;
+- frame estático WebP em
+  `public/media/quiz/cabecote-medicao-ilustracao-poster.webp`;
+- com `prefers-reduced-motion`, usar somente o poster.
+
+## Checklist antes de substituir um slot
+
+- A peça, máquina e profissional são reais quando apresentados como prova?
+- A afirmação da legenda é sustentada pelo que aparece?
+- O vídeo funciona sem som e não inicia automaticamente?
+- O poster tem dimensões fixas e está comprimido?
+- Não há placa, documento, cliente ou dado pessoal visível?
+- A mídia foi verificada em 360 × 800, 390 × 844 e desktop?
+- LCP, CLS e INP continuam dentro das metas após a substituição?

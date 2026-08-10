@@ -1,80 +1,112 @@
-# Rastreamento Google Ads
+# Mensuração, consentimento e Google Ads
 
-## Consentimento e cobertura
+Atualizado em 10/08/2026.
 
-O script base do Google Analytics 4 é carregado desde a entrada no site, mas o
-Google Consent Mode v2 inicia `analytics_storage`, `ad_storage`, `ad_user_data`
-e `ad_personalization` como `denied`. Se não houver interação com o banner em
-cinco segundos, o site registra aceitação automática e atualiza análise e
-publicidade para `granted`.
+## Regra de carregamento
 
-Antes da escolha do visitante, Google Ads, GTM, Clarity e a atribuição local
-opcional não são carregados nem armazenados.
+No primeiro acesso, análise e publicidade começam desligadas. O HTML inicial
+declara o Consent Mode como `denied`, mas **não faz requisição de mensuração
+para Google Analytics, Google Ads ou Microsoft Clarity**.
+Os scripts externos só são
+adicionados depois de uma escolha explícita compatível:
 
-O visitante pode aceitar ou recusar separadamente:
+- análise: GA4 e Clarity;
+- publicidade: Google Ads e medição de chamadas;
+- rejeição: nenhum desses provedores é carregado.
 
-- **Análise avançada da experiência:** Microsoft Clarity, pageviews e métricas
-  detalhadas de navegação e formulário no Retiflow, além de cidade e região
-  aproximadas disponibilizadas pelo Google Analytics.
-- **Anúncios e conversões:** Google Ads, origem/campanha, identificadores de
-  clique e conversões de WhatsApp, telefone e formulário.
+Não existe aceite por tempo, rolagem ou continuação da navegação. Uma decisão
+salva continua válida por até 180 dias e pode ser revista pelo link
+`Privacidade e cookies` no rodapé.
 
-Ao abrir `Configurar` no primeiro acesso, as opções facultativas começam
-marcadas e o visitante pode desligar o que não deseja antes de salvar. O botão
-`Privacidade`, no canto inferior esquerdo, permite alterar ou revogar a escolha.
-A personalização de anúncios permanece desativada mesmo quando a medição de
-anúncios é aceita.
+O armazenamento essencial guarda somente a preferência e recursos solicitados
+pelo visitante, como a retomada da estimativa. Ele não cria uma sessão de
+marketing antes da autorização. Até existir uma base legal documentada para
+outro desenho, a cobertura de jornada do Retiflow deve ser publicada como
+**sessões consentidas**, nunca como todo o tráfego.
 
-Após a autorização correspondente, o site carrega uma única Google tag e
-configura dois destinos:
+## Categorias e destinos
 
-- GA4 `G-HD00424MR7`.
-- Google Ads `AW-18268630627`.
+### Análise avançada
 
-O GA4 recebe os eventos de comportamento e diagnóstico do funil. O Google Ads
-recebe somente as ações que representam intenção real de contato:
+Com análise autorizada:
 
-| Evento do site | Conversão no Google Ads | Contagem |
+- GA4 `G-HD00424MR7` recebe eventos de página e funil;
+- Clarity recebe gravações e mapas compatíveis com a escolha;
+- o Retiflow recebe a jornada pseudonimizada da sessão.
+
+Cidade e região do GA4 são estimativas aproximadas e agregadas do provedor.
+Não correspondem a GPS e não servem para localizar uma pessoa. Uma cidade
+informada explicitamente pelo visitante pode usar `visitor_city`; esse campo é
+reservado ao Retiflow e é descartado do payload enviado ao Google.
+
+### Anúncios e conversões
+
+Com publicidade autorizada:
+
+- origem, campanha e identificadores de clique podem ser preservados;
+- Google Ads recebe apenas as conversões configuradas abaixo;
+- se análise estiver desligada, eventos de navegação não são enviados ao GA4
+  nem ao Retiflow; somente intenções de contato necessárias à atribuição são
+  espelhadas.
+
+A personalização de anúncios permanece desativada.
+
+| Evento canônico | Ação do Google Ads | Interpretação |
 | --- | --- | --- |
-| `generate_lead` após formulário entregue | Lead - Envio de formulario | Uma por clique |
-| `whatsapp_click` | Lead - Clique no WhatsApp | Uma por clique |
-| `phone_click` | Lead - Clique no telefone | Uma por clique |
-| Ligação ao número dinâmico após anúncio | Lead - Ligação atendida pelo site (30s) | Uma por clique; conversão após 30s |
+| `generate_lead` | Lead - Envio de formulário | Formulário recebido pelo backend |
+| `whatsapp_click` | Lead - Clique no WhatsApp | Intenção; não confirma mensagem enviada |
+| `phone_click` | Lead - Clique no telefone | Intenção; não confirma ligação atendida |
+| Ligação dinâmica | Lead - Ligação atendida pelo site (30s) | Depende do relatório de chamadas do Google |
 
-`phone_click` mede somente o toque no link. A ação de ligação real usa um número
-de encaminhamento do Google para visitantes que chegaram por anúncio e deram
-consentimento de publicidade. Chamadas curtas ainda podem aparecer no relatório
-de chamadas, mas só viram conversão depois de 30 segundos. A ação começa como
-secundária para não alterar a otimização das campanhas antes da validação real.
+`transaction_id` aceita somente o código anônimo `RP-*`. A sessão de medição é
+rotacionada após 30 minutos sem eventos, sem transformar o código em um dado
+pessoal. Nome, telefone, texto livre, veículo completo e
+mensagem de WhatsApp não entram em parâmetros do GA4, Ads ou Clarity. O
+sanitizador central remove query e fragmento de `link_url` e `page_location`,
+além de descartar sinais de e-mail ou telefone em parâmetros de campanha.
 
-O número comercial permanece como fallback. Quando o Google fornece o número
-dinâmico, o site troca tanto o texto visível quanto o destino dos links `tel:`;
-ao revogar o consentimento, restaura o número original.
+## Contrato de eventos
 
-Pageviews, scroll, início do formulário, erros de validação, abandono e cliques
-de navegação continuam disponíveis no GA4 sem inflar as conversões de lead.
+Os nomes são genéricos e estáveis; seção, posição e variante ficam nos
+parâmetros. O contrato atual é `site-events-v2`.
 
-## Deduplicação
+- navegação: `page_view`, `cta_click`, `service_detail_click`, `scroll_depth`;
+- contato: `whatsapp_click`, `phone_click`, `directions_click`,
+  `instagram_click`;
+- formulário: `form_view`, `form_start`, `form_field_complete`,
+  `form_submit_attempt`, `form_validation_error`, `form_abandon`,
+  `form_submit_error`, `generate_lead`;
+- estimativa: eventos `quiz_*`, além de `engagement_5s` e `engagement_10s`.
 
-Cada intenção de contato recebe um código anônimo no navegador, com validade de
-30 minutos. Esse código é enviado como `transaction_id` para o Google Ads. Assim,
-cliques repetidos na mesma ação durante a mesma intenção não viram várias
-conversões.
+Parâmetros principais: `component_id`, `position`, `page_type`, `page_path`,
+`service_id`, `flow_type`, `step_id`, `estimate_state`, `experiment_id` e
+`variant_id`. Cliques também usam `destination_type` e `destination_path`;
+o caminho é relativo e não contém query. WhatsApp, telefone e direções são
+normalizados para `/whatsapp`, `/phone` e `/directions`, sem número ou mensagem.
 
-O código não contém nome, e-mail, telefone ou outro dado pessoal.
+O endpoint `/api/marketing/event` repete a validação no servidor: aceita apenas
+tipos e metadados conhecidos, reduz referrer à origem e remove query/hash da
+localização da página. O formulário persiste o evento canônico `form_submit` no
+backend; `generate_lead` só é enviado ao Google depois dessa gravação ser
+confirmada, evitando contar uma conversão ausente do painel comercial.
 
-## Atribuição
+## Ambientes
 
-Com pelo menos uma categoria opcional autorizada, o site preserva por até 90
-dias `utm_source`, `utm_medium`, `utm_campaign`, `utm_term` e `utm_content`.
-`gclid`, `gbraid` e `wbraid` só são mantidos com autorização de anúncios. O
-auto-tagging da conta do Google Ads deve permanecer ativado para que o `gclid`
-seja anexado aos acessos vindos dos anúncios.
+Por padrão, scripts e eventos externos só são enviados nos hosts
+`premiumretifica.com.br` e `www.premiumretifica.com.br`. Localhost e previews
+não contaminam GA4, Ads, Clarity ou Retiflow.
+
+Para um smoke test deliberado fora de produção, defina temporariamente:
+
+```dotenv
+NEXT_PUBLIC_TRACKING_DEBUG=true
+```
+
+O payload continuará marcado com `siteHostname` e `environment`, para ser
+excluído dos relatórios. Nunca mantenha esse override em um ambiente de uso
+cotidiano.
 
 ## Variáveis públicas
-
-Os IDs abaixo são públicos porque também aparecem no JavaScript entregue ao
-navegador:
 
 ```dotenv
 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-HD00424MR7
@@ -85,31 +117,27 @@ NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO=AW-18268630627/qlmYCMS9ldYcEOPclIdE
 NEXT_PUBLIC_GOOGLE_ADS_WEBSITE_CALL_SEND_TO=AW-18268630627/CwNLCK_qqdwcEOPclIdE
 ```
 
-Tokens OAuth, developer token e demais credenciais da API do Google Ads não
-pertencem ao site e nunca devem ser versionados.
+IDs acima são públicos. OAuth, developer token, chaves privadas e
+`service_role` nunca pertencem ao frontend.
 
-## Validação em produção
+## Validação antes da publicação
 
-1. Em uma janela limpa, confirmar que o GA4 carrega e que Ads, GTM e Clarity
-   permanecem bloqueados antes da escolha.
-2. Recusar opcionais e confirmar que o GA4 continua medindo, sem scripts nem
-   conversões de Ads e sem Clarity.
-3. Aceitar apenas análise avançada e confirmar GA4/Clarity, sem conversões de
-   Ads.
-4. Aceitar anúncios e confirmar os destinos `G-HD00424MR7` e
-   `AW-18268630627` no Tag Assistant.
-5. Abrir páginas diferentes sem recarregar e verificar `page_view`.
-6. Testar WhatsApp, clique no telefone e um envio bem-sucedido do formulário.
-7. Após um clique real no anúncio, confirmar que o telefone visível e o link
-   `tel:` recebem o mesmo número de encaminhamento do Google.
-8. Fazer uma chamada de teste e conferir no relatório de chamadas o status e a
-   duração; chamadas de pelo menos 30 segundos devem aparecer como conversão.
-9. Revogar as categorias opcionais e confirmar a atualização para `denied` e a
-   remoção dos dados locais correspondentes.
-10. Conferir os eventos no DebugView do GA4 e o diagnóstico das conversões no
-   Google Ads. A interface do Ads pode levar algumas horas para refletir os
-   primeiros eventos.
+1. Abrir uma janela limpa e confirmar no painel de rede: zero requests para
+   `googletagmanager.com`, `google-analytics.com`, `googleadservices.com` e
+   `clarity.ms` antes da escolha.
+2. Rejeitar opcionais e navegar: os mesmos provedores devem continuar ausentes.
+3. Aceitar apenas análise: GA4/Clarity carregam; Ads e chamada dinâmica não.
+4. Aceitar apenas anúncios: Ads carrega; GA4/Clarity e pageviews de jornada não.
+5. Aceitar ambos e conferir `page_view`, WhatsApp, telefone e formulário no
+   Tag Assistant/DebugView.
+6. Confirmar que o clique do WhatsApp usa `destination_path=/whatsapp` e não
+   envia `link_url`, número ou `?text=`.
+7. Confirmar no Retiflow `siteHostname`, `environment`, `componentId`, página e
+   versão do contrato.
+8. Revogar as categorias e confirmar consentimento `denied` e remoção de
+   `_ga*`, `_cl*`, `_gcl*` e `_gac*` acessíveis no domínio.
+9. Só depois do smoke test considerar qualquer mudança de conversão primária
+   ou estratégia de lance no Google Ads.
 
-Conversões otimizadas para leads não estão ativadas nesta integração. Elas
-exigem aceite dos termos de dados do cliente e um fluxo seguro de dados
-primários/offline; não se deve enviar e-mail ou telefone sem essa preparação.
+Conversões otimizadas para leads continuam desativadas. Elas exigem termos,
+base legal e fluxo seguro de dados primários/offline próprios.

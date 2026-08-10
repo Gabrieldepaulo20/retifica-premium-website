@@ -25,6 +25,8 @@ npm run start
 - `/problemas/[slug]`
 - `/b2b`
 - `/contato`
+- `/quanto-custa`
+- `/privacidade`
 - `/sitemap.xml`
 - `/robots.txt`
 - `/favicon.ico`
@@ -53,13 +55,14 @@ npm run start
 - Open Graph e Twitter configurados
 
 ## Analytics
-- Google tag global via `next/script`, carregada em todas as paginas
-- GA4 para pageviews, navegacao interna, scroll, CTAs e funil do formulario
+- Consentimento explícito; nenhum script ou request de GA4, Ads ou Clarity antes da escolha
+- GA4 para pageviews, navegacao interna, scroll, CTAs e funil do formulario quando análise é autorizada
 - Google Ads com conversoes de formulario enviado, clique no WhatsApp, clique no telefone e ligacao real pelo site
 - `transaction_id` anonimo por intencao de contato para evitar conversoes duplicadas
 - Captura de UTM, GCLID, GBRAID e WBRAID para atribuicao
-- Microsoft Clarity global via `next/script`
-- Tracking interno dos eventos de marketing em `/api/marketing/event`
+- Microsoft Clarity somente com consentimento de análise
+- Tracking pseudonimizado no Retiflow por `/api/marketing/event`, com contrato canônico e sem PII nos provedores Google/Clarity
+- Localhost e previews bloqueados por padrão para não contaminar produção
 
 Os IDs publicos do Google tag ficam nas variaveis
 `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `NEXT_PUBLIC_GOOGLE_ADS_ID`,

@@ -4,10 +4,15 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   CONSENT_CHANGED_EVENT,
-  hasMeasurementConsent,
+  CONSENT_RUNTIME_READY_EVENT,
+  hasAnalyticsConsent,
+  isConsentRuntimeReady,
 } from "@/lib/consent";
 import {
   captureTrafficAttribution,
+  flushExternalMarketingEventOutbox,
+  getOrCreateContactIntent,
+  MEASUREMENT_SESSION_ROTATED_EVENT,
   sendExternalMarketingEvent,
   trackFunnelEvent,
   trackMarketingEvent,
@@ -20,21 +25,62 @@ const ENGAGEMENT_PULSE_MS = 30_000;
 export function AnalyticsRuntime() {
   const pathname = usePathname();
   const previousPathnameRef = useRef<string | null>(null);
+  const lastMeasuredPathnameRef = useRef<string | null>(null);
   const accumulatedActiveMsRef = useRef(0);
+  const sessionRevisionRef = useRef(0);
+  const [consentReady, setConsentReady] = useState(false);
   const [consentRevision, setConsentRevision] = useState(0);
+  const [sessionRevision, setSessionRevision] = useState(0);
 
   useEffect(() => {
     const handleConsentChanged = () => {
       setConsentRevision((current) => current + 1);
     };
+    const handleRuntimeReady = () => {
+      setConsentReady(true);
+      setConsentRevision((current) => current + 1);
+    };
+    const handleSessionRotated = () => {
+      const nextRevision = sessionRevisionRef.current + 1;
+      sessionRevisionRef.current = nextRevision;
+      accumulatedActiveMsRef.current = 0;
+      previousPathnameRef.current = null;
+      lastMeasuredPathnameRef.current = null;
+      setSessionRevision(nextRevision);
+    };
 
     window.addEventListener(CONSENT_CHANGED_EVENT, handleConsentChanged);
-    return () =>
+    window.addEventListener(CONSENT_RUNTIME_READY_EVENT, handleRuntimeReady);
+    window.addEventListener(
+      MEASUREMENT_SESSION_ROTATED_EVENT,
+      handleSessionRotated
+    );
+    if (isConsentRuntimeReady()) handleRuntimeReady();
+
+    return () => {
       window.removeEventListener(CONSENT_CHANGED_EVENT, handleConsentChanged);
+      window.removeEventListener(CONSENT_RUNTIME_READY_EVENT, handleRuntimeReady);
+      window.removeEventListener(
+        MEASUREMENT_SESSION_ROTATED_EVENT,
+        handleSessionRotated
+      );
+    };
   }, []);
 
   useEffect(() => {
-    if (!hasMeasurementConsent()) return;
+    if (!consentReady) return;
+
+    const flushOutbox = () => {
+      void flushExternalMarketingEventOutbox();
+    };
+    window.addEventListener("online", flushOutbox);
+    flushOutbox();
+
+    return () => window.removeEventListener("online", flushOutbox);
+  }, [consentReady, consentRevision, sessionRevision]);
+
+  useEffect(() => {
+    if (!consentReady || !hasAnalyticsConsent()) return;
 
     let visibleStartedAt = document.visibilityState === "visible" ? performance.now() : null;
     let activeMs = 0;
@@ -77,31 +123,35 @@ export function AnalyticsRuntime() {
       window.clearInterval(interval);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [consentRevision, pathname]);
+  }, [consentReady, consentRevision, pathname, sessionRevision]);
 
   useEffect(() => {
+    if (!consentReady || !hasAnalyticsConsent()) {
+      accumulatedActiveMsRef.current = 0;
+      return;
+    }
+
+    const effectSessionRevision = sessionRevision;
     let activeStartedAt =
       document.visibilityState === "visible" ? Date.now() : null;
     let lastReportedSeconds = -1;
 
-    if (hasMeasurementConsent()) {
-      try {
-        const stored = Number(
-          window.sessionStorage.getItem(ACTIVE_TIME_STORAGE_KEY)
+    try {
+      const stored = Number(
+        window.sessionStorage.getItem(ACTIVE_TIME_STORAGE_KEY)
+      );
+      if (Number.isFinite(stored) && stored >= 0) {
+        accumulatedActiveMsRef.current = Math.max(
+          accumulatedActiveMsRef.current,
+          stored
         );
-        if (Number.isFinite(stored) && stored >= 0) {
-          accumulatedActiveMsRef.current = Math.max(
-            accumulatedActiveMsRef.current,
-            stored
-          );
-        }
-      } catch {
-        // A medição continua somente em memória quando o storage está indisponível.
       }
+    } catch {
+      // A medição continua somente em memória quando o storage está indisponível.
     }
 
     const persistActiveTime = () => {
-      if (!hasMeasurementConsent()) return;
+      if (!hasAnalyticsConsent()) return;
       try {
         window.sessionStorage.setItem(
           ACTIVE_TIME_STORAGE_KEY,
@@ -138,6 +188,9 @@ export function AnalyticsRuntime() {
         activeStartedAt = null;
         return;
       }
+      // Verifica a janela de 30 min antes de voltar a acumular tempo. Se a
+      // sessão expirou, o evento de rotação zera os refs antes do novo pulso.
+      getOrCreateContactIntent();
       activeStartedAt = Date.now();
     };
 
@@ -149,31 +202,35 @@ export function AnalyticsRuntime() {
       window.clearInterval(intervalId);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("pagehide", reportActiveTime);
-      reportActiveTime();
+      if (effectSessionRevision === sessionRevisionRef.current) {
+        reportActiveTime();
+      }
     };
-  }, [consentRevision]);
+  }, [consentReady, consentRevision, sessionRevision]);
 
   useEffect(() => {
+    if (!consentReady) return;
+
     const previousPathname = previousPathnameRef.current;
     previousPathnameRef.current = pathname;
-    const pathnameChanged =
-      previousPathname === null || previousPathname !== pathname;
 
     captureTrafficAttribution();
 
-    if (pathnameChanged) {
-      sendExternalMarketingEvent("page_view", {
-        event_category: "navigation",
-        event_label: previousPathname === null ? "page_view" : "spa_navigation",
-      });
-    }
-
-    if (previousPathname !== null && previousPathname !== pathname) {
+    if (
+      hasAnalyticsConsent() &&
+      lastMeasuredPathnameRef.current !== pathname
+    ) {
       trackMarketingEvent("page_view", {
         event_category: "navigation",
-        event_label: "spa_navigation",
+        event_label:
+          lastMeasuredPathnameRef.current === null || previousPathname === null
+            ? "page_view"
+            : "spa_navigation",
       });
+      lastMeasuredPathnameRef.current = pathname;
     }
+
+    if (!hasAnalyticsConsent()) return;
     const fired = new Set<number>();
 
     function handleScroll() {
@@ -189,11 +246,6 @@ export function AnalyticsRuntime() {
       for (const threshold of SCROLL_THRESHOLDS) {
         if (percentScrolled >= threshold && !fired.has(threshold)) {
           fired.add(threshold);
-          sendExternalMarketingEvent("custom", {
-            event_category: "engagement",
-            event_label: `scroll_${threshold}`,
-            percent_scrolled: threshold,
-          });
           trackMarketingEvent("scroll_depth", {
             event_category: "engagement",
             event_label: `scroll_${threshold}`,
@@ -207,7 +259,7 @@ export function AnalyticsRuntime() {
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [consentRevision, pathname]);
+  }, [consentReady, consentRevision, pathname, sessionRevision]);
 
   return null;
 }

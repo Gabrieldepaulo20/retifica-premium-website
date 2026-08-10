@@ -12,10 +12,12 @@ type ConsentWindow = Window & {
   dataLayer?: unknown[];
   gtag?: (...args: unknown[]) => void;
   clarity?: ((...args: unknown[]) => void) & { q?: unknown[][] };
+  __retificaConsentRuntimeReady?: boolean;
 };
 
 export const CONSENT_STORAGE_KEY = "retifica_premium_consent";
 export const CONSENT_CHANGED_EVENT = "retifica:consent-changed";
+export const CONSENT_RUNTIME_READY_EVENT = "retifica:consent-runtime-ready";
 export const CONSENT_BANNER_VISIBILITY_EVENT = "retifica:consent-banner-visibility";
 export const CONSENT_POLICY_VERSION = "2026-08-10";
 
@@ -24,16 +26,27 @@ const TRACKING_STORAGE_KEYS = [
   "retifica_premium_attribution",
   "retifica_premium_anonymous_id",
   "retifica_premium_session_id",
+  "retifica_premium_session_activity",
   "retifica_premium_session_attribution",
   "retifica_premium_contact_intent",
   "retifica_premium_reported_events",
   "retifica_premium_active_time_ms",
+  "retifica_premium_event_outbox",
 ] as const;
+const ANALYTICS_COOKIE_PREFIXES = ["_ga", "_gid", "_gat"] as const;
 const EXPERIENCE_COOKIE_PREFIXES = ["_clck", "_clsk"] as const;
-const ADVERTISING_COOKIE_PREFIXES = ["_gcl"] as const;
+const ADVERTISING_COOKIE_PREFIXES = ["_gcl", "_gac"] as const;
 const TRACKING_COOKIE_PREFIXES = [
+  ...ANALYTICS_COOKIE_PREFIXES,
   ...EXPERIENCE_COOKIE_PREFIXES,
   ...ADVERTISING_COOKIE_PREFIXES,
+] as const;
+const ATTRIBUTION_QUERY_PARAMS = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
 ] as const;
 const AD_QUERY_PARAMS = [
   "gclid",
@@ -43,6 +56,27 @@ const AD_QUERY_PARAMS = [
   "gad_source",
   "gad_campaignid",
 ] as const;
+const ADVERTISING_MEASUREMENT_EVENT_TYPES = new Set([
+  "whatsapp_click",
+  "phone_click",
+]);
+const EXPERIENCE_QUERY_PARAMS = [
+  "experiment_id",
+  "variant_id",
+  "service",
+  "flow",
+  "nivel_b2b",
+] as const;
+const PRODUCTION_HOSTNAMES = new Set([
+  "premiumretifica.com.br",
+  "www.premiumretifica.com.br",
+]);
+
+export type TrackingEnvironment =
+  | "production"
+  | "preview"
+  | "development"
+  | "unknown";
 
 function storageAvailable(kind: "localStorage" | "sessionStorage") {
   try {
@@ -127,6 +161,35 @@ export function hasMeasurementConsent() {
   return Boolean(preferences?.analytics || preferences?.advertising);
 }
 
+export function currentTrackingHostname() {
+  return typeof window === "undefined"
+    ? "unknown"
+    : window.location.hostname.toLowerCase();
+}
+
+export function currentTrackingEnvironment(): TrackingEnvironment {
+  if (typeof window === "undefined") return "unknown";
+
+  const hostname = currentTrackingHostname();
+  if (PRODUCTION_HOSTNAMES.has(hostname)) return "production";
+  if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1") {
+    return "development";
+  }
+  return "preview";
+}
+
+/**
+ * Evita contaminar GA4, Ads, Clarity e Retiflow com localhost ou previews.
+ * O override existe somente para um smoke test deliberado e mantém o ambiente
+ * identificado no payload para permitir sua exclusão dos relatórios.
+ */
+export function canSendTrackingRequests() {
+  return (
+    currentTrackingEnvironment() === "production" ||
+    process.env.NEXT_PUBLIC_TRACKING_DEBUG === "true"
+  );
+}
+
 export function updateGoogleConsent(preferences: ConsentPreferences | null) {
   if (typeof window === "undefined") return;
 
@@ -172,9 +235,29 @@ export function dispatchConsentChanged(preferences: ConsentPreferences) {
   );
 }
 
+export function isConsentRuntimeReady() {
+  return (
+    typeof window !== "undefined" &&
+    (window as ConsentWindow).__retificaConsentRuntimeReady === true
+  );
+}
+
+export function dispatchConsentRuntimeReady() {
+  if (typeof window === "undefined") return;
+  (window as ConsentWindow).__retificaConsentRuntimeReady = true;
+  window.dispatchEvent(new Event(CONSENT_RUNTIME_READY_EVENT));
+}
+
 function clearCookiesWithPrefixes(prefixes: readonly string[]) {
   const domain = window.location.hostname;
-  const domainVariants = ["", domain, `.${domain}`];
+  const domainVariants = new Set(["", domain, `.${domain}`]);
+  if (
+    domain === "premiumretifica.com.br" ||
+    domain.endsWith(".premiumretifica.com.br")
+  ) {
+    domainVariants.add("premiumretifica.com.br");
+    domainVariants.add(".premiumretifica.com.br");
+  }
 
   for (const cookie of document.cookie.split(";")) {
     const name = cookie.split("=")[0]?.trim();
@@ -220,6 +303,69 @@ function clearAdvertisingAttribution() {
   }
 }
 
+function sanitizeTrackingOutbox(preferences: ConsentPreferences) {
+  if (!storageAvailable("localStorage")) return;
+
+  const outboxKey = "retifica_premium_event_outbox";
+  try {
+    const raw = window.localStorage.getItem(outboxKey);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      window.localStorage.removeItem(outboxKey);
+      return;
+    }
+
+    const allowed = parsed.flatMap((item) => {
+      if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+      const entry = item as Record<string, unknown>;
+      const payload = entry.payload;
+      if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+        return [];
+      }
+
+      const cleanedPayload = { ...(payload as Record<string, unknown>) };
+      if (
+        !preferences.analytics &&
+        !ADVERTISING_MEASUREMENT_EVENT_TYPES.has(
+          typeof cleanedPayload.eventType === "string"
+            ? cleanedPayload.eventType
+            : ""
+        )
+      ) {
+        return [];
+      }
+
+      if (!preferences.analytics) {
+        delete cleanedPayload.city;
+        delete cleanedPayload.visitorCity;
+        const metadata = cleanedPayload.metadata;
+        if (metadata && typeof metadata === "object" && !Array.isArray(metadata)) {
+          const cleanedMetadata = { ...(metadata as Record<string, unknown>) };
+          delete cleanedMetadata.visitorCity;
+          cleanedPayload.metadata = cleanedMetadata;
+        }
+      }
+
+      if (!preferences.advertising) {
+        delete cleanedPayload.gclid;
+        delete cleanedPayload.gbraid;
+        delete cleanedPayload.wbraid;
+      }
+
+      return [{ ...entry, payload: cleanedPayload }];
+    });
+
+    if (allowed.length === 0) {
+      window.localStorage.removeItem(outboxKey);
+      return;
+    }
+    window.localStorage.setItem(outboxKey, JSON.stringify(allowed));
+  } catch {
+    window.localStorage.removeItem(outboxKey);
+  }
+}
+
 export function clearDisallowedTrackingStorage(
   preferences: ConsentPreferences
 ) {
@@ -231,6 +377,7 @@ export function clearDisallowedTrackingStorage(
   }
 
   if (!preferences.analytics) {
+    clearCookiesWithPrefixes(ANALYTICS_COOKIE_PREFIXES);
     clearCookiesWithPrefixes(EXPERIENCE_COOKIE_PREFIXES);
   }
 
@@ -238,6 +385,8 @@ export function clearDisallowedTrackingStorage(
     clearCookiesWithPrefixes(ADVERTISING_COOKIE_PREFIXES);
     clearAdvertisingAttribution();
   }
+
+  sanitizeTrackingOutbox(preferences);
 }
 
 export function clearTrackingStorage() {
@@ -260,14 +409,21 @@ export function clearTrackingStorage() {
 
 export function privacySafePageLocation() {
   if (typeof window === "undefined") return "";
-  if (!hasMeasurementConsent()) {
-    return `${window.location.origin}${window.location.pathname}`;
-  }
-  if (hasAdvertisingConsent()) return window.location.href;
 
-  const url = new URL(window.location.href);
-  for (const parameter of AD_QUERY_PARAMS) {
-    url.searchParams.delete(parameter);
+  const source = new URL(window.location.href);
+  const safe = new URL(source.pathname, source.origin);
+  const allowedParameters: string[] = hasMeasurementConsent()
+    ? [...EXPERIENCE_QUERY_PARAMS, ...ATTRIBUTION_QUERY_PARAMS]
+    : [];
+
+  if (hasAdvertisingConsent()) {
+    allowedParameters.push(...AD_QUERY_PARAMS);
   }
-  return url.toString();
+
+  for (const parameter of allowedParameters) {
+    const value = source.searchParams.get(parameter)?.trim();
+    if (value) safe.searchParams.set(parameter, value.slice(0, 220));
+  }
+
+  return safe.toString();
 }

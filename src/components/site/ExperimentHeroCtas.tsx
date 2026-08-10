@@ -4,23 +4,25 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { TrackedPhoneLink, TrackedWhatsAppLink } from "@/components/site/TrackedLinks";
+import {
+  SERVICES_HERO_EXPERIMENT_ID,
+  normalizeServicesHeroExperimentId,
+  normalizeServicesHeroVariant,
+} from "@/lib/marketing-experiment";
 import { siteConfig } from "@/lib/site";
 import { trackFunnelEvent } from "@/lib/trackingEvents";
 
-const EXPERIMENT_ID = "services-hero-v1";
-
-function normalizeVariant(value: string | null) {
-  return ["guided", "guided_v1", "estimate", "treatment"].includes(value ?? "")
-    ? "guided_v1"
-    : "whatsapp_direct";
-}
-
 export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: string }) {
   const searchParams = useSearchParams();
-  const variantId = normalizeVariant(
-    searchParams.get("variant_id") ?? searchParams.get("variant")
+  const variantId = normalizeServicesHeroVariant(
+    searchParams.get("variant_id") ?? searchParams.get("variant"),
+    "organic"
   );
-  const experimentId = searchParams.get("experiment_id") ?? searchParams.get("exp") ?? EXPERIMENT_ID;
+  const experimentId = normalizeServicesHeroExperimentId(
+    searchParams.get("experiment_id") ??
+      searchParams.get("exp") ??
+      SERVICES_HERO_EXPERIMENT_ID
+  );
   const common = useMemo(
     () => ({
       experiment_id: experimentId,
@@ -52,6 +54,8 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
             trackFunnelEvent("cta_click", {
               ...common,
               component_id: "hero_guided_estimate",
+              destination_type: "estimate",
+              destination_path: "/quanto-custa",
             })
           }
           className="inline-flex min-h-14 items-center justify-center rounded-full bg-rp-gold px-7 text-center font-heading text-base font-bold text-[#1A1200] transition hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -65,6 +69,8 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
             trackFunnelEvent("cta_click", {
               ...common,
               component_id: "hero_whatsapp_secondary",
+              destination_type: "whatsapp",
+              destination_path: "/whatsapp",
             })
           }
           className="inline-flex min-h-14 items-center justify-center rounded-full border border-[#25D366]/70 px-7 font-heading text-base font-bold text-[#60e795] transition hover:bg-[#25D366] hover:text-[#04240F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -84,6 +90,8 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
           trackFunnelEvent("cta_click", {
             ...common,
             component_id: "hero_whatsapp",
+            destination_type: "whatsapp",
+            destination_path: "/whatsapp",
           })
         }
         className="inline-flex min-h-14 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -96,6 +104,8 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
           trackFunnelEvent("cta_click", {
             ...common,
             component_id: "hero_phone",
+            destination_type: "phone",
+            destination_path: "/phone",
           })
         }
         className="inline-flex min-h-14 items-center justify-center rounded-full border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"

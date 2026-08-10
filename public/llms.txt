@@ -34,15 +34,23 @@ A oficina atende motoristas, oficinas mecânicas, frotas e empresas. Trabalha co
 
 - Experiência desde 2004
 - Diagnóstico antes da indicação de troca de peças
-- Laudo técnico
-- Garantia por escrito conforme o serviço executado
+- Medição da peça antes da definição do serviço
+- Garantia de 6 meses sobre o serviço executado
 - Atendimento regional para clientes finais, oficinas e frotas
 
 ## Páginas principais
 
 - Início: https://www.premiumretifica.com.br/
 - Serviços: https://www.premiumretifica.com.br/servicos
+- Estimativa guiada: https://www.premiumretifica.com.br/quanto-custa
 - Retífica de cabeçote: https://www.premiumretifica.com.br/servicos/retifica-de-cabecote
+- Retífica de sedes e válvulas: https://www.premiumretifica.com.br/servicos/retifica-de-sedes-e-valvulas
+- Plaina de cabeçote: https://www.premiumretifica.com.br/servicos/plaina-de-cabecote
+- Limpeza química: https://www.premiumretifica.com.br/servicos/banho-quimico
+- Teste e reparo de trincas: https://www.premiumretifica.com.br/servicos/teste-de-trinca
+- Troca e adaptação de guias: https://www.premiumretifica.com.br/servicos/troca-e-adaptacao-de-guias
+- Usinagem de roscas: https://www.premiumretifica.com.br/servicos/usinagem-de-roscas
+- Montagem de cabeçote: https://www.premiumretifica.com.br/servicos/montagem-de-cabecote
 - Atendimento a Ribeirão Preto: https://www.premiumretifica.com.br/retifica-em-ribeirao-preto
 - Sobre a empresa: https://www.premiumretifica.com.br/sobre
 - Parcerias com oficinas e frotas: https://www.premiumretifica.com.br/b2b

@@ -26,7 +26,13 @@ export function HomeWhatsAppCtaLink() {
         trackEngagementEvent(
           "whatsapp_home_cta_click",
           "whatsapp_click",
-          "home_cta"
+          "home_cta",
+          {
+            component_id: "home_whatsapp_cta",
+            position: "home_hero",
+            destination_type: "whatsapp",
+            destination_path: "/whatsapp",
+          }
         );
       }}
     >

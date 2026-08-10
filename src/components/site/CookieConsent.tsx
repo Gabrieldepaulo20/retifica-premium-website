@@ -1,15 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /** Evento que reabre as preferências de privacidade a partir do rodapé. */
 export const ABRIR_PREFERENCIAS_EVENTO = "retifica:abrir-preferencias";
 import {
   CONSENT_BANNER_VISIBILITY_EVENT,
+  canSendTrackingRequests,
   clearDisallowedTrackingStorage,
   clearTrackingStorage,
   createConsentPreferences,
   dispatchConsentChanged,
+  dispatchConsentRuntimeReady,
   readConsentPreferences,
   saveConsentPreferences,
   type ConsentPreferences,
@@ -18,8 +21,8 @@ import {
 } from "@/lib/consent";
 
 type CookieConsentProps = {
+  gaMeasurementId: string;
   googleAdsId?: string;
-  gtmId?: string;
   clarityId: string;
 };
 
@@ -27,7 +30,9 @@ type RuntimeWindow = Window & {
   dataLayer?: unknown[];
   gtag?: (...args: unknown[]) => void;
   clarity?: ((...args: unknown[]) => void) & { q?: unknown[][] };
-  __retificaGtmInitialized?: boolean;
+  __retificaGoogleTagInitialized?: boolean;
+  __retificaGaConfigured?: boolean;
+  __retificaAdsConfigured?: boolean;
   __retificaClarityInitialized?: boolean;
 };
 
@@ -43,9 +48,14 @@ function appendScript(id: string, src: string) {
 
 function initializeGoogleTags(
   preferences: ConsentPreferences,
-  ids: Pick<CookieConsentProps, "googleAdsId" | "gtmId">
+  ids: Pick<CookieConsentProps, "gaMeasurementId" | "googleAdsId">
 ) {
-  if (!preferences.analytics && !preferences.advertising) return;
+  if (
+    (!preferences.analytics && !preferences.advertising) ||
+    !canSendTrackingRequests()
+  ) {
+    return;
+  }
 
   const runtimeWindow = window as RuntimeWindow;
   runtimeWindow.dataLayer = runtimeWindow.dataLayer || [];
@@ -55,25 +65,43 @@ function initializeGoogleTags(
       runtimeWindow.dataLayer?.push(args);
     };
 
-  if (preferences.advertising && ids.googleAdsId) {
-    runtimeWindow.gtag("config", ids.googleAdsId);
+  const bootstrapId = preferences.analytics
+    ? ids.gaMeasurementId
+    : ids.googleAdsId;
+
+  if (bootstrapId && !runtimeWindow.__retificaGoogleTagInitialized) {
+    runtimeWindow.gtag("js", new Date());
+    appendScript(
+      "retifica-google-tag",
+      `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(bootstrapId)}`
+    );
+    runtimeWindow.__retificaGoogleTagInitialized = true;
   }
 
-  if (ids.gtmId && !runtimeWindow.__retificaGtmInitialized) {
-    runtimeWindow.dataLayer.push({
-      "gtm.start": Date.now(),
-      event: "gtm.js",
+  if (
+    preferences.analytics &&
+    ids.gaMeasurementId &&
+    !runtimeWindow.__retificaGaConfigured
+  ) {
+    runtimeWindow.gtag("config", ids.gaMeasurementId, {
+      send_page_view: false,
     });
-    appendScript(
-      "retifica-google-tag-manager",
-      `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(ids.gtmId)}`
-    );
-    runtimeWindow.__retificaGtmInitialized = true;
+    runtimeWindow.__retificaGaConfigured = true;
   }
+
+  if (
+    preferences.advertising &&
+    ids.googleAdsId &&
+    !runtimeWindow.__retificaAdsConfigured
+  ) {
+    runtimeWindow.gtag("config", ids.googleAdsId);
+    runtimeWindow.__retificaAdsConfigured = true;
+  }
+
 }
 
 function initializeClarity(preferences: ConsentPreferences, clarityId: string) {
-  if (!preferences.analytics) return;
+  if (!preferences.analytics || !canSendTrackingRequests()) return;
 
   const runtimeWindow = window as RuntimeWindow;
   runtimeWindow.clarity =
@@ -139,8 +167,8 @@ function ChoiceRow({
 }
 
 export function CookieConsent({
+  gaMeasurementId,
   googleAdsId,
-  gtmId,
   clarityId,
 }: CookieConsentProps) {
   const [preferences, setPreferences] = useState<
@@ -165,20 +193,22 @@ export function CookieConsent({
       if (!stored) {
         clearTrackingStorage();
         updateGoogleConsent(null);
+        dispatchConsentRuntimeReady();
         return;
       }
 
       updateGoogleConsent(stored);
       clearDisallowedTrackingStorage(stored);
       initializeGoogleTags(stored, {
+        gaMeasurementId,
         googleAdsId,
-        gtmId,
       });
       initializeClarity(stored, clarityId);
+      dispatchConsentRuntimeReady();
     }, 0);
 
     return () => window.clearTimeout(initializationTimer);
-  }, [clarityId, googleAdsId, gtmId]);
+  }, [clarityId, gaMeasurementId, googleAdsId]);
 
   useEffect(() => {
     if (isCustomizing) {
@@ -205,8 +235,8 @@ export function CookieConsent({
       updateClarityConsent(next);
       clearDisallowedTrackingStorage(next);
       initializeGoogleTags(next, {
+        gaMeasurementId,
         googleAdsId,
-        gtmId,
       });
       initializeClarity(next, clarityId);
       dispatchConsentChanged(next);
@@ -217,7 +247,7 @@ export function CookieConsent({
       setIsCustomizing(false);
       setIsOpen(false);
     },
-    [clarityId, googleAdsId, gtmId]
+    [clarityId, gaMeasurementId, googleAdsId]
   );
 
   function openConfiguration() {
@@ -265,31 +295,39 @@ export function CookieConsent({
           role="region"
           aria-label="Preferências de privacidade"
         >
-          <div className="h-1 bg-rp-gold" />
-          <div className="px-4 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2.5 sm:p-5">
-            <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="h-0.5 bg-rp-gold" />
+          <div className="px-4 pb-[max(0.375rem,env(safe-area-inset-bottom))] pt-2 sm:p-5">
+            <div className="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:justify-between lg:gap-3">
               <div className="max-w-2xl">
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center justify-between gap-3">
                   <h2 className="font-heading text-base font-bold leading-tight sm:text-lg">
-                    Sua escolha de privacidade
+                    Privacidade no site
                   </h2>
-                  {!isCustomizing ? (
-                    <button
-                      type="button"
-                      onClick={openConfiguration}
-                      className="min-h-8 shrink-0 text-xs font-bold text-white/80 underline decoration-white/30 underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  <div className="flex shrink-0 items-center gap-3 text-xs font-bold">
+                    <Link
+                      href="/privacidade"
+                      className="min-h-8 content-center text-white/65 underline decoration-white/25 underline-offset-4 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                     >
-                      Personalizar
-                    </button>
-                  ) : null}
+                      Política
+                    </Link>
+                    {!isCustomizing ? (
+                      <button
+                        type="button"
+                        onClick={openConfiguration}
+                        className="min-h-8 text-white/80 underline decoration-white/30 underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                      >
+                        Personalizar
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
-                <p className="mt-1 text-[13px] leading-relaxed text-white/72 sm:text-sm">
-                  Cookies opcionais medem a experiência e os anúncios. Ficam desligados até sua escolha.
+                <p className="mt-0.5 text-[11px] leading-tight text-white/72 sm:text-sm sm:leading-relaxed">
+                  Google, Clarity e Retiflow: desligados até sua escolha.
                 </p>
               </div>
 
               {!isCustomizing ? (
-                <div className="grid shrink-0 grid-cols-2 gap-2 lg:w-auto">
+                <div className="grid shrink-0 grid-cols-2 gap-1.5 lg:w-auto lg:gap-2">
                   <button
                     type="button"
                     onClick={() => {
@@ -298,7 +336,7 @@ export function CookieConsent({
                     }}
                     className="min-h-10 whitespace-nowrap rounded-full border border-white/20 px-3 text-xs font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-11 sm:px-4 sm:text-sm"
                   >
-                    Rejeitar não necessários
+                    Rejeitar opcionais
                   </button>
                   <button
                     type="button"
@@ -356,13 +394,13 @@ export function CookieConsent({
                   />
                   <ChoiceRow
                     title="Análise avançada da experiência"
-                    description="Google Analytics e Microsoft Clarity para medir cidade e região aproximadas, páginas visitadas e uso dos formulários."
+                    description="Google Analytics e Clarity analisam páginas e estimam região; o Retiflow registra a jornada e a cidade que você informar. Sem GPS."
                     checked={analytics}
                     onChange={setAnalytics}
                   />
                   <ChoiceRow
                     title="Anúncios e conversões"
-                    description="Preserva origem, campanha e identificadores de clique para medir quais anúncios geram contatos."
+                    description="Google Ads e Retiflow registram origem, campanha e identificadores de clique para medir contatos."
                     checked={advertising}
                     onChange={setAdvertising}
                   />

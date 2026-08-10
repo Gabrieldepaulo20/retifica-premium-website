@@ -2,9 +2,9 @@
  * Placeholder de mídia.
  *
  * Ocupa a proporção final do arquivo definitivo para não haver deslocamento de
- * layout quando a foto ou o vídeo real entrar. Mostra o resumo do briefing na
- * própria tela para que quem for produzir a mídia saiba o que precisa ser feito
- * sem abrir a documentação.
+ * layout quando a foto ou o vídeo real entrar. Enquanto a mídia definitiva não
+ * existe, mostra uma visualização técnica pública — nunca nome de arquivo,
+ * instrução editorial ou marcador de conteúdo inacabado.
  *
  * Não usa foto de banco de imagens: uma bancada que não é a da Retífica Premium,
  * apresentada como se fosse, é propaganda enganosa — e queima justamente a
@@ -20,6 +20,10 @@ type Props = {
   arquivo: string;
   /** Resumo do que a imagem/vídeo precisa mostrar. */
   resumo: string;
+  /** Título que agrega valor para o visitante; nunca contém instrução editorial. */
+  title?: string;
+  /** Legenda pública curta. */
+  caption?: string;
   /** Proporção final. Classe de aspecto do Tailwind. */
   proporcao?: string;
   /** `escuro` sobre fundo navy, `claro` sobre fundo branco. */
@@ -29,8 +33,8 @@ type Props = {
 
 export function MidiaPlaceholder({
   id,
-  arquivo,
-  resumo,
+  title = "Inspeção técnica da peça",
+  caption = "Limpeza, medição e conferência antes da definição do serviço.",
   proporcao = "aspect-[4/3]",
   tom = "escuro",
   className = "",
@@ -40,11 +44,12 @@ export function MidiaPlaceholder({
   return (
     <div
       role="img"
-      aria-label={`Espaço reservado para mídia: ${resumo}`}
-      className={`relative flex ${proporcao} w-full flex-col justify-between overflow-hidden rounded-2xl border border-dashed p-5 ${
+      aria-label={`${title}. ${caption}`}
+      data-media-slot={id}
+      className={`relative flex ${proporcao} w-full flex-col justify-between overflow-hidden rounded-2xl border p-5 ${
         escuro
-          ? "border-rp-gold/35 bg-white/[0.04] text-white"
-          : "border-rp-accent/35 bg-[#F5F8FD] text-gray-800"
+          ? "border-rp-gold/25 bg-white/[0.04] text-white"
+          : "border-rp-accent/20 bg-[#F5F8FD] text-gray-800"
       } ${className}`}
     >
       {/* Malha de cota, para o espaço vazio não parecer erro de carregamento */}
@@ -65,27 +70,20 @@ export function MidiaPlaceholder({
             escuro ? "text-rp-gold" : "text-rp-accent"
           }`}
         >
-          Substituir por mídia
+          Verificação técnica
         </span>
-        <span
-          className={`font-heading text-xs font-bold uppercase tracking-[0.14em] ${
-            escuro ? "text-white/55" : "text-gray-400"
-          }`}
-        >
-          {id}
-        </span>
+        <svg viewBox="0 0 48 48" className={`h-8 w-8 ${escuro ? "text-rp-gold/70" : "text-rp-accent/55"}`} fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">
+          <path d="M8 17h32v17H8zM13 17V12h22v5M15 25h18M18 29h12" />
+          <circle cx="14" cy="21" r="1.5" /><circle cx="34" cy="21" r="1.5" />
+        </svg>
       </div>
 
       <div className="relative">
-        <p className={`text-sm leading-snug ${escuro ? "text-white/72" : "text-gray-600"}`}>
-          {resumo}
+        <p className={`font-heading text-xl font-bold leading-tight ${escuro ? "text-white" : "text-gray-900"}`}>
+          {title}
         </p>
-        <p
-          className={`mt-2 font-mono text-xs ${
-            escuro ? "text-white/55" : "text-gray-400"
-          }`}
-        >
-          {arquivo}
+        <p className={`mt-2 max-w-md text-sm leading-relaxed ${escuro ? "text-white/65" : "text-gray-600"}`}>
+          {caption}
         </p>
       </div>
     </div>

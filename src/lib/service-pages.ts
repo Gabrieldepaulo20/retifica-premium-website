@@ -1,5 +1,7 @@
 export type ServiceDetailPage = {
   slug: string;
+  /** Identificador comercial canônico usado na mensuração e no Retiflow. */
+  serviceId: string;
   title: string;
   shortTitle: string;
   metaTitle: string;
@@ -21,14 +23,15 @@ export type ServiceDetailPage = {
 export const serviceDetailPages = [
   {
     slug: "retifica-de-cabecote",
+    serviceId: "retifica-de-cabecote",
     title: "Retífica de cabeçote",
     shortTitle: "Retífica de cabeçote",
     metaTitle: "Retífica de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Retífica de cabeçote com plaina, sedes, válvulas, guias, limpeza química e montagem técnica em Sertãozinho-SP. Atende Ribeirão Preto e região.",
-    hero: "Retífica de cabeçote com diagnóstico e usinagem de precisão",
+    hero: "Retífica de cabeçote: entenda o que a peça precisa antes de aprovar",
     intro:
-      "A retífica de cabeçote exige medição, limpeza, inspeção e usinagem correta antes da montagem. Na Retífica Premium, cada cabeçote é avaliado conforme o sintoma do veículo e o estado real da peça, evitando troca desnecessária e reduzindo risco de retrabalho.",
+      "Superaquecimento, junta queimada, perda de compressão e mistura de água e óleo podem levar ao cabeçote, mas não definem sozinhos o serviço. A peça é limpa, inspecionada e medida para separar plaina, sedes, válvulas, guias, trinca, montagem e componentes realmente necessários.",
     image: "/cabecote.webp",
     imageAlt: "Cabeçote em processo de retífica e usinagem de precisão",
     primaryIntent: "alta-intencao",
@@ -67,14 +70,15 @@ export const serviceDetailPages = [
   },
   {
     slug: "plaina-de-cabecote",
+    serviceId: "plaina-de-cabecote",
     title: "Plaina de cabeçote",
     shortTitle: "Plaina de cabeçote",
     metaTitle: "Plaina de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Serviço de plaina de cabeçote para corrigir empeno, melhorar vedação e preparar a peça para montagem. Sertãozinho-SP, Ribeirão Preto e região.",
-    hero: "Plaina de cabeçote para corrigir empeno e vedação",
+    hero: "Plaina de cabeçote só quando a medição indicar",
     intro:
-      "A plaina de cabeçote corrige irregularidades na superfície de contato com o bloco. É um serviço técnico que exige medição antes da usinagem, porque remover material sem critério pode comprometer o conjunto.",
+      "Junta queimada ou superaquecimento não significam automaticamente que a peça deve ser plainada. Primeiro conferimos empeno, superfície e altura disponível; só então a usinagem é indicada para recuperar a condição de vedação sem remover material por rotina.",
     image: "/plainadecabecotes.png",
     imageAlt: "Ícone de plaina de cabeçote",
     primaryIntent: "servico-especifico",
@@ -113,14 +117,15 @@ export const serviceDetailPages = [
   },
   {
     slug: "banho-quimico",
+    serviceId: "limpeza-quimica",
     title: "Banho químico de cabeçote",
     shortTitle: "Banho químico",
     metaTitle: "Banho Químico de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Banho químico e limpeza técnica de cabeçote para remover carbonização, óleo, ferrugem e resíduos antes da usinagem. Atende Ribeirão Preto e região.",
-    hero: "Banho químico e limpeza técnica para cabeçote",
+    hero: "Limpeza química para revelar o estado real da peça",
     intro:
-      "A limpeza do cabeçote é etapa essencial antes de medir, usinar e montar. O banho químico remove sujeira pesada, carbonização, óleo e resíduos que podem esconder trincas, desgaste ou falhas de vedação.",
+      "Carbonização, óleo, borra e ferrugem podem esconder trincas, desgaste e falhas de vedação. A limpeza prepara a peça para inspeção e medição; ela não substitui o diagnóstico nem corrige sozinha um defeito mecânico.",
     image: "/cabecoteservicos.png",
     imageAlt: "Ícone de limpeza química de cabeçote",
     primaryIntent: "servico-especifico",
@@ -159,14 +164,15 @@ export const serviceDetailPages = [
   },
   {
     slug: "teste-de-trinca",
+    serviceId: "solda-de-trincas",
     title: "Inspeção de trincas no cabeçote",
     shortTitle: "Trincas no cabeçote",
     metaTitle: "Cabeçote Trincado Tem Conserto?",
     metaDescription:
       "Cabeçote trincado tem conserto em muitos casos. Inspeção de trincas, solda e reparo técnico em Sertãozinho-SP, com avaliação para vazamento e superaquecimento.",
-    hero: "Inspeção de trincas e reparo técnico em cabeçote",
+    hero: "Teste de trinca antes de decidir por solda, reparo ou troca",
     intro:
-      "Trincas no cabeçote podem causar vazamento, falha de compressão, mistura de água e óleo ou retorno do superaquecimento. A peça precisa ser limpa e inspecionada antes de decidir por reparo, solda ou substituição.",
+      "Superaquecimento recorrente, pressão no reservatório e mistura de água e óleo podem justificar a verificação, mas não confirmam uma trinca. A peça precisa estar limpa e ser testada para orientar com segurança a decisão entre reparo, solda ou substituição.",
     image: "/soldadetrincas.png",
     imageAlt: "Ícone de solda de trincas em cabeçote",
     primaryIntent: "problema",
@@ -205,14 +211,15 @@ export const serviceDetailPages = [
   },
   {
     slug: "montagem-de-cabecote",
+    serviceId: "montagem-e-regulagem-final",
     title: "Montagem e regulagem de cabeçote",
     shortTitle: "Montagem de cabeçote",
     metaTitle: "Montagem de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Montagem e regulagem de cabeçote com conferência de componentes, vedação, válvulas e orientação para instalação correta. Atende Ribeirão Preto e região.",
-    hero: "Montagem e regulagem de cabeçote com conferência técnica",
+    hero: "Montagem e regulagem depois de conferir cada ponto",
     intro:
-      "A montagem correta é o que fecha o serviço de retífica com segurança. Após limpeza, medição e usinagem, a peça precisa de conferência de componentes, regulagem e orientação para voltar ao veículo sem retrabalho.",
+      "A montagem fecha o serviço, mas não corrige medição ou usinagem incompleta. Antes de liberar o conjunto, conferimos componentes, encaixes, vedação e regulagem conforme o escopo aprovado e orientamos os cuidados para a instalação.",
     image: "/montagemeregulagemfinal.png",
     imageAlt: "Ícone de montagem e regulagem final de cabeçote",
     primaryIntent: "servico-especifico",
@@ -251,12 +258,13 @@ export const serviceDetailPages = [
   },
   {
     slug: "retifica-de-sedes-e-valvulas",
+    serviceId: "retifica-de-sedes-e-valvulas",
     title: "Retífica de sedes e válvulas",
     shortTitle: "Sedes e válvulas",
     metaTitle: "Retífica de Sedes e Válvulas em Sertãozinho-SP",
     metaDescription:
       "Retífica de sedes, válvulas e esmerilhamento com conferência de vedação e desgaste. Atendimento em Sertãozinho, Ribeirão Preto e região.",
-    hero: "Sedes e válvulas conferidas para recuperar vedação e compressão",
+    hero: "Sedes e válvulas medidas para recuperar vedação e compressão",
     intro:
       "Sedes e válvulas trabalham juntas para vedar a câmara. Desgaste, queima ou assentamento irregular podem causar falhas, perda de potência e baixa compressão. A correção começa medindo cada ponto, não apenas esmerilhando por rotina.",
     image: "/sedeseguias.png",
@@ -297,14 +305,15 @@ export const serviceDetailPages = [
   },
   {
     slug: "troca-e-adaptacao-de-guias",
+    serviceId: "troca-e-adaptacao-de-guias",
     title: "Troca e adaptação de guias de válvula",
     shortTitle: "Troca e adaptação de guias",
     metaTitle: "Troca e Adaptação de Guias de Válvula",
     metaDescription:
       "Troca e adaptação de guias de válvula com medição de folga e alinhamento em Sertãozinho-SP. Atende oficinas de Ribeirão Preto e região.",
-    hero: "Guias de válvula com folga, medida e alinhamento corretos",
+    hero: "Guias de válvula: medir a folga antes de trocar ou adaptar",
     intro:
-      "A guia mantém a válvula alinhada durante o funcionamento. Folga excessiva pode aumentar consumo de óleo e fumaça; uma adaptação incorreta pode travar, desalinha a vedação e cria retrabalho.",
+      "A guia mantém a válvula alinhada durante o funcionamento. Folga excessiva pode contribuir para consumo de óleo e fumaça azul; uma adaptação incorreta pode travar a válvula, desalinhar a vedação e gerar retrabalho. A medida define o próximo passo.",
     image: "/adaptacaodeguias.png",
     imageAlt: "Ilustração de troca e adaptação de guias de válvula",
     primaryIntent: "servico-especifico",
@@ -343,12 +352,13 @@ export const serviceDetailPages = [
   },
   {
     slug: "usinagem-de-roscas",
+    serviceId: "usinagem-de-roscas",
     title: "Usinagem e recuperação de roscas",
     shortTitle: "Usinagem de roscas",
     metaTitle: "Usinagem de Roscas em Cabeçote",
     metaDescription:
       "Recuperação e usinagem de roscas de cabeçote com alinhamento e inspeção técnica em Sertãozinho-SP, Ribeirão Preto e região.",
-    hero: "Roscas recuperadas com alinhamento e fixação seguros",
+    hero: "Rosca danificada: recuperar sem perder alinhamento ou profundidade",
     intro:
       "Rosca espanada ou danificada compromete aperto, vedação e montagem. A recuperação precisa respeitar posição, profundidade e material do cabeçote para não transformar um reparo localizado em dano maior.",
     image: "/usinagemderoscas.png",
@@ -390,16 +400,16 @@ export const serviceDetailPages = [
 ] as const satisfies readonly ServiceDetailPage[];
 
 export const serviceCatalog = [
-  { id: "head-rebuild", title: "Retífica de cabeçote", href: "/servicos/retifica-de-cabecote", description: "Inspeção, medição e correções conforme o estado real da peça." },
-  { id: "seats-valves", title: "Retífica de sedes e válvulas", href: "/servicos/retifica-de-sedes-e-valvulas", description: "Vedação e assentamento para recuperar compressão." },
-  { id: "surfacing", title: "Plaina de cabeçote", href: "/servicos/plaina-de-cabecote", description: "Correção da face após medir empeno e altura disponível." },
-  { id: "chemical-cleaning", title: "Limpeza química", href: "/servicos/banho-quimico", description: "Remove resíduos para permitir inspeção e usinagem confiáveis." },
-  { id: "valve-guides", title: "Troca e adaptação de guias", href: "/servicos/troca-e-adaptacao-de-guias", description: "Folga e alinhamento conferidos antes da montagem." },
-  { id: "valve-lapping", title: "Esmerilhamento de válvulas", href: "/servicos/retifica-de-sedes-e-valvulas#esmerilhamento", description: "Acabamento e conferência de contato após a medição." },
-  { id: "thread-machining", title: "Usinagem de roscas", href: "/servicos/usinagem-de-roscas", description: "Recuperação de fixações com eixo e profundidade corretos." },
-  { id: "crack-welding", title: "Solda de trincas", href: "/servicos/teste-de-trinca#solda", description: "Reparo somente quando a inspeção indicar condição segura." },
-  { id: "final-assembly", title: "Montagem e regulagem final", href: "/servicos/montagem-de-cabecote", description: "Conferência do conjunto antes de voltar ao veículo." },
-  { id: "technical-diagnosis", title: "Diagnóstico técnico de motor", href: "/quanto-custa", description: "Triagem por veículo, situação e sintomas sem exigir conhecimento técnico." },
+  { id: "retifica-de-cabecote", title: "Retífica de cabeçote", href: "/servicos/retifica-de-cabecote", description: "Inspeção, medição e correções conforme o estado real da peça." },
+  { id: "retifica-de-sedes-e-valvulas", title: "Retífica de sedes e válvulas", href: "/servicos/retifica-de-sedes-e-valvulas", description: "Vedação e assentamento para recuperar compressão." },
+  { id: "plaina-de-cabecote", title: "Plaina de cabeçote", href: "/servicos/plaina-de-cabecote", description: "Correção da face após medir empeno e altura disponível." },
+  { id: "limpeza-quimica", title: "Limpeza química", href: "/servicos/banho-quimico", description: "Remove resíduos para permitir inspeção e usinagem confiáveis." },
+  { id: "troca-e-adaptacao-de-guias", title: "Troca e adaptação de guias", href: "/servicos/troca-e-adaptacao-de-guias", description: "Folga e alinhamento conferidos antes da montagem." },
+  { id: "esmerilhamento-de-valvulas", title: "Esmerilhamento de válvulas", href: "/servicos/retifica-de-sedes-e-valvulas#esmerilhamento", description: "Acabamento e conferência de contato após a medição." },
+  { id: "usinagem-de-roscas", title: "Usinagem de roscas", href: "/servicos/usinagem-de-roscas", description: "Recuperação de fixações com eixo e profundidade corretos." },
+  { id: "solda-de-trincas", title: "Solda de trincas", href: "/servicos/teste-de-trinca#solda", description: "Reparo somente quando a inspeção indicar condição segura." },
+  { id: "montagem-e-regulagem-final", title: "Montagem e regulagem final", href: "/servicos/montagem-de-cabecote", description: "Conferência do conjunto antes de voltar ao veículo." },
+  { id: "diagnostico-tecnico-de-motor", title: "Diagnóstico técnico de motor", href: "/quanto-custa", description: "Triagem por veículo, situação e sintomas sem exigir conhecimento técnico." },
 ] as const;
 
 type ServiceDetailPageEntry = (typeof serviceDetailPages)[number];

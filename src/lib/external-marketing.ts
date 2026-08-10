@@ -19,6 +19,10 @@ export type ExternalMarketingEvent = {
   gbraid?: string;
   wbraid?: string;
   deviceType?: string;
+  /** Cidade informada voluntariamente no formulário/quiz. */
+  city?: string;
+  /** UF informada voluntariamente, quando disponível. */
+  region?: string;
   metadata?: Record<string, unknown>;
   lead?: {
     name?: string;

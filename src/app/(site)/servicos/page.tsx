@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import {
@@ -17,10 +16,8 @@ import {
 import { AtalhoSintoma } from "@/components/site/AtalhoSintoma";
 import { ExperimentHeroCtas } from "@/components/site/ExperimentHeroCtas";
 import { MidiaPlaceholder } from "@/components/site/MidiaPlaceholder";
-import { NumerosProva } from "@/components/site/NumerosProva";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
-import { numerosProva } from "@/lib/prova";
 import { primaryRegionalCities } from "@/lib/regional";
 import { serviceCatalog, serviceDetailPages, servicePath } from "@/lib/service-pages";
 import { siteConfig } from "@/lib/site";
@@ -33,20 +30,17 @@ import { serviceVideos, videos } from "@/lib/videos";
  * dele tem, na mesma ordem em que a bancada trabalha: sintoma → medição →
  * correção → entrega.
  *
- * Por que assim, e não a grade de cards que todo mundo usa: dos seis
- * concorrentes brasileiros analisados em 10/08/2026 (Hermes, Leon Motores,
- * Motor-Vidro, RetMotor, Hype Motores e Retífica MN), NENHUM organiza a página
- * por sintoma. Todos assumem que a pessoa já sabe o nome do serviço. Quem chega
- * com "meu carro está fumando" não é atendido por nenhum deles — e a Retífica
- * Premium já tem cinco páginas de sintoma publicadas para atender exatamente
- * essa pessoa.
+ * Por que assim, e não uma grade genérica: a pesquisa de dez retíficas
+ * brasileiras em 10/08/2026 mostrou que os concorrentes priorizam contato, mas
+ * raramente ajudam quem ainda não sabe o nome do serviço. A Retífica Premium
+ * liga sintomas, triagem e catálogo sem tratar suspeita como diagnóstico.
  *
  * O diagnóstico completo está em `docs/redesign-servicos-diagnostico.md`.
  * O briefing das mídias está em `docs/redesign-servicos-midia.md`.
  *
- * Comportamento medido que orienta a hierarquia: 74% celular, 61% sai em menos
- * de 10 segundos, 83% não passa da metade da página, e quem passa de 30
- * segundos converte entre 29% e 50%.
+ * O tráfego pago é majoritariamente móvel. A telemetria de duração ainda tem
+ * cobertura parcial, por isso a hierarquia prioriza a primeira tela sem tratar
+ * uma taxa de abandono global como fato fechado.
  */
 
 export const metadata: Metadata = {
@@ -91,7 +85,11 @@ export const metadata: Metadata = {
  *
  * Pendência de mídia: 4 dos 5 serviços ainda não têm foto própria.
  */
-const servicosComFotoReal = new Set(["retifica-de-cabecote"]);
+const servicosEmDestaque = new Set([
+  "retifica-de-cabecote",
+  "teste-de-trinca",
+  "retifica-de-sedes-e-valvulas",
+]);
 
 /** O que é conferido antes de sair um preço. Vocabulário de bancada. */
 const medicoes = [
@@ -113,7 +111,7 @@ const medicoes = [
   {
     titulo: "Trincas",
     texto:
-      "A verificação que separa um serviço que dura de um retrabalho em duas semanas. Tem seção própria logo abaixo.",
+      "A verificação ajuda a encontrar fissuras ou vazamentos que não aparecem apenas olhando a peça. Tem seção própria logo abaixo.",
   },
 ];
 
@@ -215,24 +213,20 @@ export default function ServicosPage() {
             Sertãozinho-SP · atende Ribeirão Preto
           </p>
 
-          {/* Afirma, não pergunta. As remanufaturadoras de referência
-              (Jasper nos EUA, Ivor Searle no Reino Unido) abrem dizendo o que
-              entregam e com que compromisso — nenhuma abre com uma pergunta.
-              Pergunta adia a decisão; aqui a primeira linha já é a promessa. */}
+          {/* A primeira linha já explica o método, sem exigir que o visitante
+              saiba nomear o serviço ou responder uma pergunta técnica. */}
           <h1 className="mt-4 max-w-3xl font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.4rem]">
             A gente mede antes de{" "}
             <span className="text-rp-gold">dar o preço</span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
-            Seu cabeçote é limpo, medido e só então orçado. Você aprova
-            sabendo o que a peça precisa — e recebe a resposta pelo WhatsApp em{" "}
-            <strong className="font-semibold text-white">até 2 horas</strong>.
+            Conte o que aconteceu. A peça é limpa e medida para separar o que
+            precisa ser feito do que não precisa entrar no orçamento.
           </p>
 
-          {/* Garantia com prazo é a prova principal deste mercado: quatro das
-              seis retíficas pesquisadas lideram com ela. Fica logo abaixo do
-              título, em selo, para ser lida sem esforço. */}
+          {/* A garantia confirmada fica perto do título para ser encontrada
+              sem disputar atenção com a ação principal. */}
           <p className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-rp-gold/50 bg-rp-gold/10 py-2.5 pl-3 pr-5">
             <span
               aria-hidden="true"
@@ -243,7 +237,7 @@ export default function ServicosPage() {
               </svg>
             </span>
             <span className="font-heading text-base font-bold text-rp-gold sm:text-lg">
-              6 meses de garantia
+              6 meses de garantia no serviço executado
             </span>
           </p>
 
@@ -261,7 +255,55 @@ export default function ServicosPage() {
             <AtalhoSintoma contexto="servicos_hero" />
           </div>
 
-          <NumerosProva numeros={numerosProva} tom="claro" className="mt-12" />
+          <TrackedCtaLink
+            href="/servicos#catalogo"
+            eventLabel="servicos_catalog_jump"
+            trackingPosition="services_hero"
+            className="mt-6 inline-flex min-h-11 items-center font-heading text-sm font-bold text-white/70 underline decoration-rp-gold/50 underline-offset-4 transition hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          >
+            Já sei qual serviço preciso — ver os 10 serviços
+          </TrackedCtaLink>
+        </div>
+      </section>
+
+      {/* ═══ CATÁLOGO CEDO — acesso a todos os serviços sem rolagem longa ═ */}
+      <section id="catalogo" className="scroll-mt-20 border-b border-gray-200 bg-[#F8FAFD] py-12 md:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <Etapa>Catálogo completo</Etapa>
+          <div className="mt-2 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <h2 className="max-w-2xl font-heading text-[1.8rem] font-bold leading-tight text-gray-900 md:text-[2.4rem]">
+              Você não precisa escolher o serviço sozinho
+            </h2>
+            <p className="max-w-md text-sm leading-relaxed text-gray-600 md:text-right">
+              Se já recebeu uma indicação, abra o serviço. Se não recebeu, comece pela triagem.
+            </p>
+          </div>
+          <nav aria-label="Catálogo completo de serviços" className="mt-7">
+            <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {serviceCatalog.map((service, index) => (
+                <li key={service.id}>
+                  <TrackedServiceLink
+                    href={service.href}
+                    serviceId={service.id}
+                    serviceName={service.title}
+                    className="group flex min-h-20 gap-3 rounded-xl border border-gray-200 bg-white p-3.5 transition hover:border-rp-accent hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent"
+                  >
+                    <span className="font-heading text-sm font-bold tabular-nums text-rp-accent/55">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span>
+                      <span className="block font-heading text-base font-bold leading-tight text-gray-900 group-hover:text-rp-accent">
+                        {service.title}
+                      </span>
+                      <span className="mt-1 block text-xs leading-relaxed text-gray-500">
+                        {service.description}
+                      </span>
+                    </span>
+                  </TrackedServiceLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
       </section>
 
@@ -311,6 +353,8 @@ export default function ServicosPage() {
               proporcao="aspect-[4/3]"
               tom="claro"
               resumo="Foto real da bancada: relógio comparador apoiado na face do cabeçote, mão do mecânico em quadro, luz lateral marcando a superfície usinada."
+              title="A medição decide o escopo"
+              caption="Face, vedação, guias, sedes e sinais de trinca são conferidos antes de definir as operações necessárias."
             />
           </div>
         </div>
@@ -330,24 +374,17 @@ export default function ServicosPage() {
             <div>
               <Etapa tom="escuro">Teste de trinca</Etapa>
               <h2 className="mt-2 font-heading text-[1.8rem] font-bold leading-tight tracking-[-0.01em] md:text-[2.7rem]">
-                A trinca que ninguém vê é a que traz o carro de volta
+                Decidir só pelo que aparece pode deixar a causa escondida
               </h2>
               <p className="mt-4 text-base leading-relaxed text-white/75 md:text-lg">
-                Falha de junta muitas vezes é sintoma, não causa. Quando existe
-                trinca no cabeçote e ela não é encontrada, o motor é montado, roda
-                algumas semanas e o problema volta — agora com a mão de obra paga
-                duas vezes.
+                Superaquecimento, pressão no reservatório e mistura de água e óleo
+                podem ter mais de uma causa. A inspeção da peça ajuda a separar
+                empeno, falha de vedação e suspeita de trinca.
               </p>
               <p className="mt-4 text-base leading-relaxed text-white/75 md:text-lg">
                 Por isso a peça é limpa e testada <strong className="text-white">antes</strong> de
-                qualquer decisão sobre reparo, solda ou troca. É a verificação que
-                separa um serviço que dura de um retrabalho.
-              </p>
-
-              <p className="mt-5 rounded-lg border border-dashed border-rp-gold/40 bg-rp-gold/5 px-4 py-3 font-mono text-[15px] leading-relaxed text-rp-gold/90">
-                [CONTEÚDO REAL NECESSÁRIO: nome e marca do equipamento de teste de
-                trinca, para citar pelo nome como fazem as retíficas de maior
-                autoridade]
+                qualquer decisão sobre reparo, solda ou troca. O teste orienta a
+                decisão; não transforma um sintoma em diagnóstico confirmado.
               </p>
 
               <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
@@ -360,6 +397,7 @@ export default function ServicosPage() {
                 </TrackedWhatsAppLink>
                 <TrackedServiceLink
                   href={servicePath("teste-de-trinca")}
+                  serviceId="solda-de-trincas"
                   serviceName="Teste de trinca"
                   className="inline-flex h-12 items-center justify-center rounded-full border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold md:h-13"
                 >
@@ -381,6 +419,8 @@ export default function ServicosPage() {
                   proporcao="aspect-video"
                   tom="escuro"
                   resumo="Vídeo de 45s: peça entrando limpa, equipamento em operação, close na trinca revelada. O plano da trinca aparecendo é o que vende a seção."
+                  title="Inspeção para suspeita de trinca"
+                  caption="Peça limpa, equipamento em operação e interpretação do resultado antes de decidir sobre o reparo."
                 />
               )}
             </div>
@@ -401,43 +441,12 @@ export default function ServicosPage() {
             </p>
           </div>
 
-          <div className="mt-8 rounded-2xl border border-gray-200 bg-[#F8FAFD] p-4 sm:p-6">
-            <p className="font-heading text-xs font-bold uppercase tracking-[0.18em] text-gray-500">
-              Acesso rápido aos 10 serviços
-            </p>
-            <nav aria-label="Catálogo completo de serviços" className="mt-4">
-              <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {serviceCatalog.map((service, index) => (
-                  <li key={service.id}>
-                    <TrackedServiceLink
-                      href={service.href}
-                      serviceName={service.title}
-                      className="group flex min-h-20 gap-3 rounded-xl border border-gray-200 bg-white p-3.5 transition hover:border-rp-accent hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent"
-                    >
-                      <span className="font-heading text-sm font-bold tabular-nums text-rp-accent/55">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <span>
-                        <span className="block font-heading text-base font-bold leading-tight text-gray-900 group-hover:text-rp-accent">
-                          {service.title}
-                        </span>
-                        <span className="mt-1 block text-xs leading-relaxed text-gray-500">
-                          {service.description}
-                        </span>
-                      </span>
-                    </TrackedServiceLink>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-
           {/* Cards intercalados: mídia de um lado, explicação do outro,
               alternando. Cada um mostra COMO o serviço é executado e leva para
               a página completa. Antes isto era uma lista de links de texto —
               não parecia levar a lugar nenhum. */}
           <div className="mt-10 space-y-14 md:space-y-20">
-            {serviceDetailPages.map((servico, i) => {
+            {serviceDetailPages.filter((servico) => servicosEmDestaque.has(servico.slug)).map((servico, i) => {
               const video = serviceVideos[servico.slug];
               const invertido = i % 2 === 1;
               const zapServico = `Olá! Vim pelo site e gostaria de um orçamento de ${servico.shortTitle.toLowerCase()}.`;
@@ -461,17 +470,11 @@ export default function ServicosPage() {
                           alt={servico.imageAlt}
                           fill
                           sizes="(max-width: 768px) 92vw, 520px"
-                          className={
-                            servicosComFotoReal.has(servico.slug)
-                              ? "object-cover"
-                              : "object-contain p-10"
-                          }
+                          className={servico.slug === "retifica-de-cabecote" ? "object-cover" : "object-contain p-10"}
                           loading="lazy"
                         />
                         <span className="absolute bottom-3 left-3 rounded-full bg-rp-navy/85 px-3 py-1 font-heading text-xs font-bold uppercase tracking-[0.16em] text-rp-gold backdrop-blur-sm">
-                          {servicosComFotoReal.has(servico.slug)
-                            ? "Vídeo em produção"
-                            : "Foto e vídeo em produção"}
+                          Imagem ilustrativa
                         </span>
                       </div>
                     )}
@@ -506,6 +509,7 @@ export default function ServicosPage() {
                     <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
                       <TrackedServiceLink
                         href={servicePath(servico.slug)}
+                        serviceId={servico.serviceId}
                         serviceName={servico.shortTitle}
                         className="inline-flex h-12 items-center justify-center rounded-full bg-rp-accent px-6 font-heading text-sm font-bold text-white transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent"
                       >
@@ -514,6 +518,7 @@ export default function ServicosPage() {
                       <TrackedWhatsAppLink
                         eventLabel={`servicos_card_${servico.slug}_whatsapp`}
                         message={zapServico}
+                        serviceId={servico.serviceId}
                         className="inline-flex h-12 items-center justify-center rounded-full border border-[#25D366] px-6 font-heading text-sm font-bold text-[#0B7A3B] transition hover:bg-[#25D366] hover:text-[#04240F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
                       >
                         Orçamento deste serviço
@@ -569,9 +574,8 @@ export default function ServicosPage() {
               Você monta. A gente usina.
             </h2>
             <p className="mt-3 text-base leading-relaxed text-white/72">
-              Suporte técnico, prazo combinado antes de começar e laudo por
-              escrito que você repassa ao seu cliente. Sem retrabalho voltando
-              para a sua bancada.
+              Alinhe escopo, quantidade, disponibilidade da peça e prazo antes de
+              começar. A medição ajuda a reduzir o risco de retrabalho na sua bancada.
             </p>
           </div>
           <div className="flex flex-col gap-2.5 sm:flex-row md:flex-col">
@@ -601,8 +605,8 @@ export default function ServicosPage() {
             Sertãozinho e a região de Ribeirão Preto
           </h2>
           <p className="mt-3 max-w-2xl text-base leading-relaxed text-gray-600">
-            A oficina fica em Sertãozinho-SP. Para Ribeirão Preto, buscamos o
-            cabeçote e devolvemos depois do serviço, sem custo de deslocamento.
+            A oficina fica em Sertãozinho-SP. Para outras cidades, confirme pelo
+            WhatsApp os dias, a disponibilidade e as condições de retirada ou devolução.
           </p>
 
           <ul className="mt-6 flex flex-wrap gap-2">
@@ -616,12 +620,14 @@ export default function ServicosPage() {
             ))}
           </ul>
 
-          <Link
+          <TrackedCtaLink
             href="/retifica-em-ribeirao-preto"
+            eventLabel="servicos_regional_ribeirao"
+            trackingPosition="services_region"
             className="mt-6 inline-flex font-heading text-sm font-bold text-rp-accent underline underline-offset-4 transition-colors hover:text-gray-900"
           >
             Como funciona para quem está em Ribeirão Preto →
-          </Link>
+          </TrackedCtaLink>
         </div>
       </section>
 
@@ -663,8 +669,8 @@ export default function ServicosPage() {
             Manda o sintoma. A gente responde o próximo passo.
           </h2>
           <p className="mt-3 text-base leading-relaxed text-white/72 md:text-lg">
-            Sem compromisso e sem orçamento no escuro. Se a peça não precisar de
-            retífica, a gente também fala.
+            Informe o veículo, o sintoma e sua cidade. A equipe orienta o que
+            precisa ser avaliado antes de definir o serviço.
           </p>
           <div className="mt-7 flex flex-col justify-center gap-2.5 sm:flex-row">
             <TrackedWhatsAppLink

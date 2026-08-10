@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 import {
   LocalBusinessSchema,
@@ -63,7 +62,7 @@ const iconStroke = {
 
 const differentiators = [
   {
-    title: "Entrega Rápida",
+    title: "Prazo combinado",
     desc: "Prazos combinados e acompanhamento do serviço do início à entrega.",
     icon: (
       <svg viewBox="0 0 24 24" className="h-8 w-8 md:h-9 md:w-9" {...iconStroke}>
@@ -73,8 +72,8 @@ const differentiators = [
     ),
   },
   {
-    title: "Garantia Documentada",
-    desc: "Garantia real por escrito e laudo técnico do serviço realizado.",
+    title: "Garantia do serviço",
+    desc: "6 meses de garantia no serviço executado, com cobertura confirmada no atendimento.",
     icon: (
       <svg viewBox="0 0 24 24" className="h-8 w-8 md:h-9 md:w-9" {...iconStroke}>
         <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
@@ -133,7 +132,7 @@ export default function HomePage() {
                 <span className="text-[#f59e0b]">RETÍFICA DE CABEÇOTE </span>
                 <br />
                 <span className="text-white text-[22px] md:text-[42px] lg:text-5xl">
-                  COM PRECISÃO E GARANTIA REAL
+                  COM MEDIÇÃO ANTES DO ORÇAMENTO
                 </span>
               </h1>
 
@@ -156,11 +155,11 @@ export default function HomePage() {
                   >
                     <path d="M12 2l2.9 6.26L21.5 9l-5 4.6L18 21l-6-3.5L6 21l1.5-7.4-5-4.6 6.6-.74z" />
                   </svg>
-                  Clientes e oficinas que recomendam
+                  Atendimento para clientes e oficinas
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-rp-gold" />
-                  +5.000 cabeçotes retificados
+                  6 meses de garantia no serviço executado
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-rp-gold" />
@@ -184,7 +183,7 @@ export default function HomePage() {
             {Array.from({ length: 3 }).map((_, i) => (
               <span key={i} className="flex items-center gap-4">
                 USINAGEM DE PRECISÃO • RETÍFICA DE CABEÇOTES • DIAGNÓSTICO
-                TÉCNICO • ORÇAMENTO RÁPIDO • GARANTIA DOCUMENTADA
+                TÉCNICO • ORÇAMENTO APÓS AVALIAÇÃO • GARANTIA NO SERVIÇO
                 {i < 2 && <span className="text-rp-gold">•</span>}
               </span>
             ))}
@@ -216,7 +215,7 @@ export default function HomePage() {
               DIFERENCIAIS
             </p>
             <h2 className="font-heading text-[26px] font-bold leading-tight text-white md:text-4xl">
-              Por que a Retífica Premium é a escolha certa para seu cabeçote?
+              Como conduzimos cada cabeçote na oficina
             </h2>
             <div className="mx-auto mt-5 flex justify-center gap-2">
               <div className="h-1 w-12 rounded-full bg-rp-gold" />
@@ -272,8 +271,8 @@ export default function HomePage() {
                 letterSpacing: "0%",
               }}
             >
-              Soluções completas <br className="hidden lg:block" />
-              em retífica automotiva
+              Serviços para cabeçotes, <br className="hidden lg:block" />
+              definidos depois da medição
             </h2>
 
             <p
@@ -284,9 +283,9 @@ export default function HomePage() {
                 lineHeight: "140%",
               }}
             >
-              Trabalhamos com retífica de cabeçotes, usinagem de precisão,
-              revisão de válvulas e montagem técnica. Tudo com equipamentos
-              modernos, controle rigoroso e garantia no resultado final.
+              Trabalhamos nas etapas do cabeçote: usinagem, revisão de
+              válvulas, guias e montagem técnica. A medição da peça orienta o
+              escopo, e a garantia se aplica ao serviço executado.
             </p>
           </div>
 
@@ -299,6 +298,7 @@ export default function HomePage() {
                 title: "Retífica de Cabeçote",
                 desc: "Plaina, sedes, válvulas e guias com medição de empeno e vedação para recuperar a compressão.",
                 href: servicePath("retifica-de-cabecote"),
+                serviceId: "retifica-de-cabecote",
               },
               {
                 img: "/montagemdemotores.jpg",
@@ -306,13 +306,15 @@ export default function HomePage() {
                 title: "Montagem de Cabeçote",
                 desc: "Conferência de componentes, montagem de válvulas e regulagem final para vedação correta.",
                 href: servicePath("montagem-de-cabecote"),
+                serviceId: "montagem-e-regulagem-final",
               },
               {
                 img: "/diagnosticotecnico.webp",
                 alt: "Diagnóstico técnico de cabeçote",
                 title: "Diagnóstico Técnico",
                 desc: "Avaliação de sintomas como motor fumando, baixando óleo ou superaquecendo para indicar o reparo do cabeçote.",
-                href: servicePath("teste-de-trinca"),
+                href: "/quanto-custa",
+                serviceId: "diagnostico-tecnico-de-motor",
               },
             ].map((card, index) => {
               const stackClass = `service-card-stack service-card-stack-${
@@ -376,6 +378,7 @@ export default function HomePage() {
                     {/* Botão do card */}
                     <TrackedServiceLink
                       href={card.href}
+                      serviceId={card.serviceId}
                       serviceName={card.title}
                       className="mt-auto inline-flex h-8 w-[128px] items-center justify-center rounded-[62px] text-[11px] font-bold text-white shadow-[0px_4px_10px_rgba(0,0,0,0.25)] transition-all duration-200 hover:brightness-110 hover:shadow-[0px_8px_18px_rgba(0,0,0,0.25)] md:h-[44px] md:w-[180px] md:text-[18px]"
                       style={{
@@ -448,21 +451,16 @@ export default function HomePage() {
               </h2>
 
               <p className="mt-5 max-w-xl text-base leading-relaxed text-gray-300 md:text-lg">
-                É dono de oficina mecânica? Mande seus cabeçotes pra gente e
-                ganhe{" "}
-                <strong className="font-bold text-white">site próprio</strong>,{" "}
-                <strong className="font-bold text-white">
-                  sistema pra organizar a oficina
-                </strong>{" "}
-                e <strong className="font-bold text-white">divulgação</strong> —
-                sem pagar nada a mais.
+                A parceria pode incluir presença digital, organização de
+                oportunidades e apoio comercial, conforme rotina, volume e
+                condições combinadas com cada oficina.
               </p>
 
               <ul className="mt-6 space-y-3 text-left">
                 {[
-                  "Site da sua oficina, de graça (vale mais de R$ 4 mil)",
-                  "Sistema pra organizar orçamentos e serviços",
-                  "A gente busca o cabeçote e ainda te indica clientes",
+                  "Presença digital definida conforme o nível da parceria",
+                  "Organização de orçamentos e retornos quando aplicável",
+                  "Logística e apoio comercial combinados caso a caso",
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-3">
                     <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-rp-gold/15 text-rp-gold ring-1 ring-rp-gold/30">
@@ -518,10 +516,10 @@ export default function HomePage() {
               {/* Selo flutuante */}
               <div className="absolute -bottom-4 -left-4 hidden rounded-xl bg-rp-gold px-5 py-3 shadow-xl md:block">
                 <p className="font-heading text-xl font-extrabold leading-none text-rp-navy">
-                  Sem custo
+                  Condições combinadas
                 </p>
                 <p className="mt-1 text-xs font-semibold text-rp-navy/80">
-                  pra oficina parceira
+                  conforme a parceria
                 </p>
               </div>
             </div>
@@ -601,6 +599,7 @@ export default function HomePage() {
                   ].map((item) => (
                     <div
                       key={`${copy}-${item.id}`}
+                      aria-hidden={copy === 2 ? true : undefined}
                       className="flex h-[280px] w-[240px] shrink-0 flex-col rounded-2xl border-2 border-[#F8B628] bg-white px-4 py-6 shadow-[0_20px_60px_rgba(0,0,0,0.25)] md:h-[380px] md:w-[380px] md:px-10 md:py-10"
                     >
                       <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -684,15 +683,15 @@ export default function HomePage() {
             {[
               {
                 q: "Quanto custa retífica de cabeçote?",
-                a: "O valor varia conforme o modelo do veículo e o estado do cabeçote. Fazemos diagnóstico técnico e enviamos orçamento detalhado pelo WhatsApp em até 2 horas úteis.",
+                a: "O valor varia conforme o conjunto, o estado da peça e as operações necessárias. A triagem organiza o caso, mas o orçamento final depende da identificação e da medição do cabeçote.",
               },
               {
                 q: "Quanto tempo demora a retífica?",
-                a: "Retífica simples de cabeçote leva de 2 a 4 dias úteis. Retífica completa, com troca de guias e válvulas, pode levar de 5 a 10 dias. Informamos o prazo exato após diagnóstico técnico.",
+                a: "O prazo depende das medições, das peças necessárias e do escopo aprovado. A previsão é confirmada antes da execução do serviço.",
               },
               {
                 q: "Retífica de cabeçote tem garantia?",
-                a: "Sim. Oferecemos garantia documentada conforme o tipo de serviço realizado. Tudo é registrado e entregue junto com o laudo técnico.",
+                a: "A Retífica Premium oferece 6 meses de garantia sobre o serviço executado. A cobertura e os limites são confirmados no atendimento.",
               },
               {
                 q: "Quando o cabeçote precisa de retífica?",
@@ -704,7 +703,7 @@ export default function HomePage() {
               },
               {
                 q: "Vocês atendem oficinas?",
-                a: "Sim. Temos programa B2B com descontos progressivos de 5% a 15%, atendimento prioritário e suporte técnico para oficinas parceiras em Ribeirão Preto e região.",
+                a: "Sim. Oficinas podem solicitar atendimento recorrente, apoio técnico e condições comerciais avaliadas conforme perfil e volume.",
               },
               {
                 q: "Como solicitar orçamento?",
@@ -756,12 +755,14 @@ export default function HomePage() {
             A Retífica Premium fica em Sertãozinho e atende motoristas,
             oficinas e frotas que procuram retífica de cabeçote, plaina,
             banho químico e diagnóstico técnico em{" "}
-            <Link
+            <TrackedCtaLink
               href="/retifica-em-ribeirao-preto"
+              eventLabel="home_regional_ribeirao_inline"
+              trackingPosition="home_region"
               className="font-semibold text-rp-gold underline-offset-4 hover:underline"
             >
               Ribeirão Preto
-            </Link>{" "}
+            </TrackedCtaLink>{" "}
             e cidades próximas.
           </p>
           <div className="mb-8 flex flex-wrap justify-center gap-2">
@@ -813,17 +814,17 @@ export default function HomePage() {
           {
             question: "Quanto custa retífica de cabeçote?",
             answer:
-              "O valor varia conforme o modelo do veículo e o estado do cabeçote. Fazemos diagnóstico técnico e enviamos orçamento detalhado pelo WhatsApp em até 2 horas úteis.",
+              "O valor varia conforme o conjunto, o estado da peça e as operações necessárias. A triagem organiza o caso, mas o orçamento final depende da identificação e da medição do cabeçote.",
           },
           {
             question: "Quanto tempo demora a retífica?",
             answer:
-              "Retífica simples de cabeçote leva de 2 a 4 dias úteis. Retífica completa, com troca de guias e válvulas, pode levar de 5 a 10 dias. Informamos o prazo exato após diagnóstico técnico.",
+              "O prazo depende das medições, das peças necessárias e do escopo aprovado. A previsão é confirmada antes da execução do serviço.",
           },
           {
             question: "Retífica de cabeçote tem garantia?",
             answer:
-              "Sim. Oferecemos garantia documentada conforme o tipo de serviço realizado. Tudo é registrado e entregue junto com o laudo técnico.",
+              "A Retífica Premium oferece 6 meses de garantia sobre o serviço executado. A cobertura e os limites são confirmados no atendimento.",
           },
           {
             question: "Quando o cabeçote precisa de retífica?",
@@ -838,7 +839,7 @@ export default function HomePage() {
           {
             question: "Vocês atendem oficinas?",
             answer:
-              "Sim. Temos programa B2B com descontos progressivos de 5% a 15%, atendimento prioritário e suporte técnico para oficinas parceiras em Ribeirão Preto e região.",
+              "Sim. Oficinas podem solicitar atendimento recorrente, apoio técnico e condições comerciais avaliadas conforme perfil e volume.",
           },
           {
             question: "Como solicitar orçamento?",

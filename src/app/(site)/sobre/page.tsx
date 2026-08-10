@@ -1,20 +1,21 @@
 import Image from "next/image";
-import Link from "next/link";
-import { StatsCounter } from "@/components/site/StatsCounter";
+import { NumerosProva } from "@/components/site/NumerosProva";
+import { TrackedCtaLink } from "@/components/site/TrackedLinks";
 import type { Metadata } from "next";
 import { BreadcrumbSchema } from "@/components/site/StructuredData";
+import { numerosProva } from "@/lib/prova";
 
 export const metadata: Metadata = {
   title: "Sobre a Oficina em Sertãozinho-SP",
   description:
-    "Conheça a Retífica Premium: retífica de cabeçotes, diagnóstico de motor e usinagem automotiva em Sertãozinho-SP, com experiência desde 2004.",
+    "Conheça a Retífica Premium: retífica, medição e usinagem de cabeçotes em Sertãozinho-SP, com atuação desde 2004.",
   alternates: {
     canonical: "/sobre",
   },
   openGraph: {
     title: "Retífica Premium: Sobre a Oficina em Sertãozinho-SP",
     description:
-      "Retífica de cabeçotes, diagnóstico de motor e usinagem automotiva com equipe especializada desde 2004.",
+      "Retífica, medição e usinagem de cabeçotes em Sertãozinho-SP desde 2004.",
     url: "https://www.premiumretifica.com.br/sobre",
     siteName: "Retífica Premium",
     locale: "pt_BR",
@@ -32,10 +33,44 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Retífica Premium: Sobre a Oficina em Sertãozinho-SP",
     description:
-      "Retífica de cabeçotes, diagnóstico de motor e usinagem automotiva com equipe especializada desde 2004.",
+      "Retífica, medição e usinagem de cabeçotes em Sertãozinho-SP desde 2004.",
     images: ["/retificapremium.jpeg"],
   },
 };
+
+type AboutIconName =
+  | "target"
+  | "vision"
+  | "precision"
+  | "commitment"
+  | "quality"
+  | "team";
+
+function AboutIcon({ name, className = "" }: { name: AboutIconName; className?: string }) {
+  const paths: Record<AboutIconName, React.ReactNode> = {
+    target: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="4" /><path d="m12 12 7-7M16 5h3v3" /></>,
+    vision: <><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.7" /></>,
+    precision: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /></>,
+    commitment: <><path d="m8 12 2.5 2.5L16 9" /><path d="M4 8.5 7.5 5H11l1.5 1.5L14 5h3.5L21 8.5l-6 6a4.2 4.2 0 0 1-6 0l-6-6Z" /></>,
+    quality: <><path d="m12 3 7 3v5c0 4.4-2.8 7.4-7 9-4.2-1.6-7-4.6-7-9V6l7-3Z" /><path d="m9 12 2 2 4-4" /></>,
+    team: <><circle cx="9" cy="8" r="3" /><circle cx="17" cy="9" r="2.5" /><path d="M3.5 20v-2.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V20M14 14.5h2.5a4 4 0 0 1 4 4V20" /></>,
+  };
+
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      {paths[name]}
+    </svg>
+  );
+}
 
 export default function SobrePage() {
   return (
@@ -69,7 +104,7 @@ export default function SobrePage() {
             >
               Mais de{" "}
               <span className="text-rp-accent">20 Anos de Experiência</span> em
-              Retífica Automotiva e Usinagem de Precisão
+              Retífica e Usinagem de Cabeçotes
             </h1>
 
             <p
@@ -80,8 +115,8 @@ export default function SobrePage() {
                 lineHeight: 1.5,
               }}
             >
-              Desde 2004, a Retífica Premium entrega serviços completos de
-              retífica de cabeçotes com garantia, prazo e transparência.
+              Desde 2004, a Retífica Premium trabalha com retífica de
+              cabeçotes, medição, prazo combinado e transparência.
               Atendemos carros, caminhões, ônibus e tratores em Sertãozinho-SP,
               Ribeirão Preto e região.
             </p>
@@ -94,10 +129,10 @@ export default function SobrePage() {
                 className="font-rajdhani text-[30px] font-bold leading-[1.12] tracking-tight text-gray-900"
                 style={{ fontFamily: "var(--font-rajdhani)" }}
               >
-                <span className="text-rp-royal">Excelência</span> em cada
+                <span className="text-rp-royal">Medição</span> em cada
                 cabeçote.{" "}
                 <br />
-                <span className="text-rp-royal">Confiança</span> em cada reparo.
+                <span className="text-rp-royal">Clareza</span> em cada etapa.
               </div>
 
               <div className="mt-8 space-y-2">
@@ -108,7 +143,7 @@ export default function SobrePage() {
                     lineHeight: 1.35,
                   }}
                 >
-                  Mais de 20 anos de experiência
+                  Desde 2004 em Sertãozinho-SP
                 </p>
                 <p
                   className="text-[16px] text-[#0b1f3a]"
@@ -117,7 +152,7 @@ export default function SobrePage() {
                     lineHeight: 1.45,
                   }}
                 >
-                  transformando motores com precisão
+                  Retífica de cabeçotes com medição,
                 </p>
                 <p
                   className="text-[16px] text-[#0b1f3a]"
@@ -126,7 +161,7 @@ export default function SobrePage() {
                     lineHeight: 1.45,
                   }}
                 >
-                  e qualidade incomparáveis.
+                  conferência e escopo combinado.
                 </p>
               </div>
             </div>
@@ -173,22 +208,22 @@ export default function SobrePage() {
               >
                 <p className="font-bold">
                   Fundada em 2004, a Retífica Premium nasceu do sonho de
-                  oferecer serviços de retífica de cabeçotes com excelência
-                  técnica e atendimento diferenciado.
+                  oferecer serviços de retífica de cabeçotes com medição,
+                  explicação técnica e atendimento próximo.
                 </p>
 
                 <p>
                   <span className="font-bold">
-                    Com equipamentos de última geração e uma equipe altamente
-                    qualificada,
+                    Com equipamentos de medição e uma equipe dedicada ao
+                    trabalho em cabeçotes,
                   </span>{" "}
-                  conquistamos a confiança de milhares de clientes.
+                  a oficina organiza cada serviço a partir da avaliação da peça.
                 </p>
 
                 <p>
                   Ao longo dos anos, investimos continuamente em tecnologia e
-                  capacitação profissional, tornando-nos referência no mercado
-                  de retífica de cabeçotes.
+                  capacitação profissional para manter o processo de retífica
+                  de cabeçotes atualizado.
                 </p>
 
                 <p className="font-bold uppercase text-rp-accent">
@@ -197,10 +232,9 @@ export default function SobrePage() {
                 </p>
 
                 <p>
-                  Hoje, orgulhamo-nos de ser uma das retíficas mais respeitadas
-                  da região, reconhecida pela qualidade dos serviços,
-                  pontualidade nas entregas e transparência no relacionamento
-                  com os clientes.
+                  Hoje, o compromisso continua sendo explicar o que foi
+                  encontrado, combinar o prazo e executar somente o escopo
+                  aprovado com o cliente.
                 </p>
               </div>
             </div>
@@ -290,22 +324,12 @@ export default function SobrePage() {
                     className="text-base leading-relaxed text-white md:text-lg"
                     style={{ fontFamily: "var(--font-open-sans)" }}
                   >
-                    Restaurar a performance e a confiabilidade do motor a
-                    partir do cabeçote, com qualidade técnica, agilidade e
-                    atendimento humano.
+                    Avaliar e recuperar o cabeçote dentro do escopo aprovado,
+                    com medição, prazo combinado e atendimento direto.
                   </p>
                 </div>
                 <div className="shrink-0">
-                  <span
-                    className="material-symbols-outlined text-[80px] leading-none text-[#F3B839] md:text-[130px]!"
-                    style={{
-                      lineHeight: 1,
-                      fontVariationSettings:
-                        '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
-                    }}
-                  >
-                    target
-                  </span>
+                  <AboutIcon name="target" className="h-20 w-20 text-[#F3B839] md:h-[130px] md:w-[130px]" />
                 </div>
               </div>
             </div>
@@ -344,16 +368,7 @@ export default function SobrePage() {
                   </p>
                 </div>
                 <div className="shrink-0">
-                  <span
-                    className="material-symbols-outlined text-[80px] leading-none text-[#F3B839] md:text-[130px]!"
-                    style={{
-                      lineHeight: 1,
-                      fontVariationSettings:
-                        '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
-                    }}
-                  >
-                    visibility
-                  </span>
+                  <AboutIcon name="vision" className="h-20 w-20 text-[#F3B839] md:h-[130px] md:w-[130px]" />
                 </div>
               </div>
             </div>
@@ -367,16 +382,7 @@ export default function SobrePage() {
               style={{ background: "#1a1a1a" }}
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <span
-                  className="material-symbols-outlined mb-4 text-[80px] leading-none text-[#F3B839] md:text-[130px]!"
-                  style={{
-                    lineHeight: 1,
-                    fontVariationSettings:
-                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
-                  }}
-                >
-                  track_changes
-                </span>
+                <AboutIcon name="precision" className="mb-4 h-20 w-20 text-[#F3B839] md:h-[130px] md:w-[130px]" />
                 <h3
                   className="mb-3 font-rajdhani text-xl font-bold text-white md:text-2xl"
                   style={{ fontFamily: "var(--font-rajdhani)" }}
@@ -387,8 +393,8 @@ export default function SobrePage() {
                   className="text-sm leading-relaxed text-gray-300 md:text-base"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
-                  Trabalhamos com equipamentos de última geração para garantir
-                  precisão milimétrica em cada serviço.
+                  Trabalhamos com instrumentos de medição e processos definidos
+                  para conferir cada etapa do serviço.
                 </p>
               </div>
             </div>
@@ -399,16 +405,7 @@ export default function SobrePage() {
               style={{ background: "#1a1a1a" }}
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <span
-                  className="material-symbols-outlined mb-4 text-[80px] leading-none text-[#F3B839] md:text-[130px]!"
-                  style={{
-                    lineHeight: 1,
-                    fontVariationSettings:
-                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
-                  }}
-                >
-                  handshake
-                </span>
+                <AboutIcon name="commitment" className="mb-4 h-20 w-20 text-[#F3B839] md:h-[130px] md:w-[130px]" />
                 <h3
                   className="mb-3 font-rajdhani text-xl font-bold text-white md:text-2xl"
                   style={{ fontFamily: "var(--font-rajdhani)" }}
@@ -419,8 +416,8 @@ export default function SobrePage() {
                   className="text-sm leading-relaxed text-gray-300 md:text-base"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
-                  Comprometidos com a satisfação do cliente e a excelência em
-                  cada projeto realizado.
+                  Combinamos escopo e prazo antes da execução e explicamos o
+                  serviço realizado na entrega.
                 </p>
               </div>
             </div>
@@ -431,16 +428,7 @@ export default function SobrePage() {
               style={{ background: "#1a1a1a" }}
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <span
-                  className="material-symbols-outlined mb-4 text-[80px] leading-none text-[#F3B839] md:text-[130px]!"
-                  style={{
-                    lineHeight: 1,
-                    fontVariationSettings:
-                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
-                  }}
-                >
-                  workspace_premium
-                </span>
+                <AboutIcon name="quality" className="mb-4 h-20 w-20 text-[#F3B839] md:h-[130px] md:w-[130px]" />
                 <h3
                   className="mb-3 font-rajdhani text-xl font-bold text-white md:text-2xl"
                   style={{ fontFamily: "var(--font-rajdhani)" }}
@@ -463,16 +451,7 @@ export default function SobrePage() {
               style={{ background: "#1a1a1a" }}
             >
               <div className="flex h-full flex-col items-center justify-center text-center">
-                <span
-                  className="material-symbols-outlined mb-4 text-[80px] leading-none text-[#F3B839] md:text-[130px]!"
-                  style={{
-                    lineHeight: 1,
-                    fontVariationSettings:
-                      '"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48',
-                  }}
-                >
-                  groups
-                </span>
+                <AboutIcon name="team" className="mb-4 h-20 w-20 text-[#F3B839] md:h-[130px] md:w-[130px]" />
                 <h3
                   className="mb-3 font-rajdhani text-xl font-bold text-white md:text-2xl"
                   style={{ fontFamily: "var(--font-rajdhani)" }}
@@ -483,8 +462,8 @@ export default function SobrePage() {
                   className="text-sm leading-relaxed text-gray-300 md:text-base"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
-                  Profissionais especializados e certificados com anos de
-                  experiência no mercado.
+                  Profissionais dedicados à avaliação, usinagem e montagem de
+                  cabeçotes, com experiência prática na oficina.
                 </p>
               </div>
             </div>
@@ -492,30 +471,10 @@ export default function SobrePage() {
         </div>
       </section>
 
-      {/* 4. FAIXA DE MÉTRICAS */}
-      <section className="h-[350px] bg-linear-to-r from-[#053282] via-[#0B2F6B] to-[#053282] max-[640px]:h-auto max-[640px]:py-12">
-        <div className="mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-          <div className="grid w-full grid-cols-2 gap-8 md:grid-cols-4">
-            {/* Métrica 1 */}
-            <StatsCounter
-              endValue={20}
-              suffix="+"
-              label="Anos de experiência"
-            />
-
-            {/* Métrica 2 */}
-            <StatsCounter
-              endValue={5000}
-              suffix="+"
-              label="Cabeçotes Retificados"
-            />
-
-            {/* Métrica 3 */}
-            <StatsCounter endValue={98} suffix="%" label="Satisfação" />
-
-            {/* Métrica 4 */}
-            <StatsCounter endValue={15} label="Especialistas" />
-          </div>
+      {/* 4. FAIXA DE NÚMEROS AUDITADOS */}
+      <section className="bg-linear-to-r from-[#053282] via-[#0B2F6B] to-[#053282] py-14 md:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <NumerosProva numeros={numerosProva} tom="claro" />
         </div>
       </section>
 
@@ -562,14 +521,13 @@ export default function SobrePage() {
                 style={{ fontFamily: "var(--font-open-sans)" }}
               >
                 <p>
-                  Nossa equipe é formada por profissionais altamente
-                  qualificados, com vasta experiência em{" "}
+                  Nossa equipe reúne profissionais com experiência prática em{" "}
                   <span className="font-bold text-rp-accent">
-                    usinagem automotiva
+                    usinagem de cabeçotes
                   </span>
                   ,{" "}
                   <span className="font-bold text-rp-accent">
-                    mecânica de precisão
+                    medição dimensional
                   </span>{" "}
                   e{" "}
                   <span className="font-bold text-rp-accent">
@@ -578,25 +536,28 @@ export default function SobrePage() {
                   .
                 </p>
                 <p>
-                  Combinamos experiência prática com equipamentos modernos,
-                  garantindo resultados que superam as expectativas. Cada membro
-                  da nossa equipe compartilha o compromisso com a excelência e o
-                  cuidado com cada cabeçote que passa por nossas mãos.
+                  Combinamos experiência prática, instrumentos de medição e
+                  conferência por etapas. Cada membro da equipe participa do
+                  cuidado com a peça e da explicação do serviço executado.
                 </p>
               </div>
               <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-                <Link
+                <TrackedCtaLink
                   href="/servicos"
+                  eventLabel="about_story_services"
+                  trackingPosition="about_story"
                   className="inline-flex h-12 items-center justify-center rounded-full bg-rp-accent px-8 text-sm font-bold text-white transition-all hover:brightness-110"
                 >
                   Conhecer serviços
-                </Link>
-                <Link
+                </TrackedCtaLink>
+                <TrackedCtaLink
                   href="/contato"
+                  eventLabel="about_story_contact"
+                  trackingPosition="about_story"
                   className="inline-flex h-12 items-center justify-center rounded-full border border-rp-accent px-8 text-sm font-bold text-rp-accent transition-all hover:bg-[#D9E7FF]"
                 >
                   Falar com a equipe
-                </Link>
+                </TrackedCtaLink>
               </div>
             </div>
           </div>

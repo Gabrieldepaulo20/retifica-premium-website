@@ -22,16 +22,60 @@ type TrackedInternalLinkProps = Omit<
   href: string;
 };
 
+function internalDestination(href: string) {
+  const path = href.startsWith("#")
+    ? typeof window !== "undefined"
+      ? window.location.pathname || "/"
+      : "/"
+    : href.split(/[?#]/, 1)[0] || "/";
+  const type = path.startsWith("/quanto-custa")
+    ? "estimate"
+    : path.startsWith("/contato")
+      ? "contact"
+      : path.startsWith("/servicos") || path.startsWith("/problemas")
+        ? "service"
+        : "other";
+
+  return { destination_type: type, destination_path: path };
+}
+
+function serviceIdFromHref(href: string) {
+  if (href.startsWith("/servicos/retifica-de-sedes-e-valvulas#esmerilhamento")) {
+    return "esmerilhamento-de-valvulas";
+  }
+
+  const serviceIdsByPath: Record<string, string> = {
+    "/servicos/retifica-de-cabecote": "retifica-de-cabecote",
+    "/servicos/retifica-de-sedes-e-valvulas": "retifica-de-sedes-e-valvulas",
+    "/servicos/plaina-de-cabecote": "plaina-de-cabecote",
+    "/servicos/banho-quimico": "limpeza-quimica",
+    "/servicos/troca-e-adaptacao-de-guias": "troca-e-adaptacao-de-guias",
+    "/servicos/usinagem-de-roscas": "usinagem-de-roscas",
+    "/servicos/teste-de-trinca": "solda-de-trincas",
+    "/servicos/montagem-de-cabecote": "montagem-e-regulagem-final",
+    "/quanto-custa": "diagnostico-tecnico-de-motor",
+  };
+  const path = internalDestination(href).destination_path;
+
+  return (
+    serviceIdsByPath[path] ?? path.match(/^\/servicos\/([^/]+)/)?.[1]
+  );
+}
+
 export function TrackedWhatsAppLink({
   children,
   clarityEventName = "whatsapp_home_cta_click",
   eventLabel,
   message = whatsappBudgetText,
+  serviceId,
+  trackingPosition = "content",
   ...props
 }: TrackedAnchorProps & {
   clarityEventName?: ClarityEventName;
   eventLabel: string;
   message?: string;
+  serviceId?: string;
+  trackingPosition?: string;
 }) {
   return (
     <a
@@ -53,6 +97,10 @@ export function TrackedWhatsAppLink({
             link_url: event.currentTarget.href,
             method: "whatsapp",
             component_id: eventLabel,
+            position: trackingPosition,
+            service_id: serviceId,
+            destination_type: "whatsapp",
+            destination_path: "/whatsapp",
           }
         );
       }}
@@ -65,9 +113,13 @@ export function TrackedWhatsAppLink({
 export function TrackedPhoneLink({
   children,
   eventLabel,
+  serviceId,
+  trackingPosition = "content",
   ...props
 }: TrackedAnchorProps & {
   eventLabel: string;
+  serviceId?: string;
+  trackingPosition?: string;
 }) {
   return (
     <a
@@ -79,6 +131,10 @@ export function TrackedPhoneLink({
           link_url: event.currentTarget.href,
           method: "phone",
           component_id: eventLabel,
+          position: trackingPosition,
+          service_id: serviceId,
+          destination_type: "phone",
+          destination_path: "/phone",
         });
       }}
     >
@@ -90,9 +146,11 @@ export function TrackedPhoneLink({
 export function TrackedDirectionsLink({
   children,
   eventLabel,
+  trackingPosition = "content",
   ...props
 }: TrackedAnchorProps & {
   eventLabel: string;
+  trackingPosition?: string;
 }) {
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
     siteConfig.address.formatted
@@ -114,6 +172,9 @@ export function TrackedDirectionsLink({
             link_url: event.currentTarget.href,
             method: "maps",
             component_id: eventLabel,
+            position: trackingPosition,
+            destination_type: "directions",
+            destination_path: "/directions",
           }
         );
       }}
@@ -126,11 +187,17 @@ export function TrackedDirectionsLink({
 export function TrackedServiceLink({
   children,
   href,
+  serviceId,
   serviceName,
+  trackingPosition = "service_catalog",
   ...props
 }: TrackedInternalLinkProps & {
+  serviceId?: string;
   serviceName: string;
+  trackingPosition?: string;
 }) {
+  const resolvedServiceId = serviceId ?? serviceIdFromHref(href);
+
   return (
     <Link
       {...props}
@@ -142,12 +209,17 @@ export function TrackedServiceLink({
           event_label: serviceName,
           link_url: event.currentTarget.href,
           service_name: serviceName,
-          component_id: `service_${serviceName
-            .toLocaleLowerCase("pt-BR")
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9]+/g, "_")
-            .replace(/^_|_$/g, "")}`,
+          service_id: resolvedServiceId,
+          component_id: resolvedServiceId
+            ? `service_${resolvedServiceId.replace(/-/g, "_")}`
+            : `service_${serviceName
+                .toLocaleLowerCase("pt-BR")
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]+/g, "_")
+                .replace(/^_|_$/g, "")}`,
+          position: trackingPosition,
+          ...internalDestination(href),
         });
       }}
     >
@@ -160,9 +232,13 @@ export function TrackedCtaLink({
   children,
   eventLabel,
   href,
+  serviceId,
+  trackingPosition = "content",
   ...props
 }: TrackedInternalLinkProps & {
   eventLabel: string;
+  serviceId?: string;
+  trackingPosition?: string;
 }) {
   return (
     <Link
@@ -175,6 +251,9 @@ export function TrackedCtaLink({
           event_label: eventLabel,
           link_url: event.currentTarget.href,
           component_id: eventLabel,
+          position: trackingPosition,
+          service_id: serviceId,
+          ...internalDestination(href),
         });
       }}
     >

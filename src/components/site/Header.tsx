@@ -7,6 +7,25 @@ import { siteConfig } from "@/lib/site";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import {
+  trackEngagementEvent,
+  trackMarketingEvent,
+} from "@/lib/trackingEvents";
+
+function trackHeaderNavigation(label: string, href: string, position: string) {
+  trackMarketingEvent("cta_click", {
+    event_category: "navigation",
+    event_label: `header_${label.toLowerCase()}`,
+    component_id: `header_nav_${label.toLowerCase()}`,
+    position,
+    destination_type: href.startsWith("/servicos")
+      ? "service"
+      : href === "/contato"
+        ? "contact"
+        : "other",
+    destination_path: href,
+  });
+}
 
 export function Header() {
   const pathname = usePathname();
@@ -18,14 +37,14 @@ export function Header() {
   return (
     <header className="w-full bg-[#020E1D]" role="banner">
       <nav
-        className="relative mx-auto flex h-auto max-w-7xl flex-row items-center justify-between gap-3 px-4 pb-4 pt-5 sm:px-6 md:h-[132px] md:gap-0 md:py-0 lg:px-8"
+        className="relative mx-auto grid h-auto max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 pb-4 pt-5 sm:px-6 md:flex md:h-[132px] md:justify-between md:gap-0 md:py-0 lg:px-8"
         role="navigation"
         aria-label="Navegação principal"
       >
         {/* Logo */}
         <Link
           href="/"
-          className="order-2 flex items-center md:order-none"
+          className="order-2 flex items-center justify-self-center md:order-none"
           aria-label="Retífica Premium - Página inicial"
         >
           <Image
@@ -51,6 +70,9 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() =>
+                  trackHeaderNavigation(item.label, item.href, "header_desktop")
+                }
                 className={cn(
                   "relative text-sm font-medium text-white transition-colors hover:text-rp-gold",
                   isActive && "text-rp-gold"
@@ -77,7 +99,7 @@ export function Header() {
             poucos pixels. */}
         <button
           type="button"
-          className="order-1 flex h-12 shrink-0 items-center gap-2 rounded-xl border border-white/25 bg-white/5 px-3.5 text-white transition-all hover:border-white/45 hover:bg-white/10 md:hidden"
+          className="order-1 flex h-12 shrink-0 items-center gap-2 justify-self-start rounded-xl border border-white/25 bg-white/5 px-3.5 text-white transition-all hover:border-white/45 hover:bg-white/10 md:hidden"
           aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-menu"
@@ -108,7 +130,22 @@ export function Header() {
             precisa estar a um toque em qualquer página, não só no rodapé. */}
         <a
           href={siteConfig.phone.href}
-          className="order-3 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-rp-gold/40 bg-rp-gold/10 text-rp-gold transition-all hover:bg-rp-gold hover:text-[#1A1200] md:hidden"
+          onClick={(event) =>
+            trackEngagementEvent(
+              "phone_click",
+              "phone_click",
+              "header_mobile_phone",
+              {
+                link_url: event.currentTarget.href,
+                method: "phone",
+                component_id: "header_mobile_phone",
+                position: "header_mobile",
+                destination_type: "phone",
+                destination_path: "/phone",
+              }
+            )
+          }
+          className="order-3 flex h-12 w-12 shrink-0 items-center justify-center justify-self-end rounded-xl border border-rp-gold/40 bg-rp-gold/10 text-rp-gold transition-all hover:bg-rp-gold hover:text-[#1A1200] md:hidden"
           aria-label={`Ligar para ${siteConfig.phone.display}`}
         >
           <svg
@@ -148,7 +185,14 @@ export function Header() {
               <li key={item.href}>
               <Link
                 href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  trackHeaderNavigation(
+                    item.label,
+                    item.href,
+                    "header_mobile_menu"
+                  );
+                }}
                 className={cn(
                   "flex min-h-13 items-center border-b border-white/10 font-heading text-lg font-bold text-white transition-colors last:border-b-0",
                   isActive ? "text-rp-gold" : "hover:text-rp-gold"

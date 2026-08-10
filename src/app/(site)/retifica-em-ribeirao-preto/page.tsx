@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { Metadata } from "next";
 import {
   BreadcrumbSchema,
@@ -9,6 +8,7 @@ import {
 import {
   TrackedCtaLink,
   TrackedPhoneLink,
+  TrackedServiceLink,
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
@@ -25,9 +25,9 @@ const whatsappMessage =
   "Olá, sou de Ribeirão Preto e vim pelo site da Retífica Premium. Gostaria de um orçamento para retífica de cabeçote.";
 
 export const metadata: Metadata = {
-  title: "Retífica de Cabeçote em Ribeirão Preto — Buscamos e Entregamos",
+  title: "Retífica de Cabeçote para Ribeirão Preto | Sertãozinho-SP",
   description:
-    "Retífica de cabeçote para Ribeirão Preto: buscamos a peça, retificamos em Sertãozinho e devolvemos. Orçamento no WhatsApp em até 2 horas, com garantia por escrito.",
+    "Retífica de cabeçote, plaina e teste de trinca para Ribeirão Preto, com oficina em Sertãozinho-SP. Consulte avaliação, prazo e logística pelo WhatsApp.",
   alternates: {
     canonical: pagePath,
   },
@@ -57,24 +57,23 @@ export const metadata: Metadata = {
   },
 };
 
-/** Selos da primeira dobra. O tráfego pago rola 14% da página — o que estiver
- *  abaixo da dobra, na prática, não existe. Estas três promessas ficam visíveis
- *  sem rolar a tela. */
+/** Selos da primeira dobra: respondem logística, prazo e garantia sem prometer
+ * condições que dependem da avaliação ou da rota do dia. */
 const heroBadges = [
   {
     icon: "🚚",
-    title: "Buscamos e entregamos",
-    desc: "Em Ribeirão Preto, sem custo de deslocamento para você",
+    title: "Logística combinada",
+    desc: "Consulte disponibilidade, rota e condições para a sua peça",
   },
   {
     icon: "⏱",
-    title: "Orçamento em até 2h",
-    desc: "Pelo WhatsApp, em horário comercial",
+    title: "Prazo confirmado antes",
+    desc: "Depois de identificar a peça e o escopo necessário",
   },
   {
     icon: "🛡",
-    title: "Garantia por escrito",
-    desc: "Com laudo técnico. Desde 2004",
+    title: "Garantia do serviço",
+    desc: "6 meses sobre o serviço executado",
   },
 ];
 
@@ -88,12 +87,12 @@ const steps = [
     desc: "Avaliamos o caso e enviamos orçamento detalhado pelo WhatsApp, sem compromisso e sem orçamento no escuro.",
   },
   {
-    title: "Buscamos a peça",
-    desc: "Combinamos a retirada em Ribeirão Preto e buscamos o cabeçote no endereço que você indicar. Você não precisa vir até Sertãozinho.",
+    title: "Combinamos a logística",
+    desc: "Confirmamos pelo WhatsApp se há retirada ou entrega disponível para o endereço e a data informados.",
   },
   {
-    title: "Serviço e devolução",
-    desc: "Executamos a retífica com medição técnica e devolvemos a peça no mesmo endereço, com garantia por escrito e orientação de montagem.",
+    title: "Serviço e orientação",
+    desc: "Executamos o que foi aprovado, conferimos a peça e explicamos os cuidados de montagem e a cobertura do serviço.",
   },
 ];
 
@@ -101,37 +100,36 @@ const steps = [
  *  Preto. Sem citar nome de concorrente — política do Google e bom senso. */
 const vantagens = [
   {
-    title: "Você não perde o dia",
-    desc: "Buscamos e devolvemos o cabeçote em Ribeirão Preto. Enquanto a retífica do bairro te obriga a levar, esperar e voltar, aqui a peça vai e volta com a gente.",
+    title: "Logística antes de sair",
+    desc: "Você confirma pelo WhatsApp se há rota disponível ou se é melhor levar a peça diretamente à oficina em Sertãozinho.",
   },
   {
-    title: "Só cabeçote, desde 2004",
-    desc: "Não somos uma retífica genérica que também faz cabeçote. É o que fazemos todos os dias, o dia inteiro, há mais de 20 anos.",
+    title: "Foco em cabeçotes desde 2004",
+    desc: "A avaliação, a usinagem e a montagem são organizadas em torno das medições próprias desse conjunto.",
   },
   {
     title: "Teste de trinca com equipamento próprio",
-    desc: "Trinca fina não aparece a olho nu. Testamos toda peça antes de liberar — é o que evita você montar o motor e o problema voltar em duas semanas.",
+    desc: "Algumas fissuras não aparecem na inspeção visual. O teste ajuda a confirmar o estado da peça antes de decidir reparo, solda ou substituição.",
   },
   {
     title: "Diagnóstico antes do orçamento",
-    desc: "Medimos empeno, sedes, guias e vedação antes de dizer preço. Você não recebe orçamento no escuro nem paga por serviço que a peça não precisava.",
+    desc: "A medição de empeno, sedes, guias e vedação ajuda a definir quais operações devem entrar no orçamento.",
   },
   {
-    title: "Laudo técnico por escrito",
-    desc: "Você recebe o que foi medido, o que foi feito e a garantia documentada. Se for oficina, é o documento que você repassa ao seu cliente.",
+    title: "Serviço explicado",
+    desc: "A equipe informa o que foi verificado, quais operações foram aprovadas e como funciona a garantia do serviço executado.",
   },
   {
-    title: "19 km. 25 minutos.",
-    desc: "É mais perto do que a maioria imagina — e, como buscamos a peça, na prática a distância nem entra na conta.",
+    title: "Oficina próxima da região",
+    desc: "A distância até Sertãozinho é de aproximadamente 19 km, variando conforme o ponto de saída e a rota.",
   },
 ];
 
-/** Diferencial técnico. É o argumento mais forte para justificar sair de
- *  Ribeirão Preto: equipamento que a retífica de bairro não tem. */
+/** Pontos técnicos que ajudam a entender por que a peça precisa ser avaliada. */
 const tecnologia = [
   {
     title: "Teste de trinca",
-    desc: "Equipamento próprio para revelar trincas invisíveis a olho nu, inclusive nas regiões críticas entre válvulas e câmara. Peça com trinca não tratada volta para a bancada em semanas.",
+    desc: "Equipamento próprio para investigar trincas que podem não aparecer a olho nu. Uma falha não identificada pode provocar vazamento e retrabalho após a montagem.",
     href: "/servicos/teste-de-trinca",
     cta: "Como funciona o teste",
   },
@@ -143,7 +141,7 @@ const tecnologia = [
   },
   {
     title: "Banho químico",
-    desc: "Limpeza química antes de qualquer medição. Sem a peça limpa, nenhuma medida é confiável — e é aqui que muita retífica pula etapa.",
+    desc: "A limpeza remove resíduos que podem esconder defeitos ou interferir na leitura da superfície antes das medições.",
     href: "/servicos/banho-quimico",
     cta: "Ver limpeza química",
   },
@@ -155,12 +153,12 @@ const reasons = [
     desc: "Retífica de cabeçotes e usinagem automotiva desde 2004, atendendo carro, caminhão, ônibus, trator e motores diesel, gasolina e álcool.",
   },
   {
-    title: "Garantia documentada",
-    desc: "Garantia real por escrito e laudo técnico do serviço realizado — segurança para motorista e para oficina.",
+    title: "Garantia do serviço executado",
+    desc: "A cobertura de 6 meses se aplica ao serviço realizado; condições e limites são confirmados no atendimento.",
   },
   {
     title: "A 19 km de Ribeirão Preto",
-    desc: "Cerca de 25 minutos de carro entre Ribeirão Preto e a oficina em Sertãozinho. Mais perto do que parece.",
+    desc: "A distância aproximada varia conforme o ponto de saída e a rota. Confirme o melhor caminho antes de sair.",
   },
   {
     title: "Atendimento direto",
@@ -177,27 +175,27 @@ const faq = [
   {
     question: "Preciso levar o cabeçote até Sertãozinho?",
     answer:
-      "Não. Buscamos o cabeçote em Ribeirão Preto no endereço que você indicar e devolvemos no mesmo lugar depois do serviço. A retirada é combinada pelo WhatsApp junto com o orçamento. Se preferir trazer pessoalmente, também atendemos na oficina.",
+      "Depende da rota e da disponibilidade. Informe o endereço e a situação da peça pelo WhatsApp; a equipe confirma se há retirada ou entrega disponível. Você também pode levar a peça diretamente à oficina.",
   },
   {
     question: "A busca e a entrega têm custo?",
     answer:
-      "A retirada e a devolução em Ribeirão Preto estão incluídas no serviço. Como a rota já é feita, não repassamos custo de deslocamento — isso é combinado no orçamento, sem surpresa depois.",
+      "Disponibilidade, prazo e eventual custo de retirada ou entrega são confirmados antes do serviço, conforme endereço, rota e volume da peça.",
   },
   {
     question: "Vocês fazem teste de trinca?",
     answer:
-      "Sim, com equipamento próprio. Trincas finas não aparecem a olho nu e são a principal causa de retrabalho: o motor é montado, roda algumas semanas e o problema volta. Por isso a peça é testada antes de ser liberada.",
+      "Sim. O teste procura fissuras ou vazamentos que podem não aparecer visualmente e ajuda a orientar a decisão sobre reparo, solda ou substituição.",
   },
   {
     question: "Qual o prazo para quem está em Ribeirão Preto?",
     answer:
-      "O prazo é o mesmo do atendimento local: retífica simples de cabeçote leva de 2 a 4 dias úteis e o orçamento sai pelo WhatsApp em até 2 horas úteis após o diagnóstico.",
+      "O prazo depende do conjunto, das medições, das peças necessárias e da logística. A equipe confirma a previsão antes da aprovação do serviço.",
   },
   {
     question: "Vale a pena sair de Ribeirão Preto para retificar em Sertãozinho?",
     answer:
-      "São cerca de 25 minutos de carro. Em troca, você tem diagnóstico antes da troca de peças, garantia por escrito, laudo técnico e mais de 20 anos de especialização em cabeçotes.",
+      "A oficina fica em Sertãozinho, a aproximadamente 19 km de Ribeirão Preto. Antes de sair, confirme atendimento e logística; a peça é medida antes da definição do serviço.",
   },
   {
     question: "Vocês atendem oficinas mecânicas de Ribeirão Preto?",
@@ -225,23 +223,21 @@ export default function RetificaRibeiraoPretoPage() {
         <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[1.05fr_0.95fr] md:items-center lg:px-8">
           <div className="flex flex-col">
             <p className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-rp-gold/40 bg-rp-gold/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-rp-gold sm:text-sm">
-              Atendemos Ribeirão Preto · 19 km · buscamos e entregamos
+              Atendemos Ribeirão Preto · oficina em Sertãozinho-SP
             </p>
             <h1 className="font-heading text-3xl font-extrabold leading-tight md:text-5xl">
-              Retífica de cabeçote em Ribeirão Preto —{" "}
-              <span className="text-rp-gold">a gente busca, retifica e devolve</span>
+              Retífica de cabeçote para Ribeirão Preto —{" "}
+              <span className="text-rp-gold">medição antes da decisão</span>
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">
-              Você não precisa levar nada. Buscamos o cabeçote em Ribeirão
-              Preto, fazemos o serviço na nossa oficina em Sertãozinho e
-              devolvemos no mesmo endereço, com garantia por escrito.
-              Orçamento pelo WhatsApp em até 2 horas.
+              Conte o que aconteceu e onde a peça está. A equipe orienta a
+              avaliação, confirma prazo e informa se há logística disponível
+              para a sua região antes da aprovação.
             </p>
 
             {/* Selos: as três objeções de quem busca "retífica em Ribeirão Preto",
-                respondidas antes de qualquer rolagem.
-                No celular ficam DEPOIS dos botões (order-2): 74% do tráfego pago
-                é mobile e o WhatsApp não pode sair da primeira dobra. */}
+                respondidas antes de qualquer rolagem. No celular ficam depois
+                dos botões para manter o contato na primeira tela. */}
             <ul className="order-2 mt-6 grid gap-2 sm:order-none sm:mt-7 sm:gap-2.5 sm:grid-cols-3">
               {heroBadges.map((badge) => (
                 <li
@@ -304,8 +300,7 @@ export default function RetificaRibeiraoPretoPage() {
         </div>
       </section>
 
-      {/* Preço, prazo e garantia vêm logo depois da dobra: 83% do tráfego pago
-          não passa da metade da página. */}
+      {/* Preço, prazo e garantia vêm logo depois da dobra. */}
       <PrecoPrazoGarantia
         contexto="ribeirao_preto"
         whatsappMessage={whatsappMessage}
@@ -363,8 +358,7 @@ export default function RetificaRibeiraoPretoPage() {
         </div>
       </section>
 
-      {/* TECNOLOGIA — o diferencial que a retífica de bairro não tem.
-          O vídeo do teste de trinca entra aqui quando estiver pronto. */}
+      {/* TECNOLOGIA — o vídeo real do teste entra aqui quando estiver pronto. */}
       <section className="bg-[#051B3D] py-14 text-white md:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
@@ -375,8 +369,8 @@ export default function RetificaRibeiraoPretoPage() {
               O que a gente mede antes de liberar a peça
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/78 md:text-lg">
-              Retrabalho não acontece por azar. Acontece quando alguém monta o
-              motor sem ter testado o que não dá para ver.
+              Algumas condições só aparecem depois da limpeza, da medição e do
+              teste. Conferir antes ajuda a decidir o próximo passo com mais informação.
             </p>
           </div>
 
@@ -401,12 +395,14 @@ export default function RetificaRibeiraoPretoPage() {
                 <p className="mt-2 grow text-sm leading-relaxed text-white/80">
                   {item.desc}
                 </p>
-                <Link
+                <TrackedServiceLink
                   href={item.href}
+                  serviceName={item.title}
+                  trackingPosition="ribeirao_technology"
                   className="mt-4 inline-block text-sm font-semibold text-white underline decoration-rp-gold underline-offset-4 hover:text-rp-gold"
                 >
                   {item.cta} →
-                </Link>
+                </TrackedServiceLink>
               </article>
             ))}
           </div>
@@ -423,8 +419,8 @@ export default function RetificaRibeiraoPretoPage() {
               Atendimento para Ribeirão Preto em 4 passos
             </h2>
             <p className="mt-4 text-base leading-relaxed text-gray-700 md:text-lg">
-              Do primeiro contato à devolução da peça, o processo é combinado
-              pelo WhatsApp para você não perder viagem.
+              Do primeiro contato à conclusão do serviço, o processo e a
+              logística disponível são confirmados pelo WhatsApp.
             </p>
           </div>
 
@@ -471,9 +467,11 @@ export default function RetificaRibeiraoPretoPage() {
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {serviceDetailPages.map((service) => (
-              <Link
+              <TrackedServiceLink
                 key={service.slug}
                 href={servicePath(service.slug)}
+                serviceName={service.shortTitle}
+                trackingPosition="ribeirao_service_catalog"
                 className="group rounded-lg border border-[#E8EEF8] bg-[#F8FBFF] p-5 shadow-sm transition-all hover:border-rp-accent hover:shadow-md"
               >
                 <h3 className="font-heading text-xl font-bold text-[#053282] group-hover:text-rp-accent">
@@ -485,7 +483,7 @@ export default function RetificaRibeiraoPretoPage() {
                 <span className="mt-3 inline-block text-sm font-semibold text-rp-accent">
                   Ver detalhes do serviço →
                 </span>
-              </Link>
+              </TrackedServiceLink>
             ))}
           </div>
         </div>
@@ -498,12 +496,11 @@ export default function RetificaRibeiraoPretoPage() {
               Por que vale o trajeto
             </p>
             <h2 className="mt-2 font-heading text-3xl font-bold leading-tight md:text-5xl">
-              Especialização a 25 minutos de Ribeirão Preto
+              Atendimento regional com oficina em Sertãozinho
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/78 md:text-lg">
-              Muitas oficinas e motoristas de Ribeirão Preto já enviam
-              cabeçotes para Sertãozinho: a distância é curta e o serviço é
-              feito por quem trabalha com retífica todos os dias.
+              A oficina fica a aproximadamente 19 km de Ribeirão Preto. O
+              atendimento confirma rota, prazo e condição da peça antes da aprovação.
             </p>
           </div>
 

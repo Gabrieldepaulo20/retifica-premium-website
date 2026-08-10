@@ -5,8 +5,9 @@
 // automaticamente — enquanto `youtubeId` estiver vazio, nada é renderizado
 // (zero impacto visual e de performance).
 //
-// `poster` é opcional: se vazio, usa a capa do próprio YouTube. Para uma capa
-// própria, coloque a imagem em /public e referencie aqui (ex.: "/video-oficina.jpg").
+// `poster` é opcional: se vazio, o site usa um quadro neutro local. Para uma
+// capa real, coloque a imagem em /public e referencie aqui (ex.: "/video-oficina.webp").
+// Nunca use a thumb remota do YouTube: ela criaria uma requisição antes do clique.
 //
 // `brief` descreve o que o vídeo precisa mostrar e quanto deve durar. Serve de
 // roteiro na hora de gerar/gravar — não aparece no site.
@@ -16,10 +17,18 @@ export type VideoSlot = {
   youtubeId?: string;
   /** Título acessível / objetivo do vídeo. */
   title: string;
-  /** Capa opcional (caminho em /public). Sem isso, usa a thumb do YouTube. */
+  /** Capa opcional e local (caminho em /public). Sem isso, usa quadro neutro. */
   poster?: string;
   /** Roteiro resumido: o que mostrar e duração alvo. Não vai para o site. */
   brief?: string;
+  /** Arquivo final esperado em /public. Serve só como guia de produção. */
+  targetFile?: string;
+  /** Entrega recomendada para preservar qualidade e desempenho. */
+  format?: string;
+  /** Prompt Veo permitido apenas para visualização técnica não documental. */
+  veoPrompt?: string;
+  /** Restrições do prompt técnico. */
+  negativePrompt?: string;
   /**
    * Proporção do container. Padrão `wide` (16:9).
    * Use `mobileSquare` no vídeo da primeira dobra — quadrado no celular
@@ -42,7 +51,9 @@ export const videos: Record<VideoKey, VideoSlot> = {
     title: "Conheça a Retífica Premium — estrutura, equipe e processo",
     brief:
       "45–60s. Fachada, bancada, máquinas em operação, equipe trabalhando. "
-      + "Fecha com o cabeçote pronto e a frase de garantia por escrito.",
+      + "Fecha com o cabeçote pronto e uma explicação curta do que foi conferido.",
+    targetFile: "/media/videos/oficina-retifica-premium-16x9.mp4",
+    format: "MP4 H.264, 1920x1080, 24–30 fps, até 12 MB, legendado e sem autoplay.",
     // youtubeId: "",
     // poster: "/video-oficina.jpg",
   },
@@ -52,7 +63,9 @@ export const videos: Record<VideoKey, VideoSlot> = {
     title: "Retífica de cabeçote: do diagnóstico à entrega",
     brief:
       "60–90s. Sequência: chegada da peça → limpeza química → medição de empeno → "
-      + "plaina → sedes e válvulas → montagem → entrega com laudo.",
+      + "plaina → sedes e válvulas → montagem → explicação do serviço executado.",
+    targetFile: "/media/videos/processo-retifica-cabecote-16x9.mp4",
+    format: "MP4 H.264, 1920x1080, 24–30 fps, até 15 MB, com poster WebP 1600x900.",
     // youtubeId: "",
   },
 
@@ -60,8 +73,8 @@ export const videos: Record<VideoKey, VideoSlot> = {
   b2bPartnership: {
     title: "Programa B2B para oficinas — como funciona a parceria",
     brief:
-      "60–90s. Falado para dono de oficina: prazo, logística de busca e entrega, "
-      + "laudo técnico que a oficina repassa ao cliente final, condições por volume.",
+      "60–90s. Falado para dono de oficina: triagem, prazo combinado, disponibilidade "
+      + "de retirada/entrega sob consulta e explicação do serviço para o mecânico.",
     // youtubeId: "",
   },
 
@@ -72,12 +85,12 @@ export const videos: Record<VideoKey, VideoSlot> = {
    */
   ribeiraoPretoHero: {
     aspect: "mobileSquare",
-    title: "A gente busca em Ribeirão Preto, retifica e devolve",
+    title: "Atendimento para Ribeirão Preto: confirme a logística da sua peça",
     brief:
       "30–40s, vertical ou quadrado, legendado (75% assiste sem som). "
-      + "Roteiro: 0–5s alguém em Ribeirão Preto com o carro parado → "
-      + "5–15s a peça sendo buscada → 15–25s usinagem na bancada → "
-      + "25–35s peça devolvida e apertada. Encerrar com 'Orçamento no WhatsApp em 2h'.",
+      + "Roteiro real: 0–5s identificação da cidade → 5–15s peça recebida → "
+      + "15–25s medição/usinagem → 25–35s peça conferida. Encerrar com "
+      + "'Consulte disponibilidade e condições no WhatsApp'.",
     // youtubeId: "",
   },
 
@@ -85,8 +98,8 @@ export const videos: Record<VideoKey, VideoSlot> = {
   ribeiraoPretoLogistica: {
     title: "Como funciona a busca e a entrega em Ribeirão Preto",
     brief:
-      "30–45s. Mapa Ribeirão Preto → Sertãozinho (19 km / 25 min), veículo saindo, "
-      + "peça sendo embalada e devolvida. Texto na tela: 'Você não perde o dia'.",
+      "30–45s. Mostrar a rota real, recebimento e embalagem da peça. Informar que "
+      + "retirada e entrega dependem de disponibilidade e confirmação prévia.",
     // youtubeId: "",
   },
 
@@ -97,8 +110,15 @@ export const videos: Record<VideoKey, VideoSlot> = {
   tecnologiaTesteTrinca: {
     title: "Teste de trinca: como encontramos o que não se vê a olho nu",
     brief:
-      "40–60s. Máquina de teste em operação, close no cabeçote, revelação da trinca. "
-      + "Explicar em uma frase por que montar sem esse teste gera retrabalho.",
+      "40–60s. Equipamento real em operação, close no cabeçote e resultado sendo "
+      + "interpretado pelo técnico. Explicar que o teste orienta a decisão sem "
+      + "transformar sintomas em diagnóstico.",
+    targetFile: "/media/videos/teste-de-trinca-retifica-premium-16x9.mp4",
+    format: "MP4 H.264, 1920x1080, 24–30 fps, 30–45 s, até 10 MB, legendas gravadas e poster WebP 1600x900.",
+    veoPrompt:
+      "Create a 6-second seamless technical visualization, 1080x1080, of an aluminum automotive cylinder head floating over a deep navy engineering background. Show thin amber measurement lines and restrained highlights moving progressively across the sealing face, valve seats, valve guides and coolant passages. Precise industrial visualization, realistic metal surface, orthographic-inspired camera, slow controlled motion, no dramatic rotation, no people, no workshop, no company logo, no text, no diagnosis claim. The animation must remain understandable without sound and loop without a visible cut. High contrast but restrained palette: navy, aluminum gray and amber only.",
+    negativePrompt:
+      "fake workshop, mechanic, hands, logo, text, watermark, fire, smoke, sparks, excessive glow, sci-fi interface, oversaturated colors, rapid camera movement, parallax, shaky camera, deformed engine parts",
     // youtubeId: "",
   },
 };
@@ -113,22 +133,48 @@ export const serviceVideos: Record<string, VideoSlot> = {
   "retifica-de-cabecote": {
     title: "Retífica de cabeçote na prática",
     brief: "40–60s. Medição de empeno, usinagem e conferência final da superfície de vedação.",
+    targetFile: "/media/videos/retifica-de-cabecote-16x9.mp4",
+    format: "MP4 H.264 1920x1080, até 10 MB, legendado, poster WebP 1600x900.",
     // youtubeId: "",
   },
   "plaina-de-cabecote": {
     title: "Plaina de cabeçote: corrigindo o empeno",
     brief: "30–45s. Cabeçote empenado no relógio comparador, passada da plaina, superfície corrigida.",
+    targetFile: "/media/videos/plaina-de-cabecote-16x9.mp4",
+    format: "MP4 H.264 1920x1080, até 8 MB, legendado, poster WebP 1600x900.",
     // youtubeId: "",
   },
   "banho-quimico": {
     title: "Banho químico: por que a limpeza vem antes de tudo",
     brief: "30–40s. Peça suja entrando, peça limpa saindo. Explicar que sem limpeza não há medição confiável.",
+    targetFile: "/media/videos/limpeza-quimica-cabecote-16x9.mp4",
+    format: "MP4 H.264 1920x1080, até 8 MB, legendado, poster WebP 1600x900.",
     // youtubeId: "",
   },
   "montagem-de-cabecote": {
     title: "Montagem e regulagem final do cabeçote",
     brief: "40–60s. Montagem das válvulas, regulagem, torque e conferência.",
+    targetFile: "/media/videos/montagem-cabecote-16x9.mp4",
+    format: "MP4 H.264 1920x1080, até 10 MB, legendado, poster WebP 1600x900.",
     // youtubeId: "",
+  },
+  "retifica-de-sedes-e-valvulas": {
+    title: "Sedes e válvulas: vedação conferida na bancada",
+    brief: "35–50s. Medição, usinagem controlada, assentamento e teste de vedação. Não prometer vedação absoluta.",
+    targetFile: "/media/videos/sedes-e-valvulas-16x9.mp4",
+    format: "MP4 H.264 1920x1080, até 9 MB, legendado, poster WebP 1600x900.",
+  },
+  "troca-e-adaptacao-de-guias": {
+    title: "Guias de válvula: folga medida antes da troca",
+    brief: "35–50s. Instrumento medindo a folga, remoção/instalação e conferência de alinhamento.",
+    targetFile: "/media/videos/guias-de-valvula-16x9.mp4",
+    format: "MP4 H.264 1920x1080, até 9 MB, legendado, poster WebP 1600x900.",
+  },
+  "usinagem-de-roscas": {
+    title: "Usinagem de roscas: alinhamento e profundidade sob controle",
+    brief: "30–45s. Preparação, alinhamento da ferramenta, reparo e conferência final da rosca.",
+    targetFile: "/media/videos/usinagem-de-roscas-16x9.mp4",
+    format: "MP4 H.264 1920x1080, até 8 MB, legendado, poster WebP 1600x900.",
   },
 };
 
