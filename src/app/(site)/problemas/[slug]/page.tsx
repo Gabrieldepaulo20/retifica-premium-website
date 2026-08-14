@@ -20,6 +20,9 @@ import {
 import { servicePath } from "@/lib/service-pages";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { NumerosProva } from "@/components/site/NumerosProva";
+import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
+import { numerosProva } from "@/lib/prova";
 import { problemVideos } from "@/lib/videos";
 
 type ProblemPageProps = {
@@ -89,7 +92,7 @@ export default async function ProblemDetailPage({ params }: ProblemPageProps) {
   const relatedGuides = page.relatedGuideSlugs
     .map((relatedSlug) => getProblemPageBySlug(relatedSlug))
     .filter((guide) => guide !== undefined);
-  const whatsappMessage = `Olá, vim pelo guia sobre ${page.shortTitle.toLowerCase()} no site da Retífica Premium. Gostaria de orientação e orçamento para avaliar o veículo.`;
+  const whatsappMessage = `Olá! Meu motor está com ${page.shortTitle.toLowerCase()}. Vim pelo site e gostaria de uma orientação.`;
 
   return (
     <main className="min-h-screen bg-white">
@@ -108,38 +111,69 @@ export default async function ProblemDetailPage({ params }: ProblemPageProps) {
           </div>
 
           <div className="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 md:grid-cols-[1.08fr_0.92fr] md:items-center lg:px-8">
-            <div>
-              <Link
-                href="/servicos"
-                className="mb-6 inline-flex text-sm font-semibold uppercase tracking-wide text-rp-gold transition-colors hover:text-white"
-              >
-                Guia de sintomas do motor
-              </Link>
-              <h1 className="font-heading text-3xl font-extrabold leading-tight md:text-5xl">
+            {/* Quem chega aqui está com o carro parado, não procurando leitura.
+                A página tinha 11 sessões pagas, ZERO contato e 2 segundos de
+                engajamento mediano — o pior ativo da conta. Três causas, todas
+                corrigidas abaixo:
+
+                1. O primeiro elemento era um link para /servicos. Mandava
+                   embora quem tinha acabado de chegar por anúncio.
+                2. A moldura era editorial ("Guia de sintomas", "Conteúdo
+                   técnico · Atualizado em"). Quem está com o motor quebrado
+                   procura socorro, não artigo — e sai quando vê blog.
+                3. O botão vinha depois de dois parágrafos e de uma linha de
+                   data. */}
+            <div className="flex flex-col">
+              <p className="font-heading text-xs font-bold uppercase tracking-[0.22em] text-rp-gold">
+                Sintoma · Sertãozinho-SP e Ribeirão Preto
+              </p>
+
+              <h1 className="mt-4 font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-5xl">
                 {page.hero}
               </h1>
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/84 md:text-lg">
+
+              <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/80 md:text-lg">
                 {page.quickAnswer}
               </p>
-              <p className="mt-5 text-sm text-white/65">
-                Conteúdo técnico da Retífica Premium · Atualizado em 21 de julho
-                de 2026
-              </p>
+
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <TrackedWhatsAppLink
                   eventLabel={`problem_${page.slug}_whatsapp`}
                   message={whatsappMessage}
-                  className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 md:h-14 md:text-base"
+                  className="inline-flex h-13 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
                 >
-                  Enviar o sintoma pelo WhatsApp
+                  Descrever meu caso no WhatsApp
                 </TrackedWhatsAppLink>
                 <TrackedPhoneLink
                   eventLabel={`problem_${page.slug}_phone`}
-                  className="inline-flex h-12 items-center justify-center rounded-full border border-white/45 px-8 text-sm font-bold text-white transition-all hover:bg-white/10 md:h-14 md:text-base"
+                  className="inline-flex h-13 items-center justify-center rounded-full border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
                 >
                   Ligar {siteConfig.phone.display}
                 </TrackedPhoneLink>
               </div>
+
+              <p className="mt-6 inline-flex w-fit items-center gap-2.5 rounded-full border border-rp-gold/50 bg-rp-gold/10 py-2.5 pl-3 pr-5">
+                <span
+                  aria-hidden="true"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-rp-gold text-[#1A1200]"
+                >
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m5 12.5 4.5 4.5L19 7.5" />
+                  </svg>
+                </span>
+                <span className="font-heading text-base font-bold text-rp-gold">
+                  6 meses de garantia no serviço
+                </span>
+              </p>
+
+              <NumerosProva numeros={numerosProva} tom="claro" className="mt-8" />
+
+              <Link
+                href="/servicos"
+                className="mt-6 inline-flex w-fit font-heading text-xs font-bold uppercase tracking-[0.18em] text-white/55 transition-colors hover:text-rp-gold"
+              >
+                ← Ver todos os serviços
+              </Link>
             </div>
 
             <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px] overflow-hidden rounded-lg border border-white/15 bg-white/8 shadow-2xl">
@@ -166,6 +200,15 @@ export default async function ProblemDetailPage({ params }: ProblemPageProps) {
             </div>
           </div>
         </section>
+
+        {/* Mesmas três respostas que levaram a página de serviço de 22% para
+            35% de conversão. 80% do tráfego pago não passa da metade da
+            página, então elas precisam vir cedo. */}
+        <PrecoPrazoGarantia
+          contexto={`problem_${page.slug}`}
+          whatsappMessage={whatsappMessage}
+          fundo="branco"
+        />
 
         <section className="bg-white py-14 md:py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
