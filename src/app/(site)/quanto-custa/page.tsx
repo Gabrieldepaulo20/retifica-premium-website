@@ -34,6 +34,38 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Fatores que alteram o valor. São qualitativos de propósito: faixas de preço só
+ * entram no site depois de auditadas contra O.S. reais.
+ */
+const fatores = [
+  {
+    titulo: "O motor",
+    texto:
+      "Família, número de cilindros e disponibilidade de peças mudam o tempo de bancada e o custo do que precisa ser reposto.",
+  },
+  {
+    titulo: "Empeno e material já removido",
+    texto:
+      "Um cabeçote que já foi plainado antes tem menos material disponível. Isso limita o que ainda pode ser feito e muda o caminho do serviço.",
+  },
+  {
+    titulo: "Trinca",
+    texto:
+      "Só aparece no teste. Se existir, entram solda e nova verificação — e é o item que mais separa um orçamento do outro.",
+  },
+  {
+    titulo: "Sedes, válvulas, guias e roscas",
+    texto:
+      "Cada um pode estar dentro do limite ou não. É a diferença entre recuperar e substituir.",
+  },
+  {
+    titulo: "Peças, montagem e prazo",
+    texto:
+      "Junta, retentores, parafusos e a montagem final entram conforme o caso. Urgência e logística também pesam.",
+  },
+] as const;
+
 const faq = [
   {
     question: "A triagem confirma qual é o defeito?",
@@ -72,17 +104,69 @@ export default function QuantoCustaPage() {
         />
         <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <p className="font-heading text-xs font-bold uppercase tracking-[0.24em] text-rp-gold">
-            Triagem guiada · cerca de 2 minutos
+            Retífica Premium · Sertãozinho e região
           </p>
           <h1 className="mt-3 max-w-3xl font-heading text-[2.15rem] font-bold leading-[1.04] tracking-[-0.015em] md:text-[3.35rem]">
-            Descubra o que seu cabeçote pode precisar
+            Quanto custa retificar um cabeçote?
           </h1>
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/85 md:text-xl">
+            Depende do que a peça precisa — e isso só aparece depois de medir. Quem dá
+            um número fechado por telefone está chutando, e o valor muda quando o
+            cabeçote chega na bancada.
+          </p>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/72 md:text-lg">
-            Responda algumas perguntas simples. Você não precisa conhecer o nome do serviço, e o resultado aparece antes de qualquer pedido de contato.
+            O que dá para fazer agora é reduzir o intervalo: responda algumas perguntas
+            simples e você vê o que provavelmente será verificado no seu caso. Sem nome,
+            sem telefone, sem compromisso.
           </p>
           <div className="mt-8">
             <EstimativaGuiada />
           </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-14 md:py-20">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <p className="font-heading text-xs font-bold uppercase tracking-[0.2em] text-rp-accent">
+            Por que não existe preço único
+          </p>
+          <h2 className="mt-2 max-w-2xl font-heading text-[1.8rem] font-bold leading-tight text-gray-900 md:text-[2.35rem]">
+            Cinco coisas mudam o valor do serviço
+          </h2>
+          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-gray-700">
+            Dois cabeçotes do mesmo carro podem custar diferente. O que separa um do
+            outro é isto:
+          </p>
+          <ol className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-gray-200 bg-gray-200 sm:grid-cols-2">
+            {fatores.map((fator, indice) => (
+              <li key={fator.titulo} className="bg-white p-6">
+                <span className="font-heading text-sm font-bold text-rp-gold">
+                  {String(indice + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-2 font-heading text-lg font-bold text-gray-900">
+                  {fator.titulo}
+                </h3>
+                <p className="mt-2 leading-relaxed text-gray-700">{fator.texto}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-8 rounded-2xl border border-gray-200 bg-gray-50 p-6">
+            <h3 className="font-heading text-lg font-bold text-gray-900">
+              O que a gente faz — e o que não faz
+            </h3>
+            <p className="mt-2 leading-relaxed text-gray-700">
+              A Retífica Premium trabalha o <strong>cabeçote</strong>: medição, plaina,
+              trinca, sedes, válvulas, guias, roscas e montagem. <strong>Motor
+              completo, bloco e virabrequim são de outra especialidade</strong> — se o
+              seu caso for esse, é melhor você saber agora do que depois de uma
+              conversa inteira.
+            </p>
+          </div>
+          <p className="mt-8 max-w-2xl leading-relaxed text-gray-700">
+            Por isso a medição vem antes do preço. A triagem acima organiza o seu caso
+            para que a conversa comece com contexto — e a equipe confirma a viabilidade
+            e o valor final depois de ver a peça.
+          </p>
         </div>
       </section>
 
