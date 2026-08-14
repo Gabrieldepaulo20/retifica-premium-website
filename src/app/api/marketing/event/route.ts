@@ -48,6 +48,9 @@ const allowedMetadataKeys = new Set([
   "serviceId",
   "flowType",
   "stepId",
+  "optionId",
+  "fieldId",
+  "interactionAction",
   "estimateState",
   "destinationType",
   "destinationPath",
@@ -83,6 +86,11 @@ const measurementModes = new Set([
   "analytics",
   "advertising",
   "analytics_and_advertising",
+]);
+const technicalDimensionKeys = new Set([
+  "optionId",
+  "fieldId",
+  "interactionAction",
 ]);
 
 function clean(value: unknown, max = 500) {
@@ -131,6 +139,18 @@ function cleanMetadata(value: unknown) {
       const measurementMode = clean(item, 40);
       if (measurementModes.has(measurementMode)) {
         metadata[key] = measurementMode;
+      }
+      continue;
+    }
+
+    if (technicalDimensionKeys.has(key)) {
+      const dimension = clean(item, 100);
+      if (
+        dimension &&
+        /^[A-Za-z0-9_-]+$/.test(dimension) &&
+        dimension.replace(/\D/g, "").length < 10
+      ) {
+        metadata[key] = dimension;
       }
       continue;
     }

@@ -47,10 +47,14 @@ type GaEventName =
   | "scroll_depth"
   | "quiz_start"
   | "quiz_flow_selected"
+  | "quiz_option_selected"
+  | "quiz_field_interaction"
   | "quiz_step_view"
   | "quiz_step_complete"
+  | "quiz_continue_blocked"
   | "quiz_unknown_selected"
   | "quiz_back"
+  | "quiz_reset"
   | "quiz_file_intent"
   | "quiz_result_view"
   | "quiz_estimate_state"
@@ -193,6 +197,9 @@ const GOOGLE_SAFE_STRING_PARAMS = new Set([
   "service_id",
   "flow_type",
   "step_id",
+  "option_id",
+  "field_id",
+  "interaction_action",
   "estimate_state",
   "form_name",
   "last_field",
@@ -970,6 +977,9 @@ export function sendExternalMarketingEvent(
       serviceId: params.service_id,
       flowType: params.flow_type,
       stepId: params.step_id,
+      optionId: params.option_id,
+      fieldId: params.field_id,
+      interactionAction: params.interaction_action,
       estimateState: params.estimate_state,
       destinationType: destination.type,
       destinationPath: destination.path,
@@ -1250,10 +1260,14 @@ export type FunnelEventName = Extract<
   | "cta_click"
   | "quiz_start"
   | "quiz_flow_selected"
+  | "quiz_option_selected"
+  | "quiz_field_interaction"
   | "quiz_step_view"
   | "quiz_step_complete"
+  | "quiz_continue_blocked"
   | "quiz_unknown_selected"
   | "quiz_back"
+  | "quiz_reset"
   | "quiz_file_intent"
   | "quiz_result_view"
   | "quiz_estimate_state"

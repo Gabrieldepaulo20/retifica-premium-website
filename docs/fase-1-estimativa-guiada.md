@@ -25,7 +25,8 @@ Eventos implementados nesta fase:
 
 - `engagement_5s` e `engagement_10s` contam tempo com a aba visível.
 - `cta_impression` e `cta_click` medem a primeira dobra do experimento.
-- `quiz_start`, `quiz_flow_selected`, `quiz_step_view`, `quiz_step_complete`, `quiz_unknown_selected`, `quiz_back`, `quiz_file_intent`, `quiz_result_view`, `quiz_estimate_state`, `quiz_whatsapp_prepared` e `quiz_whatsapp_click` medem o funil.
+- `quiz_start`, `quiz_flow_selected`, `quiz_option_selected`, `quiz_field_interaction`, `quiz_step_view`, `quiz_step_complete`, `quiz_continue_blocked`, `quiz_unknown_selected`, `quiz_back`, `quiz_reset`, `quiz_file_intent`, `quiz_result_view`, `quiz_estimate_state`, `quiz_whatsapp_prepared` e `quiz_whatsapp_click` medem o funil.
+- Opções categóricas usam apenas IDs estáveis; campos digitáveis registram somente o primeiro foco e nunca copiam marca, modelo, cidade, diagnóstico ou outro texto livre para GA4/Retiflow.
 
 Parâmetros usados quando aplicáveis: `experiment_id`, `variant_id`, `component_id`, `position`, `page_type`, `service_id`, `flow_type`, `step_id` e `estimate_state`.
 

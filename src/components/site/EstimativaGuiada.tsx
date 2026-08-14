@@ -235,6 +235,7 @@ export function EstimativaGuiada() {
   const [online, setOnline] = useState(true);
   const [restored, setRestored] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const interactedFieldsRef = useRef(new Set<string>());
   const result = useMemo(() => buildEstimateResult(answers), [answers]);
   const models = answers.vehicle.make ? vehicleCatalog[answers.vehicle.make] ?? [] : [];
   const activeFlow = answers.flow ?? "vehicle_known";
@@ -356,6 +357,37 @@ export function EstimativaGuiada() {
     }));
   }
 
+  function trackOption(
+    stepId: QuizStepId,
+    optionId: string,
+    interactionAction: "select" | "unselect" = "select"
+  ) {
+    trackFunnelEvent("quiz_option_selected", {
+      ...funnelEventContext,
+      component_id: "guided_estimate",
+      page_type: "estimate",
+      flow_type: answers.flow ?? "unknown",
+      step_id: stepId,
+      option_id: optionId,
+      interaction_action: interactionAction,
+    });
+  }
+
+  function trackFieldInteraction(stepId: QuizStepId, fieldId: string) {
+    const key = `${stepId}:${fieldId}`;
+    if (interactedFieldsRef.current.has(key)) return;
+    interactedFieldsRef.current.add(key);
+    trackFunnelEvent("quiz_field_interaction", {
+      ...funnelEventContext,
+      component_id: "guided_estimate",
+      page_type: "estimate",
+      flow_type: answers.flow ?? "unknown",
+      step_id: stepId,
+      field_id: fieldId,
+      interaction_action: "focus",
+    });
+  }
+
   function selectFlow(flow: QuizFlow) {
     const code = attendanceCode || getOrCreateContactIntent().leadCode;
     setAttendanceCode(code);
@@ -413,6 +445,14 @@ export function EstimativaGuiada() {
     const validationError = validateCurrentStep();
     if (validationError) {
       setError(validationError);
+      trackFunnelEvent("quiz_continue_blocked", {
+        ...funnelEventContext,
+        component_id: "guided_estimate_continue",
+        page_type: "estimate",
+        flow_type: answers.flow ?? "unknown",
+        step_id: currentStepId,
+        validation_reason: `required_${currentStepId}`,
+      });
       return;
     }
     setError("");
@@ -445,6 +485,8 @@ export function EstimativaGuiada() {
 
   function toggleSymptom(value: string) {
     const selectingUnknown = value === "unknown" && !answers.symptoms.includes("unknown");
+    const selected = answers.symptoms.includes(value);
+    trackOption("symptoms", value, selected ? "unselect" : "select");
     setAnswers((current) => {
       const next = value === "unknown"
         ? current.symptoms.includes("unknown")
@@ -468,6 +510,14 @@ export function EstimativaGuiada() {
   }
 
   function resetQuiz() {
+    trackFunnelEvent("quiz_reset", {
+      ...funnelEventContext,
+      component_id: "guided_estimate_reset",
+      page_type: "estimate",
+      flow_type: answers.flow ?? "unknown",
+      step_id: "result",
+    });
+    interactedFieldsRef.current.clear();
     setAnswers(withQueryServiceContext(freshQuizAnswers()));
     setStarted(false);
     setStep(1);
@@ -640,7 +690,10 @@ export function EstimativaGuiada() {
                     value={value}
                     selected={answers.profile === value}
                     label={label}
-                    onClick={() => update({ profile: value })}
+                    onClick={() => {
+                      update({ profile: value });
+                      trackOption("requester", value);
+                    }}
                   />
                 ))}
               </div>
@@ -656,6 +709,7 @@ export function EstimativaGuiada() {
                   onChange={(event) => {
                     const unknown = event.target.checked;
                     updateVehicle({ unknown });
+                    trackOption("vehicle", "vehicle_unknown", unknown ? "select" : "unselect");
                     if (unknown) {
                       trackFunnelEvent("quiz_unknown_selected", {
                         ...funnelEventContext,
@@ -672,22 +726,22 @@ export function EstimativaGuiada() {
               {!answers.vehicle.unknown ? (
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Marca">
-                    <input className={inputClass} list="vehicle-makes" value={answers.vehicle.make} onChange={(event) => updateVehicle({ make: event.target.value, model: "" })} placeholder="Ex.: Fiat" autoComplete="off" />
+                    <input className={inputClass} list="vehicle-makes" value={answers.vehicle.make} onFocus={() => trackFieldInteraction("vehicle", "vehicle_make")} onChange={(event) => updateVehicle({ make: event.target.value, model: "" })} placeholder="Ex.: Fiat" autoComplete="off" />
                   </Field>
                   <datalist id="vehicle-makes">{Object.keys(vehicleCatalog).map((make) => <option key={make} value={make} />)}</datalist>
                   <Field label="Modelo">
-                    <input className={inputClass} list="vehicle-models" value={answers.vehicle.model} onChange={(event) => updateVehicle({ model: event.target.value })} placeholder="Ex.: Strada" autoComplete="off" />
+                    <input className={inputClass} list="vehicle-models" value={answers.vehicle.model} onFocus={() => trackFieldInteraction("vehicle", "vehicle_model")} onChange={(event) => updateVehicle({ model: event.target.value })} placeholder="Ex.: Strada" autoComplete="off" />
                   </Field>
                   <datalist id="vehicle-models">{models.map((model) => <option key={model} value={model} />)}</datalist>
-                  <Field label="Ano" optional><input className={inputClass} inputMode="numeric" value={answers.vehicle.year} onChange={(event) => updateVehicle({ year: event.target.value.slice(0, 4) })} placeholder="Ex.: 2018" /></Field>
-                  <Field label="Motorização" optional><input className={inputClass} value={answers.vehicle.engine} onChange={(event) => updateVehicle({ engine: event.target.value })} placeholder="Ex.: 1.6 16V" /></Field>
+                  <Field label="Ano" optional><input className={inputClass} inputMode="numeric" value={answers.vehicle.year} onFocus={() => trackFieldInteraction("vehicle", "vehicle_year")} onChange={(event) => updateVehicle({ year: event.target.value.slice(0, 4) })} placeholder="Ex.: 2018" /></Field>
+                  <Field label="Motorização" optional><input className={inputClass} value={answers.vehicle.engine} onFocus={() => trackFieldInteraction("vehicle", "vehicle_engine")} onChange={(event) => updateVehicle({ engine: event.target.value })} placeholder="Ex.: 1.6 16V" /></Field>
                   <Field label="Combustível" optional>
-                    <select className={inputClass} value={answers.vehicle.fuel ?? ""} onChange={(event) => updateVehicle({ fuel: (event.target.value || null) as FuelType | null })}>
+                    <select className={inputClass} value={answers.vehicle.fuel ?? ""} onFocus={() => trackFieldInteraction("vehicle", "vehicle_fuel")} onChange={(event) => { const fuel = (event.target.value || null) as FuelType | null; updateVehicle({ fuel }); if (fuel) trackOption("vehicle", `fuel_${fuel}`); }}>
                       <option value="">Selecione</option>
                       {(Object.entries(fuelLabels) as [FuelType, string][]).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                     </select>
                   </Field>
-                  <Field label="Código do motor" optional><input className={inputClass} value={answers.vehicle.engineCode} onChange={(event) => updateVehicle({ engineCode: event.target.value })} placeholder="Se estiver disponível" /></Field>
+                  <Field label="Código do motor" optional><input className={inputClass} value={answers.vehicle.engineCode} onFocus={() => trackFieldInteraction("vehicle", "vehicle_engine_code")} onChange={(event) => updateVehicle({ engineCode: event.target.value })} placeholder="Se estiver disponível" /></Field>
                 </div>
               ) : (
                 <p className="rounded-xl border border-white/12 bg-white/[0.04] p-4 text-sm leading-relaxed text-white/65">
@@ -707,12 +761,15 @@ export function EstimativaGuiada() {
                   value={value}
                   selected={answers.situation === value}
                   label={label}
-                  onClick={() => update({ situation: value })}
+                  onClick={() => {
+                    update({ situation: value });
+                    trackOption("situation", value);
+                  }}
                 />
               ))}
               {answers.situation === "mechanic_assessed" ? (
                 <Field label="O que o mecânico informou?" optional>
-                  <textarea className={`${inputClass} min-h-24 py-3`} maxLength={300} value={answers.mechanicAssessment} onChange={(event) => update({ mechanicAssessment: event.target.value })} placeholder="Resuma em até 300 caracteres" />
+                  <textarea className={`${inputClass} min-h-24 py-3`} maxLength={300} value={answers.mechanicAssessment} onFocus={() => trackFieldInteraction("situation", "mechanic_assessment")} onChange={(event) => update({ mechanicAssessment: event.target.value })} placeholder="Resuma em até 300 caracteres" />
                 </Field>
               ) : null}
             </fieldset>
@@ -738,7 +795,7 @@ export function EstimativaGuiada() {
                 </div>
               </fieldset>
               {answers.symptoms.includes("other") ? (
-                <div className="mt-4"><Field label="Outro sinal" optional><input className={inputClass} value={answers.otherSymptom} onChange={(event) => update({ otherSymptom: event.target.value })} maxLength={120} /></Field></div>
+                <div className="mt-4"><Field label="Outro sinal" optional><input className={inputClass} value={answers.otherSymptom} onFocus={() => trackFieldInteraction("symptoms", "other_symptom")} onChange={(event) => update({ otherSymptom: event.target.value })} maxLength={120} /></Field></div>
               ) : null}
               {answers.situation === "running" && answers.symptoms.some((item) => ["overheating", "oil_water_mix", "reservoir_pressure", "returned_problem"].includes(item)) ? (
                 <div className="mt-5 rounded-xl border border-amber-400/50 bg-amber-300/10 p-4 text-sm leading-relaxed text-amber-100" role="alert">
@@ -761,22 +818,25 @@ export function EstimativaGuiada() {
                       value={value}
                       selected={answers.knownDiagnosis === value}
                       label={label}
-                      onClick={() => update({ knownDiagnosis: value })}
+                      onClick={() => {
+                        update({ knownDiagnosis: value });
+                        trackOption("known_information", value);
+                      }}
                     />
                   ))}
                 </div>
               </fieldset>
               {answers.knownDiagnosis && answers.knownDiagnosis !== "none" ? (
                 <div className="mt-5 grid gap-4">
-                  <Field label="Diagnóstico recebido" optional><textarea className={`${inputClass} min-h-24 py-3`} maxLength={300} value={answers.diagnosisText} onChange={(event) => update({ diagnosisText: event.target.value })} placeholder="Até 300 caracteres" /></Field>
-                  <Field label="Serviço desejado, se souber" optional><input className={inputClass} value={answers.desiredService} onChange={(event) => update({ desiredService: event.target.value })} /></Field>
+                  <Field label="Diagnóstico recebido" optional><textarea className={`${inputClass} min-h-24 py-3`} maxLength={300} value={answers.diagnosisText} onFocus={() => trackFieldInteraction("known_information", "diagnosis_text")} onChange={(event) => update({ diagnosisText: event.target.value })} placeholder="Até 300 caracteres" /></Field>
+                  <Field label="Serviço desejado, se souber" optional><input className={inputClass} value={answers.desiredService} onFocus={() => trackFieldInteraction("known_information", "desired_service")} onChange={(event) => update({ desiredService: event.target.value })} /></Field>
                 </div>
               ) : null}
               <fieldset className="mt-5">
                 <legend className="mb-2 font-heading text-sm font-bold text-white/85">Tenho fotos ou orçamento anterior</legend>
                 <div className="grid grid-cols-2 gap-3">
-                  <Option name="has-files" value="yes" selected={answers.hasFiles === true} label="Sim" onClick={() => { update({ hasFiles: true }); trackFunnelEvent("quiz_file_intent", { ...funnelEventContext, component_id: "files", page_type: "estimate", step_id: "known_information" }); }} />
-                  <Option name="has-files" value="no" selected={answers.hasFiles === false} label="Não" onClick={() => update({ hasFiles: false })} />
+                  <Option name="has-files" value="yes" selected={answers.hasFiles === true} label="Sim" onClick={() => { update({ hasFiles: true }); trackOption("known_information", "has_files_yes"); trackFunnelEvent("quiz_file_intent", { ...funnelEventContext, component_id: "files", page_type: "estimate", step_id: "known_information" }); }} />
+                  <Option name="has-files" value="no" selected={answers.hasFiles === false} label="Não" onClick={() => { update({ hasFiles: false }); trackOption("known_information", "has_files_no"); }} />
                 </div>
                 {answers.hasFiles ? <p className="mt-2 text-sm text-white/72">Se escolher WhatsApp, você poderá anexar as fotos diretamente na conversa.</p> : null}
               </fieldset>
@@ -786,17 +846,17 @@ export function EstimativaGuiada() {
           {currentStepId === "contact" ? (
             <div className="grid gap-5">
               <div>
-                <Field label="Cidade"><input className={inputClass} value={answers.city} onChange={(event) => update({ city: event.target.value })} placeholder="Ex.: Sertãozinho" autoComplete="address-level2" /></Field>
+                <Field label="Cidade"><input className={inputClass} value={answers.city} onFocus={() => trackFieldInteraction("contact", "city")} onChange={(event) => update({ city: event.target.value })} placeholder="Ex.: Sertãozinho" autoComplete="address-level2" /></Field>
                 <p className="mt-1.5 text-xs leading-relaxed text-white/65">
                   Usada para orientar atendimento e logística. Não pedimos GPS e a cidade não é enviada ao Google como parâmetro personalizado.
                 </p>
               </div>
-              <fieldset><legend className="mb-2 font-heading text-sm font-bold text-white/85">Para quando você precisa?</legend><div className="grid gap-2.5 sm:grid-cols-2">{(Object.entries(urgencyLabels) as [Urgency, string][]).map(([value, label]) => <Option key={value} name="urgency" value={value} selected={answers.urgency === value} label={label} onClick={() => update({ urgency: value })} />)}</div></fieldset>
-              <fieldset><legend className="mb-2 font-heading text-sm font-bold text-white/85">Como prefere continuar?</legend><div className="grid gap-2.5 sm:grid-cols-3">{(Object.entries(contactPreferenceLabels) as [ContactPreference, string][]).map(([value, label]) => <Option key={value} name="contact-preference" value={value} selected={answers.contactPreference === value} label={label} onClick={() => update({ contactPreference: value })} />)}</div></fieldset>
+              <fieldset><legend className="mb-2 font-heading text-sm font-bold text-white/85">Para quando você precisa?</legend><div className="grid gap-2.5 sm:grid-cols-2">{(Object.entries(urgencyLabels) as [Urgency, string][]).map(([value, label]) => <Option key={value} name="urgency" value={value} selected={answers.urgency === value} label={label} onClick={() => { update({ urgency: value }); trackOption("contact", `urgency_${value}`); }} />)}</div></fieldset>
+              <fieldset><legend className="mb-2 font-heading text-sm font-bold text-white/85">Como prefere continuar?</legend><div className="grid gap-2.5 sm:grid-cols-3">{(Object.entries(contactPreferenceLabels) as [ContactPreference, string][]).map(([value, label]) => <Option key={value} name="contact-preference" value={value} selected={answers.contactPreference === value} label={label} onClick={() => { update({ contactPreference: value }); trackOption("contact", `contact_${value}`); }} />)}</div></fieldset>
               {answers.profile === "workshop" || answers.profile === "fleet" ? (
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Quantidade aproximada de peças" optional><input className={inputClass} inputMode="numeric" value={answers.approximateQuantity} onChange={(event) => update({ approximateQuantity: event.target.value })} /></Field>
-                  <Field label="A peça já está disponível?" optional><input className={inputClass} value={answers.partAvailability} onChange={(event) => update({ partAvailability: event.target.value })} placeholder="Ex.: já removida" /></Field>
+                  <Field label="Quantidade aproximada de peças" optional><input className={inputClass} inputMode="numeric" value={answers.approximateQuantity} onFocus={() => trackFieldInteraction("contact", "approximate_quantity")} onChange={(event) => update({ approximateQuantity: event.target.value })} /></Field>
+                  <Field label="A peça já está disponível?" optional><input className={inputClass} value={answers.partAvailability} onFocus={() => trackFieldInteraction("contact", "part_availability")} onChange={(event) => update({ partAvailability: event.target.value })} placeholder="Ex.: já removida" /></Field>
                 </div>
               ) : null}
             </div>
