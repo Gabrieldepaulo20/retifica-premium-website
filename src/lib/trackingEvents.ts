@@ -58,6 +58,8 @@ type GaEventName =
   | "quiz_file_intent"
   | "quiz_result_view"
   | "quiz_estimate_state"
+  | "quiz_qualified_intent"
+  | "quiz_out_of_scope"
   | "quiz_whatsapp_prepared"
   | "quiz_whatsapp_click";
 
@@ -133,8 +135,14 @@ const SESSION_ID_KEY = "retifica_premium_session_id";
 const SESSION_ACTIVITY_KEY = "retifica_premium_session_activity";
 const SESSION_ATTRIBUTION_KEY = "retifica_premium_session_attribution";
 const CONTACT_INTENT_KEY = "retifica_premium_contact_intent";
+const LEAD_CODE_KEY = "retifica_premium_lead_code";
 const REPORTED_EVENTS_KEY = "retifica_premium_reported_events";
 const CONTACT_INTENT_TTL_MS = 30 * 60 * 1000;
+/**
+ * Janela em que dois contatos da mesma pessoa continuam sendo o mesmo lead.
+ * Além dela, quem volta a procurar a retífica é um caso comercial novo.
+ */
+const LEAD_CODE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const SESSION_INACTIVITY_TTL_MS = 30 * 60 * 1000;
 const ATTRIBUTION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 const EXTERNAL_EVENT_OUTBOX_KEY = "retifica_premium_event_outbox";
@@ -521,6 +529,55 @@ function leadCode() {
   return `RP-${date}-${suffix}`;
 }
 
+/**
+ * Código do lead por PESSOA, não por sessão.
+ *
+ * Antes o código nascia junto com o `ContactIntent`, que vive em
+ * `sessionStorage`. Toda rotação de sessão gerava um código novo para a mesma
+ * pessoa: em 13/08 um único visitante produziu três códigos em seis minutos, e
+ * 30 pessoas viraram 40 leads no painel (1,33x). Como o código também vai no
+ * `transaction_id` da conversão, a inflação vazava para o Google Ads.
+ *
+ * Guardando em `localStorage` — mesmo lugar do `anonymousId` — o código
+ * sobrevive à rotação de sessão e à navegação entre abas. A janela de 30 dias
+ * evita que um cliente de meses atrás seja contado como o mesmo lead.
+ */
+function getOrCreateLeadCode(storage: Storage | null): string {
+  if (!storage) return leadCode();
+
+  const now = Date.now();
+  try {
+    const raw = storage.getItem(LEAD_CODE_KEY);
+    if (raw) {
+      const saved = JSON.parse(raw) as { code?: string; lastUsedAt?: number };
+      const idade = now - (saved.lastUsedAt ?? Number.NaN);
+      if (
+        saved.code &&
+        isSupportedLeadCode(saved.code) &&
+        Number.isFinite(idade) &&
+        idade >= 0 &&
+        idade < LEAD_CODE_TTL_MS
+      ) {
+        storage.setItem(
+          LEAD_CODE_KEY,
+          JSON.stringify({ code: saved.code, lastUsedAt: now })
+        );
+        return saved.code;
+      }
+    }
+  } catch {
+    // Registro corrompido vale como ausente: emite um código novo.
+  }
+
+  const code = leadCode();
+  try {
+    storage.setItem(LEAD_CODE_KEY, JSON.stringify({ code, lastUsedAt: now }));
+  } catch {
+    // Sem persistência o código continua válido para esta navegação.
+  }
+  return code;
+}
+
 function isSupportedLeadCode(value: string) {
   return /^RP-(?:\d{8}-[A-Z0-9]{4,16}|\d{4}-\d{2}-[A-Z0-9]{4,16})$/i.test(
     value
@@ -554,6 +611,10 @@ export function getOrCreateContactIntent(): ContactIntent {
     anonymousRuntimeIntent?.sessionId
   );
 
+  // Resolvido antes do intent de sessão: o código pertence à pessoa e precisa
+  // sobreviver à rotação de sessão que antes o recriava.
+  const codigoDaPessoa = getOrCreateLeadCode(localStorage);
+
   try {
     const raw = sessionStorage?.getItem(CONTACT_INTENT_KEY);
     if (raw) {
@@ -563,6 +624,13 @@ export function getOrCreateContactIntent(): ContactIntent {
         existing.leadCode &&
         existing.sessionId === sessionId
       ) {
+        // Um intent gravado antes desta correção carrega o código antigo, de
+        // sessão. O código da pessoa prevalece.
+        if (existing.leadCode !== codigoDaPessoa) {
+          const corrigido = { ...existing, leadCode: codigoDaPessoa };
+          sessionStorage?.setItem(CONTACT_INTENT_KEY, JSON.stringify(corrigido));
+          return corrigido;
+        }
         return existing;
       }
     }
@@ -572,7 +640,7 @@ export function getOrCreateContactIntent(): ContactIntent {
 
   const intent: ContactIntent = {
     eventId: randomId(),
-    leadCode: leadCode(),
+    leadCode: codigoDaPessoa,
     anonymousId: getOrCreateBrowserId(
       localStorage,
       ANONYMOUS_ID_KEY,
@@ -1271,6 +1339,8 @@ export type FunnelEventName = Extract<
   | "quiz_file_intent"
   | "quiz_result_view"
   | "quiz_estimate_state"
+  | "quiz_qualified_intent"
+  | "quiz_out_of_scope"
   | "quiz_whatsapp_prepared"
   | "quiz_whatsapp_click"
 >;
