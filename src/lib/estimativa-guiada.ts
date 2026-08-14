@@ -14,6 +14,13 @@ export type FuelType =
   | "other"
   | "unknown";
 export type Urgency = "urgent" | "this_week" | "researching" | "no_deadline";
+/**
+ * A Retífica Premium trabalha o CABEÇOTE, não o motor completo. Quem chega
+ * querendo bloco, virabrequim ou motor inteiro não é atendível — e hoje esse
+ * lead consome mídia e atendimento até alguém descobrir isso no WhatsApp.
+ * Perguntar antes é mais honesto com os dois lados.
+ */
+export type ServiceScope = "head_only" | "full_engine" | "unknown";
 export type ContactPreference = "whatsapp" | "phone" | "take_part";
 export type QuizStepId =
   | "requester"
@@ -77,6 +84,7 @@ export type QuizAnswers = {
   hasFiles: boolean | null;
   city: string;
   urgency: Urgency | null;
+  scope: ServiceScope | null;
   contactPreference: ContactPreference | null;
   approximateQuantity: string;
   partAvailability: string;
@@ -96,6 +104,7 @@ export type EstimateResult = {
   valueFactors: string[];
   nextStep: string;
   safetyWarning: boolean;
+  outOfScope: boolean;
 };
 
 export const initialQuizAnswers: QuizAnswers = {
@@ -120,6 +129,7 @@ export const initialQuizAnswers: QuizAnswers = {
   hasFiles: null,
   city: "",
   urgency: null,
+  scope: null,
   contactPreference: null,
   approximateQuantity: "",
   partAvailability: "",
@@ -156,6 +166,12 @@ export const urgencyLabels: Record<Urgency, string> = {
   this_week: "Nesta semana",
   researching: "Estou pesquisando",
   no_deadline: "Sem prazo",
+};
+
+export const scopeLabels: Record<ServiceScope, string> = {
+  head_only: "Só o cabeçote",
+  full_engine: "Motor completo",
+  unknown: "Não sei ainda",
 };
 
 export const contactPreferenceLabels: Record<ContactPreference, string> = {
@@ -424,8 +440,9 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
       "estado de sedes, válvulas, guias, roscas e componentes",
       "peças, solda, montagem, urgência e logística necessárias",
     ],
-    nextStep:
-      answers.contactPreference === "phone"
+    nextStep: answers.scope === "full_engine"
+      ? "A Retífica Premium trabalha o cabeçote, não o motor completo. Se o seu caso incluir bloco, virabrequim ou motor inteiro, a parte do cabeçote a gente resolve — e vale falar com a equipe para entender o que dá para separar antes de procurar uma retífica de motores."
+      : answers.contactPreference === "phone"
         ? "Ligue para a Retífica Premium e informe o código da triagem. Deixe este resumo aberto para consultar os pontos principais."
         : answers.contactPreference === "take_part"
           ? "Abra a rota da Retífica Premium e leve o código da triagem junto com a peça ou as informações que tiver."
@@ -433,7 +450,125 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
     safetyWarning:
       answers.situation === "running" &&
       answers.symptoms.some((item) => seriousSymptoms.has(item)),
+    outOfScope: answers.scope === "full_engine",
   };
+}
+
+export type IntentLevel = "high" | "medium" | "low";
+
+export type IntentAssessment = {
+  level: IntentLevel;
+  score: number;
+  signals: string[];
+};
+
+/**
+ * Classifica a intenção a partir do que a pessoa já respondeu.
+ *
+ * Não é filtro nem barreira: ninguém é impedido de continuar. Serve para
+ * medir separadamente "quem clicou" de "quem tinha um serviço real para
+ * pedir", que é a distinção que hoje não existe no funil — todo clique de
+ * WhatsApp conta igual, seja de quem está com o carro parado ou de quem só
+ * queria saber o preço médio.
+ *
+ * Os pesos vêm do que caracteriza um serviço concreto na retífica:
+ * peça fora ou veículo parado, prazo definido e veículo identificado.
+ */
+export function assessIntent(answers: QuizAnswers): IntentAssessment {
+  const signals: string[] = [];
+  let score = 0;
+
+  // Motor completo não é serviço da casa. Por mais forte que seja a intenção,
+  // esse lead não vira O.S. — e contá-lo como qualificado distorce o funil.
+  if (answers.scope === "full_engine") {
+    return {
+      level: "low",
+      score: 0,
+      signals: ["fora de escopo: motor completo"],
+    };
+  }
+  if (answers.scope === "head_only") {
+    score += 2;
+    signals.push("escopo confirmado: cabeçote");
+  }
+
+  // Peça fora ou veículo parado é o sinal mais forte: já existe serviço.
+  if (
+    answers.situation === "head_removed" ||
+    answers.situation === "engine_disassembled"
+  ) {
+    score += 3;
+    signals.push("peça já removida");
+  } else if (answers.situation === "mechanic_assessed") {
+    score += 3;
+    signals.push("já avaliado por mecânico");
+  } else if (answers.situation === "stopped") {
+    score += 2;
+    signals.push("veículo parado");
+  }
+
+  if (answers.urgency === "urgent") {
+    score += 3;
+    signals.push("urgente");
+  } else if (answers.urgency === "this_week") {
+    score += 2;
+    signals.push("prazo nesta semana");
+  } else if (answers.urgency === "researching" || answers.urgency === "no_deadline") {
+    score -= 1;
+    signals.push("ainda pesquisando");
+  }
+
+  if (!answers.vehicle.unknown && answers.vehicle.make.trim() && answers.vehicle.model.trim()) {
+    score += 2;
+    signals.push("veículo identificado");
+  }
+
+  if (answers.knownDiagnosis && answers.knownDiagnosis !== "none") {
+    score += 2;
+    signals.push("diagnóstico já recebido");
+  }
+
+  const sintomasReais = answers.symptoms.filter(
+    (item) => item !== "unknown" && item !== "other"
+  );
+  if (sintomasReais.length >= 2) {
+    score += 2;
+    signals.push("mais de um sintoma");
+  } else if (sintomasReais.length === 1) {
+    score += 1;
+    signals.push("sintoma identificado");
+  }
+
+  if (answers.profile === "workshop" || answers.profile === "fleet" || answers.profile === "company") {
+    score += 2;
+    signals.push("oficina, empresa ou frota");
+  }
+
+  if (answers.city.trim()) {
+    score += 1;
+    signals.push("cidade informada");
+  }
+
+  if (answers.hasFiles === true) {
+    score += 1;
+    signals.push("tem fotos ou documentos");
+  }
+
+  const level: IntentLevel = score >= 8 ? "high" : score >= 4 ? "medium" : "low";
+  return { level, score, signals };
+}
+
+/**
+ * Referência curta mostrada ao cliente.
+ *
+ * O código completo (`RP-20260814-0ADB093E`) parecia protocolo de sistema e
+ * dava vontade de apagar antes de enviar. Quatro caracteres dentro de uma frase
+ * normal cumprem a mesma função: o atendimento acha o lead por
+ * `lead_code LIKE '%7A3C'`, e o cliente lê como referência, não como código.
+ */
+export function shortRef(leadCode: string) {
+  const limpo = leadCode.replace(/[^A-Z0-9]/gi, "").toUpperCase();
+  return limpo.slice(-4) || "----";
 }
 
 export function buildWhatsAppEstimateMessage(
@@ -478,7 +613,7 @@ export function buildWhatsAppEstimateMessage(
     .join(" · ");
 
   return [
-    "Olá! Fiz a estimativa guiada no site da Retífica Premium.",
+    `Olá! Fiz a triagem no site da Retífica Premium (ref. ${shortRef(attendanceCode)}).`,
     "",
     `Atendimento: ${answers.profile ? profileLabels[answers.profile] : "não informado"}`,
     `Veículo: ${vehicle}`,
@@ -492,6 +627,7 @@ export function buildWhatsAppEstimateMessage(
       ? [`Contexto de entrada: ${answers.serviceContextLabel}`]
       : []),
     `Diagnóstico/serviço informado: ${diagnosis}`,
+    `Escopo: ${answers.scope ? scopeLabels[answers.scope] : "não informado"}`,
     `Cidade e prioridade: ${answers.city || "não informada"} · ${answers.urgency ? urgencyLabels[answers.urgency] : "não informada"}`,
     `Preferência de contato: ${answers.contactPreference ? contactPreferenceLabels[answers.contactPreference] : "não informada"}`,
     ...(businessDetails ? [`Volume/disponibilidade: ${businessDetails}`] : []),
@@ -500,7 +636,5 @@ export function buildWhatsAppEstimateMessage(
     `Possíveis verificações: ${result.checks.join("; ")}`,
     `Serviços relacionados: ${result.services.join("; ")}`,
     `Tenho fotos/documentos para enviar: ${answers.hasFiles === null ? "não informado" : answers.hasFiles ? "sim" : "não"}`,
-    "",
-    `Código do atendimento: ${attendanceCode}`,
   ].join("\n");
 }

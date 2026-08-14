@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  assessIntent,
   buildEstimateResult,
   buildWhatsAppEstimateMessage,
   contactPreferenceLabels,
@@ -12,6 +13,8 @@ import {
   profileLabels,
   quizStepOrders,
   quizStepTitles,
+  scopeLabels,
+  shortRef,
   situationLabels,
   symptomOptions,
   urgencyLabels,
@@ -21,6 +24,7 @@ import {
   type QuizAnswers,
   type QuizFlow,
   type QuizStepId,
+  type ServiceScope,
   type Urgency,
   type VehicleSituation,
 } from "@/lib/estimativa-guiada";
@@ -198,13 +202,14 @@ function withQueryServiceContext(answers: QuizAnswers) {
     : answers;
 }
 
+/**
+ * O quiz gerava um código próprio, diferente do código de contato da pessoa.
+ * Resultado: a mesma pessoa aparecia com um código ao clicar num CTA comum e
+ * outro ao concluir a triagem, e as duas linhas contavam como leads distintos.
+ * Agora existe uma única fonte — o código estável da pessoa.
+ */
 function createAttendanceCode() {
-  const now = new Date();
-  const suffix =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID().replaceAll("-", "").slice(0, 4).toUpperCase()
-      : Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `RP-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${suffix}`;
+  return getOrCreateContactIntent().leadCode;
 }
 
 function experimentContext() {
@@ -237,6 +242,7 @@ export function EstimativaGuiada() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const interactedFieldsRef = useRef(new Set<string>());
   const result = useMemo(() => buildEstimateResult(answers), [answers]);
+  const intent = useMemo(() => assessIntent(answers), [answers]);
   const models = answers.vehicle.make ? vehicleCatalog[answers.vehicle.make] ?? [] : [];
   const activeFlow = answers.flow ?? "vehicle_known";
   const stepOrder = quizStepOrders[activeFlow];
@@ -276,7 +282,9 @@ export function EstimativaGuiada() {
             const restoredIndex = restoredOrder.indexOf(restoredStepId);
             nextStep = restoredIndex >= 0 ? restoredIndex + 1 : 1;
             nextStarted = saved.started;
-            nextAttendanceCode = saved.attendanceCode || createAttendanceCode();
+            // Ignora o código salvo de propósito: o código da pessoa já é
+            // estável entre sessões e é ele que o painel usa para deduplicar.
+            nextAttendanceCode = createAttendanceCode();
           } else {
             window.sessionStorage.removeItem(STORAGE_KEY);
           }
@@ -343,8 +351,21 @@ export function EstimativaGuiada() {
         estimate_state: result.state,
         visitor_city: answers.city,
       });
+      // Separa "concluiu a triagem" de "concluiu com um serviço real na mão".
+      // Sem isso, o painel trata igual quem está com o carro parado e quem
+      // só queria saber o preço médio.
+      trackFunnelEvent("quiz_qualified_intent", {
+        ...funnelEventContext,
+        component_id: "guided_estimate_result",
+        page_type: "estimate",
+        flow_type: answers.flow ?? "unknown",
+        step_id: "result",
+        intent_level: intent.level,
+        intent_score: intent.score,
+        intent_signals: intent.signals.join(" · "),
+      });
     }
-  }, [answers.city, answers.flow, currentStepId, funnelEventContext, result.state, started]);
+  }, [answers.city, answers.flow, currentStepId, funnelEventContext, intent.level, intent.score, intent.signals, result.state, started]);
 
   function update(next: Partial<QuizAnswers>) {
     setAnswers((current) => ({ ...current, ...next }));
@@ -549,6 +570,10 @@ export function EstimativaGuiada() {
       estimate_state: result.state,
       visitor_city: answers.city,
       transaction_id: attendanceCode,
+      // Viaja junto no clique para que WhatsApp, ligação e rota possam ser
+      // lidos por nível de intenção, e não só por volume.
+      intent_level: intent.level,
+      intent_score: intent.score,
     };
 
     if (preference === "whatsapp") {
@@ -852,6 +877,37 @@ export function EstimativaGuiada() {
                 </p>
               </div>
               <fieldset><legend className="mb-2 font-heading text-sm font-bold text-white/85">Para quando você precisa?</legend><div className="grid gap-2.5 sm:grid-cols-2">{(Object.entries(urgencyLabels) as [Urgency, string][]).map(([value, label]) => <Option key={value} name="urgency" value={value} selected={answers.urgency === value} label={label} onClick={() => { update({ urgency: value }); trackOption("contact", `urgency_${value}`); }} />)}</div></fieldset>
+              <fieldset>
+                <legend className="mb-2 font-heading text-sm font-bold text-white/85">O serviço é só do cabeçote?</legend>
+                <div className="grid gap-2.5 sm:grid-cols-3">
+                  {(Object.entries(scopeLabels) as [ServiceScope, string][]).map(([value, label]) => (
+                    <Option
+                      key={value}
+                      name="scope"
+                      value={value}
+                      selected={answers.scope === value}
+                      label={label}
+                      onClick={() => {
+                        update({ scope: value });
+                        trackOption("contact", `scope_${value}`);
+                        if (value === "full_engine") {
+                          trackFunnelEvent("quiz_out_of_scope", {
+                            ...funnelEventContext,
+                            component_id: "guided_estimate",
+                            page_type: "estimate",
+                            step_id: "contact",
+                            scope: value,
+                          });
+                        }
+                      }}
+                    />
+                  ))}
+                </div>
+                <p className="mt-1.5 text-xs leading-relaxed text-white/65">
+                  A Retífica Premium trabalha o cabeçote. Motor completo, bloco e
+                  virabrequim são de outra especialidade — melhor você saber agora.
+                </p>
+              </fieldset>
               <fieldset><legend className="mb-2 font-heading text-sm font-bold text-white/85">Como prefere continuar?</legend><div className="grid gap-2.5 sm:grid-cols-3">{(Object.entries(contactPreferenceLabels) as [ContactPreference, string][]).map(([value, label]) => <Option key={value} name="contact-preference" value={value} selected={answers.contactPreference === value} label={label} onClick={() => { update({ contactPreference: value }); trackOption("contact", `contact_${value}`); }} />)}</div></fieldset>
               {answers.profile === "workshop" || answers.profile === "fleet" ? (
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -869,11 +925,24 @@ export function EstimativaGuiada() {
                   Há sinais que podem piorar se o veículo continuar em uso. Evite rodar até receber orientação profissional.
                 </div>
               ) : null}
+              {result.outOfScope ? (
+                <div className="mb-5 rounded-xl border border-white/25 bg-white/[0.06] p-4 text-sm leading-relaxed text-white/85">
+                  <strong className="font-heading text-base font-bold text-white">
+                    Aqui a gente faz cabeçote, não motor completo.
+                  </strong>
+                  <p className="mt-2">
+                    Bloco, virabrequim e motor inteiro são de outra especialidade. Se
+                    parte do seu caso for o cabeçote, isso a gente resolve — e a equipe
+                    ajuda a entender o que dá para separar. Preferimos dizer agora a
+                    deixar você descobrir depois.
+                  </p>
+                </div>
+              ) : null}
               <div className="relative overflow-hidden rounded-2xl border border-rp-gold/45 bg-rp-gold/[0.09] p-5">
                 <div className="absolute right-0 top-0 h-16 w-16 border-b border-l border-rp-gold/20" aria-hidden="true" />
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <p className="font-heading text-xs font-bold uppercase tracking-[0.18em] text-rp-gold">Triagem concluída</p>
-                  <p className="font-mono text-xs font-bold text-rp-gold">{attendanceCode}</p>
+                  <p className="font-mono text-xs font-bold text-rp-gold">ref. {shortRef(attendanceCode)}</p>
                 </div>
                 <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/85">
                   Organizamos o que você contou e os pontos que merecem verificação. Isso ainda não confirma um diagnóstico.
