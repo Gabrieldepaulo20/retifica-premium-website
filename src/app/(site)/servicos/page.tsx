@@ -484,9 +484,6 @@ export default function ServicosPage() {
                           className={servico.slug === "retifica-de-cabecote" ? "object-cover" : "object-contain p-10"}
                           loading="lazy"
                         />
-                        <span className="absolute bottom-3 left-3 rounded-full bg-rp-navy/85 px-3 py-1 font-heading text-xs font-bold uppercase tracking-[0.16em] text-rp-gold backdrop-blur-sm">
-                          Imagem ilustrativa
-                        </span>
                       </div>
                     )}
                   </div>

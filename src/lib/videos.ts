@@ -173,6 +173,9 @@ export const serviceVideos: Record<string, VideoSlot> = {
     // youtubeId: "",
   },
   "retifica-de-sedes-e-valvulas": {
+    // Vídeo real gravado pela retífica em 15/08/2026. 10 s, com áudio.
+    arquivoLocal: "/retifica-de-sedes-e-valvulas.mp4",
+    capaLocal: "/retifica-de-sedes-e-valvulas-capa.jpg",
     title: "Sedes e válvulas: vedação conferida na oficina",
     brief: "35–50s. Conferência, usinagem controlada, assentamento e teste de vedação. Não prometer vedação absoluta.",
     targetFile: "/media/videos/sedes-e-valvulas-16x9.mp4",
