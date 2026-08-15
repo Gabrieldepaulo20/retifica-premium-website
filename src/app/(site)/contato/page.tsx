@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Contato da Retífica Premium em Sertãozinho-SP",
     description:
-      "WhatsApp, telefone, endereço e triagem para orientar a avaliação do cabeçote.",
+      "WhatsApp, telefone, endereço e perguntas do site para orientar a avaliação do cabeçote.",
     url: "https://www.premiumretifica.com.br/contato",
     siteName: "Retífica Premium",
     locale: "pt_BR",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Contato da Retífica Premium em Sertãozinho-SP",
     description:
-      "WhatsApp, telefone e triagem para orientar a avaliação do cabeçote.",
+      "WhatsApp, telefone e perguntas do site para orientar a avaliação do cabeçote.",
     images: ["/retificapremium.jpeg"],
   },
 };
@@ -101,7 +101,7 @@ export default function ContatoPage() {
               eventLabel="contact_guided_triage"
               className="mt-4 inline-flex min-h-11 items-center font-heading text-sm font-bold text-rp-gold underline decoration-rp-gold/45 underline-offset-4 transition hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
-              Prefere começar sem falar com ninguém? Fazer triagem guiada →
+              Prefere começar sem falar com ninguém? Fazer perguntas do site guiada →
             </TrackedCtaLink>
 
             <div className="mt-9 border-t border-white/12 pt-6">

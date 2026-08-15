@@ -72,7 +72,7 @@ export type MarketingEventParams = {
   service_name?: string;
   page_location?: string;
   traffic_source?: string;
-  traffic_medium?: string;
+  traffic_conferium?: string;
   traffic_campaign?: string;
   traffic_term?: string;
   gclid?: string;
@@ -94,7 +94,7 @@ type GoogleAdsConversionParams = MarketingEventParams & {
 
 export type StoredAttribution = {
   source?: string;
-  medium?: string;
+  conferium?: string;
   campaign?: string;
   term?: string;
   content?: string;
@@ -192,7 +192,7 @@ const GOOGLE_SAFE_STRING_PARAMS = new Set([
   "service_name",
   "page_location",
   "traffic_source",
-  "traffic_medium",
+  "traffic_conferium",
   "traffic_campaign",
   "traffic_term",
   "gclid",
@@ -238,7 +238,7 @@ const GOOGLE_SAFE_NUMBER_PARAMS = new Set([
 ]);
 const GOOGLE_QUERY_DERIVED_PARAMS = new Set([
   "traffic_source",
-  "traffic_medium",
+  "traffic_conferium",
   "traffic_campaign",
   "traffic_term",
   "gclid",
@@ -930,7 +930,7 @@ function captureRuntimeAttribution() {
   const params = new URLSearchParams(window.location.search);
   const hasTrackedParam = [
     "utm_source",
-    "utm_medium",
+    "utm_conferium",
     "gclid",
     "gbraid",
     "wbraid",
@@ -939,7 +939,7 @@ function captureRuntimeAttribution() {
 
   const classified = classifyTrafficAttribution({
     source: params.get("utm_source") || undefined,
-    medium: params.get("utm_medium") || undefined,
+    conferium: params.get("utm_conferium") || undefined,
     referrer: safeReferrerOrigin(),
     hasGoogleClickId: Boolean(
       params.get("gclid") || params.get("gbraid") || params.get("wbraid")
@@ -948,7 +948,7 @@ function captureRuntimeAttribution() {
   const capturedAt = new Date();
   runtimeAttribution = {
     source: classified.source,
-    medium: classified.medium,
+    conferium: classified.conferium,
     originType: classified.originType,
     landingPage: `${window.location.origin}${window.location.pathname}`,
     referrer: safeReferrerOrigin(),
@@ -1018,7 +1018,7 @@ export function sendExternalMarketingEvent(
     pageTitle: document.title,
     referrer: attribution?.referrer,
     source: attribution?.source,
-    medium: attribution?.medium,
+    conferium: attribution?.conferium,
     campaign: attribution?.campaign,
     term: attribution?.term,
     content: attribution?.content,
@@ -1087,7 +1087,7 @@ export function captureTrafficAttribution() {
   const params = new URLSearchParams(window.location.search);
   const trackedKeys = [
     "utm_source",
-    "utm_medium",
+    "utm_conferium",
     "utm_campaign",
     "utm_term",
     "utm_content",
@@ -1102,7 +1102,7 @@ export function captureTrafficAttribution() {
   const existing = getStoredAttribution();
   const classifiedAttribution = classifyTrafficAttribution({
     source: params.get("utm_source") || undefined,
-    medium: params.get("utm_medium") || undefined,
+    conferium: params.get("utm_conferium") || undefined,
     referrer: document.referrer || undefined,
     hasGoogleClickId: Boolean(
       params.get("gclid") || params.get("gbraid") || params.get("wbraid")
@@ -1121,9 +1121,9 @@ export function captureTrafficAttribution() {
     source: hasTrackedParam
       ? classifiedAttribution.source
       : anonymousAttribution?.source,
-    medium: hasTrackedParam
-      ? classifiedAttribution.medium
-      : anonymousAttribution?.medium,
+    conferium: hasTrackedParam
+      ? classifiedAttribution.conferium
+      : anonymousAttribution?.conferium,
     campaign: params.get("utm_campaign") || undefined,
     term: params.get("utm_term") || undefined,
     content: params.get("utm_content") || undefined,
@@ -1191,7 +1191,7 @@ export function attributionEventParams(): MarketingEventParams {
 
   return {
     traffic_source: attribution.source,
-    traffic_medium: attribution.medium,
+    traffic_conferium: attribution.conferium,
     traffic_campaign: attribution.campaign,
     traffic_term: attribution.term,
     gclid: attribution.gclid || attribution.gbraid || attribution.wbraid,
@@ -1207,7 +1207,7 @@ export function attributionMessageLines() {
     "",
     "Origem do contato:",
     attribution.source ? `Fonte: ${attribution.source}` : "",
-    attribution.medium ? `Mídia: ${attribution.medium}` : "",
+    attribution.conferium ? `Mídia: ${attribution.conferium}` : "",
     attribution.campaign ? `Campanha: ${attribution.campaign}` : "",
     attribution.term ? `Termo: ${attribution.term}` : "",
     attribution.content ? `Conteúdo: ${attribution.content}` : "",
@@ -1228,7 +1228,7 @@ export function attributionMessageLines() {
  * digitação e apagava, ou desistia de enviar. É atrito no único ponto da
  * jornada em que a pessoa já decidiu falar com a gente.
  *
- * Nada de medição se perde com isso: o `leadCode` e a atribuição completa
+ * Nada de conferência se perde com isso: o `leadCode` e a atribuição completa
  * seguem no evento (`trackEngagementEvent` → `attributionEventParams` e
  * `intent.leadCode`), que é o caminho certo para dado de rastreamento. O
  * `transaction_id` da conversão continua usando o mesmo código, então a

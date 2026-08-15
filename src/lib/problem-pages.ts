@@ -81,7 +81,7 @@ export const problemDetailPages = [
       {
         question: "Motor fumando sempre precisa de retífica?",
         answer:
-          "Não. A fumaça pode vir de injeção, ignição, condensação, vazamento externo, retentores, guias, anéis, junta ou outros componentes. A retífica só deve ser indicada após inspeção e medição.",
+          "Não. A fumaça pode vir de injeção, ignição, condensação, vazamento externo, retentores, guias, anéis, junta ou outros componentes. A retífica só deve ser indicada após inspeção e conferência.",
       },
       {
         question: "Fumaça branca significa junta do cabeçote queimada?",
@@ -108,7 +108,7 @@ export const problemDetailPages = [
     warning:
       "Se a luz de pressão do óleo acender, pare em local seguro e desligue o motor. Rodar sem lubrificação adequada pode causar dano grave em poucos minutos. Não confunda essa luz com um simples lembrete de troca.",
     image: "/montagemdemotores.jpg",
-    imageAlt: "Motor em bancada para diagnóstico de consumo e perda de óleo",
+    imageAlt: "Motor em oficina para diagnóstico de consumo e perda de óleo",
     causes: [
       {
         title: "Vazamento externo",
@@ -126,7 +126,7 @@ export const problemDetailPages = [
           "Falhas na ventilação podem alterar a pressão interna, favorecer vazamentos ou levar óleo para a admissão. É uma verificação importante antes de condenar o motor.",
       },
       {
-        title: "Medição incorreta",
+        title: "Conferência incorreta",
         description:
           "Inclinação do carro, motor recém-desligado ou procedimento diferente do manual podem distorcer a leitura. A comparação precisa ser feita sempre do mesmo jeito.",
       },
@@ -138,7 +138,7 @@ export const problemDetailPages = [
       "Observe fumaça no escapamento, cheiro de óleo queimado, falhas e perda de potência.",
     ],
     diagnosis: [
-      "medição repetida do nível e histórico de reposição",
+      "conferência repetida do nível e histórico de reposição",
       "vazamentos em juntas, retentores, cárter, filtro e linhas",
       "ventilação do cárter e presença de óleo na admissão",
       "compressão, cilindros, anéis, guias e retentores de válvula",

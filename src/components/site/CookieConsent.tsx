@@ -388,7 +388,7 @@ export function CookieConsent({
                 <div className="grid gap-2.5 md:grid-cols-3">
                   <ChoiceRow
                     title="Funcionamento essencial"
-                    description="Guarda sua escolha de privacidade e as respostas da triagem neste aparelho. Não mede marketing."
+                    description="Guarda sua escolha de privacidade e as respostas da perguntas do site neste aparelho. Não mede marketing."
                     checked
                     disabled
                   />

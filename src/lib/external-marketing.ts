@@ -11,7 +11,7 @@ export type ExternalMarketingEvent = {
   pageTitle?: string;
   referrer?: string;
   source?: string;
-  medium?: string;
+  conferium?: string;
   campaign?: string;
   term?: string;
   content?: string;

@@ -119,7 +119,7 @@ function Option({ selected, label, description, multiple, name, value, icone, on
 }
 
 /**
- * Ícone por sintoma. A etapa de sinais é a mais pesada da triagem — 13 opções
+ * Ícone por sintoma. A etapa de sinais é a mais pesada das perguntas — 13 opções
  * em texto puro — e o público não é técnico. Ícone permite reconhecer em vez
  * de ler, que é o que 62% das sessões (menos de 10 segundos) precisam.
  */
@@ -237,7 +237,7 @@ function withQueryServiceContext(answers: QuizAnswers) {
 /**
  * O quiz gerava um código próprio, diferente do código de contato da pessoa.
  * Resultado: a mesma pessoa aparecia com um código ao clicar num CTA comum e
- * outro ao concluir a triagem, e as duas linhas contavam como leads distintos.
+ * outro ao concluir as perguntas, e as duas linhas contavam como leads distintos.
  * Agora existe uma única fonte — o código estável da pessoa.
  */
 function createAttendanceCode() {
@@ -338,7 +338,7 @@ export function EstimativaGuiada() {
           }
         }
       } catch {
-        // A triagem continua em memória se o navegador bloquear o armazenamento.
+        // As perguntas continua em memória se o navegador bloquear o armazenamento.
       }
 
       setAnswers(nextAnswers);
@@ -399,7 +399,7 @@ export function EstimativaGuiada() {
         estimate_state: result.state,
         visitor_city: answers.city,
       });
-      // Separa "concluiu a triagem" de "concluiu com um serviço real na mão".
+      // Separa "concluiu as perguntas" de "concluiu com um serviço real na mão".
       // Sem isso, o painel trata igual quem está com o carro parado e quem
       // só queria saber o preço médio.
       trackFunnelEvent("quiz_qualified_intent", {
@@ -859,7 +859,7 @@ export function EstimativaGuiada() {
                 </div>
               ) : (
                 <p className="rounded-xl border border-white/12 bg-white/[0.04] p-4 text-sm leading-relaxed text-white/65">
-                  Tudo bem. A falta desses dados reduz a precisão, mas não impede a triagem.
+                  Tudo bem. A falta desses dados reduz a precisão, mas não impede as perguntas.
                 </p>
               )}
             </div>
@@ -1031,7 +1031,7 @@ export function EstimativaGuiada() {
               <div className="relative overflow-hidden rounded-2xl border border-rp-gold/45 bg-rp-gold/[0.09] p-5">
                 <div className="absolute right-0 top-0 h-16 w-16 border-b border-l border-rp-gold/20" aria-hidden="true" />
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="font-heading text-xs font-bold uppercase tracking-[0.18em] text-rp-gold">Triagem concluída</p>
+                  <p className="font-heading text-xs font-bold uppercase tracking-[0.18em] text-rp-gold">Resumo do seu caso</p>
                   <p className="font-mono text-xs font-bold text-rp-gold">ref. {shortRef(attendanceCode)}</p>
                 </div>
                 <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/85">
@@ -1057,7 +1057,7 @@ export function EstimativaGuiada() {
                       fechados aqui nos últimos meses.
                     </p>
                     <p className="mt-2 text-sm leading-relaxed text-white/60">
-                      O seu depende da medição: trinca, empeno e material já removido
+                      O seu depende da conferência: trinca, empeno e material já removido
                       antes mudam o valor. A equipe confirma depois de ver a peça.
                     </p>
                   </div>
@@ -1149,7 +1149,7 @@ export function EstimativaGuiada() {
         {error ? <p className="mt-5 rounded-xl border border-red-300/40 bg-red-300/10 px-4 py-3 text-sm text-red-100" role="alert">{error}</p> : null}
 
         <div className="mt-7 flex flex-col gap-2.5 sm:flex-row-reverse sm:justify-between">
-          {currentStepId !== "result" ? <button type="button" onClick={next} className="min-h-12 rounded-full bg-rp-gold px-7 font-heading text-sm font-bold text-[#1A1200] hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Continuar</button> : <button type="button" onClick={resetQuiz} className="min-h-12 rounded-full border border-white/22 px-6 font-heading text-sm font-bold text-white hover:bg-white/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Fazer nova triagem</button>}
+          {currentStepId !== "result" ? <button type="button" onClick={next} className="min-h-12 rounded-full bg-rp-gold px-7 font-heading text-sm font-bold text-[#1A1200] hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Continuar</button> : <button type="button" onClick={resetQuiz} className="min-h-12 rounded-full border border-white/22 px-6 font-heading text-sm font-bold text-white hover:bg-white/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Fazer novas perguntas</button>}
           <button type="button" onClick={back} className="min-h-12 rounded-full border border-white/22 px-6 font-heading text-sm font-bold text-white hover:bg-white/8 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
             {step === 1 ? "Trocar início" : "Voltar"}
           </button>

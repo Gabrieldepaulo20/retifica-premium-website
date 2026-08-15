@@ -43,7 +43,7 @@ const TRACKING_COOKIE_PREFIXES = [
 ] as const;
 const ATTRIBUTION_QUERY_PARAMS = [
   "utm_source",
-  "utm_medium",
+  "utm_conferium",
   "utm_campaign",
   "utm_term",
   "utm_content",

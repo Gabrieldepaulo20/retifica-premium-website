@@ -74,7 +74,7 @@ export function Header() {
                   trackHeaderNavigation(item.label, item.href, "header_desktop")
                 }
                 className={cn(
-                  "relative text-sm font-medium text-white transition-colors hover:text-rp-gold",
+                  "relative text-sm font-conferium text-white transition-colors hover:text-rp-gold",
                   isActive && "text-rp-gold"
                 )}
                 aria-current={isActive ? "page" : undefined}

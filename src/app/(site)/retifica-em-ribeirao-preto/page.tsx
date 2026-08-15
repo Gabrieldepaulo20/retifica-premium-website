@@ -105,7 +105,7 @@ const vantagens = [
   },
   {
     title: "Foco em cabeçotes desde 2004",
-    desc: "A avaliação, a usinagem e a montagem são organizadas em torno das medições próprias desse conjunto.",
+    desc: "A avaliação, a usinagem e a montagem são organizadas em torno das conferências próprias desse conjunto.",
   },
   {
     title: "Teste de trinca com equipamento próprio",
@@ -113,7 +113,7 @@ const vantagens = [
   },
   {
     title: "Diagnóstico antes do orçamento",
-    desc: "A medição de empeno, sedes, guias e vedação ajuda a definir quais operações devem entrar no orçamento.",
+    desc: "A conferência de empeno, sedes, guias e vedação ajuda a definir quais operações devem entrar no orçamento.",
   },
   {
     title: "Serviço explicado",
@@ -134,14 +134,14 @@ const tecnologia = [
     cta: "Como funciona o teste",
   },
   {
-    title: "Medição de empeno",
+    title: "Conferência de empeno",
     desc: "Conferência da superfície de vedação com instrumento, não no olho. É o que define se a peça precisa de plaina e quanto pode ser retirado com segurança.",
     href: "/servicos/plaina-de-cabecote",
     cta: "Ver plaina de cabeçote",
   },
   {
     title: "Banho químico",
-    desc: "A limpeza remove resíduos que podem esconder defeitos ou interferir na leitura da superfície antes das medições.",
+    desc: "A limpeza remove resíduos que podem esconder defeitos ou interferir na leitura da superfície antes das conferências.",
     href: "/servicos/banho-quimico",
     cta: "Ver limpeza química",
   },
@@ -190,12 +190,12 @@ const faq = [
   {
     question: "Qual o prazo para quem está em Ribeirão Preto?",
     answer:
-      "O prazo depende do conjunto, das medições, das peças necessárias e da logística. A equipe confirma a previsão antes da aprovação do serviço.",
+      "O prazo depende do conjunto, das conferências, das peças necessárias e da logística. A equipe confirma a previsão antes da aprovação do serviço.",
   },
   {
     question: "Vale a pena sair de Ribeirão Preto para retificar em Sertãozinho?",
     answer:
-      "A oficina fica em Sertãozinho, a aproximadamente 19 km de Ribeirão Preto. Antes de sair, confirme atendimento e logística; a peça é medida antes da definição do serviço.",
+      "A oficina fica em Sertãozinho, a aproximadamente 19 km de Ribeirão Preto. Antes de sair, confirme atendimento e logística; a peça é conferida antes da definição do serviço.",
   },
   {
     question: "Vocês atendem oficinas mecânicas de Ribeirão Preto?",
@@ -227,7 +227,7 @@ export default function RetificaRibeiraoPretoPage() {
             </p>
             <h1 className="font-heading text-3xl font-extrabold leading-tight md:text-5xl">
               Retífica de cabeçote para Ribeirão Preto —{" "}
-              <span className="text-rp-gold">medição antes da decisão</span>
+              <span className="text-rp-gold">conferência antes da decisão</span>
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">
               Conte o que aconteceu e onde a peça está. A equipe orienta a
@@ -366,10 +366,10 @@ export default function RetificaRibeiraoPretoPage() {
               Tecnologia e processo
             </p>
             <h2 className="mt-2 font-heading text-3xl font-bold leading-tight md:text-5xl">
-              O que a gente mede antes de liberar a peça
+              O que a gente confere antes de devolver
             </h2>
             <p className="mt-4 text-base leading-relaxed text-white/78 md:text-lg">
-              Algumas condições só aparecem depois da limpeza, da medição e do
+              Algumas condições só aparecem depois da limpeza, da conferência e do
               teste. Conferir antes ajuda a decidir o próximo passo com mais informação.
             </p>
           </div>

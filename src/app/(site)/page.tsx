@@ -92,7 +92,7 @@ const differentiators = [
   },
   {
     title: "Padrão Premium",
-    desc: "Controle de qualidade e medição técnica em cada conjunto entregue.",
+    desc: "Controle de qualidade e conferência técnica em cada conjunto entregue.",
     icon: (
       <svg viewBox="0 0 24 24" className="h-8 w-8 md:h-9 md:w-9" {...iconStroke}>
         <path d="M7 4h10v3a5 5 0 01-10 0V4z" />
@@ -129,19 +129,22 @@ export default function HomePage() {
             <div className="flex flex-col items-center gap-3 md:gap-3.5 lg:gap-4 pt-4 max-[640px]:pt-12 md:pt-2 lg:pt-4">
               {/* Título em 2 linhas */}
               <h1 className="font-heading text-[28px] font-extrabold uppercase leading-[1.1] tracking-tight md:text-5xl md:leading-[1.08] lg:text-6xl lg:leading-[1.1]">
-                <span className="text-[#f59e0b]">RETÍFICA DE CABEÇOTE </span>
+                <span className="text-white">CARRO PARADO POR CAUSA </span>
                 <br />
-                <span className="text-white text-[22px] md:text-[42px] lg:text-5xl">
-                  COM MEDIÇÃO ANTES DO ORÇAMENTO
+                <span className="text-white">DO CABEÇOTE?</span>
+                <br />
+                <span className="text-[#f59e0b] text-[22px] md:text-[42px] lg:text-5xl">
+                  A GENTE BUSCA E DEVOLVE PRONTO
                 </span>
               </h1>
 
               {/* Subtexto */}
               <div className="flex flex-col gap-1.5 md:gap-2">
                 <p className="mx-auto max-w-3xl text-[14px] leading-relaxed text-gray-300 md:max-w-4xl md:text-lg md:leading-relaxed">
-                  Usinagem de precisão, revisão de válvulas e montagem técnica
-                  para carro, caminhão, ônibus e trator. Motor diesel, gasolina
-                  ou álcool.
+                  Você não precisa levar nada. Buscamos o cabeçote em
+                  Sertãozinho e região, falamos o preço antes de fazer e
+                  devolvemos com seis meses de garantia. Carro, caminhão,
+                  ônibus e trator.
                 </p>
               </div>
               {/* Micro-prova social */}
@@ -272,7 +275,7 @@ export default function HomePage() {
               }}
             >
               Serviços para cabeçotes, <br className="hidden lg:block" />
-              definidos depois da medição
+              definidos depois da conferência
             </h2>
 
             <p
@@ -284,7 +287,7 @@ export default function HomePage() {
               }}
             >
               Trabalhamos nas etapas do cabeçote: usinagem, revisão de
-              válvulas, guias e montagem técnica. A medição da peça orienta o
+              válvulas, guias e montagem técnica. A conferência da peça orienta o
               escopo, e a garantia se aplica ao serviço executado.
             </p>
           </div>
@@ -294,15 +297,15 @@ export default function HomePage() {
             {[
               {
                 img: "/retificademotor.jpg",
-                alt: "Cabeçote em bancada de usinagem",
+                alt: "Cabeçote em oficina de usinagem",
                 title: "Retífica de Cabeçote",
-                desc: "Plaina, sedes, válvulas e guias com medição de empeno e vedação para recuperar a compressão.",
+                desc: "Plaina, sedes, válvulas e guias com conferência de empeno e vedação para recuperar a compressão.",
                 href: servicePath("retifica-de-cabecote"),
                 serviceId: "retifica-de-cabecote",
               },
               {
                 img: "/montagemdemotores.jpg",
-                alt: "Montagem técnica de cabeçote em bancada",
+                alt: "Montagem técnica de cabeçote em oficina",
                 title: "Montagem de Cabeçote",
                 desc: "Conferência de componentes, montagem de válvulas e regulagem final para vedação correta.",
                 href: servicePath("montagem-de-cabecote"),
@@ -683,11 +686,11 @@ export default function HomePage() {
             {[
               {
                 q: "Quanto custa retífica de cabeçote?",
-                a: "O valor varia conforme o conjunto, o estado da peça e as operações necessárias. A triagem organiza o caso, mas o orçamento final depende da identificação e da medição do cabeçote.",
+                a: "O valor varia conforme o conjunto, o estado da peça e as operações necessárias. A perguntas do site organiza o caso, mas o orçamento final depende da identificação e da conferência do cabeçote.",
               },
               {
                 q: "Quanto tempo demora a retífica?",
-                a: "O prazo depende das medições, das peças necessárias e do escopo aprovado. A previsão é confirmada antes da execução do serviço.",
+                a: "O prazo depende das conferências, das peças necessárias e do escopo aprovado. A previsão é confirmada antes da execução do serviço.",
               },
               {
                 q: "Retífica de cabeçote tem garantia?",
@@ -814,12 +817,12 @@ export default function HomePage() {
           {
             question: "Quanto custa retífica de cabeçote?",
             answer:
-              "O valor varia conforme o conjunto, o estado da peça e as operações necessárias. A triagem organiza o caso, mas o orçamento final depende da identificação e da medição do cabeçote.",
+              "O valor varia conforme o conjunto, o estado da peça e as operações necessárias. A perguntas do site organiza o caso, mas o orçamento final depende da identificação e da conferência do cabeçote.",
           },
           {
             question: "Quanto tempo demora a retífica?",
             answer:
-              "O prazo depende das medições, das peças necessárias e do escopo aprovado. A previsão é confirmada antes da execução do serviço.",
+              "O prazo depende das conferências, das peças necessárias e do escopo aprovado. A previsão é confirmada antes da execução do serviço.",
           },
           {
             question: "Retífica de cabeçote tem garantia?",

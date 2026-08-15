@@ -347,7 +347,7 @@ export async function POST(request: Request) {
   );
   const attribution = classifyTrafficAttribution({
     source: clean(body.source, 120) || undefined,
-    medium: clean(body.medium, 120) || undefined,
+    conferium: clean(body.conferium, 120) || undefined,
     referrer: clean(body.referrer, 800) || undefined,
     hasGoogleClickId,
   });
@@ -373,7 +373,7 @@ export async function POST(request: Request) {
     pageTitle: clean(body.pageTitle, 300) || undefined,
     referrer: cleanReferrerOrigin(body.referrer),
     source: attribution.source || "direto",
-    medium: attribution.medium,
+    conferium: attribution.conferium,
     campaign: clean(body.campaign, 180) || undefined,
     term: clean(body.term, 180) || undefined,
     content: clean(body.content, 180) || undefined,
@@ -430,7 +430,7 @@ export async function POST(request: Request) {
             occurredAt: event.occurredAt || new Date().toISOString(),
             pageLocation: event.pageLocation || event.pagePath || "/",
             source: event.source,
-            medium: event.medium,
+            conferium: event.conferium,
             campaign: event.campaign,
             term: event.term,
             deviceType: event.deviceType,

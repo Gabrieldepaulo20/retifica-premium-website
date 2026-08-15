@@ -51,7 +51,7 @@ export const serviceDetailPages = [
     ],
     process: [
       "Recebemos a peça e entendemos o histórico do problema.",
-      "Fazemos inspeção visual, limpeza e medições técnicas.",
+      "Fazemos inspeção visual, limpeza e conferências técnicas.",
       "Definimos quais operações são necessárias antes da usinagem.",
       "Executamos o serviço e entregamos a peça com orientação clara.",
     ],
@@ -76,7 +76,7 @@ export const serviceDetailPages = [
     metaTitle: "Plaina de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Serviço de plaina de cabeçote para corrigir empeno, melhorar vedação e preparar a peça para montagem. Sertãozinho-SP, Ribeirão Preto e região.",
-    hero: "Plaina de cabeçote só quando a medição indicar",
+    hero: "Plaina de cabeçote só quando a conferência indicar",
     intro:
       "Junta queimada ou superaquecimento não significam automaticamente que a peça deve ser plainada. Primeiro conferimos empeno, superfície e altura disponível; só então a usinagem é indicada para recuperar a condição de vedação sem remover material por rotina.",
     image: "/plainadecabecotes.png",
@@ -97,7 +97,7 @@ export const serviceDetailPages = [
       "avaliação combinada com limpeza, sedes e válvulas quando necessário",
     ],
     process: [
-      "Medimos o empeno e avaliamos o estado da peça.",
+      "Conferimos o empeno e avaliamos o estado da peça.",
       "Confirmamos se a plaina é indicada para o caso.",
       "Executamos a usinagem respeitando tolerâncias técnicas.",
       "Entregamos a peça pronta para montagem correta.",
@@ -125,7 +125,7 @@ export const serviceDetailPages = [
       "Banho químico e limpeza técnica de cabeçote para remover carbonização, óleo, ferrugem e resíduos antes da usinagem. Atende Ribeirão Preto e região.",
     hero: "Limpeza química para revelar o estado real da peça",
     intro:
-      "Carbonização, óleo, borra e ferrugem podem esconder trincas, desgaste e falhas de vedação. A limpeza prepara a peça para inspeção e medição; ela não substitui o diagnóstico nem corrige sozinha um defeito mecânico.",
+      "Carbonização, óleo, borra e ferrugem podem esconder trincas, desgaste e falhas de vedação. A limpeza prepara a peça para inspeção e conferência; ela não substitui o diagnóstico nem corrige sozinha um defeito mecânico.",
     image: "/cabecoteservicos.png",
     imageAlt: "Ícone de limpeza química de cabeçote",
     primaryIntent: "servico-especifico",
@@ -138,7 +138,7 @@ export const serviceDetailPages = [
     ],
     includes: [
       "remoção de resíduos acumulados",
-      "preparação para inspeção visual e medição",
+      "preparação para inspeção visual e conferência",
       "melhora na leitura de trincas, sedes e guias",
       "base limpa para plaina e montagem",
       "orientação sobre próximas etapas da retífica",
@@ -147,7 +147,7 @@ export const serviceDetailPages = [
       "Identificamos o tipo de sujeira e condição da peça.",
       "Realizamos a limpeza adequada para a etapa de retífica.",
       "Reavaliamos a peça limpa para localizar defeitos.",
-      "Seguimos para medição, usinagem ou montagem conforme necessidade.",
+      "Seguimos para conferência, usinagem ou montagem conforme necessidade.",
     ],
     faq: [
       {
@@ -158,7 +158,7 @@ export const serviceDetailPages = [
       {
         question: "A limpeza química é indicada antes da plaina?",
         answer:
-          "Sim, porque a peça limpa permite medição mais confiável e reduz risco de sujeira interferir no acabamento ou na inspeção.",
+          "Sim, porque a peça limpa permite conferência mais confiável e reduz risco de sujeira interferir no acabamento ou na inspeção.",
       },
     ],
   },
@@ -219,7 +219,7 @@ export const serviceDetailPages = [
       "Montagem e regulagem de cabeçote com conferência de componentes, vedação, válvulas e orientação para instalação correta. Atende Ribeirão Preto e região.",
     hero: "Montagem e regulagem depois de conferir cada ponto",
     intro:
-      "A montagem fecha o serviço, mas não corrige medição ou usinagem incompleta. Antes de liberar o conjunto, conferimos componentes, encaixes, vedação e regulagem conforme o escopo aprovado e orientamos os cuidados para a instalação.",
+      "A montagem fecha o serviço, mas não corrige conferência ou usinagem incompleta. Antes de liberar o conjunto, conferimos componentes, encaixes, vedação e regulagem conforme o escopo aprovado e orientamos os cuidados para a instalação.",
     image: "/montagemeregulagemfinal.png",
     imageAlt: "Ícone de montagem e regulagem final de cabeçote",
     primaryIntent: "servico-especifico",
@@ -286,7 +286,7 @@ export const serviceDetailPages = [
     ],
     process: [
       "Limpamos e inspecionamos sedes, válvulas e câmaras.",
-      "Medimos desgaste, contato e condição de vedação.",
+      "Conferimos desgaste, contato e condição de vedação.",
       "Retificamos as superfícies indicadas e fazemos o assentamento.",
       "Conferimos a vedação antes de liberar para montagem.",
     ],
@@ -299,7 +299,7 @@ export const serviceDetailPages = [
       {
         question: "Sede ou válvula ruim causa perda de potência?",
         answer:
-          "Pode causar, porque a câmara perde vedação e compressão. A confirmação depende de teste e medição do conjunto.",
+          "Pode causar, porque a câmara perde vedação e compressão. A confirmação depende de teste e conferência do conjunto.",
       },
     ],
   },
@@ -310,7 +310,7 @@ export const serviceDetailPages = [
     shortTitle: "Troca e adaptação de guias",
     metaTitle: "Troca e Adaptação de Guias de Válvula",
     metaDescription:
-      "Troca e adaptação de guias de válvula com medição de folga e alinhamento em Sertãozinho-SP. Atende oficinas de Ribeirão Preto e região.",
+      "Troca e adaptação de guias de válvula com conferência de folga e alinhamento em Sertãozinho-SP. Atende oficinas de Ribeirão Preto e região.",
     hero: "Guias de válvula: medir a folga antes de trocar ou adaptar",
     intro:
       "A guia mantém a válvula alinhada durante o funcionamento. Folga excessiva pode contribuir para consumo de óleo e fumaça azul; uma adaptação incorreta pode travar a válvula, desalinhar a vedação e gerar retrabalho. A medida define o próximo passo.",
@@ -325,7 +325,7 @@ export const serviceDetailPages = [
       "desgaste de guia",
     ],
     includes: [
-      "medição da folga entre haste e guia",
+      "conferência da folga entre haste e guia",
       "avaliação de alinhamento com sede e válvula",
       "remoção e instalação conforme condição da peça",
       "adaptação quando a aplicação exige solução técnica compatível",
@@ -400,16 +400,16 @@ export const serviceDetailPages = [
 ] as const satisfies readonly ServiceDetailPage[];
 
 export const serviceCatalog = [
-  { id: "retifica-de-cabecote", title: "Retífica de cabeçote", href: "/servicos/retifica-de-cabecote", description: "Inspeção, medição e correções conforme o estado real da peça." },
+  { id: "retifica-de-cabecote", title: "Retífica de cabeçote", href: "/servicos/retifica-de-cabecote", description: "Inspeção, conferência e correções conforme o estado real da peça." },
   { id: "retifica-de-sedes-e-valvulas", title: "Retífica de sedes e válvulas", href: "/servicos/retifica-de-sedes-e-valvulas", description: "Vedação e assentamento para recuperar compressão." },
   { id: "plaina-de-cabecote", title: "Plaina de cabeçote", href: "/servicos/plaina-de-cabecote", description: "Correção da face após medir empeno e altura disponível." },
   { id: "limpeza-quimica", title: "Limpeza química", href: "/servicos/banho-quimico", description: "Remove resíduos para permitir inspeção e usinagem confiáveis." },
   { id: "troca-e-adaptacao-de-guias", title: "Troca e adaptação de guias", href: "/servicos/troca-e-adaptacao-de-guias", description: "Folga e alinhamento conferidos antes da montagem." },
-  { id: "esmerilhamento-de-valvulas", title: "Esmerilhamento de válvulas", href: "/servicos/retifica-de-sedes-e-valvulas#esmerilhamento", description: "Acabamento e conferência de contato após a medição." },
+  { id: "esmerilhamento-de-valvulas", title: "Esmerilhamento de válvulas", href: "/servicos/retifica-de-sedes-e-valvulas#esmerilhamento", description: "Acabamento e conferência de contato depois de a gente ver a peça." },
   { id: "usinagem-de-roscas", title: "Usinagem de roscas", href: "/servicos/usinagem-de-roscas", description: "Recuperação de fixações com eixo e profundidade corretos." },
   { id: "solda-de-trincas", title: "Solda de trincas", href: "/servicos/teste-de-trinca#solda", description: "Reparo somente quando a inspeção indicar condição segura." },
   { id: "montagem-e-regulagem-final", title: "Montagem e regulagem final", href: "/servicos/montagem-de-cabecote", description: "Conferência do conjunto antes de voltar ao veículo." },
-  { id: "diagnostico-tecnico-de-motor", title: "Diagnóstico técnico de motor", href: "/quanto-custa", description: "Triagem por veículo, situação e sintomas sem exigir conhecimento técnico." },
+  { id: "diagnostico-tecnico-de-motor", title: "Diagnóstico técnico de motor", href: "/quanto-custa", description: "Perguntas do site por veículo, situação e sintomas sem exigir conhecimento técnico." },
 ] as const;
 
 type ServiceDetailPageEntry = (typeof serviceDetailPages)[number];
@@ -430,9 +430,9 @@ export function servicePath(slug: string) {
 }
 
 /**
- * O que é medido em cada serviço, na linguagem da bancada.
+ * O que é conferido em cada serviço, na linguagem da oficina.
  *
- * Alimenta a ficha de medição do topo da página. São os pontos que a peça
+ * Alimenta a lista do que a gente confere do topo da página. São os pontos que a peça
  * realmente passa antes de sair um preço — não é lista de venda. Se um serviço
  * não estiver aqui, a ficha simplesmente não aparece.
  *
@@ -457,7 +457,7 @@ export const medicoesPorServico: Record<string, string[]> = {
     "Resíduo de carbonização",
     "Canais de água e óleo",
     "Superfície para leitura",
-    "Estado geral antes da medição",
+    "Estado geral antes da conferência",
   ],
   "teste-de-trinca": [
     "Câmara de combustão",

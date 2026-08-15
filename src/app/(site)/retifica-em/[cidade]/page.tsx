@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!cidade) return {};
 
   const titulo = `Retífica de Cabeçote em ${cidade.nome} — Buscamos e Entregamos`;
-  const descricao = `Retífica de cabeçote para ${cidade.nome}. A oficina fica em Sertãozinho-SP, a ${cidade.distanciaKm} km. Buscamos a peça, medimos, orçamos e devolvemos. Garantia de 6 meses.`;
+  const descricao = `Retífica de cabeçote para ${cidade.nome}. A oficina fica em Sertãozinho-SP, a ${cidade.distanciaKm} km. A gente busca, conferimos, orçamos e devolvemos. Garantia de 6 meses.`;
 
   return {
     title: titulo,
@@ -51,21 +51,21 @@ export default async function CidadePage({ params }: Props) {
   const faq = [
     {
       question: `Vocês têm oficina em ${cidade.nome}?`,
-      answer: `Não. A oficina fica em Sertãozinho-SP, a aproximadamente ${cidade.distanciaKm} km de ${cidade.nome}. O que fazemos é buscar o cabeçote em ${cidade.nome}, medir e orçar na bancada, e devolver a peça pronta. Você não precisa se deslocar.`,
+      answer: `Não. A oficina fica em Sertãozinho-SP, a aproximadamente ${cidade.distanciaKm} km de ${cidade.nome}. O que fazemos é buscar o cabeçote em ${cidade.nome}, ver o que ela tem, passar o preço e devolver a peça pronta. Você não precisa se deslocar.`,
     },
     {
-      question: "A busca e entrega tem custo?",
-      answer: `Não há custo adicional de busca e entrega para ${cidade.nome}. ${cidade.contexto}`,
+      question: "Buscar e entregar custa alguma coisa?",
+      answer: `Não. Buscar e entregar em ${cidade.nome}. ${cidade.contexto}`,
     },
     {
-      question: "Como sei o valor antes de mandar a peça?",
+      question: "Como sei o preço antes de mandar a peça?",
       answer:
-        "A faixa de preço desta página vem de serviços reais já fechados e serve para você ter ordem de grandeza. O valor final sai depois da medição — trinca, empeno e material já removido antes mudam o resultado.",
+        "A faixa de preço desta página vem de serviços reais já fechados e serve para você ter uma ideia. O preço do seu caso sai depois que a gente vê a peça. Trinca, peça torta e serviço que já foi feito antes mudam o valor.",
     },
     {
       question: "Qual a garantia?",
       answer:
-        "Seis meses sobre o serviço executado, com laudo do que foi medido e do que foi feito.",
+        "Seis meses sobre o serviço executado, com um papel mostrando o que a peça tinha e o que foi feito nela.",
     },
   ];
 
@@ -99,8 +99,8 @@ export default async function CidadePage({ params }: Props) {
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/85 md:text-xl">
             Nossa oficina fica em Sertãozinho, a {cidade.distanciaKm} km de{" "}
             {cidade.nome} {cidade.rota}. Você não precisa levar nada: buscamos o
-            cabeçote, medimos na bancada, passamos o orçamento e devolvemos a
-            peça pronta.
+            cabeçote, conferimos na oficina, falamos o preço e devolvemos a peça
+            pronta.
           </p>
 
           <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
@@ -109,7 +109,7 @@ export default async function CidadePage({ params }: Props) {
               message={mensagem}
               className="inline-flex h-13 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
             >
-              Combinar a coleta no WhatsApp
+              Chamar no WhatsApp
             </TrackedWhatsAppLink>
             <TrackedPhoneLink
               eventLabel={`cidade_${cidade.slug}_phone`}
@@ -140,20 +140,20 @@ export default async function CidadePage({ params }: Props) {
             {[
               {
                 titulo: "Você chama no WhatsApp",
-                texto: `Conta o que está acontecendo e onde o cabeçote está em ${cidade.nome}. Se estiver montado no carro, orientamos como proceder.`,
+                texto: `Conta o que está acontecendo e onde o cabeçote está em ${cidade.nome}. Se ainda estiver no carro, a gente explica o que fazer.`,
               },
               {
-                titulo: "Buscamos a peça",
+                titulo: "A gente busca",
                 texto: cidade.contexto,
               },
               {
-                titulo: "Medimos antes de orçar",
+                titulo: "Vemos o que a peça tem",
                 texto:
-                  "Empeno, trinca, sedes, válvulas, guias e roscas. O orçamento sai do que a medição mostrou, não de estimativa por telefone.",
+                  "Conferimos se está torto, se tem trinca e como estão válvulas, guias e roscas. Só depois disso a gente fala preço — não damos número por telefone sem ver a peça.",
               },
               {
                 titulo: "Devolvemos pronto",
-                texto: `A peça volta para ${cidade.nome} com laudo do que foi medido e do que foi feito, e seis meses de garantia.`,
+                texto: `A peça volta para ${cidade.nome} com um papel mostrando o que a peça tinha e o que foi feito nela, e seis meses de garantia.`,
               },
             ].map((passo, indice) => (
               <li key={passo.titulo} className="bg-white p-6">

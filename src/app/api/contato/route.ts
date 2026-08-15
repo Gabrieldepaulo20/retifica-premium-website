@@ -45,7 +45,7 @@ type ContactPayload = {
   storageOnly?: unknown;
   attribution?: {
     source?: unknown;
-    medium?: unknown;
+    conferium?: unknown;
     campaign?: unknown;
     term?: unknown;
     content?: unknown;
@@ -131,7 +131,7 @@ function attributionLines(payload: ContactPayload) {
   const attribution = payload.attribution ?? {};
   const values = [
     ["Fonte", cleanText(attribution.source, 120)],
-    ["Mídia", cleanText(attribution.medium, 120)],
+    ["Mídia", cleanText(attribution.conferium, 120)],
     ["Campanha", cleanText(attribution.campaign, 160)],
     ["Termo", cleanText(attribution.term, 160)],
     ["Conteúdo", cleanText(attribution.content, 160)],
@@ -277,7 +277,7 @@ export async function POST(request: Request) {
   );
   const normalizedAttribution = classifyTrafficAttribution({
     source: cleanText(attribution.source, 120) || undefined,
-    medium: cleanText(attribution.medium, 120) || undefined,
+    conferium: cleanText(attribution.conferium, 120) || undefined,
     referrer: cleanText(attribution.referrer, 800) || undefined,
     hasGoogleClickId,
   });
@@ -299,7 +299,7 @@ export async function POST(request: Request) {
     pageLocation,
     referrer: cleanText(attribution.referrer, 800) || undefined,
     source: normalizedAttribution.source || "direto",
-    medium: normalizedAttribution.medium,
+    conferium: normalizedAttribution.conferium,
     campaign: cleanText(attribution.campaign, 180) || undefined,
     term: cleanText(attribution.term, 180) || undefined,
     content: cleanText(attribution.content, 180) || undefined,

@@ -50,7 +50,7 @@ export const videos: Record<VideoKey, VideoSlot> = {
   homeShowcase: {
     title: "Conheça a Retífica Premium — estrutura, equipe e processo",
     brief:
-      "45–60s. Fachada, bancada, máquinas em operação, equipe trabalhando. "
+      "45–60s. Fachada, oficina, máquinas em operação, equipe trabalhando. "
       + "Fecha com o cabeçote pronto e uma explicação curta do que foi conferido.",
     targetFile: "/media/videos/oficina-retifica-premium-16x9.mp4",
     format: "MP4 H.264, 1920x1080, 24–30 fps, até 12 MB, legendado e sem autoplay.",
@@ -62,7 +62,7 @@ export const videos: Record<VideoKey, VideoSlot> = {
   servicesProcess: {
     title: "Retífica de cabeçote: do diagnóstico à entrega",
     brief:
-      "60–90s. Sequência: chegada da peça → limpeza química → medição de empeno → "
+      "60–90s. Sequência: chegada da peça → limpeza química → conferência de empeno → "
       + "plaina → sedes e válvulas → montagem → explicação do serviço executado.",
     targetFile: "/media/videos/processo-retifica-cabecote-16x9.mp4",
     format: "MP4 H.264, 1920x1080, 24–30 fps, até 15 MB, com poster WebP 1600x900.",
@@ -73,7 +73,7 @@ export const videos: Record<VideoKey, VideoSlot> = {
   b2bPartnership: {
     title: "Programa B2B para oficinas — como funciona a parceria",
     brief:
-      "60–90s. Falado para dono de oficina: triagem, prazo combinado, disponibilidade "
+      "60–90s. Falado para dono de oficina: perguntas do site, prazo combinado, disponibilidade "
       + "de retirada/entrega sob consulta e explicação do serviço para o mecânico.",
     // youtubeId: "",
   },
@@ -89,7 +89,7 @@ export const videos: Record<VideoKey, VideoSlot> = {
     brief:
       "30–40s, vertical ou quadrado, legendado (75% assiste sem som). "
       + "Roteiro real: 0–5s identificação da cidade → 5–15s peça recebida → "
-      + "15–25s medição/usinagem → 25–35s peça conferida. Encerrar com "
+      + "15–25s conferência/usinagem → 25–35s peça conferida. Encerrar com "
       + "'Consulte disponibilidade e condições no WhatsApp'.",
     // youtubeId: "",
   },
@@ -132,7 +132,7 @@ export const serviceVideos: Record<string, VideoSlot> = {
   "teste-de-trinca": videos.tecnologiaTesteTrinca,
   "retifica-de-cabecote": {
     title: "Retífica de cabeçote na prática",
-    brief: "40–60s. Medição de empeno, usinagem e conferência final da superfície de vedação.",
+    brief: "40–60s. Conferência de empeno, usinagem e conferência final da superfície de vedação.",
     targetFile: "/media/videos/retifica-de-cabecote-16x9.mp4",
     format: "MP4 H.264 1920x1080, até 10 MB, legendado, poster WebP 1600x900.",
     // youtubeId: "",
@@ -146,7 +146,7 @@ export const serviceVideos: Record<string, VideoSlot> = {
   },
   "banho-quimico": {
     title: "Banho químico: por que a limpeza vem antes de tudo",
-    brief: "30–40s. Peça suja entrando, peça limpa saindo. Explicar que sem limpeza não há medição confiável.",
+    brief: "30–40s. Peça suja entrando, peça limpa saindo. Explicar que sem limpeza não há conferência confiável.",
     targetFile: "/media/videos/limpeza-quimica-cabecote-16x9.mp4",
     format: "MP4 H.264 1920x1080, até 8 MB, legendado, poster WebP 1600x900.",
     // youtubeId: "",
@@ -159,8 +159,8 @@ export const serviceVideos: Record<string, VideoSlot> = {
     // youtubeId: "",
   },
   "retifica-de-sedes-e-valvulas": {
-    title: "Sedes e válvulas: vedação conferida na bancada",
-    brief: "35–50s. Medição, usinagem controlada, assentamento e teste de vedação. Não prometer vedação absoluta.",
+    title: "Sedes e válvulas: vedação conferida na oficina",
+    brief: "35–50s. Conferência, usinagem controlada, assentamento e teste de vedação. Não prometer vedação absoluta.",
     targetFile: "/media/videos/sedes-e-valvulas-16x9.mp4",
     format: "MP4 H.264 1920x1080, até 9 MB, legendado, poster WebP 1600x900.",
   },

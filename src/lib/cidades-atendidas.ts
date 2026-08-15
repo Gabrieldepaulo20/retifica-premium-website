@@ -10,7 +10,7 @@
  *
  * O que elas são: páginas de ÁREA DE ATENDIMENTO. O endereço é sempre
  * Sertãozinho, a distância aparece explícita, e o serviço vendido é a
- * logística — buscamos o cabeçote na cidade da pessoa, medimos, orçamos e
+ * ida e volta da peça — buscamos o cabeçote na cidade da pessoa, conferimos,
  * devolvemos. É isso que faz alguém de Pontal ou Jaboticabal confiar em
  * mandar a peça para outra cidade.
  *
@@ -19,8 +19,8 @@
  * por palavra entre elas.
  *
  * REGRA: `contexto` só pode afirmar o que a retífica confirmou. Prazo de
- * coleta, agrupamento de rota e condição comercial por cidade NÃO estão
- * confirmados e não devem ser prometidos aqui.
+ * prazo para buscar a peça, rota e preço por cidade NÃO estão confirmados e
+ * não devem ser prometidos aqui.
  */
 
 export type CidadeAtendida = {
@@ -41,7 +41,7 @@ export const cidadesAtendidas: CidadeAtendida[] = [
     distanciaKm: 18,
     rota: "pela SP-322, sentido Sertãozinho",
     contexto:
-      "Pontal é uma das cidades mais próximas da oficina. A coleta é combinada no atendimento, conforme a rota do dia.",
+      "Pontal é uma das cidades mais próximas da oficina. Combinamos no WhatsApp o dia de buscar a peça.",
   },
   {
     slug: "barrinha",
@@ -49,7 +49,7 @@ export const cidadesAtendidas: CidadeAtendida[] = [
     distanciaKm: 22,
     rota: "pela SP-322",
     contexto:
-      "Barrinha fica no mesmo eixo de Pontal e Sertãozinho. A coleta é combinada no atendimento, conforme a rota do dia.",
+      "Barrinha fica no mesmo eixo de Pontal e Sertãozinho. Combinamos no WhatsApp o dia de buscar a peça.",
   },
   {
     slug: "pitangueiras",
@@ -57,7 +57,7 @@ export const cidadesAtendidas: CidadeAtendida[] = [
     distanciaKm: 33,
     rota: "pela SP-322 e SP-333",
     contexto:
-      "A coleta é combinada no atendimento, conforme a rota do dia. Oficinas e frotas têm condição própria, tratada caso a caso.",
+      "Combinamos no WhatsApp o dia de buscar a peça. Oficinas e frotas têm condição própria, tratada caso a caso.",
   },
   {
     slug: "jaboticabal",
@@ -65,7 +65,7 @@ export const cidadesAtendidas: CidadeAtendida[] = [
     distanciaKm: 42,
     rota: "pela SP-326",
     contexto:
-      "Jaboticabal é a cidade mais distante desta lista. A coleta é combinada no atendimento, conforme a rota do dia.",
+      "Jaboticabal é a cidade mais distante desta lista. Combinamos no WhatsApp o dia de buscar a peça.",
   },
 ];
 

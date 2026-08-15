@@ -1,10 +1,10 @@
 /**
- * Ficha de medição — o elemento assinatura da página de serviço.
+ * O que a gente confere — o elemento assinatura da página de serviço.
  *
  * Por que existe: o diferencial real da Retífica Premium é medir antes de dar
  * preço. Toda concorrente pesquisada abre com foto de oficina e texto
  * institucional; poucas mostram o que de fato conferem. Este cartão organiza,
- * em um só objeto, os pontos que antecedem o contato: o que é medido, quando o
+ * em um só objeto, os pontos que antecedem o contato: o que é conferido, quando o
  * prazo é definido e qual é o limite da garantia informada.
  *
  * No lugar da foto genérica que ocupava esta metade do hero.
@@ -34,7 +34,7 @@ export function FichaMedicao({ servico, medicoes }: Props) {
       {/* Cabeçalho da ficha */}
       <figcaption className="flex items-baseline justify-between gap-3 border-b border-rp-gold/20 px-5 py-3.5">
         <span className="font-heading text-[11px] font-bold uppercase tracking-[0.22em] text-rp-gold">
-          Ficha de medição
+          O que a gente confere
         </span>
         <span className="font-heading text-[11px] font-semibold uppercase tracking-[0.14em] text-white/40">
           Retífica Premium
@@ -54,7 +54,7 @@ export function FichaMedicao({ servico, medicoes }: Props) {
         {/* O que é conferido. A régua à esquerda é o traço de cota do desenho
             técnico — desenha na entrada, uma vez, em CSS puro. */}
         <p className="ficha-rotulo font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-rp-gold/85">
-          O que medimos nesta peça
+          O que conferimos nesta peça
         </p>
         <ul className="ficha-lista relative mt-2.5 space-y-2 pl-4">
           {medicoes.map((item) => (

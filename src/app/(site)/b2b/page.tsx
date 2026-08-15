@@ -110,9 +110,9 @@ const benefitShowcases = [
       "Garantia e explicação mais clara para apresentar ao cliente.",
       "Material para mostrar o problema e o serviço feito.",
     ],
-    videoTitle: "Cabeçote explicado na bancada",
+    videoTitle: "Cabeçote explicado na oficina",
     videoHint:
-      "Medição, plaina e teste traduzidos em uma explicação que a oficina pode repassar ao cliente.",
+      "Conferência, plaina e teste traduzidos em uma explicação que a oficina pode repassar ao cliente.",
   },
   {
     icon: "route",
@@ -235,7 +235,7 @@ const processSteps = [
   },
   {
     label: "04",
-    title: "Medimos e melhoramos",
+    title: "Conferimos e melhoramos",
     description:
       "O foco é acompanhar contatos, orçamentos e oportunidades para que a parceria gere venda, não só movimento.",
   },

@@ -108,7 +108,7 @@ export default function PrivacidadePage() {
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
                   Antes da sua decisão, o site usa apenas o armazenamento necessário
-                  para guardar a preferência de privacidade e restaurar uma triagem
+                  para guardar a preferência de privacidade e restaurar uma perguntas do site
                   iniciada neste aparelho. Eventos de navegação, tempo ativo e cliques
                   não são enviados ao Retiflow, Google ou Clarity sem autorização.
                   Conforme suas escolhas opcionais, podemos registrar página, origem,
@@ -140,7 +140,7 @@ export default function PrivacidadePage() {
                   seu pedido e registrar o atendimento no Retiflow. Esses dados
                   de contato não são enviados ao Google como conversões
                   otimizadas nesta versão do site. A URL completa do WhatsApp não é
-                  enviada aos provedores de medição; registramos somente o destino
+                  enviada aos provedores de conferência; registramos somente o destino
                   genérico, para impedir que nome, telefone, relato ou dados do
                   veículo escapem pela mensagem preenchida.
                 </p>

@@ -21,7 +21,7 @@ import {
  * ou 90% de rolagem converte ZERO. Ou seja, quem decide, decide na primeira
  * dobra; quem rola está procurando o que não achou.
  *
- * A triagem completa continua existindo para quem quer contexto, mas ela tinha
+ * A perguntas do site completa continua existindo para quem quer contexto, mas ela tinha
  * 3 inícios em 30 dias. Quem pesquisou "quanto custa" precisa do número antes
  * de qualquer pergunta.
  */
@@ -72,14 +72,14 @@ export function FaixaRapida() {
 
   function abrirWhatsApp() {
     const partes = [
-      "Olá! Vi a faixa de preço no site da Retífica Premium.",
+      "Olá! Vi o preço no site da Retífica Premium.",
       "",
       `Veículo: ${marca || "não informado"}${diesel ? " · diesel" : ""}`,
     ];
     if (desfecho.faixa) {
-      partes.push(`Faixa que apareceu: ${formatarFaixa(desfecho.faixa)}`);
+      partes.push(`Preço que apareceu: ${formatarFaixa(desfecho.faixa)}`);
     }
-    partes.push("", "Quero entender o que o meu caso precisa.");
+    partes.push("", "Quero saber quanto fica no meu caso.");
 
     trackFunnelEvent("quiz_whatsapp_click", {
       ...contexto,
@@ -108,7 +108,7 @@ export function FaixaRapida() {
   return (
     <div className="rounded-2xl border border-white/15 bg-[#06172e]/95 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.26)] sm:p-6">
       <p className="font-heading text-sm font-bold uppercase tracking-[0.16em] text-rp-gold">
-        Faixa do seu carro em 2 cliques
+        Quanto costuma custar no seu carro
       </p>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -164,15 +164,15 @@ export function FaixaRapida() {
                 {formatarFaixa(desfecho.faixa)}
               </p>
               <p className="mt-2.5 text-base leading-relaxed text-white/80">
-                Foi o intervalo de metade dos casos, em{" "}
-                <strong className="text-white">{desfecho.faixa.amostra} serviços</strong>{" "}
-                fechados aqui nos últimos meses.
+                Foi quanto pagou a metade dos clientes, em{" "}
+                <strong className="text-white">{desfecho.faixa.amostra} cabeçotes</strong>{" "}
+                que a gente fez nos últimos meses.
               </p>
             </>
           ) : (
             <>
               <p className="font-heading text-xl font-bold leading-snug text-white">
-                Esse caso a gente avalia antes de falar em valor.
+                Esse caso a gente prefere ver antes de falar preço.
               </p>
               <p className="mt-2.5 text-base leading-relaxed text-white/80">
                 {desfecho.semFaixa}
@@ -189,13 +189,13 @@ export function FaixaRapida() {
           </button>
 
           <p className="mt-3 text-sm leading-relaxed text-white/60">
-            O valor final depende da medição. Trinca, empeno e material já
-            removido antes mudam o resultado.
+            O preço do seu caso sai depois que a gente vê a peça. Trinca, peça
+            torta e serviço feito antes mudam o valor.
           </p>
         </div>
       ) : (
         <p className="mt-4 text-sm leading-relaxed text-white/60">
-          Responda os dois campos e o valor aparece aqui, sem pedir seu contato.
+          Responda as duas perguntas e o preço aparece aqui. Não pedimos seu contato.
         </p>
       )}
     </div>

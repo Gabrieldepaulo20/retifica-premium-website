@@ -59,7 +59,7 @@ export const quizStepTitles: Record<QuizStepId, string> = {
   symptoms: "Quais sinais você percebeu?",
   known_information: "O que já foi indicado?",
   contact: "Onde e para quando você precisa?",
-  result: "Sua triagem está pronta",
+  result: "Pronto, é isso que a gente viu",
 };
 
 export type QuizAnswers = {
@@ -336,18 +336,18 @@ const symptomRules: Record<string, SymptomRule> = {
       "limite dimensional, causa original não eliminada, montagem ou componente associado",
     ],
     checks: [
-      "revisar o serviço anterior, repetir medições e conferir o sistema que causou a falha",
+      "revisar o serviço anterior, repetir conferências e conferir o sistema que causou a falha",
     ],
     services: ["Diagnóstico técnico de motor", "Retífica de cabeçote", "Inspeção e teste de trinca"],
   },
   other: {
     related: ["mais de uma causa possível, conforme o relato e o estado da peça"],
-    checks: ["interpretar o relato e definir a medição inicial mais segura"],
+    checks: ["interpretar o relato e definir a conferência inicial mais segura"],
     services: ["Diagnóstico técnico de motor"],
   },
   unknown: {
-    related: ["uma condição que precisa de triagem antes de associar qualquer serviço"],
-    checks: ["começar por identificação, inspeção visual e medições básicas"],
+    related: ["uma condição que precisa de uma olhada na peça antes de falar em serviço"],
+    checks: ["começar por identificação, inspeção visual e conferências básicas"],
     services: ["Diagnóstico técnico de motor"],
   },
 };
@@ -428,7 +428,7 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
     pending,
     services,
     inclusions: [
-      "triagem explicativa com os pontos que merecem verificação",
+      "resumo do que você contou e do que costuma estar por trás",
       "resumo do caso para continuar no canal escolhido",
     ],
     exclusions: [
@@ -444,9 +444,9 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
     nextStep: answers.scope === "full_engine"
       ? "A Retífica Premium trabalha o cabeçote, não o motor completo. Se o seu caso incluir bloco, virabrequim ou motor inteiro, a parte do cabeçote a gente resolve — e vale falar com a equipe para entender o que dá para separar antes de procurar uma retífica de motores."
       : answers.contactPreference === "phone"
-        ? "Ligue para a Retífica Premium e informe o código da triagem. Deixe este resumo aberto para consultar os pontos principais."
+        ? "Ligue para a Retífica Premium e informe o código das perguntas. Deixe esta tela aberta para consultar."
         : answers.contactPreference === "take_part"
-          ? "Abra a rota da Retífica Premium e leve o código da triagem junto com a peça ou as informações que tiver."
+          ? "Abra a rota da Retífica Premium e leve o código das perguntas junto com a peça ou as informações que tiver."
           : "Envie este resumo pelo WhatsApp. A equipe confirma o que precisa ser avaliado e orienta como levar ou enviar a peça.",
     safetyWarning:
       answers.situation === "running" &&
@@ -455,7 +455,7 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
   };
 }
 
-export type IntentLevel = "high" | "medium" | "low";
+export type IntentLevel = "high" | "conferium" | "low";
 
 export type IntentAssessment = {
   level: IntentLevel;
@@ -555,7 +555,7 @@ export function assessIntent(answers: QuizAnswers): IntentAssessment {
     signals.push("tem fotos ou documentos");
   }
 
-  const level: IntentLevel = score >= 8 ? "high" : score >= 4 ? "medium" : "low";
+  const level: IntentLevel = score >= 8 ? "high" : score >= 4 ? "conferium" : "low";
   return { level, score, signals };
 }
 
@@ -614,7 +614,7 @@ export function buildWhatsAppEstimateMessage(
     .join(" · ");
 
   return [
-    `Olá! Fiz a triagem no site da Retífica Premium (ref. ${shortRef(attendanceCode)}).`,
+    `Olá! Fiz as perguntas no site da Retífica Premium (ref. ${shortRef(attendanceCode)}).`,
     "",
     `Atendimento: ${answers.profile ? profileLabels[answers.profile] : "não informado"}`,
     `Veículo: ${vehicle}`,
@@ -633,7 +633,7 @@ export function buildWhatsAppEstimateMessage(
     `Preferência de contato: ${answers.contactPreference ? contactPreferenceLabels[answers.contactPreference] : "não informada"}`,
     ...(businessDetails ? [`Volume/disponibilidade: ${businessDetails}`] : []),
     "",
-    "Resultado: triagem inicial concluída",
+    "Resultado: resumo pronto",
     `Possíveis verificações: ${result.checks.join("; ")}`,
     `Serviços relacionados: ${result.services.join("; ")}`,
     `Tenho fotos/documentos para enviar: ${answers.hasFiles === null ? "não informado" : answers.hasFiles ? "sim" : "não"}`,

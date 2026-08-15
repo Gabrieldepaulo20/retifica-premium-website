@@ -17,7 +17,7 @@ import { siteConfig } from "@/lib/site";
  * Reescrito para caber numa olhada: ícone, uma frase curta, um destaque. Quem
  * chega com o carro parado não lê parágrafo — lê o que salta.
  *
- * O card de preço leva para `/quanto-custa`, onde a pessoa faz uma triagem sem
+ * O card de preço leva para `/quanto-custa`, onde a pessoa faz uma perguntas do site sem
  * precisar conhecer o nome do serviço. Faixas só voltam após auditoria.
  */
 
@@ -26,7 +26,7 @@ type Props = {
   contexto: string;
   /** Serviço canônico enviado em todos os eventos do bloco. */
   serviceId?: string;
-  /** Slug da página usado para pré-selecionar a triagem. */
+  /** Slug da página usado para pré-selecionar a perguntas do site. */
   serviceSlug?: string;
   /** Mensagem que já vai preenchida no WhatsApp. */
   whatsappMessage: string;
@@ -56,9 +56,9 @@ const cartoes: Cartao[] = [
   {
     titulo: "Quanto custa",
     destaque: "Organize o seu caso primeiro",
-    texto: "A triagem leva cerca de 2 minutos e mostra o que vale verificar, sem transformar suspeita em diagnóstico.",
+    texto: "São 6 perguntas rápidas. No fim você vê o que costuma estar por trás do que está acontecendo.",
     href: "/quanto-custa",
-    cta: "Fazer a triagem",
+    cta: "Fazer a perguntas do site",
     icone: (
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
         <circle cx="16" cy="16" r="11" />

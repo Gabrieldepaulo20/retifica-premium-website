@@ -8,14 +8,14 @@ import { numerosProva } from "@/lib/prova";
 export const metadata: Metadata = {
   title: "Sobre a Oficina em Sertãozinho-SP",
   description:
-    "Conheça a Retífica Premium: retífica, medição e usinagem de cabeçotes em Sertãozinho-SP, com atuação desde 2004.",
+    "Conheça a Retífica Premium: retífica, conferência e usinagem de cabeçotes em Sertãozinho-SP, com atuação desde 2004.",
   alternates: {
     canonical: "/sobre",
   },
   openGraph: {
     title: "Retífica Premium: Sobre a Oficina em Sertãozinho-SP",
     description:
-      "Retífica, medição e usinagem de cabeçotes em Sertãozinho-SP desde 2004.",
+      "Retífica, conferência e usinagem de cabeçotes em Sertãozinho-SP desde 2004.",
     url: "https://www.premiumretifica.com.br/sobre",
     siteName: "Retífica Premium",
     locale: "pt_BR",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Retífica Premium: Sobre a Oficina em Sertãozinho-SP",
     description:
-      "Retífica, medição e usinagem de cabeçotes em Sertãozinho-SP desde 2004.",
+      "Retífica, conferência e usinagem de cabeçotes em Sertãozinho-SP desde 2004.",
     images: ["/retificapremium.jpeg"],
   },
 };
@@ -116,7 +116,7 @@ export default function SobrePage() {
               }}
             >
               Desde 2004, a Retífica Premium trabalha com retífica de
-              cabeçotes, medição, prazo combinado e transparência.
+              cabeçotes, conferência, prazo combinado e transparência.
               Atendemos carros, caminhões, ônibus e tratores em Sertãozinho-SP,
               Ribeirão Preto e região.
             </p>
@@ -129,7 +129,7 @@ export default function SobrePage() {
                 className="font-rajdhani text-[30px] font-bold leading-[1.12] tracking-tight text-gray-900"
                 style={{ fontFamily: "var(--font-rajdhani)" }}
               >
-                <span className="text-rp-royal">Medição</span> em cada
+                <span className="text-rp-royal">Conferência</span> em cada
                 cabeçote.{" "}
                 <br />
                 <span className="text-rp-royal">Clareza</span> em cada etapa.
@@ -152,7 +152,7 @@ export default function SobrePage() {
                     lineHeight: 1.45,
                   }}
                 >
-                  Retífica de cabeçotes com medição,
+                  Retífica de cabeçotes com conferência,
                 </p>
                 <p
                   className="text-[16px] text-[#0b1f3a]"
@@ -208,13 +208,13 @@ export default function SobrePage() {
               >
                 <p className="font-bold">
                   Fundada em 2004, a Retífica Premium nasceu do sonho de
-                  oferecer serviços de retífica de cabeçotes com medição,
+                  oferecer serviços de retífica de cabeçotes com conferência,
                   explicação técnica e atendimento próximo.
                 </p>
 
                 <p>
                   <span className="font-bold">
-                    Com equipamentos de medição e uma equipe dedicada ao
+                    Com equipamentos de conferência e uma equipe dedicada ao
                     trabalho em cabeçotes,
                   </span>{" "}
                   a oficina organiza cada serviço a partir da avaliação da peça.
@@ -325,7 +325,7 @@ export default function SobrePage() {
                     style={{ fontFamily: "var(--font-open-sans)" }}
                   >
                     Avaliar e recuperar o cabeçote dentro do escopo aprovado,
-                    com medição, prazo combinado e atendimento direto.
+                    com conferência, prazo combinado e atendimento direto.
                   </p>
                 </div>
                 <div className="shrink-0">
@@ -393,7 +393,7 @@ export default function SobrePage() {
                   className="text-sm leading-relaxed text-gray-300 md:text-base"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
-                  Trabalhamos com instrumentos de medição e processos definidos
+                  Trabalhamos com instrumentos de conferência e processos definidos
                   para conferir cada etapa do serviço.
                 </p>
               </div>
@@ -439,7 +439,7 @@ export default function SobrePage() {
                   className="text-sm leading-relaxed text-gray-300 md:text-base"
                   style={{ fontFamily: "var(--font-open-sans)" }}
                 >
-                  Trabalhamos com componentes adequados, medições precisas e
+                  Trabalhamos com componentes adequados, conferências precisas e
                   padrões de qualidade definidos para cada serviço.
                 </p>
               </div>
@@ -527,7 +527,7 @@ export default function SobrePage() {
                   </span>
                   ,{" "}
                   <span className="font-bold text-rp-accent">
-                    medição dimensional
+                    conferência dimensional
                   </span>{" "}
                   e{" "}
                   <span className="font-bold text-rp-accent">
@@ -536,7 +536,7 @@ export default function SobrePage() {
                   .
                 </p>
                 <p>
-                  Combinamos experiência prática, instrumentos de medição e
+                  Combinamos experiência prática, instrumentos de conferência e
                   conferência por etapas. Cada membro da equipe participa do
                   cuidado com a peça e da explicação do serviço executado.
                 </p>

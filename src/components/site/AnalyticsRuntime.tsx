@@ -147,7 +147,7 @@ export function AnalyticsRuntime() {
         );
       }
     } catch {
-      // A medição continua somente em memória quando o storage está indisponível.
+      // A conferência continua somente em memória quando o storage está indisponível.
     }
 
     const persistActiveTime = () => {

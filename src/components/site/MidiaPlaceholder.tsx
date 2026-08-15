@@ -6,7 +6,7 @@
  * existe, mostra uma visualização técnica pública — nunca nome de arquivo,
  * instrução editorial ou marcador de conteúdo inacabado.
  *
- * Não usa foto de banco de imagens: uma bancada que não é a da Retífica Premium,
+ * Não usa foto de banco de imagens: uma oficina que não é a da Retífica Premium,
  * apresentada como se fosse, é propaganda enganosa — e queima justamente a
  * credibilidade que a página existe para construir.
  *
@@ -34,7 +34,7 @@ type Props = {
 export function MidiaPlaceholder({
   id,
   title = "Inspeção técnica da peça",
-  caption = "Limpeza, medição e conferência antes da definição do serviço.",
+  caption = "Limpeza, conferência e conferência antes da definição do serviço.",
   proporcao = "aspect-[4/3]",
   tom = "escuro",
   className = "",

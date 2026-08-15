@@ -39,7 +39,7 @@ import { serviceVideos } from "@/lib/videos";
  *    título → promessa → botões → ficha → números. Os botões vêm antes de
  *    qualquer prova, porque quem já decidiu não deve ter que rolar.
  *
- * 2. A ficha de medição substitui a foto genérica. É o objeto que a empresa
+ * 2. A lista do que a gente confere substitui a foto genérica. É o objeto que a empresa
  *    entrega de verdade e responde as três perguntas que antecedem o contato.
  *    Fica logo abaixo dos botões, meio visível — o pedaço cortado é o que
  *    convida a rolar.
@@ -104,7 +104,7 @@ export async function generateMetadata({
   };
 }
 
-/** Rótulo de seção. Usa o vocabulário da bancada, não numeração decorativa. */
+/** Rótulo de seção. Usa o vocabulário da oficina, não numeração decorativa. */
 function Etapa({ children }: { children: React.ReactNode }) {
   return (
     <p className="font-heading text-[11px] font-bold uppercase tracking-[0.22em] text-rp-accent">
@@ -175,7 +175,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 serviceId={page.serviceId}
                 className="inline-flex h-13 items-center justify-center rounded-full border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:h-14"
               >
-                Fazer triagem deste caso
+                Fazer perguntas do site deste caso
               </TrackedCtaLink>
             </div>
 
@@ -282,7 +282,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             </h2>
             <p className="mt-3 text-base leading-relaxed text-gray-600">
               Nem toda peça precisa de tudo. O que a sua vai precisar sai da
-              medição — e vai escrito no orçamento, antes de você aprovar.
+              conferência — e vai escrito no orçamento, antes de você aprovar.
             </p>
           </div>
 
@@ -344,7 +344,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 proporcao="aspect-video"
                 tom="escuro"
                 title={`${page.shortTitle} na prática`}
-                caption="Limpeza, medição, execução e conferência final apresentadas na sequência real do serviço."
+                caption="Limpeza, conferência, execução e conferência final apresentadas na sequência real do serviço."
               />
             )}
           </div>

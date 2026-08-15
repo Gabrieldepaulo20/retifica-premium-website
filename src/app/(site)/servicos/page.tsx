@@ -27,13 +27,13 @@ import { serviceVideos, videos } from "@/lib/videos";
  * PÁGINA DE SERVIÇOS
  *
  * Não é um catálogo. É a trilha que alguém percorre para descobrir o que a peça
- * dele tem, na mesma ordem em que a bancada trabalha: sintoma → medição →
+ * dele tem, na mesma ordem em que a oficina trabalha: sintoma → conferência →
  * correção → entrega.
  *
  * Por que assim, e não uma grade genérica: a pesquisa de dez retíficas
  * brasileiras em 10/08/2026 mostrou que os concorrentes priorizam contato, mas
  * raramente ajudam quem ainda não sabe o nome do serviço. A Retífica Premium
- * liga sintomas, triagem e catálogo sem tratar suspeita como diagnóstico.
+ * liga sintomas, perguntas do site e catálogo sem tratar suspeita como diagnóstico.
  *
  * O diagnóstico completo está em `docs/redesign-servicos-diagnostico.md`.
  * O briefing das mídias está em `docs/redesign-servicos-midia.md`.
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
         url: "/retificapremium.jpeg",
         width: 1200,
         height: 630,
-        alt: "Bancada de retífica de cabeçote da Retífica Premium em Sertãozinho-SP",
+        alt: "Oficina de retífica de cabeçote da Retífica Premium em Sertãozinho-SP",
       },
     ],
   },
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
  * Serviços cuja imagem em `service-pages.ts` é fotografia real da oficina.
  * Os demais têm ilustração de marca, que precisa ser contida e não recortada —
  * ícone esticado em moldura de foto ao lado de uma foto de verdade denuncia
- * improviso. Quando a foto real de cada bancada existir, é só acrescentar o
+ * improviso. Quando a foto real de cada oficina existir, é só acrescentar o
  * slug aqui.
  *
  * Pendência de mídia: 4 dos 5 serviços ainda não têm foto própria.
@@ -91,7 +91,7 @@ const servicosEmDestaque = new Set([
   "retifica-de-sedes-e-valvulas",
 ]);
 
-/** O que é conferido antes de sair um preço. Vocabulário de bancada. */
+/** O que é conferido antes de sair um preço. Vocabulário de oficina. */
 const medicoes = [
   {
     titulo: "Empeno da face",
@@ -123,7 +123,7 @@ const processo = [
       "Entendemos o sintoma, o histórico do veículo e o tipo de uso para orientar a desmontagem e os testes certos.",
   },
   {
-    titulo: "Medição e inspeção",
+    titulo: "Conferência e inspeção",
     texto:
       "Conferimos empeno, vedação, trincas, folgas, guias, sedes, válvulas e roscas antes de definir o reparo.",
   },
@@ -149,7 +149,7 @@ const faq = [
   {
     question: "Preciso retificar ou dá para trocar só a junta?",
     answer:
-      "Depende do estado da peça. Se o cabeçote estiver plano, sem trinca e com sedes e guias em ordem, a troca da junta pode resolver. Se houver empeno ou trinca, trocar só a junta traz o problema de volta. É isso que a medição responde, antes de qualquer orçamento.",
+      "Depende do estado da peça. Se o cabeçote estiver plano, sem trinca e com sedes e guias em ordem, a troca da junta pode resolver. Se houver empeno ou trinca, trocar só a junta traz o problema de volta. É isso que a conferência responde, antes de qualquer orçamento.",
   },
   {
     question: "Motor baixando óleo pode ser problema no cabeçote?",
@@ -213,16 +213,19 @@ export default function ServicosPage() {
             Sertãozinho-SP · atende Ribeirão Preto
           </p>
 
-          {/* A primeira linha já explica o método, sem exigir que o visitante
-              saiba nomear o serviço ou responder uma pergunta técnica. */}
+          {/* O título antigo falava do método da oficina ("a gente mede antes de
+              dar o preço"). Método é o que interessa a quem trabalha aqui, não a
+              quem está com o carro na garagem. A primeira linha agora nomeia a
+              situação da pessoa e tira o maior obstáculo dela: o deslocamento. */}
           <h1 className="mt-4 max-w-3xl font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.4rem]">
-            A gente mede antes de{" "}
-            <span className="text-rp-gold">dar o preço</span>
+            Carro parado por causa do cabeçote?{" "}
+            <span className="text-rp-gold">A gente busca e devolve pronto</span>
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
-            Conte o que aconteceu. A peça é limpa e medida para separar o que
-            precisa ser feito do que não precisa entrar no orçamento.
+            Você não precisa levar nada. Buscamos o cabeçote, vemos o que ele
+            tem, falamos o preço antes de fazer e devolvemos com seis meses de
+            garantia.
           </p>
 
           {/* A garantia confirmada fica perto do título para ser encontrada
@@ -275,7 +278,7 @@ export default function ServicosPage() {
               Você não precisa escolher o serviço sozinho
             </h2>
             <p className="max-w-md text-sm leading-relaxed text-gray-600 md:text-right">
-              Se já recebeu uma indicação, abra o serviço. Se não recebeu, comece pela triagem.
+              Se já recebeu uma indicação, abra o serviço. Se não recebeu, comece pelas perguntas.
             </p>
           </div>
           <nav aria-label="Catálogo completo de serviços" className="mt-7">
@@ -316,7 +319,7 @@ export default function ServicosPage() {
       <section id="medicao" className="scroll-mt-20 bg-white py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
-            <Etapa>Medição</Etapa>
+            <Etapa>Conferência</Etapa>
             <h2 className="mt-2 font-heading text-[1.8rem] font-bold leading-tight tracking-[-0.01em] text-gray-900 md:text-[2.6rem]">
               O que a gente confere antes de dar preço
             </h2>
@@ -352,8 +355,8 @@ export default function ServicosPage() {
               arquivo="medicao-empeno-cabecote.webp"
               proporcao="aspect-[4/3]"
               tom="claro"
-              resumo="Foto real da bancada: relógio comparador apoiado na face do cabeçote, mão do mecânico em quadro, luz lateral marcando a superfície usinada."
-              title="A medição decide o escopo"
+              resumo="Foto real da oficina: relógio comparador apoiado na face do cabeçote, mão do mecânico em quadro, luz lateral marcando a superfície usinada."
+              title="A conferência decide o escopo"
               caption="Face, vedação, guias, sedes e sinais de trinca são conferidos antes de definir as operações necessárias."
             />
           </div>
@@ -437,7 +440,7 @@ export default function ServicosPage() {
               O que a gente executa
             </h2>
             <p className="mt-3 text-base leading-relaxed text-gray-600">
-              Nem toda peça precisa de tudo. O que a sua precisa sai da medição.
+              Nem toda peça precisa de tudo. O que a sua precisa sai da conferência.
             </p>
           </div>
 
@@ -575,7 +578,7 @@ export default function ServicosPage() {
             </h2>
             <p className="mt-3 text-base leading-relaxed text-white/72">
               Alinhe escopo, quantidade, disponibilidade da peça e prazo antes de
-              começar. A medição ajuda a reduzir o risco de retrabalho na sua bancada.
+              começar. A conferência ajuda a reduzir o risco de retrabalho na sua oficina.
             </p>
           </div>
           <div className="flex flex-col gap-2.5 sm:flex-row md:flex-col">
@@ -613,7 +616,7 @@ export default function ServicosPage() {
             {primaryRegionalCities.map((cidade) => (
               <li
                 key={cidade}
-                className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-medium text-gray-700"
+                className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-conferium text-gray-700"
               >
                 {cidade}
               </li>
