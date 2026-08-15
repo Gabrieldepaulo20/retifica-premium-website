@@ -18,6 +18,7 @@ import { ExperimentHeroCtas } from "@/components/site/ExperimentHeroCtas";
 import { MidiaPlaceholder } from "@/components/site/MidiaPlaceholder";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { VideoLocal } from "@/components/site/VideoLocal";
 import { primaryRegionalCities } from "@/lib/regional";
 import { serviceCatalog, serviceDetailPages, servicePath } from "@/lib/service-pages";
 import { siteConfig } from "@/lib/site";
@@ -461,7 +462,14 @@ export default function ServicosPage() {
                 >
                   {/* Mídia */}
                   <div className={invertido ? "md:order-2" : undefined}>
-                    {video?.youtubeId ? (
+                    {video?.arquivoLocal && video.capaLocal ? (
+                      <VideoLocal
+                        src={video.arquivoLocal}
+                        poster={video.capaLocal}
+                        descricao={video.title}
+                        eventLabel={`servicos_card_${servico.slug}_video`}
+                      />
+                    ) : video?.youtubeId ? (
                       <VideoEmbed
                         slot={video}
                         eventLabel={`servicos_card_${servico.slug}_video`}
@@ -498,7 +506,7 @@ export default function ServicosPage() {
                     <p className="mt-5 font-heading text-xs font-bold uppercase tracking-[0.18em] text-gray-400">
                       Como a gente executa
                     </p>
-                    <ol className="mt-2.5 space-y-2">
+                    <ol className="mt-2.5 list-none space-y-2">
                       {servico.process.slice(0, 3).map((passo, p) => (
                         <li key={passo} className="flex gap-3 text-sm leading-relaxed text-gray-700">
                           <span className="font-heading font-bold tabular-nums text-rp-accent/60">
