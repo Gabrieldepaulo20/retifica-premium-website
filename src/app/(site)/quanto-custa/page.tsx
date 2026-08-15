@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EstimativaGuiada } from "@/components/site/EstimativaGuiada";
+import { FaixaRapida } from "@/components/site/FaixaRapida";
 import { BreadcrumbSchema, FAQSchema } from "@/components/site/StructuredData";
 import { siteConfig } from "@/lib/site";
 
@@ -119,8 +120,26 @@ export default function QuantoCustaPage() {
             simples e você vê o que provavelmente será verificado no seu caso. Sem nome,
             sem telefone, sem compromisso.
           </p>
+          {/*
+            A faixa vem antes da triagem porque 84% do tráfego pago não rola a
+            página e 62% sai em menos de 10 segundos. Quem só quer o número
+            recebe aqui; quem quer contexto continua para a triagem.
+          */}
           <div className="mt-8">
-            <EstimativaGuiada />
+            <FaixaRapida />
+          </div>
+
+          <div className="mt-10 border-t border-white/10 pt-8">
+            <p className="font-heading text-sm font-bold uppercase tracking-[0.16em] text-white/55">
+              Quer entender o que o seu caso precisa?
+            </p>
+            <p className="mt-2 max-w-2xl text-base leading-relaxed text-white/70">
+              A triagem leva cerca de dois minutos e mostra o que provavelmente
+              será verificado no seu cabeçote. Continua sem pedir contato.
+            </p>
+            <div className="mt-6">
+              <EstimativaGuiada />
+            </div>
           </div>
         </div>
       </section>

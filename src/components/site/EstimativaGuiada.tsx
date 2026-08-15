@@ -28,6 +28,13 @@ import {
   type Urgency,
   type VehicleSituation,
 } from "@/lib/estimativa-guiada";
+import {
+  formatarFaixa,
+  segmentarCliente,
+  marcasDisponiveis,
+  modelosDaMarca,
+  motorizacoesDoModelo,
+} from "@/lib/faixas-preco";
 import { siteConfig } from "@/lib/site";
 import {
   SERVICES_HERO_EXPERIMENT_ID,
@@ -52,17 +59,6 @@ const LEGACY_STEP_IDS: readonly QuizStepId[] = [
   "contact",
   "result",
 ];
-
-const vehicleCatalog: Record<string, string[]> = {
-  Chevrolet: ["Celta", "Classic", "Cobalt", "Onix", "S10", "Spin"],
-  Fiat: ["Argo", "Doblo", "Fiorino", "Palio", "Strada", "Toro", "Uno"],
-  Ford: ["EcoSport", "Fiesta", "Focus", "Ka", "Ranger"],
-  Honda: ["Civic", "City", "Fit", "HR-V"],
-  Hyundai: ["Creta", "HB20", "i30", "Tucson"],
-  Renault: ["Clio", "Duster", "Kangoo", "Logan", "Sandero"],
-  Toyota: ["Corolla", "Etios", "Hilux", "Yaris"],
-  Volkswagen: ["Amarok", "Fox", "Gol", "Kombi", "Polo", "Saveiro", "T-Cross", "Voyage"],
-};
 
 type PersistedQuiz = {
   savedAt: number;
@@ -243,18 +239,34 @@ export function EstimativaGuiada() {
   const interactedFieldsRef = useRef(new Set<string>());
   const result = useMemo(() => buildEstimateResult(answers), [answers]);
   const intent = useMemo(() => assessIntent(answers), [answers]);
-  const models = answers.vehicle.make ? vehicleCatalog[answers.vehicle.make] ?? [] : [];
+  const desfecho = useMemo(
+    () => segmentarCliente({
+      escopoMotorCompleto: answers.scope === "full_engine",
+      perfilB2B: answers.profile === "workshop" || answers.profile === "fleet" || answers.profile === "company",
+      marca: answers.vehicle.make,
+      modelo: answers.vehicle.model,
+      motorizacao: answers.vehicle.engine,
+      combustivel: answers.vehicle.fuel,
+      querBaseTroca: answers.knownDiagnosis === "base_troca",
+    }),
+    [answers.scope, answers.profile, answers.vehicle.make, answers.vehicle.model,
+     answers.vehicle.engine, answers.vehicle.fuel, answers.knownDiagnosis]
+  );
   const activeFlow = answers.flow ?? "vehicle_known";
   const stepOrder = quizStepOrders[activeFlow];
   const totalSteps = stepOrder.length;
   const currentStepId = stepOrder[Math.min(totalSteps - 1, Math.max(0, step - 1))];
 
+  const segmento = desfecho.segmento;
   const funnelEventContext = useMemo(
     () => ({
       ...experimentContext(),
       service_id: answers.serviceContextId || undefined,
+      // Sem isto, todo número do funil vira média de segmentos que não se
+      // parecem. Com isto, dá para ler conclusão e conversão por segmento.
+      segmento,
     }),
-    [answers.serviceContextId]
+    [answers.serviceContextId, segmento]
   );
 
   useEffect(() => {
@@ -750,16 +762,57 @@ export function EstimativaGuiada() {
               </label>
               {!answers.vehicle.unknown ? (
                 <div className="grid gap-4 sm:grid-cols-2">
+                  {/*
+                    Listas fechadas no lugar de texto livre. A base interna tinha
+                    339 "modelos" distintos misturando família de motor com modelo
+                    de carro, o que inviabilizava segmentar preço. Escolher de uma
+                    lista gera dado limpo dos dois lados e ainda deixa o cliente
+                    ver a faixa da marca dele no resultado.
+                  */}
                   <Field label="Marca">
-                    <input className={inputClass} list="vehicle-makes" value={answers.vehicle.make} onFocus={() => trackFieldInteraction("vehicle", "vehicle_make")} onChange={(event) => updateVehicle({ make: event.target.value, model: "" })} placeholder="Ex.: Fiat" autoComplete="off" />
+                    <select
+                      className={inputClass}
+                      value={answers.vehicle.make}
+                      onFocus={() => trackFieldInteraction("vehicle", "vehicle_make")}
+                      onChange={(event) => {
+                        const make = event.target.value;
+                        updateVehicle({ make, model: "", engine: "" });
+                        if (make) trackOption("vehicle", `make_${make}`);
+                      }}
+                    >
+                      <option value="">Selecione a marca</option>
+                      {marcasDisponiveis.map((make) => <option key={make} value={make}>{make}</option>)}
+                    </select>
                   </Field>
-                  <datalist id="vehicle-makes">{Object.keys(vehicleCatalog).map((make) => <option key={make} value={make} />)}</datalist>
                   <Field label="Modelo">
-                    <input className={inputClass} list="vehicle-models" value={answers.vehicle.model} onFocus={() => trackFieldInteraction("vehicle", "vehicle_model")} onChange={(event) => updateVehicle({ model: event.target.value })} placeholder="Ex.: Strada" autoComplete="off" />
+                    <select
+                      className={inputClass}
+                      value={answers.vehicle.model}
+                      disabled={!answers.vehicle.make}
+                      onFocus={() => trackFieldInteraction("vehicle", "vehicle_model")}
+                      onChange={(event) => {
+                        const model = event.target.value;
+                        updateVehicle({ model, engine: "" });
+                        if (model) trackOption("vehicle", "model_selected");
+                      }}
+                    >
+                      <option value="">{answers.vehicle.make ? "Selecione o modelo" : "Escolha a marca antes"}</option>
+                      {modelosDaMarca(answers.vehicle.make).map((model) => <option key={model} value={model}>{model}</option>)}
+                    </select>
                   </Field>
-                  <datalist id="vehicle-models">{models.map((model) => <option key={model} value={model} />)}</datalist>
+                  <Field label="Motorização" optional>
+                    <select
+                      className={inputClass}
+                      value={answers.vehicle.engine}
+                      disabled={!answers.vehicle.model}
+                      onFocus={() => trackFieldInteraction("vehicle", "vehicle_engine")}
+                      onChange={(event) => updateVehicle({ engine: event.target.value })}
+                    >
+                      <option value="">{answers.vehicle.model ? "Não sei / outra" : "Escolha o modelo antes"}</option>
+                      {motorizacoesDoModelo(answers.vehicle.make, answers.vehicle.model).map((eng) => <option key={eng} value={eng}>{eng}</option>)}
+                    </select>
+                  </Field>
                   <Field label="Ano" optional><input className={inputClass} inputMode="numeric" value={answers.vehicle.year} onFocus={() => trackFieldInteraction("vehicle", "vehicle_year")} onChange={(event) => updateVehicle({ year: event.target.value.slice(0, 4) })} placeholder="Ex.: 2018" /></Field>
-                  <Field label="Motorização" optional><input className={inputClass} value={answers.vehicle.engine} onFocus={() => trackFieldInteraction("vehicle", "vehicle_engine")} onChange={(event) => updateVehicle({ engine: event.target.value })} placeholder="Ex.: 1.6 16V" /></Field>
                   <Field label="Combustível" optional>
                     <select className={inputClass} value={answers.vehicle.fuel ?? ""} onFocus={() => trackFieldInteraction("vehicle", "vehicle_fuel")} onChange={(event) => { const fuel = (event.target.value || null) as FuelType | null; updateVehicle({ fuel }); if (fuel) trackOption("vehicle", `fuel_${fuel}`); }}>
                       <option value="">Selecione</option>
@@ -947,6 +1000,41 @@ export function EstimativaGuiada() {
                 <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/85">
                   Organizamos o que você contou e os pontos que merecem verificação. Isso ainda não confirma um diagnóstico.
                 </p>
+
+                {/*
+                  A faixa vem de O.S. reais fechadas, nunca de estimativa
+                  automática. Não aparece para quem marcou motor completo — ali o
+                  serviço não é nosso e um número só confundiria.
+                */}
+                {desfecho.faixa ? (
+                  <div className="mt-5 rounded-xl border border-white/15 bg-[#04121f]/80 p-4">
+                    <p className="font-heading text-xs font-bold uppercase tracking-[0.16em] text-white/60">
+                      {desfecho.titulo}
+                    </p>
+                    <p className="mt-2 font-heading text-[1.7rem] font-bold leading-tight text-rp-gold md:text-[2.1rem]">
+                      {formatarFaixa(desfecho.faixa)}
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-white/72">
+                      Foi o intervalo de metade dos casos, em{" "}
+                      <strong className="text-white/90">{desfecho.faixa.amostra} serviços</strong>{" "}
+                      fechados aqui nos últimos meses.
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-white/60">
+                      O seu depende da medição: trinca, empeno e material já removido
+                      antes mudam o valor. A equipe confirma depois de ver a peça.
+                    </p>
+                  </div>
+                ) : desfecho.segmento !== "fora_escopo" ? (
+                  <div className="mt-5 rounded-xl border border-white/15 bg-white/[0.04] p-4">
+                    <p className="font-heading text-xs font-bold uppercase tracking-[0.16em] text-white/60">
+                      {desfecho.titulo}
+                    </p>
+                    <p className="mt-2 font-heading text-lg font-bold leading-snug text-white">
+                      Esse caso a gente avalia antes de falar em valor.
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-white/72">{desfecho.semFaixa}</p>
+                  </div>
+                ) : null}
                 <div className="mt-4 flex flex-wrap gap-2" aria-label="Serviços possivelmente relacionados">
                   {result.services.slice(0, 3).map((service) => (
                     <span key={service} className="rounded-full border border-white/20 bg-white/[0.07] px-3 py-1.5 text-xs font-bold text-white/85">

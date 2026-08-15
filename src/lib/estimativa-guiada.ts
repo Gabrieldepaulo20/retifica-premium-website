@@ -204,6 +204,7 @@ export const diagnosisOptions = [
   ["crack_weld", "Trinca ou solda"],
   ["valves_guides", "Sedes, válvulas ou guias"],
   ["assembly", "Montagem"],
+  ["base_troca", "Quero cabeçote à base de troca"],
   ["other", "Outro"],
 ] as const;
 
