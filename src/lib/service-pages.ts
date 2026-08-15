@@ -29,7 +29,7 @@ export const serviceDetailPages = [
     metaTitle: "Retífica de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Retífica de cabeçote com plaina, sedes, válvulas, guias, limpeza química e montagem técnica em Sertãozinho-SP. Atende Ribeirão Preto e região.",
-    hero: "Retífica de cabeçote: entenda o que a peça precisa antes de aprovar",
+    hero: "Retífica de cabeçote com 6 meses de garantia. A gente busca e devolve",
     intro:
       "Superaquecimento, junta queimada, perda de força e mistura de água e óleo podem levar ao cabeçote, mas nenhum deles sozinho diz qual é o serviço. A peça é limpa e conferida para separar o que precisa mesmo ser feito do que não precisa entrar na conta.",
     image: "/retifica-de-cabecote-usinagem.jpg",
@@ -77,7 +77,7 @@ export const serviceDetailPages = [
     metaTitle: "Plaina de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Serviço de plaina de cabeçote para corrigir empeno, melhorar vedação e preparar a peça para montagem. Sertãozinho-SP, Ribeirão Preto e região.",
-    hero: "Plaina de cabeçote só quando a conferência indicar",
+    hero: "Cabeçote torto? A plaina deixa a face reta de novo",
     intro:
       "Junta queimada ou superaquecimento não significam automaticamente que a peça deve ser plainada. Primeiro conferimos empeno, superfície e altura disponível; só então a usinagem é indicada para recuperar a condição de vedação sem remover material por rotina.",
     image: "/plainadecabecotes.png",
@@ -124,7 +124,7 @@ export const serviceDetailPages = [
     metaTitle: "Banho Químico de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Banho químico e limpeza técnica de cabeçote para remover carbonização, óleo, ferrugem e resíduos antes da usinagem. Atende Ribeirão Preto e região.",
-    hero: "Limpeza química para revelar o estado real da peça",
+    hero: "Cabeçote sujo esconde problema. A limpeza mostra o que tem",
     intro:
       "Carbonização, óleo, borra e ferrugem podem esconder trincas, desgaste e falhas de vedação. A limpeza prepara a peça para inspeção e conferência; ela não substitui o diagnóstico nem corrige sozinha um defeito mecânico.",
     image: "/cabecoteservicos.png",
@@ -171,7 +171,7 @@ export const serviceDetailPages = [
     metaTitle: "Cabeçote Trincado Tem Conserto?",
     metaDescription:
       "Cabeçote trincado tem conserto em muitos casos. Inspeção de trincas, solda e reparo técnico em Sertãozinho-SP, com avaliação para vazamento e superaquecimento.",
-    hero: "Teste de trinca antes de decidir por solda, reparo ou troca",
+    hero: "Rachadura no cabeçote só aparece no teste",
     intro:
       "Superaquecimento recorrente, pressão no reservatório e mistura de água e óleo podem justificar a verificação, mas não confirmam uma trinca. A peça precisa estar limpa e ser testada para orientar com segurança a decisão entre reparo, solda ou substituição.",
     image: "/soldadetrincas.png",
@@ -218,7 +218,7 @@ export const serviceDetailPages = [
     metaTitle: "Montagem de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Montagem e regulagem de cabeçote com conferência de componentes, vedação, válvulas e orientação para instalação correta. Atende Ribeirão Preto e região.",
-    hero: "Montagem e regulagem depois de conferir cada ponto",
+    hero: "Montagem do cabeçote conferida ponto a ponto",
     intro:
       "A montagem fecha o serviço, mas não corrige conferência ou usinagem incompleta. Antes de liberar o conjunto, conferimos componentes, encaixes, vedação e regulagem conforme o escopo aprovado e orientamos os cuidados para a instalação.",
     image: "/montagemeregulagemfinal.png",
@@ -265,7 +265,7 @@ export const serviceDetailPages = [
     metaTitle: "Retífica de Sedes e Válvulas em Sertãozinho-SP",
     metaDescription:
       "Retífica de sedes, válvulas e esmerilhamento com conferência de vedação e desgaste. Atendimento em Sertãozinho, Ribeirão Preto e região.",
-    hero: "Sedes e válvulas medidas para recuperar vedação e compressão",
+    hero: "Motor sem força? Costuma ser válvula ou sede gasta",
     intro:
       "Sedes e válvulas trabalham juntas para vedar a câmara. Desgaste, queima ou assentamento irregular podem causar falhas, perda de potência e baixa compressão. A correção começa medindo cada ponto, não apenas esmerilhando por rotina.",
     image: "/sedeseguias.png",
@@ -312,7 +312,7 @@ export const serviceDetailPages = [
     metaTitle: "Troca e Adaptação de Guias de Válvula",
     metaDescription:
       "Troca e adaptação de guias de válvula com conferência de folga e alinhamento em Sertãozinho-SP. Atende oficinas de Ribeirão Preto e região.",
-    hero: "Guias de válvula: medir a folga antes de trocar ou adaptar",
+    hero: "Fumaça azul costuma ser guia de válvula gasta",
     intro:
       "A guia mantém a válvula alinhada durante o funcionamento. Folga excessiva pode contribuir para consumo de óleo e fumaça azul; uma adaptação incorreta pode travar a válvula, desalinhar a vedação e gerar retrabalho. A medida define o próximo passo.",
     image: "/adaptacaodeguias.png",
@@ -359,7 +359,7 @@ export const serviceDetailPages = [
     metaTitle: "Usinagem de Roscas em Cabeçote",
     metaDescription:
       "Recuperação e usinagem de roscas de cabeçote com alinhamento e inspeção técnica em Sertãozinho-SP, Ribeirão Preto e região.",
-    hero: "Rosca danificada: recuperar sem perder alinhamento ou profundidade",
+    hero: "Rosca espanada no cabeçote tem conserto",
     intro:
       "Rosca espanada ou danificada compromete aperto, vedação e montagem. A recuperação precisa respeitar posição, profundidade e material do cabeçote para não transformar um reparo localizado em dano maior.",
     image: "/usinagemderoscas.png",
