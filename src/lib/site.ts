@@ -1,3 +1,4 @@
+import { caminhoCidade, cidadesAtendidas } from "@/lib/cidades-atendidas";
 import { serviceDetailPages, servicePath } from "@/lib/service-pages";
 import { problemDetailPages, problemPath } from "@/lib/problem-pages";
 import { regionalCityNames } from "@/lib/regional";
@@ -107,6 +108,16 @@ export const sitePages = [
     changeFrequency: "weekly",
     images: ["/oficina.jpeg", "/retificapremium.jpeg"],
   },
+  // Páginas de área de atendimento. A oficina é uma só, em Sertãozinho; estas
+  // páginas vendem a logística de busca e entrega, com a distância explícita.
+  ...cidadesAtendidas.map((cidade) => ({
+    path: caminhoCidade(cidade.slug),
+    name: `Retífica em ${cidade.nome}`,
+    lastModified: siteContentLastModified,
+    priority: 0.72,
+    changeFrequency: "weekly" as const,
+    images: [] as string[],
+  })),
   {
     path: "/sobre",
     name: "Sobre",
