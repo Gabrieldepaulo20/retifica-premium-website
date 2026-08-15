@@ -12,6 +12,7 @@ import {
 } from "@/components/site/TrackedLinks";
 import { FichaMedicao } from "@/components/site/FichaMedicao";
 import { MidiaPlaceholder } from "@/components/site/MidiaPlaceholder";
+import { FaixaRapida } from "@/components/site/FaixaRapida";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
 import {
@@ -178,13 +179,26 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               </TrackedCtaLink>
             </div>
 
-            <p className="order-[3] mt-7 max-w-xl text-base leading-relaxed text-white/72 md:order-none md:mt-5 md:text-lg">
+            {/*
+              Faixa de preço na primeira dobra desta página específica.
+              Ela concentra 55 das 141 sessões pagas de 30 dias e converte 29%
+              com mediana de 5 segundos — quem decide aqui não rola. As demais
+              páginas de serviço não recebem: a faixa é de retífica completa,
+              e plaina ou solda têm outro patamar.
+            */}
+            {page.slug === "retifica-de-cabecote" ? (
+              <div className="order-[2] mt-7 md:order-none">
+                <FaixaRapida />
+              </div>
+            ) : null}
+
+            <p className="order-[4] mt-7 max-w-xl text-base leading-relaxed text-white/72 md:order-none md:mt-5 md:text-lg">
               {page.intro}
             </p>
 
             <Link
               href="/servicos"
-              className="order-[4] mt-6 inline-flex min-h-6 w-fit items-center font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-white/55 transition-colors hover:text-rp-gold md:order-none"
+              className="order-[5] mt-6 inline-flex min-h-6 w-fit items-center font-heading text-[11px] font-bold uppercase tracking-[0.18em] text-white/55 transition-colors hover:text-rp-gold md:order-none"
             >
               ← Todos os serviços
             </Link>
@@ -192,7 +206,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
           {/* No celular a ficha entra logo depois dos botões — o corte na base
               da tela é o que convida a rolar. */}
-          <div className="order-[2] mt-7 md:order-none md:mt-0">
+          <div className="order-[3] mt-7 md:order-none md:mt-0">
             <FichaMedicao servico={page.shortTitle} medicoes={medicoes} />
           </div>
         </div>
