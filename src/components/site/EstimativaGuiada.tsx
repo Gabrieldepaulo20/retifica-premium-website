@@ -76,10 +76,11 @@ type OptionProps = {
   multiple?: boolean;
   name: string;
   value: string;
+  icone?: React.ReactNode;
   onClick: () => void;
 };
 
-function Option({ selected, label, description, multiple, name, value, onClick }: OptionProps) {
+function Option({ selected, label, description, multiple, name, value, icone, onClick }: OptionProps) {
   return (
     <label className="block cursor-pointer">
       <input
@@ -105,6 +106,7 @@ function Option({ selected, label, description, multiple, name, value, onClick }
         >
           {selected ? <span className="text-xs font-black">✓</span> : null}
         </span>
+        {icone ? <span className="shrink-0 text-rp-gold">{icone}</span> : null}
         <span>
           <span className="block font-heading text-base font-bold leading-tight">{label}</span>
           {description ? (
@@ -114,6 +116,40 @@ function Option({ selected, label, description, multiple, name, value, onClick }
       </span>
     </label>
   );
+}
+
+/**
+ * Ícone por sintoma. A etapa de sinais é a mais pesada da triagem — 13 opções
+ * em texto puro — e o público não é técnico. Ícone permite reconhecer em vez
+ * de ler, que é o que 62% das sessões (menos de 10 segundos) precisam.
+ */
+function IconeSintoma({ tipo }: { tipo: string }) {
+  const comum = {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.9,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    className: "h-5 w-5 shrink-0",
+    "aria-hidden": true,
+  };
+  const desenhos: Record<string, React.ReactNode> = {
+    overheating: <><path d="M14 14.76V5a2 2 0 1 0-4 0v9.76a4 4 0 1 0 4 0Z" /><path d="M12 9v6" /></>,
+    water_loss: <><path d="M12 3s5.5 6 5.5 9.5a5.5 5.5 0 1 1-11 0C6.5 9 12 3 12 3Z" /><path d="M8.5 20.5h7" /></>,
+    oil_water_mix: <><path d="M9 4s3.5 4 3.5 6.2A3.5 3.5 0 1 1 5.5 10C5.5 8 9 4 9 4Z" /><path d="M17 12s2.5 3 2.5 4.6a2.5 2.5 0 1 1-5 0C14.5 15 17 12 17 12Z" /></>,
+    white_smoke: <><path d="M5 17h11a3.5 3.5 0 0 0 0-7 5 5 0 0 0-9.6-1.4A3.2 3.2 0 0 0 5 17Z" /><path d="M8 20.5h9" /></>,
+    blue_smoke: <><path d="M5 16h11a3.5 3.5 0 0 0 0-7 5 5 0 0 0-9.6-1.4A3.2 3.2 0 0 0 5 16Z" /><path d="M7 20l1.5-2M12 20l1.5-2M17 20l1.5-2" /></>,
+    power_loss: <><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12L13 2Z" /><path d="m3 3 18 18" /></>,
+    misfires: <><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12L13 2Z" /></>,
+    reservoir_pressure: <><circle cx="12" cy="13" r="7" /><path d="M12 13V9M12 3h4M14 3v3" /></>,
+    head_gasket: <><rect x="3" y="8" width="18" height="8" rx="1.5" /><path d="M7 8V6M12 8V6M17 8V6M7 16v2M12 16v2M17 16v2" /></>,
+    noise: <><path d="M11 5 6.5 9H3v6h3.5L11 19V5Z" /><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10" /></>,
+    returned_problem: <><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /></>,
+    other: <><circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16.5v.01" /></>,
+    unknown: <><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.4 2.3c-.6.3-.9.8-.9 1.4v.3M12 16.8v.01" /></>,
+  };
+  return <svg {...comum}>{desenhos[tipo] ?? desenhos.other}</svg>;
 }
 
 function FlowButton({
@@ -867,6 +903,7 @@ export function EstimativaGuiada() {
                       value={value}
                       selected={answers.symptoms.includes(value)}
                       label={label}
+                      icone={<IconeSintoma tipo={value} />}
                       onClick={() => toggleSymptom(value)}
                     />
                   ))}

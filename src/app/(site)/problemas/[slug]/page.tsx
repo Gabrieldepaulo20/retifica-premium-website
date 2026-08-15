@@ -21,6 +21,7 @@ import { servicePath } from "@/lib/service-pages";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
 import { NumerosProva } from "@/components/site/NumerosProva";
+import { FaixaRapida } from "@/components/site/FaixaRapida";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
 import { numerosProva } from "@/lib/prova";
 import { problemVideos } from "@/lib/videos";
@@ -165,6 +166,17 @@ export default async function ProblemDetailPage({ params }: ProblemPageProps) {
                   6 meses de garantia no serviço
                 </span>
               </p>
+
+              {/*
+                A página tinha 352 impressões por quinzena e ZERO contato, com
+                2 segundos de engajamento mediano. A primeira dobra já foi
+                corrigida em 14/08, mas continuava sem o que faz /servicos
+                converter: um número. Quem está com o carro parado quer saber
+                quanto custa antes de decidir qualquer coisa.
+              */}
+              <div className="mt-8">
+                <FaixaRapida />
+              </div>
 
               <NumerosProva numeros={numerosProva} tom="claro" className="mt-8" />
 
