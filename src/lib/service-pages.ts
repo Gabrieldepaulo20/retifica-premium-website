@@ -31,9 +31,10 @@ export const serviceDetailPages = [
       "Retífica de cabeçote com plaina, sedes, válvulas, guias, limpeza química e montagem técnica em Sertãozinho-SP. Atende Ribeirão Preto e região.",
     hero: "Retífica de cabeçote: entenda o que a peça precisa antes de aprovar",
     intro:
-      "Superaquecimento, junta queimada, perda de compressão e mistura de água e óleo podem levar ao cabeçote, mas não definem sozinhos o serviço. A peça é limpa, inspecionada e medida para separar plaina, sedes, válvulas, guias, trinca, montagem e componentes realmente necessários.",
-    image: "/cabecote.webp",
-    imageAlt: "Cabeçote em processo de retífica e usinagem de precisão",
+      "Superaquecimento, junta queimada, perda de força e mistura de água e óleo podem levar ao cabeçote, mas nenhum deles sozinho diz qual é o serviço. A peça é limpa e conferida para separar o que precisa mesmo ser feito do que não precisa entrar na conta.",
+    image: "/retifica-de-cabecote-usinagem.jpg",
+    imageAlt:
+      "Cabeçote de motor fixado na mesa da fresadora durante a retífica, com o operador posicionando a peça",
     primaryIntent: "alta-intencao",
     symptoms: [
       "motor superaquecendo",
