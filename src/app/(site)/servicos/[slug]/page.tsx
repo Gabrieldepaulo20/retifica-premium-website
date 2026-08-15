@@ -15,6 +15,7 @@ import { MidiaPlaceholder } from "@/components/site/MidiaPlaceholder";
 import { FaixaRapida } from "@/components/site/FaixaRapida";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { VideoLocal } from "@/components/site/VideoLocal";
 import {
   getServicePageBySlug,
   medicoesPorServico,
@@ -334,7 +335,14 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           </ol>
 
           <div className="mx-auto mt-10 max-w-2xl">
-            {video?.youtubeId ? (
+            {video?.arquivoLocal && video.capaLocal ? (
+              <VideoLocal
+                src={video.arquivoLocal}
+                poster={video.capaLocal}
+                descricao={video.title}
+                eventLabel={`service_${page.slug}_video`}
+              />
+            ) : video?.youtubeId ? (
               <VideoEmbed slot={video} eventLabel={`service_${page.slug}_video`} />
             ) : (
               <MidiaPlaceholder

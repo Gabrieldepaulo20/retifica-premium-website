@@ -13,6 +13,15 @@
 // roteiro na hora de gerar/gravar — não aparece no site.
 
 export type VideoSlot = {
+  /**
+   * Vídeo hospedado no próprio site (caminho em /public). Quando presente,
+   * tem prioridade sobre `youtubeId`. Use para clipes curtos: abaixo de uns
+   * 3 MB, o arquivo local é mais leve e mais rápido que o embed do YouTube,
+   * e não passa pelo consentimento de cookie.
+   */
+  arquivoLocal?: string;
+  /** Capa do vídeo local, em /public. */
+  capaLocal?: string;
   /** ID do vídeo no YouTube (ex.: em https://youtu.be/ABC123 → "ABC123"). */
   youtubeId?: string;
   /** Título acessível / objetivo do vídeo. */
@@ -108,6 +117,11 @@ export const videos: Record<VideoKey, VideoSlot> = {
    * de bairro não tem, e o argumento mais forte para justificar o trajeto.
    */
   tecnologiaTesteTrinca: {
+    // Vídeo real gravado pela retífica em 15/08/2026. 10 s, 1,11 MB, 720p com
+    // áudio. Hospedado no próprio site: nesse tamanho o arquivo é mais leve
+    // que o embed do YouTube e não depende de consentimento de cookie.
+    arquivoLocal: "/teste-de-trinca.mp4",
+    capaLocal: "/teste-de-trinca-capa.jpg",
     title: "Teste de trinca: como encontramos o que não se vê a olho nu",
     brief:
       "40–60s. Equipamento real em operação, close no cabeçote e resultado sendo "

@@ -60,6 +60,8 @@ type GaEventName =
   | "quiz_estimate_state"
   | "quiz_qualified_intent"
   | "quiz_out_of_scope"
+  | "video_play"
+  | "video_som_ativado"
   | "quiz_whatsapp_prepared"
   | "quiz_whatsapp_click";
 
