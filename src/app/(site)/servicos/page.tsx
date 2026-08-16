@@ -13,14 +13,14 @@ import {
   TrackedServiceLink,
   TrackedWhatsAppLink,
 } from "@/components/site/TrackedLinks";
-import { AtalhoSintoma } from "@/components/site/AtalhoSintoma";
 import { ExperimentHeroCtas } from "@/components/site/ExperimentHeroCtas";
 import { MidiaPlaceholder } from "@/components/site/MidiaPlaceholder";
 import { PrecoPrazoGarantia } from "@/components/site/PrecoPrazoGarantia";
 import { VideoEmbed } from "@/components/site/VideoEmbed";
+import { GradeServicos } from "@/components/site/GradeServicos";
 import { VideoLocal } from "@/components/site/VideoLocal";
 import { primaryRegionalCities } from "@/lib/regional";
-import { serviceCatalog, serviceDetailPages, servicePath } from "@/lib/service-pages";
+import { serviceDetailPages, servicePath } from "@/lib/service-pages";
 import { siteConfig } from "@/lib/site";
 import { serviceVideos, videos } from "@/lib/videos";
 
@@ -194,7 +194,7 @@ export default function ServicosPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* ═══ HERO — abre pelo sintoma, não pelo serviço ═══════════════════ */}
-      <section className="relative overflow-hidden bg-rp-navy pb-14 pt-12 text-white md:pb-20 md:pt-20">
+      <section className="relative overflow-hidden bg-rp-navy pb-8 pt-10 text-white md:pb-12 md:pt-16">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
@@ -217,28 +217,28 @@ export default function ServicosPage() {
           {/* Título definido pelo dono da retífica. A promessa está no subtexto:
               descobrir o que precisa antes de trocar peça é a objeção real de
               quem já ouviu orçamento inflado em outro lugar. */}
-          <h1 className="mx-auto mt-4 max-w-4xl font-heading text-[2.1rem] font-bold leading-[1.08] tracking-[-0.015em] md:text-[3.9rem] md:leading-[1.04] lg:max-w-5xl lg:text-[4.4rem]">
+          <h1 className="mx-auto mt-3 max-w-4xl font-heading text-[1.95rem] font-bold leading-[1.08] tracking-[-0.015em] md:text-[3.9rem] md:leading-[1.04] lg:max-w-5xl lg:text-[4.4rem]">
             Serviços de Retífica de Cabeçotes com{" "}
             <span className="text-rp-gold">Precisão, Diagnóstico e Confiança</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-white/75 md:text-xl">
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-relaxed text-white/75 md:mt-6 md:text-xl">
             Seu motor apresentou problema? Antes de trocar peças, descubra o que
             realmente precisa ser feito.
           </p>
 
           {/* A garantia confirmada fica perto do título para ser encontrada
               sem disputar atenção com a ação principal. */}
-          <p className="mx-auto mt-6 inline-flex items-center gap-2.5 rounded-full border border-rp-gold/50 bg-rp-gold/10 py-2.5 pl-3 pr-5">
+          <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-rp-gold/50 bg-rp-gold/10 py-1.5 pl-2 pr-4 md:mt-6 md:gap-2.5 md:py-2.5 md:pl-3 md:pr-5">
             <span
               aria-hidden="true"
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-rp-gold text-[#1A1200]"
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-rp-gold text-[#1A1200] md:h-7 md:w-7"
             >
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m5 12.5 4.5 4.5L19 7.5" />
               </svg>
             </span>
-            <span className="font-heading text-base font-bold text-rp-gold sm:text-lg">
+            <span className="font-heading text-sm font-bold text-rp-gold md:text-lg">
               3 meses de garantia no serviço executado
             </span>
           </p>
@@ -251,63 +251,15 @@ export default function ServicosPage() {
             <ExperimentHeroCtas whatsappMessage={zapGeral} />
           </Suspense>
 
-          {/* Caminho curto: um toque abre a conversa já com o contexto dentro.
-              Sem formulário, sem página intermediária, sem escrever. */}
-          <div className="mt-12">
-            <AtalhoSintoma contexto="servicos_hero" />
-          </div>
-
-          <TrackedCtaLink
-            href="/servicos#catalogo"
-            eventLabel="servicos_catalog_jump"
-            trackingPosition="services_hero"
-            className="mt-6 inline-flex min-h-11 items-center font-heading text-sm font-bold text-white/70 underline decoration-rp-gold/50 underline-offset-4 transition hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-          >
-            Já sei qual serviço preciso — ver os 10 serviços
-          </TrackedCtaLink>
+          {/* Os atalhos de sintoma e o link "ver os 10 serviços" saíram daqui.
+              Em 30 dias com 27 sessões, os atalhos tiveram 1 clique e o link
+              teve ZERO. O espaço da primeira dobra passou para a grade de
+              serviços, logo abaixo. */}
         </div>
       </section>
 
       {/* ═══ CATÁLOGO CEDO — acesso a todos os serviços sem rolagem longa ═ */}
-      <section id="catalogo" className="scroll-mt-20 border-b border-gray-200 bg-[#F8FAFD] py-12 md:py-16">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <Etapa>Catálogo completo</Etapa>
-          <div className="mt-2 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-            <h2 className="max-w-2xl font-heading text-[1.8rem] font-bold leading-tight text-gray-900 md:text-[2.4rem]">
-              Você não precisa escolher o serviço sozinho
-            </h2>
-            <p className="max-w-md text-sm leading-relaxed text-gray-600 md:text-right">
-              Se já recebeu uma indicação, abra o serviço. Se não recebeu, comece pelas perguntas.
-            </p>
-          </div>
-          <nav aria-label="Catálogo completo de serviços" className="mt-7">
-            <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {serviceCatalog.map((service, index) => (
-                <li key={service.id}>
-                  <TrackedServiceLink
-                    href={service.href}
-                    serviceId={service.id}
-                    serviceName={service.title}
-                    className="group flex min-h-20 gap-3 rounded-xl border border-gray-200 bg-white p-3.5 transition hover:border-rp-accent hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent"
-                  >
-                    <span className="font-heading text-sm font-bold tabular-nums text-rp-accent/55">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span>
-                      <span className="block font-heading text-base font-bold leading-tight text-gray-900 group-hover:text-rp-accent">
-                        {service.title}
-                      </span>
-                      <span className="mt-1 block text-xs leading-relaxed text-gray-500">
-                        {service.description}
-                      </span>
-                    </span>
-                  </TrackedServiceLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      </section>
+      <GradeServicos />
 
       {/* ═══ PREÇO, PRAZO E GARANTIA ═════════════════════════════════════ */}
       <div id="orcamento" className="scroll-mt-20">

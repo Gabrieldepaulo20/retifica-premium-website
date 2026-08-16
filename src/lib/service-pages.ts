@@ -401,16 +401,16 @@ export const serviceDetailPages = [
 ] as const satisfies readonly ServiceDetailPage[];
 
 export const serviceCatalog = [
-  { id: "retifica-de-cabecote", title: "Retífica de cabeçote", href: "/servicos/retifica-de-cabecote", description: "Inspeção, conferência e correções conforme o estado real da peça." },
-  { id: "retifica-de-sedes-e-valvulas", title: "Retífica de sedes e válvulas", href: "/servicos/retifica-de-sedes-e-valvulas", description: "Vedação e assentamento para recuperar compressão." },
-  { id: "plaina-de-cabecote", title: "Plaina de cabeçote", href: "/servicos/plaina-de-cabecote", description: "Correção da face após medir empeno e altura disponível." },
-  { id: "limpeza-quimica", title: "Limpeza química", href: "/servicos/banho-quimico", description: "Remove resíduos para permitir inspeção e usinagem confiáveis." },
-  { id: "troca-e-adaptacao-de-guias", title: "Troca e adaptação de guias", href: "/servicos/troca-e-adaptacao-de-guias", description: "Folga e alinhamento conferidos antes da montagem." },
-  { id: "esmerilhamento-de-valvulas", title: "Esmerilhamento de válvulas", href: "/servicos/retifica-de-sedes-e-valvulas#esmerilhamento", description: "Acabamento e conferência de contato depois de a gente ver a peça." },
-  { id: "usinagem-de-roscas", title: "Usinagem de roscas", href: "/servicos/usinagem-de-roscas", description: "Recuperação de fixações com eixo e profundidade corretos." },
-  { id: "solda-de-trincas", title: "Solda de trincas", href: "/servicos/teste-de-trinca#solda", description: "Reparo somente quando a inspeção indicar condição segura." },
-  { id: "montagem-e-regulagem-final", title: "Montagem e regulagem final", href: "/servicos/montagem-de-cabecote", description: "Conferência do conjunto antes de voltar ao veículo." },
-  { id: "diagnostico-tecnico-de-motor", title: "Diagnóstico técnico de motor", href: "/quanto-custa", description: "Perguntas do site por veículo, situação e sintomas sem exigir conhecimento técnico." },
+  { id: "retifica-de-cabecote", title: "Retífica de cabeçote", href: "/servicos/retifica-de-cabecote", description: "O serviço completo: conferimos a peça inteira e fazemos o que ela precisa." },
+  { id: "retifica-de-sedes-e-valvulas", title: "Sedes e válvulas", href: "/servicos/retifica-de-sedes-e-valvulas", description: "Quando o motor perde força ou não pega bem. Recupera a vedação." },
+  { id: "plaina-de-cabecote", title: "Plaina de cabeçote", href: "/servicos/plaina-de-cabecote", description: "Cabeçote entortou com o calor? A plaina deixa a face reta de novo." },
+  { id: "limpeza-quimica", title: "Limpeza química", href: "/servicos/banho-quimico", description: "Tira toda a sujeira e a borra. Sem isso não dá para ver o que a peça tem." },
+  { id: "troca-e-adaptacao-de-guias", title: "Guias de válvula", href: "/servicos/troca-e-adaptacao-de-guias", description: "Guia gasta deixa passar óleo e faz sair fumaça azul." },
+  { id: "esmerilhamento-de-valvulas", title: "Esmerilhamento de válvulas", href: "/servicos/retifica-de-sedes-e-valvulas#esmerilhamento", description: "Acabamento que garante a válvula fechando direito." },
+  { id: "usinagem-de-roscas", title: "Rosca espanada", href: "/servicos/usinagem-de-roscas", description: "Parafuso não firma mais? A rosca tem conserto, sem trocar o cabeçote." },
+  { id: "solda-de-trincas", title: "Solda de rachadura", href: "/servicos/teste-de-trinca#solda", description: "Quando dá para salvar, a gente solda. Quando não dá, a gente fala." },
+  { id: "montagem-e-regulagem-final", title: "Montagem e regulagem", href: "/servicos/montagem-de-cabecote", description: "Peça volta montada e regulada, pronta para o mecânico instalar." },
+  { id: "diagnostico-tecnico-de-motor", title: "Não sei o que meu carro tem", href: "/quanto-custa", description: "Responda perguntas simples e descubra o que costuma estar por trás." },
 ] as const;
 
 type ServiceDetailPageEntry = (typeof serviceDetailPages)[number];

@@ -47,7 +47,7 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
     });
 
     return (
-      <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      <div className="mt-6 flex flex-col items-center justify-center gap-2.5 sm:mt-8 sm:flex-row sm:gap-3">
         <Link
           href={`/quanto-custa?${query.toString()}`}
           onClick={() =>
@@ -58,7 +58,7 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
               destination_path: "/quanto-custa",
             })
           }
-          className="inline-flex min-h-14 items-center justify-center rounded-full bg-rp-gold px-7 text-center font-heading text-base font-bold text-[#1A1200] transition hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          className="inline-flex min-h-12 items-center justify-center rounded-full sm:min-h-14 bg-rp-gold px-7 text-center font-heading text-base font-bold text-[#1A1200] transition hover:brightness-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           Descubra o que pode precisar — cerca de 2 min
         </Link>
@@ -73,7 +73,7 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
               destination_path: "/whatsapp",
             })
           }
-          className="inline-flex min-h-14 items-center justify-center rounded-full border border-[#25D366]/70 px-7 font-heading text-base font-bold text-[#60e795] transition hover:bg-[#25D366] hover:text-[#04240F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          className="inline-flex min-h-12 items-center justify-center rounded-full sm:min-h-14 border border-[#25D366]/70 px-7 font-heading text-base font-bold text-[#60e795] transition hover:bg-[#25D366] hover:text-[#04240F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           Ir direto ao WhatsApp
         </TrackedWhatsAppLink>
@@ -82,7 +82,7 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
   }
 
   return (
-    <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+    <div className="mt-6 flex flex-col items-center justify-center gap-2.5 sm:mt-8 sm:flex-row sm:gap-3">
       <TrackedWhatsAppLink
         eventLabel="servicos_hero_whatsapp"
         message={whatsappMessage}
@@ -94,7 +94,7 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
             destination_path: "/whatsapp",
           })
         }
-        className="inline-flex min-h-14 items-center justify-center rounded-full bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="inline-flex min-h-12 items-center justify-center rounded-full sm:min-h-14 bg-[#25D366] px-7 font-heading text-base font-bold text-[#04240F] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
         Pedir orçamento no WhatsApp
       </TrackedWhatsAppLink>
@@ -108,7 +108,7 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
             destination_path: "/phone",
           })
         }
-        className="inline-flex min-h-14 items-center justify-center rounded-full border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="inline-flex min-h-12 items-center justify-center rounded-full sm:min-h-14 border border-white/35 px-7 font-heading text-base font-bold text-white transition hover:border-rp-gold hover:text-rp-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
         Ligar {siteConfig.phone.display}
       </TrackedPhoneLink>
