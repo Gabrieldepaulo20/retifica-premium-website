@@ -217,12 +217,12 @@ export default function ServicosPage() {
           {/* Título definido pelo dono da retífica. A promessa está no subtexto:
               descobrir o que precisa antes de trocar peça é a objeção real de
               quem já ouviu orçamento inflado em outro lugar. */}
-          <h1 className="mx-auto mt-4 max-w-3xl font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.4rem]">
+          <h1 className="mx-auto mt-4 max-w-4xl font-heading text-[2.1rem] font-bold leading-[1.08] tracking-[-0.015em] md:text-[3.9rem] md:leading-[1.04] lg:max-w-5xl lg:text-[4.4rem]">
             Serviços de Retífica de Cabeçotes com{" "}
             <span className="text-rp-gold">Precisão, Diagnóstico e Confiança</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
+          <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-white/75 md:text-xl">
             Seu motor apresentou problema? Antes de trocar peças, descubra o que
             realmente precisa ser feito.
           </p>
@@ -239,7 +239,7 @@ export default function ServicosPage() {
               </svg>
             </span>
             <span className="font-heading text-base font-bold text-rp-gold sm:text-lg">
-              6 meses de garantia no serviço executado
+              3 meses de garantia no serviço executado
             </span>
           </p>
 

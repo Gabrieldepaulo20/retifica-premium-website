@@ -29,7 +29,7 @@ export const serviceDetailPages = [
     metaTitle: "Retífica de Cabeçote em Sertãozinho-SP",
     metaDescription:
       "Retífica de cabeçote com plaina, sedes, válvulas, guias, limpeza química e montagem técnica em Sertãozinho-SP. Atende Ribeirão Preto e região.",
-    hero: "Retífica de cabeçote com 6 meses de garantia. A gente busca e devolve",
+    hero: "Retífica de cabeçote com 3 meses de garantia. A gente busca e devolve",
     intro:
       "Superaquecimento, junta queimada, perda de força e mistura de água e óleo podem levar ao cabeçote, mas nenhum deles sozinho diz qual é o serviço. A peça é limpa e conferida para separar o que precisa mesmo ser feito do que não precisa entrar na conta.",
     image: "/retifica-de-cabecote-usinagem.jpg",

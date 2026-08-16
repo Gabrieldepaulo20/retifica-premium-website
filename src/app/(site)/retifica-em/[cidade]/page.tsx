@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!cidade) return {};
 
   const titulo = `Retífica de Cabeçote em ${cidade.nome} — Buscamos e Entregamos`;
-  const descricao = `Retífica de cabeçote para ${cidade.nome}. A oficina fica em Sertãozinho-SP, a ${cidade.distanciaKm} km. A gente busca, conferimos, orçamos e devolvemos. Garantia de 6 meses.`;
+  const descricao = `Retífica de cabeçote para ${cidade.nome}. A oficina fica em Sertãozinho-SP, a ${cidade.distanciaKm} km. A gente busca, conferimos, orçamos e devolvemos. Garantia de 3 meses.`;
 
   return {
     title: titulo,
@@ -65,7 +65,7 @@ export default async function CidadePage({ params }: Props) {
     {
       question: "Qual a garantia?",
       answer:
-        "Seis meses sobre o serviço executado, com um papel mostrando o que a peça tinha e o que foi feito nela.",
+        "Três meses sobre o serviço executado, com um papel mostrando o que a peça tinha e o que foi feito nela.",
     },
   ];
 
@@ -153,7 +153,7 @@ export default async function CidadePage({ params }: Props) {
               },
               {
                 titulo: "Devolvemos pronto",
-                texto: `A peça volta para ${cidade.nome} com um papel mostrando o que a peça tinha e o que foi feito nela, e seis meses de garantia.`,
+                texto: `A peça volta para ${cidade.nome} com um papel mostrando o que a peça tinha e o que foi feito nela, e três meses de garantia.`,
               },
             ].map((passo, indice) => (
               <li key={passo.titulo} className="bg-white p-6">

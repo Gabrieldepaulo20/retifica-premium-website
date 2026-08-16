@@ -23,7 +23,7 @@ type Props = {
 const linhas = [
   { rotulo: "Definição", valor: "depois de limpar e medir" },
   { rotulo: "Prazo", valor: "confirmado antes da aprovação" },
-  { rotulo: "Garantia", valor: "6 meses no serviço executado" },
+  { rotulo: "Garantia", valor: "3 meses no serviço executado" },
 ];
 
 export function FichaMedicao({ servico, medicoes }: Props) {

@@ -163,7 +163,7 @@ export default async function ProblemDetailPage({ params }: ProblemPageProps) {
                   </svg>
                 </span>
                 <span className="font-heading text-base font-bold text-rp-gold">
-                  6 meses de garantia no serviço
+                  3 meses de garantia no serviço
                 </span>
               </p>
 

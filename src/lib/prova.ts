@@ -11,7 +11,7 @@ import type { NumeroProva } from "@/components/site/NumerosProva";
  * | 1.200+ O.S. registradas | 1.227 O.S. registradas entre 21/08/2025 e 07/08/2026   |
  * | 180+ cadastros          | 182 clientes cadastrados                               |
  * | 22 anos                 | fundação em 2004 (siteConfig.foundingDate)             |
- * | 6 meses de garantia     | confirmado pela proprietária em 10/08/2026             |
+ * | 3 meses de garantia     | confirmado pela proprietária em 10/08/2026             |
  *
  * Atenção ao redigir: a fonte comprova O.S. registradas e cadastros, não
  * conclusão de serviço nem atendimento. A base inclui plaina de bloco,

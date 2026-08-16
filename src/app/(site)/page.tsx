@@ -73,7 +73,7 @@ const differentiators = [
   },
   {
     title: "Garantia do serviço",
-    desc: "6 meses de garantia no serviço executado, com cobertura confirmada no atendimento.",
+    desc: "3 meses de garantia no serviço executado, com cobertura confirmada no atendimento.",
     icon: (
       <svg viewBox="0 0 24 24" className="h-8 w-8 md:h-9 md:w-9" {...iconStroke}>
         <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" />
@@ -143,7 +143,7 @@ export default function HomePage() {
                 <p className="mx-auto max-w-3xl text-[14px] leading-relaxed text-gray-300 md:max-w-4xl md:text-lg md:leading-relaxed">
                   Você não precisa levar nada. Buscamos o cabeçote em
                   Sertãozinho e região, falamos o preço antes de fazer e
-                  devolvemos com seis meses de garantia. Carro, caminhão,
+                  devolvemos com três meses de garantia. Carro, caminhão,
                   ônibus e trator.
                 </p>
               </div>
@@ -162,7 +162,7 @@ export default function HomePage() {
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-rp-gold" />
-                  6 meses de garantia no serviço executado
+                  3 meses de garantia no serviço executado
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-rp-gold" />
@@ -694,7 +694,7 @@ export default function HomePage() {
               },
               {
                 q: "Retífica de cabeçote tem garantia?",
-                a: "A Retífica Premium oferece 6 meses de garantia sobre o serviço executado. A cobertura e os limites são confirmados no atendimento.",
+                a: "A Retífica Premium oferece 3 meses de garantia sobre o serviço executado. A cobertura e os limites são confirmados no atendimento.",
               },
               {
                 q: "Quando o cabeçote precisa de retífica?",
@@ -827,7 +827,7 @@ export default function HomePage() {
           {
             question: "Retífica de cabeçote tem garantia?",
             answer:
-              "A Retífica Premium oferece 6 meses de garantia sobre o serviço executado. A cobertura e os limites são confirmados no atendimento.",
+              "A Retífica Premium oferece 3 meses de garantia sobre o serviço executado. A cobertura e os limites são confirmados no atendimento.",
           },
           {
             question: "Quando o cabeçote precisa de retífica?",

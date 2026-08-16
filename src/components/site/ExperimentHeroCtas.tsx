@@ -47,7 +47,7 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
     });
 
     return (
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
         <Link
           href={`/quanto-custa?${query.toString()}`}
           onClick={() =>
@@ -82,7 +82,7 @@ export function ExperimentHeroCtas({ whatsappMessage }: { whatsappMessage: strin
   }
 
   return (
-    <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+    <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
       <TrackedWhatsAppLink
         eventLabel="servicos_hero_whatsapp"
         message={whatsappMessage}

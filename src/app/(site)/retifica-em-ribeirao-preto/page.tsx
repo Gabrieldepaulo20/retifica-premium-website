@@ -73,7 +73,7 @@ const heroBadges = [
   {
     icon: "🛡",
     title: "Garantia do serviço",
-    desc: "6 meses sobre o serviço executado",
+    desc: "3 meses sobre o serviço executado",
   },
 ];
 
@@ -154,7 +154,7 @@ const reasons = [
   },
   {
     title: "Garantia do serviço executado",
-    desc: "A cobertura de 6 meses se aplica ao serviço realizado; condições e limites são confirmados no atendimento.",
+    desc: "A cobertura de 3 meses se aplica ao serviço realizado; condições e limites são confirmados no atendimento.",
   },
   {
     title: "A 19 km de Ribeirão Preto",

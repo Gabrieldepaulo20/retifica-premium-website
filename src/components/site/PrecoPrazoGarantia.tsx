@@ -79,7 +79,7 @@ const cartoes: Cartao[] = [
   },
   {
     titulo: "E se der problema",
-    destaque: "6 meses de garantia",
+    destaque: "3 meses de garantia",
     texto: "Aplicada ao serviço executado. A cobertura e as condições são confirmadas no atendimento.",
     selo: true,
     icone: (
