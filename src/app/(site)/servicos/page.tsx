@@ -214,20 +214,17 @@ export default function ServicosPage() {
             Sertãozinho-SP · atende Ribeirão Preto
           </p>
 
-          {/* Terceira versão deste título. Passou por "a gente mede antes de dar
-              o preço" (método da oficina) e por "carro parado por causa do
-              cabeçote?" (nomeava o problema, mas a resposta era logística).
-              Agora promete o resultado: ninguém quer um cabeçote retificado,
-              quer o carro andando. "Cuida" troca o tom de fornecedor para
-              alguém do lado do cliente. */}
+          {/* Título definido pelo dono da retífica. A promessa está no subtexto:
+              descobrir o que precisa antes de trocar peça é a objeção real de
+              quem já ouviu orçamento inflado em outro lugar. */}
           <h1 className="mx-auto mt-4 max-w-3xl font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.4rem]">
-            Seu carro volta a rodar.{" "}
-            <span className="text-rp-gold">A gente cuida do cabeçote</span>
+            Serviços de Retífica de Cabeçotes com{" "}
+            <span className="text-rp-gold">Precisão, Diagnóstico e Confiança</span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
-            Você não precisa levar nada. Buscamos, consertamos e devolvemos com
-            seis meses de garantia.
+            Seu motor apresentou problema? Antes de trocar peças, descubra o que
+            realmente precisa ser feito.
           </p>
 
           {/* A garantia confirmada fica perto do título para ser encontrada
