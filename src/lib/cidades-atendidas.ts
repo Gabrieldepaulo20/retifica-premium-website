@@ -18,9 +18,9 @@
  * mudam de cidade para cidade; o resto do texto não deve ser repetido palavra
  * por palavra entre elas.
  *
- * REGRA: `contexto` só pode afirmar o que a retífica confirmou. Prazo de
- * prazo para buscar a peça, rota e preço por cidade NÃO estão confirmados e
- * não devem ser prometidos aqui.
+ * REGRA: `contexto` só pode afirmar o que a retífica confirmou. Prazo para
+ * buscar a peça, rota e preço por cidade NÃO estão confirmados e não devem
+ * ser prometidos aqui.
  */
 
 export type CidadeAtendida = {

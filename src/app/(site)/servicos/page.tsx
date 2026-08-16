@@ -209,7 +209,7 @@ export default function ServicosPage() {
           className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-rp-gold/45 to-transparent"
         />
 
-        <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
           <p className="font-heading text-xs font-bold uppercase tracking-[0.24em] text-rp-gold">
             Sertãozinho-SP · atende Ribeirão Preto
           </p>
@@ -218,12 +218,12 @@ export default function ServicosPage() {
               dar o preço"). Método é o que interessa a quem trabalha aqui, não a
               quem está com o carro na garagem. A primeira linha agora nomeia a
               situação da pessoa e tira o maior obstáculo dela: o deslocamento. */}
-          <h1 className="mt-4 max-w-3xl font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.4rem]">
+          <h1 className="mx-auto mt-4 max-w-3xl font-heading text-[2.1rem] font-bold leading-[1.06] tracking-[-0.015em] md:text-[3.4rem]">
             Carro parado por causa do cabeçote?{" "}
             <span className="text-rp-gold">A gente busca e devolve pronto</span>
           </h1>
 
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/75">
             Você não precisa levar nada. Buscamos o cabeçote, vemos o que ele
             tem, falamos o preço antes de fazer e devolvemos com seis meses de
             garantia.
@@ -231,7 +231,7 @@ export default function ServicosPage() {
 
           {/* A garantia confirmada fica perto do título para ser encontrada
               sem disputar atenção com a ação principal. */}
-          <p className="mt-6 inline-flex items-center gap-2.5 rounded-full border border-rp-gold/50 bg-rp-gold/10 py-2.5 pl-3 pr-5">
+          <p className="mx-auto mt-6 inline-flex items-center gap-2.5 rounded-full border border-rp-gold/50 bg-rp-gold/10 py-2.5 pl-3 pr-5">
             <span
               aria-hidden="true"
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-rp-gold text-[#1A1200]"
@@ -247,7 +247,7 @@ export default function ServicosPage() {
 
           <Suspense
             fallback={
-              <div className="mt-8 h-14 w-full max-w-xl animate-pulse rounded-full bg-white/10 motion-reduce:animate-none" />
+              <div className="mx-auto mt-8 h-14 w-full max-w-xl animate-pulse rounded-full bg-white/10 motion-reduce:animate-none" />
             }
           >
             <ExperimentHeroCtas whatsappMessage={zapGeral} />

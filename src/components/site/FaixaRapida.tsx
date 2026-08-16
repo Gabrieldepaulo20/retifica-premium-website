@@ -21,9 +21,9 @@ import {
  * ou 90% de rolagem converte ZERO. Ou seja, quem decide, decide na primeira
  * dobra; quem rola está procurando o que não achou.
  *
- * A perguntas do site completa continua existindo para quem quer contexto, mas ela tinha
- * 3 inícios em 30 dias. Quem pesquisou "quanto custa" precisa do número antes
- * de qualquer pergunta.
+ * O bloco de perguntas continua existindo abaixo, para quem quer contexto,
+ * mas teve 3 inícios em 30 dias. Quem pesquisou "quanto custa" precisa do
+ * número antes de qualquer pergunta.
  */
 export function FaixaRapida() {
   const [marca, setMarca] = useState("");
