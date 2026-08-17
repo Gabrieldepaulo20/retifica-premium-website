@@ -38,7 +38,10 @@ const IMAGENS: Record<string, { src: string; foto?: boolean }> = {
   "plaina-de-cabecote": { src: "/plaina-de-cabecote-usinagem.webp", foto: true },
   "limpeza-quimica": { src: "/cabecoteservicos.png" },
   "troca-e-adaptacao-de-guias": { src: "/adaptacaodeguias.png" },
-  "esmerilhamento-de-valvulas": { src: "/esmirilhamentodevalvulas.png" },
+  // Foto da bancada da própria retífica: ferramenta de esmerilhar em uso sobre
+  // um cabeçote real. Vale mais que ilustração num serviço que é acabamento
+  // manual — mostra que existe alguém fazendo, não um processo abstrato.
+  "esmerilhamento-de-valvulas": { src: "/esmerilhamento-de-valvulas-real.webp", foto: true },
   // Foto real do reparo no lugar da ilustração, como já foi feito na plaina.
   "usinagem-de-roscas": { src: "/usinagem-de-roscas-reparo.webp", foto: true },
   "solda-de-trincas": { src: "/teste-de-trinca-capa.jpg", foto: true },
