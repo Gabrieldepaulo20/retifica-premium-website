@@ -80,8 +80,9 @@ export const serviceDetailPages = [
     hero: "Cabeçote torto? A plaina deixa a face reta de novo",
     intro:
       "Junta queimada ou superaquecimento não significam automaticamente que a peça deve ser plainada. Primeiro conferimos empeno, superfície e altura disponível; só então a usinagem é indicada para recuperar a condição de vedação sem remover material por rotina.",
-    image: "/plainadecabecotes.png",
-    imageAlt: "Ícone de plaina de cabeçote",
+    image: "/plaina-de-cabecote-usinagem.webp",
+    imageAlt:
+      "Cabeçote de motor fixado na mesa da plaina, com a face superior sendo usinada pelo cabeçote de corte",
     primaryIntent: "servico-especifico",
     symptoms: [
       "cabeçote empenado",

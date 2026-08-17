@@ -33,7 +33,9 @@ import { serviceCatalog } from "@/lib/service-pages";
 const IMAGENS: Record<string, { src: string; foto?: boolean }> = {
   "retifica-de-cabecote": { src: "/retifica-de-cabecote-usinagem.jpg", foto: true },
   "retifica-de-sedes-e-valvulas": { src: "/retifica-de-sedes-e-valvulas.jpg", foto: true },
-  "plaina-de-cabecote": { src: "/plainadecabecotes.png" },
+  // Foto real de usinagem no lugar da ilustração vetorial: o card fica com o
+  // mesmo peso visual dos outros que já usam foto, e mostra o serviço acontecendo.
+  "plaina-de-cabecote": { src: "/plaina-de-cabecote-usinagem.webp", foto: true },
   "limpeza-quimica": { src: "/cabecoteservicos.png" },
   "troca-e-adaptacao-de-guias": { src: "/adaptacaodeguias.png" },
   "esmerilhamento-de-valvulas": { src: "/esmirilhamentodevalvulas.png" },
