@@ -364,8 +364,9 @@ export const serviceDetailPages = [
     hero: "Rosca espanada no cabeçote tem conserto",
     intro:
       "Rosca espanada ou danificada compromete aperto, vedação e montagem. A recuperação precisa respeitar posição, profundidade e material do cabeçote para não transformar um reparo localizado em dano maior.",
-    image: "/usinagemderoscas.png",
-    imageAlt: "Ilustração técnica de usinagem e recuperação de roscas",
+    image: "/usinagem-de-roscas-reparo.webp",
+    imageAlt:
+      "Mão enluvada segurando um parafuso com a rosca danificada ao lado de um cabeçote, com macho de rosca e bucha de reparo sobre a bancada",
     primaryIntent: "servico-especifico",
     symptoms: [
       "rosca espanada",

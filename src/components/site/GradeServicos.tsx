@@ -39,7 +39,8 @@ const IMAGENS: Record<string, { src: string; foto?: boolean }> = {
   "limpeza-quimica": { src: "/cabecoteservicos.png" },
   "troca-e-adaptacao-de-guias": { src: "/adaptacaodeguias.png" },
   "esmerilhamento-de-valvulas": { src: "/esmirilhamentodevalvulas.png" },
-  "usinagem-de-roscas": { src: "/usinagemderoscas.png" },
+  // Foto real do reparo no lugar da ilustração, como já foi feito na plaina.
+  "usinagem-de-roscas": { src: "/usinagem-de-roscas-reparo.webp", foto: true },
   "solda-de-trincas": { src: "/teste-de-trinca-capa.jpg", foto: true },
   "montagem-e-regulagem-final": { src: "/montagemdemotores.jpg", foto: true },
   "diagnostico-tecnico-de-motor": { src: "/diagnosticotecnico.webp", foto: true },
