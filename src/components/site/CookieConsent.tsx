@@ -285,23 +285,62 @@ export function CookieConsent({
     );
   }, [isOpen]);
 
+  /*
+    Não há folga artificial de layout aqui, e isso é deliberado.
+
+    Enquanto o aviso ficava preso na base da tela, ele cobria conteúdo do meio
+    da página. Medido num iPhone de 375x812: o campo "Marca" da faixa de preço
+    começa em 681px, os botões "É diesel?" em 767px, e o aviso ocupava de 692px
+    a 804px — em cima dos dois. No desktop de 1280x800 o mesmo acontecia: aviso
+    de 657px a 780px, campo coberto.
+
+    Duas tentativas falharam e ficam registradas para ninguém repetir:
+
+    1. Empurrar o fim da página com `padding-bottom`. Não resolve, porque o
+       elemento coberto está na primeira dobra, não no fim.
+    2. Encolher o aviso. Para caber abaixo de 767px precisaria de menos de 45px
+       de altura, o que exige alvos de toque menores que o mínimo acessível.
+
+    Com o aviso no topo ele cobre o título, que é texto e não campo, e nenhum
+    controle fica inalcançável. Sem folga, sem observador de tamanho, sem
+    estilo aplicado no body.
+  */
+
   if (preferences === undefined) return null;
 
   return (
     <>
       {isOpen ? (
         <section
-          className="fixed inset-x-2 bottom-2 z-[1100] mx-auto max-h-[min(72dvh,calc(100dvh-1rem))] max-w-5xl overflow-y-auto overscroll-contain rounded-2xl border border-white/15 bg-[#06172e]/[0.985] text-white shadow-[0_24px_80px_rgba(2,14,29,0.48)] backdrop-blur-xl sm:inset-x-5 sm:bottom-5 sm:max-h-[calc(100dvh-2.5rem)]"
+          className="fixed inset-x-2 top-2 z-[1100] mx-auto max-h-[min(72dvh,calc(100dvh-1rem))] max-w-5xl overflow-y-auto overscroll-contain rounded-2xl border border-white/15 bg-[#06172e]/[0.985] text-white shadow-[0_24px_80px_rgba(2,14,29,0.48)] backdrop-blur-xl sm:inset-x-5 sm:top-5 sm:max-h-[calc(100dvh-2.5rem)]"
           role="region"
           aria-label="Preferências de privacidade"
         >
           <div className="h-0.5 bg-rp-gold" />
           <div className="px-4 pb-[max(0.375rem,env(safe-area-inset-bottom))] pt-2 sm:p-5">
             <div className="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:justify-between lg:gap-3">
+              {/*
+                POR QUE O AVISO FICA NO TOPO NO CELULAR
+
+                Ele é `fixed`, então flutua por cima do conteúdo. Enquanto o CTA
+                principal estava no meio da página isso não incomodava. Passou a
+                incomodar quando a faixa de preço subiu para a primeira dobra:
+                medido num iPhone de 375x812, o campo "Marca" começa em 681px e
+                os botões "É diesel?" em 767px — exatamente onde um aviso preso
+                na base da tela se instala. Quem chega de anúncio cai nessa tela.
+
+                Tentei primeiro deixar o aviso mais baixo. Não resolve: para
+                caber abaixo de 767px ele teria menos de 45px, o que obrigaria a
+                encolher os alvos de toque — troca um problema de usabilidade por
+                outro.
+
+                No topo ele cobre o título, que é texto e não campo. A pessoa lê,
+                decide e segue. No desktop continua na base, onde há folga.
+              */}
               <div className="max-w-2xl">
                 <div className="flex items-center justify-between gap-3">
                   <h2 className="font-heading text-base font-bold leading-tight sm:text-lg">
-                    Privacidade no site
+                    Antes de continuar
                   </h2>
                   <div className="flex shrink-0 items-center gap-3 text-xs font-bold">
                     <Link
@@ -316,13 +355,21 @@ export function CookieConsent({
                         onClick={openConfiguration}
                         className="min-h-8 text-white/80 underline decoration-white/30 underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                       >
-                        Personalizar
+                        Escolher
                       </button>
                     ) : null}
                   </div>
                 </div>
+                {/*
+                  A frase anterior era "Google, Clarity e Retiflow: desligados
+                  até sua escolha". Nomeava três ferramentas que o cliente não
+                  conhece e não dizia o que ele ganha com aquilo. Quem não
+                  entende, não aceita — e sem aceite nada é medido, nem clique
+                  no WhatsApp, nem conversão no Google Ads.
+                */}
                 <p className="mt-0.5 text-[11px] leading-tight text-white/72 sm:text-sm sm:leading-relaxed">
-                  Google, Clarity e Retiflow: desligados até sua escolha.
+                  Usamos medição para saber quais páginas ajudam quem procura
+                  retífica. Não vendemos nem repassamos seus dados.
                 </p>
               </div>
 
@@ -336,7 +383,7 @@ export function CookieConsent({
                     }}
                     className="min-h-10 whitespace-nowrap rounded-full border border-white/20 px-3 text-xs font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-11 sm:px-4 sm:text-sm"
                   >
-                    Rejeitar opcionais
+                    Só o necessário
                   </button>
                   <button
                     type="button"
@@ -346,7 +393,7 @@ export function CookieConsent({
                     }}
                     className="min-h-10 whitespace-nowrap rounded-full border border-rp-gold bg-rp-gold px-3 text-xs font-extrabold text-[#07172e] transition-colors hover:bg-[#ffd45c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-11 sm:px-5 sm:text-sm"
                   >
-                    Aceitar opcionais
+                    Aceitar e continuar
                   </button>
                 </div>
               ) : null}
