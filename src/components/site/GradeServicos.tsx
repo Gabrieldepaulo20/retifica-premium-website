@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { TrackedServiceLink } from "@/components/site/TrackedLinks";
-import { formatarFaixa, faixaParaMarca } from "@/lib/faixas-preco";
-import { getServicePageBySlug, serviceCatalog } from "@/lib/service-pages";
+import { serviceCatalog } from "@/lib/service-pages";
 
 /**
  * Grade de serviços logo abaixo do título.
@@ -15,26 +14,36 @@ import { getServicePageBySlug, serviceCatalog } from "@/lib/service-pages";
  * A saída não é convencer a rolar: é subir o que estava embaixo. A grade mostra
  * tudo que a retífica faz sem exigir um segundo gesto.
  *
- * Preço só aparece onde existe dado real (retífica completa, 186 O.S.). Nos
- * outros nove seria chute, e chute vira desmentido no atendimento.
+ * O card não mostra preço de propósito: o objetivo desta grade é fazer a pessoa
+ * entrar no serviço, e número na vitrine faz decidir antes de entrar. O preço
+ * mora na página de destino, onde cabe explicar o que muda.
  */
 
 /**
- * Serviços com foto real da oficina. Foto pede recorte cheio; ilustração
- * vetorial pede respiro, senão estica e fica borrada.
+ * Imagem de cada card.
+ *
+ * Metade dos serviços do catálogo não tem página própria com o mesmo slug
+ * (limpeza química vive em /banho-quimico, solda em /teste-de-trinca#solda,
+ * o diagnóstico leva para /quanto-custa), então buscar pelo slug deixava
+ * cinco cards sem imagem, com uma letra no lugar. O mapa abaixo é explícito.
+ *
+ * `foto: true` recorta preenchendo o card. Ilustração vetorial fica com
+ * respiro, senão estica e borra.
  */
-const COM_FOTO = new Set(["retifica-de-cabecote", "retifica-de-sedes-e-valvulas"]);
-
-/** Imagem do serviço, quando a página de detalhe tem uma. */
-function imagemDoServico(id: string) {
-  const direto = getServicePageBySlug(id);
-  if (direto) return { src: direto.image, alt: direto.imageAlt };
-  return null;
-}
+const IMAGENS: Record<string, { src: string; foto?: boolean }> = {
+  "retifica-de-cabecote": { src: "/retifica-de-cabecote-usinagem.jpg", foto: true },
+  "retifica-de-sedes-e-valvulas": { src: "/retifica-de-sedes-e-valvulas.jpg", foto: true },
+  "plaina-de-cabecote": { src: "/plainadecabecotes.png" },
+  "limpeza-quimica": { src: "/cabecoteservicos.png" },
+  "troca-e-adaptacao-de-guias": { src: "/adaptacaodeguias.png" },
+  "esmerilhamento-de-valvulas": { src: "/esmirilhamentodevalvulas.png" },
+  "usinagem-de-roscas": { src: "/usinagemderoscas.png" },
+  "solda-de-trincas": { src: "/teste-de-trinca-capa.jpg", foto: true },
+  "montagem-e-regulagem-final": { src: "/montagemdemotores.jpg", foto: true },
+  "diagnostico-tecnico-de-motor": { src: "/diagnosticotecnico.webp", foto: true },
+};
 
 export function GradeServicos() {
-  const faixaCabecote = faixaParaMarca(null).faixa;
-
   return (
     <section
       id="catalogo"
@@ -58,8 +67,7 @@ export function GradeServicos() {
 
         <ul className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4">
           {serviceCatalog.map((servico) => {
-            const imagem = imagemDoServico(servico.id);
-            const temFaixa = servico.id === "retifica-de-cabecote" && faixaCabecote;
+            const imagem = IMAGENS[servico.id];
 
             return (
               <li key={servico.id}>
@@ -70,27 +78,18 @@ export function GradeServicos() {
                   className="group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:border-rp-accent hover:shadow-[0_10px_30px_rgba(20,60,120,0.09)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rp-accent"
                 >
                   <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#EEF3FA]">
-                    {imagem ? (
-                      <Image
-                        src={imagem.src}
-                        alt=""
-                        fill
-                        sizes="(max-width: 1024px) 45vw, 300px"
-                        className={
-                          COM_FOTO.has(servico.id)
-                            ? "object-cover transition duration-300 group-hover:scale-[1.03]"
-                            : "object-contain p-6"
-                        }
-                        loading="lazy"
-                      />
-                    ) : (
-                      <span
-                        aria-hidden="true"
-                        className="flex h-full w-full items-center justify-center font-heading text-3xl font-bold text-rp-accent/25"
-                      >
-                        {servico.title.slice(0, 1)}
-                      </span>
-                    )}
+                    <Image
+                      src={imagem.src}
+                      alt=""
+                      fill
+                      sizes="(max-width: 1024px) 45vw, 300px"
+                      className={
+                        imagem.foto
+                          ? "object-cover transition duration-300 group-hover:scale-[1.03]"
+                          : "object-contain p-6 transition duration-300 group-hover:scale-[1.04]"
+                      }
+                      loading="lazy"
+                    />
                   </div>
 
                   <div className="flex flex-1 flex-col p-4">
@@ -101,13 +100,19 @@ export function GradeServicos() {
                       {servico.description}
                     </p>
 
-                    <p className="mt-3 font-heading text-sm font-bold text-rp-accent">
-                      {temFaixa && faixaCabecote ? (
-                        <>Metade fica entre {formatarFaixa(faixaCabecote)}</>
-                      ) : (
-                        <>Ver detalhes →</>
-                      )}
-                    </p>
+                    {/*
+                      O card mostrava a faixa de preço da retífica completa. Saiu:
+                      preço no card faz a pessoa decidir ali mesmo, e o objetivo
+                      aqui é levar para dentro do serviço. O preço continua na
+                      página de destino, onde há espaço para explicar o que muda.
+
+                      Formato de botão, não de link em texto: card inteiro é
+                      clicável, mas o olho precisa de um alvo para entender isso.
+                    */}
+                    <span className="mt-3.5 inline-flex min-h-9 w-fit items-center gap-1.5 rounded-full bg-rp-accent/10 px-3.5 font-heading text-sm font-bold text-rp-accent transition group-hover:bg-rp-accent group-hover:text-white">
+                      Ver este serviço
+                      <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">→</span>
+                    </span>
                   </div>
                 </TrackedServiceLink>
               </li>
