@@ -74,7 +74,7 @@ export type MarketingEventParams = {
   service_name?: string;
   page_location?: string;
   traffic_source?: string;
-  traffic_conferium?: string;
+  traffic_medium?: string;
   traffic_campaign?: string;
   traffic_term?: string;
   gclid?: string;
@@ -96,7 +96,7 @@ type GoogleAdsConversionParams = MarketingEventParams & {
 
 export type StoredAttribution = {
   source?: string;
-  conferium?: string;
+  medium?: string;
   campaign?: string;
   term?: string;
   content?: string;
@@ -194,7 +194,7 @@ const GOOGLE_SAFE_STRING_PARAMS = new Set([
   "service_name",
   "page_location",
   "traffic_source",
-  "traffic_conferium",
+  "traffic_medium",
   "traffic_campaign",
   "traffic_term",
   "gclid",
@@ -240,7 +240,7 @@ const GOOGLE_SAFE_NUMBER_PARAMS = new Set([
 ]);
 const GOOGLE_QUERY_DERIVED_PARAMS = new Set([
   "traffic_source",
-  "traffic_conferium",
+  "traffic_medium",
   "traffic_campaign",
   "traffic_term",
   "gclid",
@@ -932,7 +932,7 @@ function captureRuntimeAttribution() {
   const params = new URLSearchParams(window.location.search);
   const hasTrackedParam = [
     "utm_source",
-    "utm_conferium",
+    "utm_medium",
     "gclid",
     "gbraid",
     "wbraid",
@@ -941,7 +941,7 @@ function captureRuntimeAttribution() {
 
   const classified = classifyTrafficAttribution({
     source: params.get("utm_source") || undefined,
-    conferium: params.get("utm_conferium") || undefined,
+    medium: params.get("utm_medium") || undefined,
     referrer: safeReferrerOrigin(),
     hasGoogleClickId: Boolean(
       params.get("gclid") || params.get("gbraid") || params.get("wbraid")
@@ -950,7 +950,7 @@ function captureRuntimeAttribution() {
   const capturedAt = new Date();
   runtimeAttribution = {
     source: classified.source,
-    conferium: classified.conferium,
+    medium: classified.medium,
     originType: classified.originType,
     landingPage: `${window.location.origin}${window.location.pathname}`,
     referrer: safeReferrerOrigin(),
@@ -1020,7 +1020,7 @@ export function sendExternalMarketingEvent(
     pageTitle: document.title,
     referrer: attribution?.referrer,
     source: attribution?.source,
-    conferium: attribution?.conferium,
+    medium: attribution?.medium,
     campaign: attribution?.campaign,
     term: attribution?.term,
     content: attribution?.content,
@@ -1089,7 +1089,7 @@ export function captureTrafficAttribution() {
   const params = new URLSearchParams(window.location.search);
   const trackedKeys = [
     "utm_source",
-    "utm_conferium",
+    "utm_medium",
     "utm_campaign",
     "utm_term",
     "utm_content",
@@ -1104,7 +1104,7 @@ export function captureTrafficAttribution() {
   const existing = getStoredAttribution();
   const classifiedAttribution = classifyTrafficAttribution({
     source: params.get("utm_source") || undefined,
-    conferium: params.get("utm_conferium") || undefined,
+    medium: params.get("utm_medium") || undefined,
     referrer: document.referrer || undefined,
     hasGoogleClickId: Boolean(
       params.get("gclid") || params.get("gbraid") || params.get("wbraid")
@@ -1123,9 +1123,9 @@ export function captureTrafficAttribution() {
     source: hasTrackedParam
       ? classifiedAttribution.source
       : anonymousAttribution?.source,
-    conferium: hasTrackedParam
-      ? classifiedAttribution.conferium
-      : anonymousAttribution?.conferium,
+    medium: hasTrackedParam
+      ? classifiedAttribution.medium
+      : anonymousAttribution?.medium,
     campaign: params.get("utm_campaign") || undefined,
     term: params.get("utm_term") || undefined,
     content: params.get("utm_content") || undefined,
@@ -1193,7 +1193,7 @@ export function attributionEventParams(): MarketingEventParams {
 
   return {
     traffic_source: attribution.source,
-    traffic_conferium: attribution.conferium,
+    traffic_medium: attribution.medium,
     traffic_campaign: attribution.campaign,
     traffic_term: attribution.term,
     gclid: attribution.gclid || attribution.gbraid || attribution.wbraid,
@@ -1209,7 +1209,7 @@ export function attributionMessageLines() {
     "",
     "Origem do contato:",
     attribution.source ? `Fonte: ${attribution.source}` : "",
-    attribution.conferium ? `Mídia: ${attribution.conferium}` : "",
+    attribution.medium ? `Mídia: ${attribution.medium}` : "",
     attribution.campaign ? `Campanha: ${attribution.campaign}` : "",
     attribution.term ? `Termo: ${attribution.term}` : "",
     attribution.content ? `Conteúdo: ${attribution.content}` : "",

@@ -38,7 +38,7 @@ export function Button({
   disabled = false,
 }: ButtonProps) {
   const baseClasses = cn(
-    "inline-flex items-center justify-center rounded-btn font-conferium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rp-accent disabled:opacity-50 disabled:cursor-not-allowed",
+    "inline-flex items-center justify-center rounded-btn font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rp-accent disabled:opacity-50 disabled:cursor-not-allowed",
     variantClasses[variant],
     sizeClasses[size],
     className

@@ -1,6 +1,6 @@
 export type NormalizedTrafficAttribution = {
   source?: string;
-  conferium?: string;
+  medium?: string;
   aiEngine?: string;
   originType: "paid" | "organic" | "other";
 };
@@ -54,17 +54,17 @@ function isOrganicSearchHost(value?: string) {
 
 export function classifyTrafficAttribution({
   source,
-  conferium,
+  medium,
   referrer,
   hasGoogleClickId = false,
 }: {
   source?: string;
-  conferium?: string;
+  medium?: string;
   referrer?: string;
   hasGoogleClickId?: boolean;
 }): NormalizedTrafficAttribution {
   const cleanSource = source?.trim() || undefined;
-  const cleanMedium = conferium?.trim() || undefined;
+  const cleanMedium = medium?.trim() || undefined;
   const sourceMatch = matchingAiSource(cleanSource);
   const referrerMatch = matchingAiSource(referrer);
   const aiMatch = sourceMatch ?? referrerMatch;
@@ -72,7 +72,7 @@ export function classifyTrafficAttribution({
   if (aiMatch) {
     return {
       source: cleanSource || aiMatch.hosts[0],
-      conferium: cleanMedium || "ai_referral",
+      medium: cleanMedium || "ai_referral",
       aiEngine: aiMatch.engine,
       originType: "other",
     };
@@ -83,7 +83,7 @@ export function classifyTrafficAttribution({
   if (paid) {
     return {
       source: cleanSource || "google",
-      conferium: cleanMedium || "cpc",
+      medium: cleanMedium || "cpc",
       originType: "paid",
     };
   }
@@ -91,14 +91,14 @@ export function classifyTrafficAttribution({
   if (normalizedMedium === "organic" || isOrganicSearchHost(referrer)) {
     return {
       source: cleanSource || normalizedHost(referrer) || "busca organica",
-      conferium: cleanMedium || "organic",
+      medium: cleanMedium || "organic",
       originType: "organic",
     };
   }
 
   return {
     source: cleanSource,
-    conferium: cleanMedium,
+    medium: cleanMedium,
     originType: "other",
   };
 }

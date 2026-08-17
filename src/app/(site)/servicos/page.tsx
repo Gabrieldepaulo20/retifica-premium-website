@@ -571,7 +571,7 @@ export default function ServicosPage() {
             {primaryRegionalCities.map((cidade) => (
               <li
                 key={cidade}
-                className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-conferium text-gray-700"
+                className="rounded-full border border-gray-200 px-4 py-1.5 text-sm font-medium text-gray-700"
               >
                 {cidade}
               </li>

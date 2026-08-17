@@ -455,7 +455,7 @@ export function buildEstimateResult(answers: QuizAnswers): EstimateResult {
   };
 }
 
-export type IntentLevel = "high" | "conferium" | "low";
+export type IntentLevel = "high" | "medium" | "low";
 
 export type IntentAssessment = {
   level: IntentLevel;
@@ -555,7 +555,7 @@ export function assessIntent(answers: QuizAnswers): IntentAssessment {
     signals.push("tem fotos ou documentos");
   }
 
-  const level: IntentLevel = score >= 8 ? "high" : score >= 4 ? "conferium" : "low";
+  const level: IntentLevel = score >= 8 ? "high" : score >= 4 ? "medium" : "low";
   return { level, score, signals };
 }
 

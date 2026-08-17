@@ -139,7 +139,7 @@ export function Footer() {
               Especialistas em retífica de cabeçotes com mais de 20 anos de
               experiência.
             </p>
-            <nav className="flex flex-col gap-2 mt-4 text-sm font-conferium">
+            <nav className="flex flex-col gap-2 mt-4 text-sm font-medium">
               {FOOTER_LINKS.map((item) => (
                 <FooterNavLink
                   key={item.id}

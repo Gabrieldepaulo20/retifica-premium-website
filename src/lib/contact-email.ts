@@ -460,7 +460,7 @@ type MarketingAlertInput = {
   occurredAt: string;
   pageLocation: string;
   source?: string;
-  conferium?: string;
+  medium?: string;
   campaign?: string;
   term?: string;
   deviceType?: string;
@@ -471,7 +471,7 @@ export async function sendWhatsAppClickAlert({
   occurredAt,
   pageLocation,
   source,
-  conferium,
+  medium,
   campaign,
   term,
   deviceType,
@@ -481,7 +481,7 @@ export async function sendWhatsAppClickAlert({
     ["Horário", occurredAt],
     ["Página", pageLocation],
     ["Fonte", source || "direto"],
-    ["Mídia", conferium || "não informada"],
+    ["Mídia", medium || "não informada"],
     ["Campanha", campaign || "não informada"],
     ["Termo", term || "não informado"],
     ["Dispositivo", deviceType || "não informado"],
