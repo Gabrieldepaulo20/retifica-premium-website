@@ -268,8 +268,9 @@ export const serviceDetailPages = [
     hero: "Motor sem força? Costuma ser válvula ou sede gasta",
     intro:
       "Sedes e válvulas trabalham juntas para vedar a câmara. Desgaste, queima ou assentamento irregular podem causar falhas, perda de potência e baixa compressão. A correção começa medindo cada ponto, não apenas esmerilhando por rotina.",
-    image: "/sedeseguias.png",
-    imageAlt: "Ilustração técnica de sedes e válvulas de cabeçote",
+    image: "/retifica-de-sedes-e-valvulas.jpg",
+    imageAlt:
+      "Fresa trabalhando na sede da válvula do cabeçote fixado na máquina, com o operador conduzindo a ferramenta",
     primaryIntent: "servico-especifico",
     symptoms: [
       "perda de compressão",

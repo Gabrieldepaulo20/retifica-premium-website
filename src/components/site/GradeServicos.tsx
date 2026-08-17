@@ -19,6 +19,12 @@ import { getServicePageBySlug, serviceCatalog } from "@/lib/service-pages";
  * outros nove seria chute, e chute vira desmentido no atendimento.
  */
 
+/**
+ * Serviços com foto real da oficina. Foto pede recorte cheio; ilustração
+ * vetorial pede respiro, senão estica e fica borrada.
+ */
+const COM_FOTO = new Set(["retifica-de-cabecote", "retifica-de-sedes-e-valvulas"]);
+
 /** Imagem do serviço, quando a página de detalhe tem uma. */
 function imagemDoServico(id: string) {
   const direto = getServicePageBySlug(id);
@@ -71,7 +77,7 @@ export function GradeServicos() {
                         fill
                         sizes="(max-width: 1024px) 45vw, 300px"
                         className={
-                          servico.id === "retifica-de-cabecote"
+                          COM_FOTO.has(servico.id)
                             ? "object-cover transition duration-300 group-hover:scale-[1.03]"
                             : "object-contain p-6"
                         }
