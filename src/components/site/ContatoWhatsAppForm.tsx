@@ -16,6 +16,11 @@ import {
   trackEngagementEvent,
   trackMarketingEvent,
 } from "@/lib/trackingEvents";
+import {
+  classifyMarketingDelivery,
+  classifyMarketingNetworkFailure,
+  retryMarketingDelivery,
+} from "@/lib/marketing-event-delivery";
 
 type ContactFormState = {
   nome: string;
@@ -38,6 +43,8 @@ const baseState: ContactFormState = {
 };
 
 const trackedFields: ContactField[] = ["nome", "telefone", "mensagem"];
+const CONTACT_FOREGROUND_MAX_ATTEMPTS = 2;
+const CONTACT_FOREGROUND_MAX_WAIT_MS = 2_000;
 
 const subjectLabels: Record<string, string> = {
   orcamento: "Solicitar orçamento",
@@ -68,8 +75,28 @@ type ContactApiResponse = {
   delivery?: {
     emailSent?: boolean;
     retiflowSaved?: boolean;
+    retiflowRetryable?: boolean;
+    retiflowStatus?: number;
   };
 };
+
+type ContactAttempt = {
+  response: Response;
+  data: ContactApiResponse | null;
+};
+
+function classifyContactStorageAttempt(attempt: ContactAttempt) {
+  const storageSaved = attempt.data?.delivery?.retiflowSaved === true;
+  const status =
+    attempt.data?.delivery?.retiflowStatus ?? attempt.response.status;
+  return classifyMarketingDelivery({
+    status,
+    responseOk: storageSaved,
+    bodyOk: storageSaved,
+    storageSaved,
+    retryAfter: attempt.response.headers.get("retry-after"),
+  });
+}
 
 type ContatoWhatsAppFormProps = {
   defaultSubject?: keyof typeof subjectLabels;
@@ -344,28 +371,46 @@ export function ContatoWhatsAppForm({
         return { response, data };
       };
 
-      const firstAttempt = await postContact();
-      const response = firstAttempt.response;
-      let data = firstAttempt.data;
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Falha ao enviar o formulário.");
+      let firstAttempt: ContactAttempt | null = null;
+      let firstDelivery = classifyMarketingNetworkFailure();
+      try {
+        firstAttempt = await postContact();
+        firstDelivery = classifyContactStorageAttempt(firstAttempt);
+      } catch {
+        // A repetição usa storageOnly e o mesmo eventId para não duplicar e-mail.
       }
+      let data = firstAttempt?.data ?? null;
 
-      if (
-        data?.delivery?.emailSent === true &&
-        data.delivery.retiflowSaved !== true
-      ) {
-        await new Promise((resolve) => window.setTimeout(resolve, 400));
-        const storageRetry = await postContact(true).catch(() => null);
+      if (!firstDelivery.delivered && firstDelivery.retryable) {
+        const storageRetry = await retryMarketingDelivery(
+          firstDelivery,
+          async () => {
+            const value = await postContact(true);
+            return {
+              value,
+              delivery: classifyContactStorageAttempt(value),
+            };
+          },
+          {
+            maxAttempts: CONTACT_FOREGROUND_MAX_ATTEMPTS,
+            maxWaitMs: CONTACT_FOREGROUND_MAX_WAIT_MS,
+          }
+        );
         if (
-          storageRetry?.response.ok &&
-          storageRetry.data?.delivery?.retiflowSaved === true
+          storageRetry.delivery.delivered &&
+          storageRetry.value?.data?.delivery?.retiflowSaved === true
         ) {
+          const storageData = storageRetry.value.data;
           data = {
-            ...data,
-            delivery: { emailSent: true, retiflowSaved: true },
+            ...(data ?? storageData),
+            delivery: {
+              ...storageData.delivery,
+              emailSent: data?.delivery?.emailSent === true,
+              retiflowSaved: true,
+            },
           };
+        } else if (!data && storageRetry.value) {
+          data = storageRetry.value.data;
         }
       }
 

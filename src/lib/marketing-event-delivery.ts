@@ -23,6 +23,27 @@ export type RetryableQueueEntry<T> = {
   payload: T;
 };
 
+export type MarketingDeliveryAttempt<T> = {
+  delivery: MarketingDelivery;
+  value?: T;
+};
+
+export type MarketingDeliveryRetryOptions = {
+  maxAttempts?: number;
+  maxWaitMs?: number;
+  sleep?: (delayMs: number) => Promise<void>;
+  random?: () => number;
+};
+
+export function isRetryableMarketingStatus(status: number | undefined) {
+  return (
+    status === undefined ||
+    status === 408 ||
+    status === 429 ||
+    (status >= 500 && status <= 599)
+  );
+}
+
 export function parseRetryAfterMs(
   value: string | null | undefined,
   now = Date.now()
@@ -56,11 +77,7 @@ export function classifyMarketingDelivery(args: {
     };
   }
 
-  if (
-    args.status === 408 ||
-    args.status === 429 ||
-    (args.status >= 500 && args.status <= 599)
-  ) {
+  if (isRetryableMarketingStatus(args.status)) {
     return {
       delivered: false,
       retryable: true,
@@ -79,6 +96,64 @@ export function classifyMarketingDelivery(args: {
         ? "unconfirmed_2xx"
         : "permanent_http",
   };
+}
+
+export async function retryMarketingDelivery<T>(
+  initialDelivery: MarketingDelivery,
+  attempt: () => Promise<MarketingDeliveryAttempt<T>>,
+  options: MarketingDeliveryRetryOptions = {}
+) {
+  const requestedAttempts = options.maxAttempts ?? MARKETING_EVENT_MAX_ATTEMPTS;
+  const maxAttempts = Number.isFinite(requestedAttempts)
+    ? Math.min(
+        MARKETING_EVENT_MAX_ATTEMPTS,
+        Math.max(1, Math.floor(requestedAttempts))
+      )
+    : MARKETING_EVENT_MAX_ATTEMPTS;
+  const maxWaitMs =
+    options.maxWaitMs === undefined
+      ? Number.POSITIVE_INFINITY
+      : Math.max(0, options.maxWaitMs);
+  const sleep =
+    options.sleep ??
+    ((delayMs: number) =>
+      new Promise<void>((resolve) => setTimeout(resolve, delayMs)));
+  const random = options.random ?? Math.random;
+  let attempts = 1;
+  let current: MarketingDeliveryAttempt<T> = {
+    delivery: initialDelivery,
+  };
+  let retryStoppedReason: "attempt_limit" | "wait_budget_exceeded" | undefined;
+
+  while (current.delivery.retryable && attempts < maxAttempts) {
+    const delayMs = marketingRetryDelayMs(
+      attempts,
+      current.delivery.retryAfterMs,
+      random
+    );
+    if (delayMs > maxWaitMs) {
+      retryStoppedReason = "wait_budget_exceeded";
+      break;
+    }
+
+    await sleep(delayMs);
+    attempts += 1;
+    try {
+      current = await attempt();
+    } catch {
+      current = { delivery: classifyMarketingNetworkFailure() };
+    }
+  }
+
+  if (
+    !retryStoppedReason &&
+    current.delivery.retryable &&
+    attempts >= maxAttempts
+  ) {
+    retryStoppedReason = "attempt_limit";
+  }
+
+  return { attempts, retryStoppedReason, ...current };
 }
 
 export function classifyMarketingNetworkFailure(): MarketingDelivery {

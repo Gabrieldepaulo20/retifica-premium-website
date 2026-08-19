@@ -52,9 +52,8 @@ export const MARKETING_EVENT_CONTRACT = {
     },
     { name: "custom", storageEventType: "custom" },
   ],
-  requiredFields: ["eventType", "leadCode"],
+  requiredFields: ["eventType", "leadCode", "eventId"],
   optionalFields: [
-    "eventId",
     "anonymousId",
     "sessionId",
     "channel",
@@ -170,21 +169,48 @@ export const MARKETING_EVENT_CONTRACT = {
   },
   normalization: {
     eventType: "trim_exact_case_no_unknown_fallback",
+    eventId:
+      "trim_required_caller_stable_url_safe_charset_field_limit_reject_email_or_phone_shaped",
+    technicalIds:
+      "trim_url_safe_charset_field_limit_reject_email_or_phone_shaped",
+    technicalIdPattern: "^[A-Za-z0-9._~-]{8,}$",
     leadCode: "trim_uppercase",
+    leadCodePattern: "^RP-[0-9]{8}-[A-Z0-9]{8}$",
     strings: "collapse_whitespace_trim_truncate",
+    personalDataDecodePasses: 3,
     pageLocation: "origin_and_path_only",
     referrer: "origin_only",
+    pathPersonalData: "decode_up_to_3_fail_closed_replace_path_with_root",
+    clickIds:
+      "trim_url_safe_charset_length_1_220_reject_email_or_phone_shaped",
+    clickIdPattern: "^[A-Za-z0-9._~-]{1,220}$",
   },
   pii: {
     siteTelemetryEndpointForwardsLead: false,
+    siteTelemetryEndpointRejectedEvents: ["form_submit", "lead_created"],
     edgeAcceptsLeadOnlyForEvents: ["form_submit", "lead_created"],
-    genericFreeTextWithEmailOrPhone: "drop",
+    genericFreeTextWithEmailOrPhone:
+      "drop_raw_or_decoded_up_to_3_embedded_sequence",
     queryStringsInPageLocationOrReferrer: "drop",
   },
 } as const;
 
 export type MarketingEventType =
   (typeof MARKETING_EVENT_CONTRACT.events)[number]["name"];
+
+const EMAIL_PATTERN = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i;
+const CANONICAL_LEAD_CODE_PATTERN = new RegExp(
+  MARKETING_EVENT_CONTRACT.normalization.leadCodePattern
+);
+const CLICK_ID_PATTERN = new RegExp(
+  MARKETING_EVENT_CONTRACT.normalization.clickIdPattern
+);
+const OPAQUE_TECHNICAL_ID_PATTERN = new RegExp(
+  MARKETING_EVENT_CONTRACT.normalization.technicalIdPattern
+);
+const SITE_TELEMETRY_REJECTED_EVENTS = new Set<string>(
+  MARKETING_EVENT_CONTRACT.pii.siteTelemetryEndpointRejectedEvents
+);
 
 const EVENT_BY_NAME = new Map(
   MARKETING_EVENT_CONTRACT.events.map((event) => [event.name, event])
@@ -201,9 +227,152 @@ export function isMarketingEventType(value: unknown): value is MarketingEventTyp
 }
 
 export function containsHighConfidencePersonalData(value: string) {
-  if (/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i.test(value)) return true;
+  const candidates = decodePersonalDataCandidates(value);
+  if (candidates === null) return true;
+  return candidates.some(
+    (candidate) =>
+      EMAIL_PATTERN.test(candidate) || containsEmbeddedPhoneSequence(candidate)
+  );
+}
+
+function decodePersonalDataCandidates(value: string) {
+  const candidates = [value];
+  const seen = new Set(candidates);
+  let current = value;
+
+  for (
+    let pass = 0;
+    pass < MARKETING_EVENT_CONTRACT.normalization.personalDataDecodePasses;
+    pass += 1
+  ) {
+    try {
+      const decoded = decodeURIComponent(current);
+      if (decoded === current) return candidates;
+      if (seen.has(decoded)) return null;
+      candidates.push(decoded);
+      seen.add(decoded);
+      current = decoded;
+    } catch {
+      return null;
+    }
+  }
+
+  return /%[0-9a-f]{2}/i.test(current) ? null : candidates;
+}
+
+function isPhoneShaped(value: string) {
+  if (!/^[+\d\s().-]+$/.test(value.trim())) return false;
   const digits = value.replace(/\D/g, "");
   return digits.length >= 8 && digits.length <= 14;
+}
+
+export function sanitizeMarketingTechnicalId(value: unknown, max: number) {
+  if (typeof value !== "string") return null;
+  const normalized = value.trim();
+  if (
+    !normalized ||
+    normalized.length > max ||
+    !OPAQUE_TECHNICAL_ID_PATTERN.test(normalized)
+  ) {
+    return null;
+  }
+
+  const candidates = decodePersonalDataCandidates(normalized);
+  return candidates === null ||
+    candidates.some(
+      (candidate) => EMAIL_PATTERN.test(candidate) || isPhoneShaped(candidate)
+    )
+    ? null
+    : normalized;
+}
+
+export function sanitizeMarketingEventId(value: unknown) {
+  return sanitizeMarketingTechnicalId(
+    value,
+    MARKETING_EVENT_CONTRACT.limits.eventId
+  );
+}
+
+export function normalizeMarketingLeadCode(value: unknown) {
+  if (typeof value !== "string") return null;
+  const normalized = value.trim().toUpperCase();
+  return CANONICAL_LEAD_CODE_PATTERN.test(normalized) ? normalized : null;
+}
+
+export function isCanonicalMarketingLeadCode(value: unknown): value is string {
+  return typeof value === "string" && CANONICAL_LEAD_CODE_PATTERN.test(value);
+}
+
+export function sanitizeMarketingClickId(value: unknown) {
+  if (typeof value !== "string") return null;
+  const clickId = value.trim();
+  if (
+    !clickId ||
+    clickId.length > MARKETING_EVENT_CONTRACT.limits.clickId
+  ) {
+    return null;
+  }
+  const candidates = decodePersonalDataCandidates(clickId);
+  if (
+    candidates === null ||
+    candidates.some(
+      (candidate) => EMAIL_PATTERN.test(candidate) || isPhoneShaped(candidate)
+    ) ||
+    !CLICK_ID_PATTERN.test(clickId)
+  ) {
+    return null;
+  }
+  return clickId;
+}
+
+function containsEmbeddedPhoneSequence(value: string) {
+  return value
+    .split(/[^+\d\s().-]+/)
+    .some((candidate) => candidate.replace(/\D/g, "").length >= 8);
+}
+
+function pathContainsPersonalData(pathname: string) {
+  const candidates = decodePersonalDataCandidates(pathname);
+  if (candidates === null) return true;
+  return candidates.some(
+    (candidate) =>
+      EMAIL_PATTERN.test(candidate) ||
+      candidate
+        .split("/")
+        .some((segment) => containsEmbeddedPhoneSequence(segment))
+  );
+}
+
+export function sanitizeMarketingPath(
+  value: unknown,
+  max: number = MARKETING_EVENT_CONTRACT.limits.pagePath
+) {
+  const raw = cleanContractMetadataString(value, max).split(/[?#]/, 1)[0];
+  if (!raw || !raw.startsWith("/")) return "/";
+  const normalized = `/${raw.replace(/^\/+/, "")}`;
+  return pathContainsPersonalData(normalized) ? "/" : normalized;
+}
+
+export function sanitizeMarketingPageLocation(value: unknown) {
+  const max = MARKETING_EVENT_CONTRACT.limits.pageLocation;
+  const normalized = cleanContractMetadataString(value, max);
+  if (!normalized) return null;
+
+  try {
+    const url = new URL(normalized);
+    if (url.protocol !== "https:" && url.protocol !== "http:") {
+      return null;
+    }
+    const location = `${url.origin}${sanitizeMarketingPath(url.pathname)}`;
+    return location.slice(0, max);
+  } catch {
+    return null;
+  }
+}
+
+export function isSiteTelemetryEndpointEventAllowed(value: unknown) {
+  const event = normalizeMarketingEventType(value);
+  return Boolean(event && !SITE_TELEMETRY_REJECTED_EVENTS.has(event.name));
 }
 
 export type SanitizedMarketingMetadata = Record<
@@ -252,10 +421,15 @@ export function sanitizeMarketingEventMetadata(
     }
 
     if (key === "destinationPath") {
-      const destinationPath = cleanContractMetadataString(
+      const rawDestinationPath = cleanContractMetadataString(
         item,
         rules.destinationPathLimit
-      ).split(/[?#]/, 1)[0];
+      );
+      if (!rawDestinationPath) continue;
+      const destinationPath = sanitizeMarketingPath(
+        rawDestinationPath,
+        rules.destinationPathLimit
+      );
       if (/^\/[a-z0-9/_-]*$/i.test(destinationPath)) {
         metadata[key] = `/${destinationPath.replace(/^\/+/, "")}`;
       }

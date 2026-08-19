@@ -6,11 +6,13 @@ import {
   classifyMarketingNetworkFailure,
   deduplicateQueueByEventId,
   downstreamFailureStatus,
+  isRetryableMarketingStatus,
   marketingRetryDelayMs,
   MARKETING_EVENT_MAX_ATTEMPTS,
   parseRetryAfterMs,
   queueAfterInitialFailure,
   rescheduleAfterFailure,
+  retryMarketingDelivery,
 } from "../src/lib/marketing-event-delivery.ts";
 
 function response(status, overrides = {}) {
@@ -122,4 +124,114 @@ test("eventId estável impede duplicidade na fila", () => {
   assert.equal(unique.length, 1);
   assert.equal(unique[0].queuedAt, 3);
   assert.equal(unique[0].attempts, 2);
+});
+
+test("retry interativo não chama novamente em falha permanente", async () => {
+  let calls = 0;
+  const result = await retryMarketingDelivery(
+    response(400),
+    async () => {
+      calls += 1;
+      return { delivery: response(200) };
+    },
+    { sleep: async () => undefined }
+  );
+
+  assert.equal(isRetryableMarketingStatus(400), false);
+  assert.equal(calls, 0);
+  assert.equal(result.attempts, 1);
+  assert.equal(result.delivery.reason, "permanent_http");
+});
+
+test("retry interativo limita transientes com backoff e jitter", async () => {
+  let calls = 0;
+  const delays = [];
+  const result = await retryMarketingDelivery(
+    response(503),
+    async () => {
+      calls += 1;
+      return { delivery: classifyMarketingNetworkFailure() };
+    },
+    {
+      sleep: async (delay) => {
+        delays.push(delay);
+      },
+      random: () => 0,
+    }
+  );
+
+  assert.equal(calls, 3);
+  assert.equal(result.attempts, MARKETING_EVENT_MAX_ATTEMPTS);
+  assert.deepEqual(delays, [1_000, 2_000, 4_000]);
+  assert.equal(result.delivery.retryable, true);
+});
+
+test("retry interativo respeita Retry-After e para ao armazenar", async () => {
+  const delays = [];
+  const result = await retryMarketingDelivery(
+    response(429, { retryAfter: "7" }),
+    async () => ({
+      value: "stored",
+      delivery: response(200, { bodyOk: true, storageSaved: true }),
+    }),
+    {
+      sleep: async (delay) => {
+        delays.push(delay);
+      },
+    }
+  );
+
+  assert.deepEqual(delays, [7_000]);
+  assert.equal(result.attempts, 2);
+  assert.equal(result.value, "stored");
+  assert.equal(result.delivery.delivered, true);
+});
+
+test("retry foreground não espera Retry-After além do orçamento", async () => {
+  let calls = 0;
+  const delays = [];
+  const result = await retryMarketingDelivery(
+    response(429, { retryAfter: "600" }),
+    async () => {
+      calls += 1;
+      return { delivery: response(200) };
+    },
+    {
+      maxAttempts: 2,
+      maxWaitMs: 2_000,
+      sleep: async (delay) => {
+        delays.push(delay);
+      },
+    }
+  );
+
+  assert.equal(calls, 0);
+  assert.equal(result.attempts, 1);
+  assert.equal(result.retryStoppedReason, "wait_budget_exceeded");
+  assert.deepEqual(delays, []);
+});
+
+test("retry foreground faz no máximo uma nova chamada em transiente curto", async () => {
+  let calls = 0;
+  const delays = [];
+  const result = await retryMarketingDelivery(
+    response(503),
+    async () => {
+      calls += 1;
+      return { delivery: classifyMarketingNetworkFailure() };
+    },
+    {
+      maxAttempts: 2,
+      maxWaitMs: 2_000,
+      sleep: async (delay) => {
+        delays.push(delay);
+      },
+      random: () => 0,
+    }
+  );
+
+  assert.equal(calls, 1);
+  assert.equal(result.attempts, 2);
+  assert.equal(result.retryStoppedReason, "attempt_limit");
+  assert.deepEqual(delays, [1_000]);
 });

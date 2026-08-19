@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import {
   buildContactEmail,
@@ -6,7 +5,21 @@ import {
   subjectLabels,
 } from "@/lib/contact-email";
 import { saveExternalMarketingEvent } from "@/lib/external-marketing";
-import { MARKETING_EVENT_CONTRACT } from "@/lib/marketing-event-contract";
+import {
+  containsHighConfidencePersonalData,
+  MARKETING_EVENT_CONTRACT,
+  normalizeMarketingLeadCode,
+  sanitizeMarketingClickId,
+  sanitizeMarketingEventId,
+  sanitizeMarketingEventMetadata,
+  sanitizeMarketingPageLocation,
+  sanitizeMarketingPath,
+  sanitizeMarketingTechnicalId,
+} from "@/lib/marketing-event-contract";
+import {
+  downstreamFailureStatus,
+  isRetryableMarketingStatus,
+} from "@/lib/marketing-event-delivery";
 import { classifyTrafficAttribution } from "@/lib/traffic-attribution";
 
 export const runtime = "nodejs";
@@ -22,11 +35,9 @@ const contactRequests = new Map<
 >();
 const CONTACT_RATE_WINDOW_MS = 10 * 60 * 1000;
 const CONTACT_RATE_MAX = 5;
-const measurementModes = new Set([
-  "analytics",
-  "advertising",
-  "analytics_and_advertising",
-]);
+const measurementModes = new Set<string>(
+  MARKETING_EVENT_CONTRACT.metadata.measurementModes
+);
 
 type ContactPayload = {
   eventId?: unknown;
@@ -64,6 +75,11 @@ function cleanText(value: unknown, maxLength: number) {
   return value.replace(/\s+/g, " ").trim().slice(0, maxLength);
 }
 
+function cleanNonPersonalText(value: unknown, maxLength: number) {
+  const cleaned = cleanText(value, maxLength);
+  return cleaned && !containsHighConfidencePersonalData(cleaned) ? cleaned : "";
+}
+
 function cleanMultiline(value: unknown, maxLength: number) {
   if (typeof value !== "string") return "";
   return value
@@ -75,12 +91,6 @@ function cleanMultiline(value: unknown, maxLength: number) {
 
 function validEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function validLeadCode(value: string) {
-  return /^RP-(?:\d{8}-[A-Z0-9]{4,16}|\d{4}-\d{2}-[A-Z0-9]{4,16})$/.test(
-    value
-  );
 }
 
 function requestOriginAllowed(request: Request) {
@@ -130,24 +140,38 @@ function contactRequestAllowed(request: Request) {
 
 function attributionLines(payload: ContactPayload) {
   const attribution = payload.attribution ?? {};
+  const clickId =
+    sanitizeMarketingClickId(attribution.gclid) ||
+    sanitizeMarketingClickId(attribution.gbraid) ||
+    sanitizeMarketingClickId(attribution.wbraid);
   const values = [
-    ["Fonte", cleanText(attribution.source, 120)],
-    ["Mídia", cleanText(attribution.medium, 120)],
-    ["Campanha", cleanText(attribution.campaign, 160)],
-    ["Termo", cleanText(attribution.term, 160)],
-    ["Conteúdo", cleanText(attribution.content, 160)],
+    ["Fonte", cleanNonPersonalText(attribution.source, 120)],
+    ["Mídia", cleanNonPersonalText(attribution.medium, 120)],
+    ["Campanha", cleanNonPersonalText(attribution.campaign, 160)],
+    ["Termo", cleanNonPersonalText(attribution.term, 160)],
+    ["Conteúdo", cleanNonPersonalText(attribution.content, 160)],
     [
       "GCLID/GBRAID/WBRAID",
-      cleanText(attribution.gclid, 220) ||
-        cleanText(attribution.gbraid, 220) ||
-        cleanText(attribution.wbraid, 220),
+      clickId,
     ],
-    ["Página de entrada", cleanText(attribution.landingPage, 400)],
-    ["Referência", cleanText(attribution.referrer, 400)],
+    [
+      "Página de entrada",
+      sanitizeMarketingPageLocation(attribution.landingPage) || "",
+    ],
+    ["Referência", sanitizeMarketingPageLocation(attribution.referrer) || ""],
     ["Capturado em", cleanText(attribution.capturedAt, 80)],
   ].filter(([, value]) => value);
 
   return values.map(([label, value]) => `${label}: ${value}`);
+}
+
+function pagePathFromLocation(pageLocation: string) {
+  if (!pageLocation) return "/";
+  try {
+    return sanitizeMarketingPath(new URL(pageLocation).pathname);
+  } catch {
+    return "/";
+  }
 }
 
 export async function POST(request: Request) {
@@ -201,21 +225,23 @@ export async function POST(request: Request) {
   const assunto = subjectLabels[assuntoKey] ?? assuntoKey;
   const mensagem = cleanMultiline(payload.mensagem, 2000);
   const b2bLevel = cleanText(payload.b2bLevel, 160);
-  const pageLocation = cleanText(payload.pageLocation, 400);
+  const pageLocation = sanitizeMarketingPageLocation(payload.pageLocation) || "";
   const submittedMeasurementMode = cleanText(payload.measurementMode, 40);
   const measurementMode = measurementModes.has(submittedMeasurementMode)
     ? submittedMeasurementMode
     : undefined;
-  const eventId = cleanText(payload.eventId, 80) || randomUUID();
+  const eventId = sanitizeMarketingEventId(payload.eventId);
   const storageOnly = payload.storageOnly === true;
-  const submittedLeadCode = cleanText(payload.leadCode, 40).toUpperCase();
-  const leadCode = submittedLeadCode ||
-    `RP-${new Date().toISOString().slice(0, 10).replaceAll("-", "")}-${randomUUID()
-      .replaceAll("-", "")
-      .slice(0, 8)
-      .toUpperCase()}`;
+  const leadCode = normalizeMarketingLeadCode(payload.leadCode);
 
-  if (!validLeadCode(leadCode)) {
+  if (!eventId) {
+    return NextResponse.json(
+      { ok: false, message: "Identificador do evento inválido." },
+      { status: 400 }
+    );
+  }
+
+  if (!leadCode) {
     return NextResponse.json(
       { ok: false, message: "Código do contato inválido." },
       { status: 400 }
@@ -271,49 +297,55 @@ export async function POST(request: Request) {
   });
 
   const attribution = payload.attribution ?? {};
-  const hasGoogleClickId = Boolean(
-    cleanText(attribution.gclid, 220) ||
-      cleanText(attribution.gbraid, 220) ||
-      cleanText(attribution.wbraid, 220)
-  );
+  const gclid = sanitizeMarketingClickId(attribution.gclid);
+  const gbraid = sanitizeMarketingClickId(attribution.gbraid);
+  const wbraid = sanitizeMarketingClickId(attribution.wbraid);
+  const hasGoogleClickId = Boolean(gclid || gbraid || wbraid);
+  const referrer =
+    sanitizeMarketingPageLocation(attribution.referrer) || undefined;
   const normalizedAttribution = classifyTrafficAttribution({
-    source: cleanText(attribution.source, 120) || undefined,
-    medium: cleanText(attribution.medium, 120) || undefined,
-    referrer: cleanText(attribution.referrer, 800) || undefined,
+    source: cleanNonPersonalText(attribution.source, 120) || undefined,
+    medium: cleanNonPersonalText(attribution.medium, 120) || undefined,
+    referrer,
     hasGoogleClickId,
   });
   const storageEvent = {
     eventId,
     leadCode,
-    anonymousId: cleanText(payload.anonymousId, 120) || undefined,
-    sessionId: cleanText(payload.sessionId, 120) || undefined,
+    anonymousId:
+      sanitizeMarketingTechnicalId(
+        payload.anonymousId,
+        MARKETING_EVENT_CONTRACT.limits.anonymousId
+      ) || undefined,
+    sessionId:
+      sanitizeMarketingTechnicalId(
+        payload.sessionId,
+        MARKETING_EVENT_CONTRACT.limits.sessionId
+      ) || undefined,
     eventType: "form_submit",
     channel: "site_form",
     occurredAt: new Date().toISOString(),
-    pagePath: (() => {
-      try {
-        return new URL(pageLocation).pathname;
-      } catch {
-        return "/";
-      }
-    })(),
-    pageLocation,
-    referrer: cleanText(attribution.referrer, 800) || undefined,
+    pagePath: pagePathFromLocation(pageLocation),
+    pageLocation: pageLocation || undefined,
+    referrer,
     source: normalizedAttribution.source || "direto",
     medium: normalizedAttribution.medium,
-    campaign: cleanText(attribution.campaign, 180) || undefined,
-    term: cleanText(attribution.term, 180) || undefined,
-    content: cleanText(attribution.content, 180) || undefined,
-    gclid: cleanText(attribution.gclid, 220) || undefined,
-    gbraid: cleanText(attribution.gbraid, 220) || undefined,
-    wbraid: cleanText(attribution.wbraid, 220) || undefined,
+    campaign: cleanNonPersonalText(attribution.campaign, 180) || undefined,
+    term: cleanNonPersonalText(attribution.term, 180) || undefined,
+    content: cleanNonPersonalText(attribution.content, 180) || undefined,
+    gclid: gclid || undefined,
+    gbraid: gbraid || undefined,
+    wbraid: wbraid || undefined,
     city: cidade || undefined,
-    metadata: {
-      subject: assuntoKey,
-      b2bLevel: b2bLevel || undefined,
+    metadata: sanitizeMarketingEventMetadata({
+      visitorCity:
+        measurementMode === "analytics" ||
+        measurementMode === "analytics_and_advertising"
+          ? cidade
+          : undefined,
       measurementMode,
       eventContractVersion: MARKETING_EVENT_CONTRACT.schemaVersion,
-    },
+    }),
     lead: {
       name: nome,
       email: email || undefined,
@@ -338,47 +370,74 @@ export async function POST(request: Request) {
     console.error("Contact form email failed:", code);
   }
 
-  let storage =
+  const storage =
     storageResult.status === "fulfilled"
       ? storageResult.value
       : { configured: true, saved: false };
-  if (storage.configured && !storage.saved) {
-    storage = await saveExternalMarketingEvent(storageEvent);
-  }
   const retiflowSaved = storage.saved === true;
+  const retiflowStatus = retiflowSaved
+    ? storage.status ?? 200
+    : downstreamFailureStatus(storage);
+  const retiflowRetryable =
+    !retiflowSaved && isRetryableMarketingStatus(retiflowStatus);
+  const delivery = {
+    emailSent,
+    retiflowSaved,
+    retiflowRetryable,
+    retiflowStatus,
+  };
+  const responseHeaders = storage.retryAfter
+    ? { "Retry-After": storage.retryAfter }
+    : undefined;
 
   if (storageOnly && !retiflowSaved) {
+    if (retiflowStatus === 204 || retiflowStatus === 304) {
+      return new NextResponse(null, {
+        status: retiflowStatus,
+        headers: responseHeaders,
+      });
+    }
     return NextResponse.json(
       {
         ok: false,
         leadCode,
         storageOnly: true,
-        delivery: { emailSent: false, retiflowSaved: false },
+        delivery,
         message:
           "O painel continua indisponível. Seu formulário foi preservado para uma nova tentativa.",
       },
-      { status: 503 }
+      { status: retiflowStatus, headers: responseHeaders }
     );
   }
 
   if (!emailSent && !retiflowSaved) {
+    if (retiflowStatus === 204 || retiflowStatus === 304) {
+      return new NextResponse(null, {
+        status: retiflowStatus,
+        headers: responseHeaders,
+      });
+    }
     return NextResponse.json(
       {
         ok: false,
+        delivery,
         message:
           "Não conseguimos registrar o pedido agora. Use o WhatsApp para garantir seu atendimento.",
       },
-      { status: 503 }
+      { status: retiflowStatus, headers: responseHeaders }
     );
   }
 
-  return NextResponse.json({
-    ok: true,
-    leadCode,
-    storageOnly,
-    delivery: { emailSent, retiflowSaved },
-    message: retiflowSaved
-      ? "Seu pedido ficou registrado para retorno. Se o caso for urgente, você também pode abrir o WhatsApp abaixo."
-      : "Seu pedido foi enviado por e-mail, mas ainda não apareceu no painel. Para garantir atendimento imediato, abra o WhatsApp abaixo.",
-  });
+  return NextResponse.json(
+    {
+      ok: true,
+      leadCode,
+      storageOnly,
+      delivery,
+      message: retiflowSaved
+        ? "Seu pedido ficou registrado para retorno. Se o caso for urgente, você também pode abrir o WhatsApp abaixo."
+        : "Seu pedido foi enviado por e-mail, mas ainda não apareceu no painel. Para garantir atendimento imediato, abra o WhatsApp abaixo.",
+    },
+    { headers: responseHeaders }
+  );
 }

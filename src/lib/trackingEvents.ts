@@ -6,11 +6,21 @@ import {
   hasAnalyticsConsent,
   hasMeasurementConsent,
   isConsentRuntimeReady,
+  measurementModeForConsent,
   privacySafePageLocation,
+  sanitizeTrackingPayloadForConsent,
 } from "@/lib/consent";
 import {
+  containsHighConfidencePersonalData,
+  isCanonicalMarketingLeadCode,
+  isSiteTelemetryEndpointEventAllowed,
   MARKETING_EVENT_CONTRACT,
   normalizeMarketingEventType,
+  sanitizeMarketingClickId,
+  sanitizeMarketingEventId,
+  sanitizeMarketingPageLocation,
+  sanitizeMarketingPath,
+  sanitizeMarketingTechnicalId,
 } from "@/lib/marketing-event-contract";
 import {
   classifyMarketingDelivery,
@@ -297,13 +307,6 @@ function compactString(value: unknown, max = 180) {
   return compact ? compact.slice(0, max) : undefined;
 }
 
-function containsHighConfidencePersonalData(value: string) {
-  if (/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i.test(value)) return true;
-
-  const digits = value.replace(/\D/g, "");
-  return digits.length >= 8 && digits.length <= 14;
-}
-
 function privacySafeLinkUrl(value: unknown) {
   const compact = compactString(value, 800);
   if (!compact || typeof window === "undefined") return undefined;
@@ -315,7 +318,7 @@ function privacySafeLinkUrl(value: unknown) {
     if (url.hostname === "wa.me" || url.hostname.endsWith(".whatsapp.com")) {
       return undefined;
     }
-    return `${url.origin}${url.pathname}`;
+    return `${url.origin}${sanitizeMarketingPath(url.pathname)}`;
   } catch {
     return undefined;
   }
@@ -328,7 +331,7 @@ function privacySafeGooglePageLocation(value: unknown) {
   try {
     const url = new URL(compact, window.location.origin);
     if (url.protocol !== "http:" && url.protocol !== "https:") return undefined;
-    return `${url.origin}${url.pathname}`;
+    return sanitizeMarketingPageLocation(`${url.origin}${url.pathname}`);
   } catch {
     return undefined;
   }
@@ -345,7 +348,10 @@ function relativeDestinationPath(value: unknown) {
 
   try {
     const url = new URL(compact, "https://destination.invalid");
-    const path = url.pathname.replace(/\/{2,}/g, "/").slice(0, 180);
+    const path = sanitizeMarketingPath(
+      url.pathname.replace(/\/{2,}/g, "/"),
+      MARKETING_EVENT_CONTRACT.metadata.destinationPathLimit
+    );
     return path.startsWith("/") && /^\/[a-z0-9/_-]*$/i.test(path)
       ? path
       : undefined;
@@ -432,7 +438,10 @@ export function sanitizeGoogleEventParams(params: MarketingEventParams) {
     }
 
     if (GOOGLE_SAFE_STRING_PARAMS.has(key)) {
-      const compact = compactString(value, key === "gclid" ? 220 : 180);
+      const compact =
+        key === "gclid"
+          ? sanitizeMarketingClickId(value)
+          : compactString(value, 180);
       if (
         compact &&
         GOOGLE_QUERY_DERIVED_PARAMS.has(key) &&
@@ -472,7 +481,7 @@ function hasExternalEventConsent(eventType: string) {
 }
 
 export function createMarketingEventId() {
-  return randomId();
+  return sanitizeMarketingEventId(randomId()) as string;
 }
 
 function getOrCreateBrowserId(
@@ -481,10 +490,17 @@ function getOrCreateBrowserId(
   prefix: string,
   preferredValue?: string
 ) {
-  const existing = storage?.getItem(key);
+  const existing = sanitizeMarketingTechnicalId(
+    storage?.getItem(key),
+    MARKETING_EVENT_CONTRACT.limits.anonymousId
+  );
   if (existing) return existing;
 
-  const value = preferredValue || `${prefix}-${randomId()}`;
+  const value =
+    sanitizeMarketingTechnicalId(
+      preferredValue,
+      MARKETING_EVENT_CONTRACT.limits.anonymousId
+    ) || `${prefix}-${randomId()}`;
   storage?.setItem(key, value);
   return value;
 }
@@ -498,7 +514,10 @@ function getOrCreateSessionId(
   }
 
   const now = Date.now();
-  const existingId = storage.getItem(SESSION_ID_KEY);
+  const existingId = sanitizeMarketingTechnicalId(
+    storage.getItem(SESSION_ID_KEY),
+    MARKETING_EVENT_CONTRACT.limits.sessionId
+  );
 
   try {
     const raw = storage.getItem(SESSION_ACTIVITY_KEY);
@@ -509,7 +528,10 @@ function getOrCreateSessionId(
 
     if (
       existingId &&
-      activity?.sessionId === existingId &&
+      sanitizeMarketingTechnicalId(
+        activity?.sessionId,
+        MARKETING_EVENT_CONTRACT.limits.sessionId
+      ) === existingId &&
       Number.isFinite(inactivity) &&
       inactivity >= 0 &&
       inactivity < SESSION_INACTIVITY_TTL_MS
@@ -526,7 +548,10 @@ function getOrCreateSessionId(
 
   const nextId = existingId
     ? `session-${randomId()}`
-    : preferredValue || `session-${randomId()}`;
+    : sanitizeMarketingTechnicalId(
+        preferredValue,
+        MARKETING_EVENT_CONTRACT.limits.sessionId
+      ) || `session-${randomId()}`;
   storage.setItem(SESSION_ID_KEY, nextId);
   storage.setItem(
     SESSION_ACTIVITY_KEY,
@@ -603,10 +628,8 @@ function getOrCreateLeadCode(storage: Storage | null): string {
   return code;
 }
 
-function isSupportedLeadCode(value: string) {
-  return /^RP-(?:\d{8}-[A-Z0-9]{4,16}|\d{4}-\d{2}-[A-Z0-9]{4,16})$/i.test(
-    value
-  );
+export function isSupportedLeadCode(value: string) {
+  return isCanonicalMarketingLeadCode(value);
 }
 
 function createEphemeralContactIntent(): ContactIntent {
@@ -645,8 +668,12 @@ export function getOrCreateContactIntent(): ContactIntent {
     if (raw) {
       const existing = JSON.parse(raw) as ContactIntent;
       if (
-        existing.eventId &&
-        existing.leadCode &&
+        sanitizeMarketingEventId(existing.eventId) === existing.eventId &&
+        isSupportedLeadCode(existing.leadCode) &&
+        sanitizeMarketingTechnicalId(
+          existing.anonymousId,
+          MARKETING_EVENT_CONTRACT.limits.anonymousId
+        ) === existing.anonymousId &&
         existing.sessionId === sessionId
       ) {
         // Um intent gravado antes desta correção carrega o código antigo, de
@@ -743,8 +770,8 @@ function recordExternalMarketingFailure(
   if (!storageAvailable() || !hasMeasurementConsent()) return;
 
   const failure: ExternalMarketingFailure = {
-    eventId: compactString(payload.eventId, 80) || "unknown",
-    eventType: compactString(payload.eventType, 60) || "unknown",
+    eventId: sanitizeMarketingEventId(payload.eventId) || "invalid",
+    eventType: normalizeMarketingEventType(payload.eventType)?.name || "invalid",
     failedAt: Date.now(),
     attempts,
     status,
@@ -755,13 +782,15 @@ function recordExternalMarketingFailure(
     const raw = window.localStorage.getItem(EXTERNAL_EVENT_FAILURES_KEY);
     const parsed = raw ? (JSON.parse(raw) as unknown) : [];
     const current = Array.isArray(parsed)
-      ? parsed.filter(
-          (item): item is ExternalMarketingFailure =>
-            Boolean(item) &&
-            typeof item === "object" &&
-            !Array.isArray(item) &&
-            typeof (item as Partial<ExternalMarketingFailure>).eventId === "string"
-        )
+      ? parsed.flatMap((item) => {
+          if (!item || typeof item !== "object" || Array.isArray(item)) {
+            return [];
+          }
+          const stored = item as Partial<ExternalMarketingFailure>;
+          const eventId = sanitizeMarketingEventId(stored.eventId);
+          const eventType = normalizeMarketingEventType(stored.eventType)?.name;
+          return eventId && eventType ? [{ ...stored, eventId, eventType }] : [];
+        })
       : [];
     window.localStorage.setItem(
       EXTERNAL_EVENT_FAILURES_KEY,
@@ -777,6 +806,56 @@ function recordExternalMarketingFailure(
       { detail: failure }
     )
   );
+}
+
+function sanitizeQueuedExternalMarketingPayload(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const payload = value as ExternalMarketingPayload;
+  const eventId = sanitizeMarketingEventId(payload.eventId);
+  const eventDefinition = normalizeMarketingEventType(payload.eventType);
+  const leadCode = isCanonicalMarketingLeadCode(payload.leadCode)
+    ? payload.leadCode
+    : null;
+  if (
+    !eventId ||
+    !eventDefinition ||
+    !isSiteTelemetryEndpointEventAllowed(eventDefinition.name) ||
+    !leadCode
+  ) {
+    return null;
+  }
+
+  const sanitized: ExternalMarketingPayload = {
+    ...payload,
+    eventId,
+    eventType: eventDefinition.name,
+    leadCode,
+  };
+  const anonymousId = sanitizeMarketingTechnicalId(
+    payload.anonymousId,
+    MARKETING_EVENT_CONTRACT.limits.anonymousId
+  );
+  const sessionId = sanitizeMarketingTechnicalId(
+    payload.sessionId,
+    MARKETING_EVENT_CONTRACT.limits.sessionId
+  );
+  const pageLocation = sanitizeMarketingPageLocation(payload.pageLocation);
+
+  if (anonymousId) sanitized.anonymousId = anonymousId;
+  else delete sanitized.anonymousId;
+  if (sessionId) sanitized.sessionId = sessionId;
+  else delete sanitized.sessionId;
+  sanitized.pagePath = sanitizeMarketingPath(payload.pagePath);
+  if (pageLocation) sanitized.pageLocation = pageLocation;
+  else delete sanitized.pageLocation;
+
+  for (const key of ["gclid", "gbraid", "wbraid"] as const) {
+    const clickId = sanitizeMarketingClickId(payload[key]);
+    if (clickId) sanitized[key] = clickId;
+    else delete sanitized[key];
+  }
+
+  return sanitized;
 }
 
 function readExternalEventOutbox(): QueuedExternalMarketingEvent[] {
@@ -800,28 +879,30 @@ function readExternalEventOutbox(): QueuedExternalMarketingEvent[] {
       const entry = item as Partial<QueuedExternalMarketingEvent>;
       if (
         typeof entry.queuedAt !== "number" ||
-        !entry.payload ||
-        typeof entry.payload.eventId !== "string" ||
-        typeof entry.payload.eventType !== "string"
+        !entry.payload
       ) {
         continue;
       }
 
-      if (entry.queuedAt < minimumQueuedAt) {
-        recordExternalMarketingFailure(
-          entry.payload,
-          typeof entry.attempts === "number" ? entry.attempts : 1,
-          "expired",
-          entry.lastStatus
-        );
-        continue;
-      }
-
-      if (!normalizeMarketingEventType(entry.payload.eventType)) {
+      const sanitizedPayload = sanitizeQueuedExternalMarketingPayload(
+        entry.payload
+      );
+      if (!sanitizedPayload) {
         recordExternalMarketingFailure(
           entry.payload,
           typeof entry.attempts === "number" ? entry.attempts : 1,
           "invalid_queue_entry",
+          entry.lastStatus
+        );
+        continue;
+      }
+      const payload = consentSafeExternalMarketingPayload(sanitizedPayload);
+
+      if (entry.queuedAt < minimumQueuedAt) {
+        recordExternalMarketingFailure(
+          payload,
+          typeof entry.attempts === "number" ? entry.attempts : 1,
+          "expired",
           entry.lastStatus
         );
         continue;
@@ -838,7 +919,7 @@ function readExternalEventOutbox(): QueuedExternalMarketingEvent[] {
             ? entry.nextAttemptAt
             : entry.queuedAt,
         lastStatus: entry.lastStatus,
-        payload: entry.payload,
+        payload,
       });
     }
 
@@ -861,7 +942,12 @@ function writeExternalEventOutbox(entries: QueuedExternalMarketingEvent[]) {
     window.localStorage.setItem(
       EXTERNAL_EVENT_OUTBOX_KEY,
       JSON.stringify(
-        deduplicateQueueByEventId(entries).slice(-EXTERNAL_EVENT_OUTBOX_MAX)
+        deduplicateQueueByEventId(
+          entries.map((entry) => ({
+            ...entry,
+            payload: consentSafeExternalMarketingPayload(entry.payload),
+          }))
+        ).slice(-EXTERNAL_EVENT_OUTBOX_MAX)
       )
     );
   } catch {
@@ -892,23 +978,16 @@ function queueExternalMarketingEvent(
 function consentSafeExternalMarketingPayload(
   payload: ExternalMarketingPayload
 ): ExternalMarketingPayload {
-  const safePayload = { ...payload };
+  const preferences = {
+    analytics: hasAnalyticsConsent(),
+    advertising: hasAdvertisingConsent(),
+  };
+  const safePayload = sanitizeTrackingPayloadForConsent(payload, preferences);
 
-  if (!hasAnalyticsConsent()) {
-    delete safePayload.city;
-    delete safePayload.visitorCity;
-    const metadata = safePayload.metadata;
-    if (metadata && typeof metadata === "object" && !Array.isArray(metadata)) {
-      const safeMetadata = { ...(metadata as Record<string, unknown>) };
-      delete safeMetadata.visitorCity;
-      safePayload.metadata = safeMetadata;
-    }
-  }
-
-  if (!hasAdvertisingConsent()) {
-    delete safePayload.gclid;
-    delete safePayload.gbraid;
-    delete safePayload.wbraid;
+  for (const key of ["gclid", "gbraid", "wbraid"] as const) {
+    const clickId = sanitizeMarketingClickId(safePayload[key]);
+    if (clickId) safePayload[key] = clickId;
+    else delete safePayload[key];
   }
 
   return safePayload;
@@ -1058,20 +1137,21 @@ function captureRuntimeAttribution() {
   ].some((key) => params.has(key));
   if (runtimeAttribution && !hasTrackedParam) return runtimeAttribution;
 
+  const gclid = sanitizeMarketingClickId(params.get("gclid"));
+  const gbraid = sanitizeMarketingClickId(params.get("gbraid"));
+  const wbraid = sanitizeMarketingClickId(params.get("wbraid"));
   const classified = classifyTrafficAttribution({
     source: params.get("utm_source") || undefined,
     medium: params.get("utm_medium") || undefined,
     referrer: safeReferrerOrigin(),
-    hasGoogleClickId: Boolean(
-      params.get("gclid") || params.get("gbraid") || params.get("wbraid")
-    ),
+    hasGoogleClickId: Boolean(gclid || gbraid || wbraid),
   });
   const capturedAt = new Date();
   runtimeAttribution = {
     source: classified.source,
     medium: classified.medium,
     originType: classified.originType,
-    landingPage: `${window.location.origin}${window.location.pathname}`,
+    landingPage: privacySafePageLocation(),
     referrer: safeReferrerOrigin(),
     capturedAt: capturedAt.toISOString(),
     expiresAt: new Date(capturedAt.getTime() + CONTACT_INTENT_TTL_MS).toISOString(),
@@ -1119,17 +1199,28 @@ export function sendExternalMarketingEvent(
     ?? runtimeAttribution?.originType;
   const destination = safeDestination(params);
   const suppliedLeadCode = compactString(params.transaction_id, 40);
+  const intentLeadCode = isSupportedLeadCode(intent.leadCode)
+    ? intent.leadCode
+    : getOrCreateLeadCode(storageAvailable() ? window.localStorage : null);
   const eventLeadCode =
     suppliedLeadCode && isSupportedLeadCode(suppliedLeadCode)
       ? suppliedLeadCode
-      : intent.leadCode;
+      : intentLeadCode;
   const payload: ExternalMarketingPayload = {
     eventId: intent.eventId,
     // No quiz, o código exibido no WhatsApp precisa ser o mesmo pesquisável
     // no Retiflow. Fora dele, preservamos o código estável da intenção.
     leadCode: eventLeadCode,
-    anonymousId: intent.anonymousId,
-    sessionId: intent.sessionId,
+    anonymousId:
+      sanitizeMarketingTechnicalId(
+        intent.anonymousId,
+        MARKETING_EVENT_CONTRACT.limits.anonymousId
+      ) || undefined,
+    sessionId:
+      sanitizeMarketingTechnicalId(
+        intent.sessionId,
+        MARKETING_EVENT_CONTRACT.limits.sessionId
+      ) || undefined,
     eventType,
     channel:
       eventType === "whatsapp_click"
@@ -1138,7 +1229,7 @@ export function sendExternalMarketingEvent(
           ? "site_phone"
           : "site",
     occurredAt: new Date().toISOString(),
-    pagePath: window.location.pathname,
+    pagePath: sanitizeMarketingPath(window.location.pathname),
     pageLocation: privacySafePageLocation(),
     pageTitle: document.title,
     referrer: attribution?.referrer,
@@ -1147,9 +1238,9 @@ export function sendExternalMarketingEvent(
     campaign: privacySafeAttributionText(attribution?.campaign),
     term: privacySafeAttributionText(attribution?.term),
     content: privacySafeAttributionText(attribution?.content),
-    gclid: attribution?.gclid,
-    gbraid: attribution?.gbraid,
-    wbraid: attribution?.wbraid,
+    gclid: sanitizeMarketingClickId(attribution?.gclid) || undefined,
+    gbraid: sanitizeMarketingClickId(attribution?.gbraid) || undefined,
+    wbraid: sanitizeMarketingClickId(attribution?.wbraid) || undefined,
     deviceType: deviceType(),
     metadata: {
       eventLabel: params.event_label,
@@ -1182,12 +1273,10 @@ export function sendExternalMarketingEvent(
       sessionOriginType,
       siteHostname: currentTrackingHostname(),
       environment: currentTrackingEnvironment(),
-      measurementMode:
-        analyticsConsented && advertisingConsented
-          ? "analytics_and_advertising"
-          : analyticsConsented
-            ? "analytics"
-            : "advertising",
+      measurementMode: measurementModeForConsent({
+        analytics: analyticsConsented,
+        advertising: advertisingConsented,
+      }),
       eventContractVersion: MARKETING_EVENT_CONTRACT.schemaVersion,
     },
   };
@@ -1232,13 +1321,14 @@ export function captureTrafficAttribution() {
   if (!storageAvailable() || !hasMeasurementConsent()) return;
 
   const existing = getStoredAttribution();
+  const gclid = sanitizeMarketingClickId(params.get("gclid"));
+  const gbraid = sanitizeMarketingClickId(params.get("gbraid"));
+  const wbraid = sanitizeMarketingClickId(params.get("wbraid"));
   const classifiedAttribution = classifyTrafficAttribution({
     source: params.get("utm_source") || undefined,
     medium: params.get("utm_medium") || undefined,
     referrer: document.referrer || undefined,
-    hasGoogleClickId: Boolean(
-      params.get("gclid") || params.get("gbraid") || params.get("wbraid")
-    ),
+    hasGoogleClickId: Boolean(gclid || gbraid || wbraid),
   });
   storeSessionAttribution(
     { originType: anonymousAttribution?.originType ?? classifiedAttribution.originType },
@@ -1259,9 +1349,9 @@ export function captureTrafficAttribution() {
     campaign: params.get("utm_campaign") || undefined,
     term: params.get("utm_term") || undefined,
     content: params.get("utm_content") || undefined,
-    gclid: advertisingConsent ? params.get("gclid") || undefined : undefined,
-    gbraid: advertisingConsent ? params.get("gbraid") || undefined : undefined,
-    wbraid: advertisingConsent ? params.get("wbraid") || undefined : undefined,
+    gclid: advertisingConsent ? gclid || undefined : undefined,
+    gbraid: advertisingConsent ? gbraid || undefined : undefined,
+    wbraid: advertisingConsent ? wbraid || undefined : undefined,
     landingPage: anonymousAttribution?.landingPage ?? privacySafePageLocation(),
     referrer: safeReferrerOrigin() || anonymousAttribution?.referrer,
     capturedAt: capturedAt.toISOString(),
@@ -1298,10 +1388,19 @@ export function getStoredAttribution(): StoredAttribution | null {
 
     const stored: StoredAttribution = {
       ...attribution,
-      landingPage: attribution.landingPage,
+      landingPage:
+        sanitizeMarketingPageLocation(attribution.landingPage) || "",
       capturedAt: attribution.capturedAt,
       expiresAt: attribution.expiresAt as string,
+      gclid: sanitizeMarketingClickId(attribution.gclid) || undefined,
+      gbraid: sanitizeMarketingClickId(attribution.gbraid) || undefined,
+      wbraid: sanitizeMarketingClickId(attribution.wbraid) || undefined,
     };
+
+    if (!stored.landingPage) {
+      window.localStorage.removeItem(ATTRIBUTION_KEY);
+      return null;
+    }
 
     if (!hasAdvertisingConsent()) {
       delete stored.gclid;

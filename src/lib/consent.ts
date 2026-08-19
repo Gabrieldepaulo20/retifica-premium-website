@@ -1,3 +1,5 @@
+import { sanitizeMarketingPageLocation } from "@/lib/marketing-event-contract";
+
 export type ConsentPreferences = {
   version: string;
   purposeVersion: "measurement-v1";
@@ -25,13 +27,14 @@ export const CONSENT_POLICY_VERSION = "2026-08-19";
 export const CONSENT_PURPOSE_VERSION = "measurement-v1";
 
 const CONSENT_TTL_MS = 180 * 24 * 60 * 60 * 1000;
-const TRACKING_STORAGE_KEYS = [
+export const TRACKING_STORAGE_KEYS = [
   "retifica_premium_attribution",
   "retifica_premium_anonymous_id",
   "retifica_premium_session_id",
   "retifica_premium_session_activity",
   "retifica_premium_session_attribution",
   "retifica_premium_contact_intent",
+  "retifica_premium_lead_code",
   "retifica_premium_reported_events",
   "retifica_premium_active_time_ms",
   "retifica_premium_event_outbox",
@@ -45,32 +48,10 @@ const TRACKING_COOKIE_PREFIXES = [
   ...EXPERIENCE_COOKIE_PREFIXES,
   ...ADVERTISING_COOKIE_PREFIXES,
 ] as const;
-const ATTRIBUTION_QUERY_PARAMS = [
-  "utm_source",
-  "utm_medium",
-  "utm_campaign",
-  "utm_term",
-  "utm_content",
-] as const;
-const AD_QUERY_PARAMS = [
-  "gclid",
-  "dclid",
-  "gbraid",
-  "wbraid",
-  "gad_source",
-  "gad_campaignid",
-] as const;
 const ADVERTISING_MEASUREMENT_EVENT_TYPES = new Set([
   "whatsapp_click",
   "phone_click",
 ]);
-const EXPERIENCE_QUERY_PARAMS = [
-  "experiment_id",
-  "variant_id",
-  "service",
-  "flow",
-  "nivel_b2b",
-] as const;
 const PRODUCTION_HOSTNAMES = new Set([
   "premiumretifica.com.br",
   "www.premiumretifica.com.br",
@@ -173,6 +154,53 @@ export function hasAdvertisingConsent() {
 export function hasMeasurementConsent() {
   const preferences = readConsentPreferences();
   return Boolean(preferences?.analytics || preferences?.advertising);
+}
+
+export function measurementModeForConsent(
+  preferences: Pick<ConsentPreferences, "analytics" | "advertising">
+) {
+  if (preferences.analytics && preferences.advertising) {
+    return "analytics_and_advertising" as const;
+  }
+  if (preferences.analytics) return "analytics" as const;
+  if (preferences.advertising) return "advertising" as const;
+  return undefined;
+}
+
+export function sanitizeTrackingPayloadForConsent<
+  Payload extends Record<string, unknown>,
+>(
+  payload: Payload,
+  preferences: Pick<ConsentPreferences, "analytics" | "advertising">
+) {
+  const cleanedPayload: Record<string, unknown> = { ...payload };
+  const metadata =
+    cleanedPayload.metadata &&
+    typeof cleanedPayload.metadata === "object" &&
+    !Array.isArray(cleanedPayload.metadata)
+      ? { ...(cleanedPayload.metadata as Record<string, unknown>) }
+      : {};
+
+  if (!preferences.analytics) {
+    delete cleanedPayload.city;
+    delete cleanedPayload.visitorCity;
+    delete metadata.visitorCity;
+  }
+
+  if (!preferences.advertising) {
+    delete cleanedPayload.gclid;
+    delete cleanedPayload.gbraid;
+    delete cleanedPayload.wbraid;
+  }
+
+  const measurementMode = measurementModeForConsent(preferences);
+  if (measurementMode) metadata.measurementMode = measurementMode;
+  else delete metadata.measurementMode;
+
+  if (Object.keys(metadata).length > 0) cleanedPayload.metadata = metadata;
+  else delete cleanedPayload.metadata;
+
+  return cleanedPayload as Payload;
 }
 
 export function currentTrackingHostname() {
@@ -301,11 +329,8 @@ function clearAdvertisingAttribution() {
     delete attribution.wbraid;
 
     if (typeof attribution.landingPage === "string") {
-      const landingPage = new URL(attribution.landingPage);
-      for (const parameter of AD_QUERY_PARAMS) {
-        landingPage.searchParams.delete(parameter);
-      }
-      attribution.landingPage = landingPage.toString();
+      attribution.landingPage =
+        sanitizeMarketingPageLocation(attribution.landingPage) || "";
     }
 
     window.localStorage.setItem(
@@ -338,34 +363,22 @@ function sanitizeTrackingOutbox(preferences: ConsentPreferences) {
         return [];
       }
 
-      const cleanedPayload = { ...(payload as Record<string, unknown>) };
+      const rawPayload = payload as Record<string, unknown>;
       if (
         !preferences.analytics &&
         !ADVERTISING_MEASUREMENT_EVENT_TYPES.has(
-          typeof cleanedPayload.eventType === "string"
-            ? cleanedPayload.eventType
+          typeof rawPayload.eventType === "string"
+            ? rawPayload.eventType
             : ""
         )
       ) {
         return [];
       }
 
-      if (!preferences.analytics) {
-        delete cleanedPayload.city;
-        delete cleanedPayload.visitorCity;
-        const metadata = cleanedPayload.metadata;
-        if (metadata && typeof metadata === "object" && !Array.isArray(metadata)) {
-          const cleanedMetadata = { ...(metadata as Record<string, unknown>) };
-          delete cleanedMetadata.visitorCity;
-          cleanedPayload.metadata = cleanedMetadata;
-        }
-      }
-
-      if (!preferences.advertising) {
-        delete cleanedPayload.gclid;
-        delete cleanedPayload.gbraid;
-        delete cleanedPayload.wbraid;
-      }
+      const cleanedPayload = sanitizeTrackingPayloadForConsent(
+        rawPayload,
+        preferences
+      );
 
       return [{ ...entry, payload: cleanedPayload }];
     });
@@ -423,21 +436,5 @@ export function clearTrackingStorage() {
 
 export function privacySafePageLocation() {
   if (typeof window === "undefined") return "";
-
-  const source = new URL(window.location.href);
-  const safe = new URL(source.pathname, source.origin);
-  const allowedParameters: string[] = hasMeasurementConsent()
-    ? [...EXPERIENCE_QUERY_PARAMS, ...ATTRIBUTION_QUERY_PARAMS]
-    : [];
-
-  if (hasAdvertisingConsent()) {
-    allowedParameters.push(...AD_QUERY_PARAMS);
-  }
-
-  for (const parameter of allowedParameters) {
-    const value = source.searchParams.get(parameter)?.trim();
-    if (value) safe.searchParams.set(parameter, value.slice(0, 220));
-  }
-
-  return safe.toString();
+  return sanitizeMarketingPageLocation(window.location.href) || "";
 }

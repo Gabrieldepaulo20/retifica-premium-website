@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import {
   type ExternalMarketingEvent,
@@ -7,9 +6,16 @@ import {
 } from "@/lib/external-marketing";
 import {
   containsHighConfidencePersonalData,
+  isSiteTelemetryEndpointEventAllowed,
   MARKETING_EVENT_CONTRACT,
+  normalizeMarketingLeadCode,
   normalizeMarketingEventType,
+  sanitizeMarketingClickId,
+  sanitizeMarketingEventId,
   sanitizeMarketingEventMetadata,
+  sanitizeMarketingPageLocation,
+  sanitizeMarketingPath,
+  sanitizeMarketingTechnicalId,
 } from "@/lib/marketing-event-contract";
 import { downstreamFailureStatus } from "@/lib/marketing-event-delivery";
 import { sendWhatsAppClickAlert } from "@/lib/contact-email";
@@ -38,33 +44,6 @@ function clean(value: unknown, max = 500) {
 function cleanNonPersonal(value: unknown, max: number) {
   const cleaned = clean(value, max);
   return cleaned && !containsHighConfidencePersonalData(cleaned) ? cleaned : "";
-}
-
-function validLeadCode(value: string) {
-  return /^RP-(?:\d{8}-[A-Z0-9]{4,16}|\d{4}-\d{2}-[A-Z0-9]{4,16})$/.test(
-    value
-  );
-}
-
-function cleanPagePath(value: unknown) {
-  const path = clean(value, MARKETING_EVENT_CONTRACT.limits.pagePath).split(
-    /[?#]/,
-    1
-  )[0];
-  return path.startsWith("/") ? `/${path.replace(/^\/+/, "")}` : "/";
-}
-
-function cleanPageLocation(value: unknown) {
-  const location = clean(value, MARKETING_EVENT_CONTRACT.limits.pageLocation);
-  if (!location) return undefined;
-
-  try {
-    const url = new URL(location);
-    if (url.protocol !== "https:" && url.protocol !== "http:") return undefined;
-    return `${url.origin}${url.pathname}`;
-  } catch {
-    return undefined;
-  }
 }
 
 function cleanReferrerOrigin(value: unknown) {
@@ -208,11 +187,23 @@ export async function POST(request: Request) {
   }
   const eventType = eventDefinition.name;
 
-  const normalizedLeadCode = clean(
-    body.leadCode,
-    MARKETING_EVENT_CONTRACT.limits.leadCode
-  ).toUpperCase();
-  if (!validLeadCode(normalizedLeadCode)) {
+  if (!isSiteTelemetryEndpointEventAllowed(eventType)) {
+    return NextResponse.json(
+      { ok: false, message: "Evento reservado ao formulário de contato." },
+      { status: 400 }
+    );
+  }
+
+  const eventId = sanitizeMarketingEventId(body.eventId);
+  if (!eventId) {
+    return NextResponse.json(
+      { ok: false, message: "Identificador do evento inválido." },
+      { status: 400 }
+    );
+  }
+
+  const normalizedLeadCode = normalizeMarketingLeadCode(body.leadCode);
+  if (!normalizedLeadCode) {
     return NextResponse.json(
       { ok: false, message: "Código do contato inválido." },
       { status: 400 }
@@ -226,11 +217,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const hasGoogleClickId = Boolean(
-    clean(body.gclid, MARKETING_EVENT_CONTRACT.limits.clickId) ||
-      clean(body.gbraid, MARKETING_EVENT_CONTRACT.limits.clickId) ||
-      clean(body.wbraid, MARKETING_EVENT_CONTRACT.limits.clickId)
-  );
+  const gclid = sanitizeMarketingClickId(body.gclid);
+  const gbraid = sanitizeMarketingClickId(body.gbraid);
+  const wbraid = sanitizeMarketingClickId(body.wbraid);
+  const hasGoogleClickId = Boolean(gclid || gbraid || wbraid);
   const attribution = classifyTrafficAttribution({
     source:
       cleanNonPersonal(body.source, MARKETING_EVENT_CONTRACT.limits.source) ||
@@ -241,7 +231,8 @@ export async function POST(request: Request) {
     referrer: cleanReferrerOrigin(body.referrer),
     hasGoogleClickId,
   });
-  const pageLocation = cleanPageLocation(body.pageLocation);
+  const pageLocation =
+    sanitizeMarketingPageLocation(body.pageLocation) || undefined;
   const metadata = sanitizeMarketingEventMetadata(body.metadata);
   if (
     metadata.measurementMode !== "analytics" &&
@@ -251,16 +242,18 @@ export async function POST(request: Request) {
   }
   const environment = pageEnvironment(pageLocation);
   const event: ExternalMarketingEvent = {
-    eventId:
-      clean(body.eventId, MARKETING_EVENT_CONTRACT.limits.eventId) ||
-      randomUUID(),
+    eventId,
     leadCode: normalizedLeadCode,
     anonymousId:
-      clean(body.anonymousId, MARKETING_EVENT_CONTRACT.limits.anonymousId) ||
-      undefined,
+      sanitizeMarketingTechnicalId(
+        body.anonymousId,
+        MARKETING_EVENT_CONTRACT.limits.anonymousId
+      ) || undefined,
     sessionId:
-      clean(body.sessionId, MARKETING_EVENT_CONTRACT.limits.sessionId) ||
-      undefined,
+      sanitizeMarketingTechnicalId(
+        body.sessionId,
+        MARKETING_EVENT_CONTRACT.limits.sessionId
+      ) || undefined,
     eventType,
     channel:
       cleanNonPersonal(body.channel, MARKETING_EVENT_CONTRACT.limits.channel) ||
@@ -268,7 +261,7 @@ export async function POST(request: Request) {
     occurredAt:
       clean(body.occurredAt, MARKETING_EVENT_CONTRACT.limits.occurredAt) ||
       new Date().toISOString(),
-    pagePath: cleanPagePath(body.pagePath),
+    pagePath: sanitizeMarketingPath(body.pagePath),
     pageLocation,
     pageTitle:
       cleanNonPersonal(
@@ -287,12 +280,9 @@ export async function POST(request: Request) {
     content:
       cleanNonPersonal(body.content, MARKETING_EVENT_CONTRACT.limits.content) ||
       undefined,
-    gclid:
-      clean(body.gclid, MARKETING_EVENT_CONTRACT.limits.clickId) || undefined,
-    gbraid:
-      clean(body.gbraid, MARKETING_EVENT_CONTRACT.limits.clickId) || undefined,
-    wbraid:
-      clean(body.wbraid, MARKETING_EVENT_CONTRACT.limits.clickId) || undefined,
+    gclid: gclid || undefined,
+    gbraid: gbraid || undefined,
+    wbraid: wbraid || undefined,
     deviceType:
       cleanNonPersonal(
         body.deviceType,

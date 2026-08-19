@@ -10,6 +10,9 @@ import {
   CONSENT_POLICY_VERSION,
   CONSENT_PURPOSE_VERSION,
   createConsentPreferences,
+  measurementModeForConsent,
+  sanitizeTrackingPayloadForConsent,
+  TRACKING_STORAGE_KEYS,
 } from "../src/lib/consent.ts";
 
 test("cinco segundos sem interação só autorizam minimizar o aviso", () => {
@@ -69,4 +72,45 @@ test("a interface oferece aceitar e recusar com o mesmo peso e reabertura", asyn
   assert.match(source, /Medição desligada · escolher/);
   assert.match(source, /aria-labelledby="privacy-banner-title"/);
   assert.match(source, /focus-visible:outline/);
+});
+
+test("revogação inclui o código persistente do lead", () => {
+  assert.ok(TRACKING_STORAGE_KEYS.includes("retifica_premium_lead_code"));
+});
+
+test("replay recalcula measurementMode e remove dados sem consentimento atual", () => {
+  const original = {
+    eventId: "evt-abc_123",
+    eventType: "whatsapp_click",
+    city: "Ribeirão Preto",
+    gclid: "valid-click-id",
+    metadata: {
+      visitorCity: "Ribeirão Preto",
+      measurementMode: "analytics_and_advertising",
+      eventContractVersion: "marketing-events-v3",
+    },
+  };
+
+  const analyticsOnly = sanitizeTrackingPayloadForConsent(original, {
+    analytics: true,
+    advertising: false,
+  });
+  assert.equal(analyticsOnly.gclid, undefined);
+  assert.equal(analyticsOnly.metadata.measurementMode, "analytics");
+
+  const advertisingOnly = sanitizeTrackingPayloadForConsent(original, {
+    analytics: false,
+    advertising: true,
+  });
+  assert.equal(advertisingOnly.city, undefined);
+  assert.equal(advertisingOnly.metadata.visitorCity, undefined);
+  assert.equal(advertisingOnly.metadata.measurementMode, "advertising");
+
+  const denied = sanitizeTrackingPayloadForConsent(original, {
+    analytics: false,
+    advertising: false,
+  });
+  assert.equal(denied.gclid, undefined);
+  assert.equal(denied.metadata.measurementMode, undefined);
+  assert.equal(measurementModeForConsent({ analytics: false, advertising: false }), undefined);
 });
