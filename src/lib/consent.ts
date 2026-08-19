@@ -1,9 +1,11 @@
 export type ConsentPreferences = {
   version: string;
+  purposeVersion: "measurement-v1";
   necessary: true;
   analytics: boolean;
   advertising: boolean;
-  decisionMethod?: "explicit";
+  decision: "accept_all" | "reject_all" | "custom";
+  decisionMethod: "explicit";
   savedAt: string;
   expiresAt: string;
 };
@@ -19,7 +21,8 @@ export const CONSENT_STORAGE_KEY = "retifica_premium_consent";
 export const CONSENT_CHANGED_EVENT = "retifica:consent-changed";
 export const CONSENT_RUNTIME_READY_EVENT = "retifica:consent-runtime-ready";
 export const CONSENT_BANNER_VISIBILITY_EVENT = "retifica:consent-banner-visibility";
-export const CONSENT_POLICY_VERSION = "2026-08-10";
+export const CONSENT_POLICY_VERSION = "2026-08-19";
+export const CONSENT_PURPOSE_VERSION = "measurement-v1";
 
 const CONSENT_TTL_MS = 180 * 24 * 60 * 60 * 1000;
 const TRACKING_STORAGE_KEYS = [
@@ -32,6 +35,7 @@ const TRACKING_STORAGE_KEYS = [
   "retifica_premium_reported_events",
   "retifica_premium_active_time_ms",
   "retifica_premium_event_outbox",
+  "retifica_premium_event_failures",
 ] as const;
 const ANALYTICS_COOKIE_PREFIXES = ["_ga", "_gid", "_gat"] as const;
 const EXPERIENCE_COOKIE_PREFIXES = ["_clck", "_clsk"] as const;
@@ -92,11 +96,14 @@ function isConsentPreferences(value: unknown): value is ConsentPreferences {
   const preferences = value as Partial<ConsentPreferences>;
   return (
     preferences.version === CONSENT_POLICY_VERSION &&
+    preferences.purposeVersion === CONSENT_PURPOSE_VERSION &&
     preferences.necessary === true &&
     typeof preferences.analytics === "boolean" &&
     typeof preferences.advertising === "boolean" &&
-    (preferences.decisionMethod === undefined ||
-      preferences.decisionMethod === "explicit") &&
+    ["accept_all", "reject_all", "custom"].includes(
+      preferences.decision ?? ""
+    ) &&
+    preferences.decisionMethod === "explicit" &&
     typeof preferences.savedAt === "string" &&
     typeof preferences.expiresAt === "string" &&
     Number.isFinite(new Date(preferences.expiresAt).getTime())
@@ -134,9 +141,16 @@ export function createConsentPreferences(
 
   return {
     version: CONSENT_POLICY_VERSION,
+    purposeVersion: CONSENT_PURPOSE_VERSION,
     necessary: true,
     analytics: choices.analytics,
     advertising: choices.advertising,
+    decision:
+      choices.analytics && choices.advertising
+        ? "accept_all"
+        : !choices.analytics && !choices.advertising
+          ? "reject_all"
+          : "custom",
     decisionMethod,
     savedAt: savedAt.toISOString(),
     expiresAt: new Date(savedAt.getTime() + CONSENT_TTL_MS).toISOString(),

@@ -6,6 +6,7 @@ import {
   subjectLabels,
 } from "@/lib/contact-email";
 import { saveExternalMarketingEvent } from "@/lib/external-marketing";
+import { MARKETING_EVENT_CONTRACT } from "@/lib/marketing-event-contract";
 import { classifyTrafficAttribution } from "@/lib/traffic-attribution";
 
 export const runtime = "nodejs";
@@ -311,6 +312,7 @@ export async function POST(request: Request) {
       subject: assuntoKey,
       b2bLevel: b2bLevel || undefined,
       measurementMode,
+      eventContractVersion: MARKETING_EVENT_CONTRACT.schemaVersion,
     },
     lead: {
       name: nome,

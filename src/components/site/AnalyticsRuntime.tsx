@@ -74,9 +74,15 @@ export function AnalyticsRuntime() {
       void flushExternalMarketingEventOutbox();
     };
     window.addEventListener("online", flushOutbox);
+    document.addEventListener("visibilitychange", flushOutbox);
+    const retryTimer = window.setInterval(flushOutbox, 5_000);
     flushOutbox();
 
-    return () => window.removeEventListener("online", flushOutbox);
+    return () => {
+      window.removeEventListener("online", flushOutbox);
+      document.removeEventListener("visibilitychange", flushOutbox);
+      window.clearInterval(retryTimer);
+    };
   }, [consentReady, consentRevision, sessionRevision]);
 
   useEffect(() => {

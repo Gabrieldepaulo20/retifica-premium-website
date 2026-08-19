@@ -19,6 +19,10 @@ import {
   updateClarityConsent,
   updateGoogleConsent,
 } from "@/lib/consent";
+import {
+  CONSENT_BANNER_MINIMIZE_AFTER_MS,
+  shouldMinimizeConsentBanner,
+} from "@/lib/consent-banner-policy";
 
 type CookieConsentProps = {
   gaMeasurementId: string;
@@ -175,10 +179,14 @@ export function CookieConsent({
     ConsentPreferences | null | undefined
   >(undefined);
   const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [advertising, setAdvertising] = useState(false);
   const configurationHeadingRef = useRef<HTMLHeadingElement>(null);
+  const bannerHeadingRef = useRef<HTMLHeadingElement>(null);
+  const privacyControlRef = useRef<HTMLButtonElement>(null);
+  const focusBannerOnOpenRef = useRef(false);
   const hasInteractedRef = useRef(false);
 
   useEffect(() => {
@@ -189,6 +197,7 @@ export function CookieConsent({
       setAnalytics(stored?.analytics ?? false);
       setAdvertising(stored?.advertising ?? false);
       setIsOpen(!stored);
+      setIsMinimized(false);
 
       if (!stored) {
         clearTrackingStorage();
@@ -211,10 +220,45 @@ export function CookieConsent({
   }, [clarityId, gaMeasurementId, googleAdsId]);
 
   useEffect(() => {
+    if (
+      !shouldMinimizeConsentBanner({
+        hasStoredPreferences: preferences !== null,
+        isOpen,
+        isCustomizing,
+        hasInteracted: hasInteractedRef.current,
+      })
+    ) {
+      return;
+    }
+
+    const minimizeTimer = window.setTimeout(() => {
+      if (
+        !shouldMinimizeConsentBanner({
+          hasStoredPreferences: preferences !== null,
+          isOpen,
+          isCustomizing,
+          hasInteracted: hasInteractedRef.current,
+        })
+      ) {
+        return;
+      }
+      setIsOpen(false);
+      setIsMinimized(true);
+    }, CONSENT_BANNER_MINIMIZE_AFTER_MS);
+
+    return () => window.clearTimeout(minimizeTimer);
+  }, [isCustomizing, isOpen, preferences]);
+
+  useEffect(() => {
     if (isCustomizing) {
       configurationHeadingRef.current?.focus();
+      return;
     }
-  }, [isCustomizing]);
+    if (isOpen && focusBannerOnOpenRef.current) {
+      focusBannerOnOpenRef.current = false;
+      bannerHeadingRef.current?.focus();
+    }
+  }, [isCustomizing, isOpen]);
 
   const applyChoices = useCallback(
     (
@@ -246,6 +290,8 @@ export function CookieConsent({
       setAdvertising(next.advertising);
       setIsCustomizing(false);
       setIsOpen(false);
+      setIsMinimized(false);
+      window.requestAnimationFrame(() => privacyControlRef.current?.focus());
     },
     [clarityId, gaMeasurementId, googleAdsId]
   );
@@ -259,18 +305,14 @@ export function CookieConsent({
 
   const reopenPreferences = useCallback(() => {
     hasInteractedRef.current = true;
+    focusBannerOnOpenRef.current = true;
     setAnalytics(preferences?.analytics ?? false);
     setAdvertising(preferences?.advertising ?? false);
-    setIsCustomizing(true);
+    setIsCustomizing(Boolean(preferences));
+    setIsMinimized(false);
     setIsOpen(true);
   }, [preferences]);
 
-  /**
-   * O botão flutuante de privacidade saiu: no celular ele disputava a base da
-   * tela com o WhatsApp e cobria conteúdo. A LGPD exige que dê para rever o
-   * consentimento a qualquer momento, então o caminho passou a ser o link
-   * "Privacidade e cookies" do rodapé, que dispara este evento.
-   */
   useEffect(() => {
     const abrir = () => reopenPreferences();
     window.addEventListener(ABRIR_PREFERENCIAS_EVENTO, abrir);
@@ -312,9 +354,17 @@ export function CookieConsent({
     <>
       {isOpen ? (
         <section
+          id="privacy-preferences-dialog"
           className="fixed inset-x-2 top-2 z-[1100] mx-auto max-h-[min(72dvh,calc(100dvh-1rem))] max-w-5xl overflow-y-auto overscroll-contain rounded-2xl border border-white/15 bg-[#06172e]/[0.985] text-white shadow-[0_24px_80px_rgba(2,14,29,0.48)] backdrop-blur-xl sm:inset-x-5 sm:top-5 sm:max-h-[calc(100dvh-2.5rem)]"
-          role="region"
-          aria-label="Preferências de privacidade"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="privacy-banner-title"
+          onPointerDown={() => {
+            hasInteractedRef.current = true;
+          }}
+          onKeyDown={() => {
+            hasInteractedRef.current = true;
+          }}
         >
           <div className="h-0.5 bg-rp-gold" />
           <div className="px-4 pb-[max(0.375rem,env(safe-area-inset-bottom))] pt-2 sm:p-5">
@@ -339,7 +389,12 @@ export function CookieConsent({
               */}
               <div className="max-w-2xl">
                 <div className="flex items-center justify-between gap-3">
-                  <h2 className="font-heading text-base font-bold leading-tight sm:text-lg">
+                  <h2
+                    ref={bannerHeadingRef}
+                    id="privacy-banner-title"
+                    tabIndex={-1}
+                    className="font-heading text-base font-bold leading-tight outline-none sm:text-lg"
+                  >
                     Antes de continuar
                   </h2>
                   <div className="flex shrink-0 items-center gap-3 text-xs font-bold">
@@ -381,9 +436,9 @@ export function CookieConsent({
                       hasInteractedRef.current = true;
                       applyChoices(false, false);
                     }}
-                    className="min-h-10 whitespace-nowrap rounded-full border border-white/20 px-3 text-xs font-bold text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-11 sm:px-4 sm:text-sm"
+                    className="min-h-11 whitespace-nowrap rounded-full border border-white/30 bg-white/[0.08] px-3 text-xs font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-5 sm:text-sm"
                   >
-                    Só o necessário
+                    Recusar medição
                   </button>
                   <button
                     type="button"
@@ -391,9 +446,9 @@ export function CookieConsent({
                       hasInteractedRef.current = true;
                       applyChoices(true, true);
                     }}
-                    className="min-h-10 whitespace-nowrap rounded-full border border-rp-gold bg-rp-gold px-3 text-xs font-extrabold text-[#07172e] transition-colors hover:bg-[#ffd45c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-11 sm:px-5 sm:text-sm"
+                    className="min-h-11 whitespace-nowrap rounded-full border border-white/30 bg-white/[0.08] px-3 text-xs font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-5 sm:text-sm"
                   >
-                    Aceitar e continuar
+                    Aceitar medição
                   </button>
                 </div>
               ) : null}
@@ -441,7 +496,7 @@ export function CookieConsent({
                   />
                   <ChoiceRow
                     title="Análise avançada da experiência"
-                    description="Google Analytics e Clarity analisam páginas e estimam região; o Retiflow registra a jornada e a cidade que você informar. Sem GPS."
+                    description="Mede páginas e experiência; o Retiflow registra a jornada consentida e a cidade que você informar. Sem GPS."
                     checked={analytics}
                     onChange={setAnalytics}
                   />
@@ -472,7 +527,20 @@ export function CookieConsent({
             ) : null}
           </div>
         </section>
-      ) : null}
+      ) : (
+        <button
+          ref={privacyControlRef}
+          type="button"
+          onClick={reopenPreferences}
+          className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-3 z-[1050] inline-flex min-h-11 items-center rounded-full border border-slate-300 bg-white/95 px-3 text-xs font-bold text-[#07172e] shadow-lg backdrop-blur transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#07172e] sm:left-5"
+          aria-expanded="false"
+          aria-controls="privacy-preferences-dialog"
+        >
+          {isMinimized && !preferences
+            ? "Medição desligada · escolher"
+            : "Privacidade"}
+        </button>
+      )}
     </>
   );
 }

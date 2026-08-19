@@ -35,6 +35,7 @@ export type ExternalMarketingResult = {
   configured: boolean;
   saved: boolean;
   status?: number;
+  retryAfter?: string;
   deduplicated?: boolean;
   shouldAlert?: boolean;
   storedEventId?: string;
@@ -75,6 +76,7 @@ export async function saveExternalMarketingEvent(
       configured: true,
       saved: response.ok && result?.ok === true,
       status: response.status,
+      retryAfter: response.headers.get("retry-after") || undefined,
       deduplicated: result?.deduplicated,
       shouldAlert: result?.shouldAlert,
       storedEventId: result?.eventId,

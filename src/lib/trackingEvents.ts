@@ -8,6 +8,19 @@ import {
   isConsentRuntimeReady,
   privacySafePageLocation,
 } from "@/lib/consent";
+import {
+  MARKETING_EVENT_CONTRACT,
+  normalizeMarketingEventType,
+} from "@/lib/marketing-event-contract";
+import {
+  classifyMarketingDelivery,
+  classifyMarketingNetworkFailure,
+  deduplicateQueueByEventId,
+  queueAfterInitialFailure,
+  rescheduleAfterFailure,
+  type MarketingDelivery,
+  type RetryableQueueEntry,
+} from "@/lib/marketing-event-delivery";
 import { classifyTrafficAttribution } from "@/lib/traffic-attribution";
 
 export type ClarityEventName =
@@ -148,8 +161,12 @@ const LEAD_CODE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const SESSION_INACTIVITY_TTL_MS = 30 * 60 * 1000;
 const ATTRIBUTION_TTL_MS = 90 * 24 * 60 * 60 * 1000;
 const EXTERNAL_EVENT_OUTBOX_KEY = "retifica_premium_event_outbox";
+const EXTERNAL_EVENT_FAILURES_KEY = "retifica_premium_event_failures";
 const EXTERNAL_EVENT_OUTBOX_MAX = 40;
+const EXTERNAL_EVENT_FAILURES_MAX = 20;
 const EXTERNAL_EVENT_OUTBOX_TTL_MS = 24 * 60 * 60 * 1000;
+export const MARKETING_EVENT_DELIVERY_FAILED_EVENT =
+  "retifica:marketing-delivery-failed";
 export const MEASUREMENT_SESSION_ROTATED_EVENT =
   "retifica:measurement-session-rotated";
 const pendingEvents = new Set<string>();
@@ -441,6 +458,12 @@ function explicitCity(value: unknown) {
   return compact;
 }
 
+function privacySafeAttributionText(value: unknown, max = 180) {
+  const compact = compactString(value, max);
+  if (!compact || containsHighConfidencePersonalData(compact)) return undefined;
+  return compact;
+}
+
 function hasExternalEventConsent(eventType: string) {
   return (
     hasAnalyticsConsent() ||
@@ -696,15 +719,65 @@ type ExternalMarketingPayload = {
   [key: string]: unknown;
 };
 
-type QueuedExternalMarketingEvent = {
-  queuedAt: number;
-  payload: ExternalMarketingPayload;
+type QueuedExternalMarketingEvent = RetryableQueueEntry<ExternalMarketingPayload>;
+
+type ExternalMarketingFailure = {
+  eventId: string;
+  eventType: string;
+  failedAt: number;
+  attempts: number;
+  status?: number;
+  reason:
+    | MarketingDelivery["reason"]
+    | "retry_exhausted"
+    | "expired"
+    | "invalid_queue_entry";
 };
 
-type ExternalMarketingDelivery = {
-  delivered: boolean;
-  retryable: boolean;
-};
+function recordExternalMarketingFailure(
+  payload: ExternalMarketingPayload,
+  attempts: number,
+  reason: ExternalMarketingFailure["reason"],
+  status?: number
+) {
+  if (!storageAvailable() || !hasMeasurementConsent()) return;
+
+  const failure: ExternalMarketingFailure = {
+    eventId: compactString(payload.eventId, 80) || "unknown",
+    eventType: compactString(payload.eventType, 60) || "unknown",
+    failedAt: Date.now(),
+    attempts,
+    status,
+    reason,
+  };
+
+  try {
+    const raw = window.localStorage.getItem(EXTERNAL_EVENT_FAILURES_KEY);
+    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
+    const current = Array.isArray(parsed)
+      ? parsed.filter(
+          (item): item is ExternalMarketingFailure =>
+            Boolean(item) &&
+            typeof item === "object" &&
+            !Array.isArray(item) &&
+            typeof (item as Partial<ExternalMarketingFailure>).eventId === "string"
+        )
+      : [];
+    window.localStorage.setItem(
+      EXTERNAL_EVENT_FAILURES_KEY,
+      JSON.stringify([...current, failure].slice(-EXTERNAL_EVENT_FAILURES_MAX))
+    );
+  } catch {
+    // A falha continua observável pelo evento em memória quando o storage falha.
+  }
+
+  window.dispatchEvent(
+    new CustomEvent<ExternalMarketingFailure>(
+      MARKETING_EVENT_DELIVERY_FAILED_EVENT,
+      { detail: failure }
+    )
+  );
+}
 
 function readExternalEventOutbox(): QueuedExternalMarketingEvent[] {
   if (!storageAvailable() || !hasMeasurementConsent()) return [];
@@ -720,19 +793,56 @@ function readExternalEventOutbox(): QueuedExternalMarketingEvent[] {
     }
 
     const minimumQueuedAt = Date.now() - EXTERNAL_EVENT_OUTBOX_TTL_MS;
-    return parsed
-      .filter((item): item is QueuedExternalMarketingEvent => {
-        if (!item || typeof item !== "object" || Array.isArray(item)) return false;
-        const entry = item as Partial<QueuedExternalMarketingEvent>;
-        return (
-          typeof entry.queuedAt === "number" &&
-          entry.queuedAt >= minimumQueuedAt &&
-          Boolean(entry.payload) &&
-          typeof entry.payload?.eventId === "string" &&
-          typeof entry.payload?.eventType === "string"
+    const entries: QueuedExternalMarketingEvent[] = [];
+
+    for (const item of parsed) {
+      if (!item || typeof item !== "object" || Array.isArray(item)) continue;
+      const entry = item as Partial<QueuedExternalMarketingEvent>;
+      if (
+        typeof entry.queuedAt !== "number" ||
+        !entry.payload ||
+        typeof entry.payload.eventId !== "string" ||
+        typeof entry.payload.eventType !== "string"
+      ) {
+        continue;
+      }
+
+      if (entry.queuedAt < minimumQueuedAt) {
+        recordExternalMarketingFailure(
+          entry.payload,
+          typeof entry.attempts === "number" ? entry.attempts : 1,
+          "expired",
+          entry.lastStatus
         );
-      })
-      .slice(-EXTERNAL_EVENT_OUTBOX_MAX);
+        continue;
+      }
+
+      if (!normalizeMarketingEventType(entry.payload.eventType)) {
+        recordExternalMarketingFailure(
+          entry.payload,
+          typeof entry.attempts === "number" ? entry.attempts : 1,
+          "invalid_queue_entry",
+          entry.lastStatus
+        );
+        continue;
+      }
+
+      entries.push({
+        queuedAt: entry.queuedAt,
+        attempts:
+          typeof entry.attempts === "number" && entry.attempts >= 1
+            ? Math.floor(entry.attempts)
+            : 1,
+        nextAttemptAt:
+          typeof entry.nextAttemptAt === "number"
+            ? entry.nextAttemptAt
+            : entry.queuedAt,
+        lastStatus: entry.lastStatus,
+        payload: entry.payload,
+      });
+    }
+
+    return deduplicateQueueByEventId(entries).slice(-EXTERNAL_EVENT_OUTBOX_MAX);
   } catch {
     window.localStorage.removeItem(EXTERNAL_EVENT_OUTBOX_KEY);
     return [];
@@ -750,14 +860,19 @@ function writeExternalEventOutbox(entries: QueuedExternalMarketingEvent[]) {
 
     window.localStorage.setItem(
       EXTERNAL_EVENT_OUTBOX_KEY,
-      JSON.stringify(entries.slice(-EXTERNAL_EVENT_OUTBOX_MAX))
+      JSON.stringify(
+        deduplicateQueueByEventId(entries).slice(-EXTERNAL_EVENT_OUTBOX_MAX)
+      )
     );
   } catch {
     // A fila é uma proteção complementar; storage cheio não pode bloquear o site.
   }
 }
 
-function queueExternalMarketingEvent(payload: ExternalMarketingPayload) {
+function queueExternalMarketingEvent(
+  payload: ExternalMarketingPayload,
+  delivery: MarketingDelivery
+) {
   if (!hasExternalEventConsent(payload.eventType)) return;
 
   const consentSafePayload = consentSafeExternalMarketingPayload(payload);
@@ -770,10 +885,8 @@ function queueExternalMarketingEvent(payload: ExternalMarketingPayload) {
     return;
   }
 
-  writeExternalEventOutbox([
-    ...entries,
-    { queuedAt: Date.now(), payload: consentSafePayload },
-  ]);
+  const queued = queueAfterInitialFailure(consentSafePayload, delivery);
+  if (queued) writeExternalEventOutbox([...entries, queued]);
 }
 
 function consentSafeExternalMarketingPayload(
@@ -803,7 +916,7 @@ function consentSafeExternalMarketingPayload(
 
 async function deliverExternalMarketingEvent(
   payload: ExternalMarketingPayload
-): Promise<ExternalMarketingDelivery> {
+): Promise<MarketingDelivery> {
   try {
     const consentSafePayload = consentSafeExternalMarketingPayload(payload);
     const response = await fetch("/api/marketing/event", {
@@ -820,18 +933,15 @@ async function deliverExternalMarketingEvent(
     const storageSaved =
       result?.storageSaved === true || result?.storage?.saved === true;
 
-    if (response.ok && result?.ok === true && storageSaved) {
-      return { delivered: true, retryable: false };
-    }
-
-    const retryable =
-      response.status === 408 ||
-      response.status === 429 ||
-      response.status >= 500 ||
-      (response.ok && !storageSaved);
-    return { delivered: false, retryable };
+    return classifyMarketingDelivery({
+      status: response.status,
+      responseOk: response.ok,
+      bodyOk: result?.ok === true,
+      storageSaved,
+      retryAfter: response.headers.get("retry-after"),
+    });
   } catch {
-    return { delivered: false, retryable: true };
+    return classifyMarketingNetworkFailure();
   }
 }
 
@@ -857,12 +967,11 @@ export async function flushExternalMarketingEventOutbox() {
   externalEventOutboxFlushInProgress = true;
   const snapshotIds = new Set(snapshot.map((entry) => entry.payload.eventId));
   const remaining: QueuedExternalMarketingEvent[] = [];
-  let deliveryBlocked = false;
 
   try {
     for (const entry of snapshot) {
       if (!hasExternalEventConsent(entry.payload.eventType)) continue;
-      if (deliveryBlocked) {
+      if (entry.nextAttemptAt > Date.now()) {
         remaining.push(entry);
         continue;
       }
@@ -872,16 +981,26 @@ export async function flushExternalMarketingEventOutbox() {
         markAsReported(entry.payload.eventType, entry.payload.eventId);
         continue;
       }
-      if (delivery.retryable) {
-        remaining.push(entry);
-        deliveryBlocked = true;
+
+      const retry = rescheduleAfterFailure(entry, delivery);
+      if (retry.state === "retry_scheduled") {
+        remaining.push(retry.entry);
+      } else {
+        recordExternalMarketingFailure(
+          entry.payload,
+          entry.attempts + 1,
+          retry.state === "exhausted" ? "retry_exhausted" : delivery.reason,
+          delivery.status
+        );
       }
     }
   } finally {
     const addedDuringFlush = readExternalEventOutbox().filter(
       (entry) => !snapshotIds.has(entry.payload.eventId)
     );
-    writeExternalEventOutbox([...remaining, ...addedDuringFlush]);
+    writeExternalEventOutbox(
+      deduplicateQueueByEventId([...remaining, ...addedDuringFlush])
+    );
     externalEventOutboxFlushInProgress = false;
   }
 }
@@ -969,6 +1088,10 @@ export function sendExternalMarketingEvent(
   params: MarketingEventParams = {},
   contactIntent?: ContactIntent
 ) {
+  const eventDefinition = normalizeMarketingEventType(eventType);
+  if (!eventDefinition) return;
+  eventType = eventDefinition.name;
+
   if (
     typeof window === "undefined" ||
     !isConsentRuntimeReady() ||
@@ -1019,11 +1142,11 @@ export function sendExternalMarketingEvent(
     pageLocation: privacySafePageLocation(),
     pageTitle: document.title,
     referrer: attribution?.referrer,
-    source: attribution?.source,
-    medium: attribution?.medium,
-    campaign: attribution?.campaign,
-    term: attribution?.term,
-    content: attribution?.content,
+    source: privacySafeAttributionText(attribution?.source, 120),
+    medium: privacySafeAttributionText(attribution?.medium, 120),
+    campaign: privacySafeAttributionText(attribution?.campaign),
+    term: privacySafeAttributionText(attribution?.term),
+    content: privacySafeAttributionText(attribution?.content),
     gclid: attribution?.gclid,
     gbraid: attribution?.gbraid,
     wbraid: attribution?.wbraid,
@@ -1065,7 +1188,7 @@ export function sendExternalMarketingEvent(
           : analyticsConsented
             ? "analytics"
             : "advertising",
-      eventContractVersion: "site-events-v2",
+      eventContractVersion: MARKETING_EVENT_CONTRACT.schemaVersion,
     },
   };
 
@@ -1077,8 +1200,15 @@ export function sendExternalMarketingEvent(
         return;
       }
       if (delivery.retryable) {
-        queueExternalMarketingEvent(payload);
+        queueExternalMarketingEvent(payload, delivery);
+        return;
       }
+      recordExternalMarketingFailure(
+        payload,
+        1,
+        delivery.reason,
+        delivery.status
+      );
     })
     .finally(() => pendingEvents.delete(pendingKey));
 }

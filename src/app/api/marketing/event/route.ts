@@ -5,62 +5,19 @@ import {
   saveExternalMarketingEvent,
   updateExternalMarketingAlert,
 } from "@/lib/external-marketing";
+import {
+  containsHighConfidencePersonalData,
+  MARKETING_EVENT_CONTRACT,
+  normalizeMarketingEventType,
+  sanitizeMarketingEventMetadata,
+} from "@/lib/marketing-event-contract";
+import { downstreamFailureStatus } from "@/lib/marketing-event-delivery";
 import { sendWhatsAppClickAlert } from "@/lib/contact-email";
 import { classifyTrafficAttribution } from "@/lib/traffic-attribution";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const allowedEventTypes = new Set([
-  "page_view",
-  "whatsapp_click",
-  "instagram_click",
-  "phone_click",
-  "directions_click",
-  "cta_click",
-  "service_detail_click",
-  "form_view",
-  "form_start",
-  "form_field_complete",
-  "form_abandon",
-  "form_submit_attempt",
-  "form_validation_error",
-  "form_submit_error",
-  "scroll_depth",
-  "custom",
-]);
-const allowedMetadataKeys = new Set([
-  "eventLabel",
-  "method",
-  "formName",
-  "lastField",
-  "validationReason",
-  "elapsedSeconds",
-  "fieldsCompleted",
-  "completionPercent",
-  "engagedSeconds",
-  "percentScrolled",
-  "experimentId",
-  "variantId",
-  "componentId",
-  "position",
-  "pageType",
-  "serviceId",
-  "flowType",
-  "stepId",
-  "optionId",
-  "fieldId",
-  "interactionAction",
-  "estimateState",
-  "destinationType",
-  "destinationPath",
-  "visitorCity",
-  "sessionOriginType",
-  "siteHostname",
-  "environment",
-  "measurementMode",
-  "eventContractVersion",
-]);
 const whatsappDedupe = new Map<string, { expiresAt: number }>();
 const DEDUPE_MS = 30 * 60 * 1000;
 const eventRequests = new Map<string, { count: number; expiresAt: number }>();
@@ -72,31 +29,15 @@ const productionHostnames = new Set([
   "premiumretifica.com.br",
   "www.premiumretifica.com.br",
 ]);
-const destinationTypes = new Set([
-  "whatsapp",
-  "phone",
-  "estimate",
-  "service",
-  "contact",
-  "directions",
-  "video",
-  "other",
-]);
-const measurementModes = new Set([
-  "analytics",
-  "advertising",
-  "analytics_and_advertising",
-]);
-const technicalDimensionKeys = new Set([
-  "optionId",
-  "fieldId",
-  "interactionAction",
-]);
-
 function clean(value: unknown, max = 500) {
   return typeof value === "string"
     ? value.replace(/\s+/g, " ").trim().slice(0, max)
     : "";
+}
+
+function cleanNonPersonal(value: unknown, max: number) {
+  const cleaned = clean(value, max);
+  return cleaned && !containsHighConfidencePersonalData(cleaned) ? cleaned : "";
 }
 
 function validLeadCode(value: string) {
@@ -105,80 +46,16 @@ function validLeadCode(value: string) {
   );
 }
 
-function cleanMetadata(value: unknown) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
-
-  const metadata: Record<string, string | number | boolean> = {};
-
-  for (const [key, item] of Object.entries(value)) {
-    if (!allowedMetadataKeys.has(key)) continue;
-
-    if (key === "destinationType") {
-      const destinationType = clean(item, 32).toLowerCase();
-      if (destinationTypes.has(destinationType)) {
-        metadata[key] = destinationType;
-      }
-      continue;
-    }
-
-    if (key === "destinationPath") {
-      const destinationPath = clean(item, 180).split(/[?#]/, 1)[0];
-      if (/^\/[a-z0-9/_-]*$/i.test(destinationPath)) {
-        metadata[key] = `/${destinationPath.replace(/^\/+/, "")}`;
-      }
-      continue;
-    }
-
-    if (key === "visitorCity") {
-      const city = clean(item, 60);
-      if (/^[\p{L}\s.'-]+$/u.test(city)) metadata[key] = city;
-      continue;
-    }
-
-    if (key === "measurementMode") {
-      const measurementMode = clean(item, 40);
-      if (measurementModes.has(measurementMode)) {
-        metadata[key] = measurementMode;
-      }
-      continue;
-    }
-
-    if (technicalDimensionKeys.has(key)) {
-      const dimension = clean(item, 100);
-      if (
-        dimension &&
-        /^[A-Za-z0-9_-]+$/.test(dimension) &&
-        dimension.replace(/\D/g, "").length < 10
-      ) {
-        metadata[key] = dimension;
-      }
-      continue;
-    }
-
-    if (typeof item === "string") {
-      const cleaned = clean(item, key === "siteHostname" ? 255 : 180);
-      if (cleaned) metadata[key] = cleaned;
-      continue;
-    }
-
-    if (typeof item === "number" && Number.isFinite(item)) {
-      metadata[key] = Math.max(-1_000_000, Math.min(1_000_000, item));
-      continue;
-    }
-
-    if (typeof item === "boolean") metadata[key] = item;
-  }
-
-  return metadata;
-}
-
 function cleanPagePath(value: unknown) {
-  const path = clean(value, 500).split(/[?#]/, 1)[0];
+  const path = clean(value, MARKETING_EVENT_CONTRACT.limits.pagePath).split(
+    /[?#]/,
+    1
+  )[0];
   return path.startsWith("/") ? `/${path.replace(/^\/+/, "")}` : "/";
 }
 
 function cleanPageLocation(value: unknown) {
-  const location = clean(value, 800);
+  const location = clean(value, MARKETING_EVENT_CONTRACT.limits.pageLocation);
   if (!location) return undefined;
 
   try {
@@ -191,7 +68,7 @@ function cleanPageLocation(value: unknown) {
 }
 
 function cleanReferrerOrigin(value: unknown) {
-  const referrer = clean(value, 800);
+  const referrer = clean(value, MARKETING_EVENT_CONTRACT.limits.referrer);
   if (!referrer) return undefined;
 
   try {
@@ -294,7 +171,7 @@ export async function POST(request: Request) {
   }
 
   const contentLength = Number(request.headers.get("content-length") || 0);
-  if (contentLength > 32_000) {
+  if (contentLength > MARKETING_EVENT_CONTRACT.limits.bodyBytes) {
     return NextResponse.json(
       { ok: false, message: "Evento muito grande." },
       { status: 413 }
@@ -302,7 +179,10 @@ export async function POST(request: Request) {
   }
 
   const rawBody = await request.text().catch(() => "");
-  if (rawBody.length > 32_000) {
+  if (
+    new TextEncoder().encode(rawBody).byteLength >
+    MARKETING_EVENT_CONTRACT.limits.bodyBytes
+  ) {
     return NextResponse.json(
       { ok: false, message: "Evento muito grande." },
       { status: 413 }
@@ -318,16 +198,20 @@ export async function POST(request: Request) {
   } catch {
     body = null;
   }
-  const eventType = clean(body?.eventType, 60);
+  const eventDefinition = normalizeMarketingEventType(body?.eventType);
 
-  if (!body || !allowedEventTypes.has(eventType)) {
+  if (!body || !eventDefinition) {
     return NextResponse.json(
       { ok: false, message: "Evento inválido." },
       { status: 400 }
     );
   }
+  const eventType = eventDefinition.name;
 
-  const normalizedLeadCode = clean(body.leadCode, 40).toUpperCase();
+  const normalizedLeadCode = clean(
+    body.leadCode,
+    MARKETING_EVENT_CONTRACT.limits.leadCode
+  ).toUpperCase();
   if (!validLeadCode(normalizedLeadCode)) {
     return NextResponse.json(
       { ok: false, message: "Código do contato inválido." },
@@ -343,16 +227,22 @@ export async function POST(request: Request) {
   }
 
   const hasGoogleClickId = Boolean(
-    clean(body.gclid, 220) || clean(body.gbraid, 220) || clean(body.wbraid, 220)
+    clean(body.gclid, MARKETING_EVENT_CONTRACT.limits.clickId) ||
+      clean(body.gbraid, MARKETING_EVENT_CONTRACT.limits.clickId) ||
+      clean(body.wbraid, MARKETING_EVENT_CONTRACT.limits.clickId)
   );
   const attribution = classifyTrafficAttribution({
-    source: clean(body.source, 120) || undefined,
-    medium: clean(body.medium, 120) || undefined,
-    referrer: clean(body.referrer, 800) || undefined,
+    source:
+      cleanNonPersonal(body.source, MARKETING_EVENT_CONTRACT.limits.source) ||
+      undefined,
+    medium:
+      cleanNonPersonal(body.medium, MARKETING_EVENT_CONTRACT.limits.medium) ||
+      undefined,
+    referrer: cleanReferrerOrigin(body.referrer),
     hasGoogleClickId,
   });
   const pageLocation = cleanPageLocation(body.pageLocation);
-  const metadata = cleanMetadata(body.metadata);
+  const metadata = sanitizeMarketingEventMetadata(body.metadata);
   if (
     metadata.measurementMode !== "analytics" &&
     metadata.measurementMode !== "analytics_and_advertising"
@@ -361,26 +251,53 @@ export async function POST(request: Request) {
   }
   const environment = pageEnvironment(pageLocation);
   const event: ExternalMarketingEvent = {
-    eventId: clean(body.eventId, 80) || randomUUID(),
+    eventId:
+      clean(body.eventId, MARKETING_EVENT_CONTRACT.limits.eventId) ||
+      randomUUID(),
     leadCode: normalizedLeadCode,
-    anonymousId: clean(body.anonymousId, 120) || undefined,
-    sessionId: clean(body.sessionId, 120) || undefined,
+    anonymousId:
+      clean(body.anonymousId, MARKETING_EVENT_CONTRACT.limits.anonymousId) ||
+      undefined,
+    sessionId:
+      clean(body.sessionId, MARKETING_EVENT_CONTRACT.limits.sessionId) ||
+      undefined,
     eventType,
-    channel: clean(body.channel, 80) || undefined,
-    occurredAt: clean(body.occurredAt, 80) || new Date().toISOString(),
+    channel:
+      cleanNonPersonal(body.channel, MARKETING_EVENT_CONTRACT.limits.channel) ||
+      undefined,
+    occurredAt:
+      clean(body.occurredAt, MARKETING_EVENT_CONTRACT.limits.occurredAt) ||
+      new Date().toISOString(),
     pagePath: cleanPagePath(body.pagePath),
     pageLocation,
-    pageTitle: clean(body.pageTitle, 300) || undefined,
+    pageTitle:
+      cleanNonPersonal(
+        body.pageTitle,
+        MARKETING_EVENT_CONTRACT.limits.pageTitle
+      ) || undefined,
     referrer: cleanReferrerOrigin(body.referrer),
     source: attribution.source || "direto",
     medium: attribution.medium,
-    campaign: clean(body.campaign, 180) || undefined,
-    term: clean(body.term, 180) || undefined,
-    content: clean(body.content, 180) || undefined,
-    gclid: clean(body.gclid, 220) || undefined,
-    gbraid: clean(body.gbraid, 220) || undefined,
-    wbraid: clean(body.wbraid, 220) || undefined,
-    deviceType: clean(body.deviceType, 40) || undefined,
+    campaign:
+      cleanNonPersonal(body.campaign, MARKETING_EVENT_CONTRACT.limits.campaign) ||
+      undefined,
+    term:
+      cleanNonPersonal(body.term, MARKETING_EVENT_CONTRACT.limits.term) ||
+      undefined,
+    content:
+      cleanNonPersonal(body.content, MARKETING_EVENT_CONTRACT.limits.content) ||
+      undefined,
+    gclid:
+      clean(body.gclid, MARKETING_EVENT_CONTRACT.limits.clickId) || undefined,
+    gbraid:
+      clean(body.gbraid, MARKETING_EVENT_CONTRACT.limits.clickId) || undefined,
+    wbraid:
+      clean(body.wbraid, MARKETING_EVENT_CONTRACT.limits.clickId) || undefined,
+    deviceType:
+      cleanNonPersonal(
+        body.deviceType,
+        MARKETING_EVENT_CONTRACT.limits.deviceType
+      ) || undefined,
     city:
       typeof metadata.visitorCity === "string"
         ? metadata.visitorCity
@@ -389,11 +306,19 @@ export async function POST(request: Request) {
       ...metadata,
       siteHostname: environment.hostname,
       environment: environment.environment,
+      eventContractVersion: MARKETING_EVENT_CONTRACT.schemaVersion,
     },
   };
 
   const storage = await saveExternalMarketingEvent(event);
   if (!storage.saved) {
+    const failureStatus = downstreamFailureStatus(storage);
+    const headers = storage.retryAfter
+      ? { "Retry-After": storage.retryAfter }
+      : undefined;
+    if (failureStatus === 204 || failureStatus === 304) {
+      return new NextResponse(null, { status: failureStatus, headers });
+    }
     return NextResponse.json(
       {
         ok: false,
@@ -401,10 +326,14 @@ export async function POST(request: Request) {
         leadCode: event.leadCode,
         storageSaved: false,
         alertStatus: "not_stored",
-        storage,
-        message: "Não foi possível armazenar o evento agora.",
+        storage: {
+          configured: storage.configured,
+          saved: false,
+          status: storage.status,
+        },
+        message: "O destino não confirmou o armazenamento do evento.",
       },
-      { status: 503 }
+      { status: failureStatus, headers }
     );
   }
 
@@ -449,7 +378,7 @@ export async function POST(request: Request) {
           );
           console.error(
             "WhatsApp click alert failed:",
-            error instanceof Error ? error.message : "UNKNOWN_ERROR"
+            error instanceof Error ? error.name : "UNKNOWN_ERROR"
           );
         }
       }
