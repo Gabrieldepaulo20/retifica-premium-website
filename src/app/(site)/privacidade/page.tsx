@@ -147,10 +147,21 @@ export default function PrivacidadePage() {
                   Ela não é usada para publicidade.
                 </p>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
-                  Você pode se opor a essa contagem essencial a qualquer momento,
-                  escrevendo para o contato indicado no fim desta página. Também
-                  pode revisar suas escolhas pelo link “Privacidade e cookies” no
-                  rodapé.
+                  <strong className="text-[#06172e]">
+                    Como parar essa contagem agora.
+                  </strong>{" "}
+                  Abra{" "}
+                  <a
+                    href="/?nao-medir=1"
+                    className="font-bold text-[#053282] underline decoration-[#053282]/30 underline-offset-4"
+                  >
+                    premiumretifica.com.br/?nao-medir=1
+                  </a>{" "}
+                  e este aparelho para de ser medido, imediatamente e nas visitas
+                  seguintes, sem depender de e-mail nem de resposta nossa. Para
+                  voltar a permitir, troque o número por zero. Você também pode se
+                  opor escrevendo para o contato no fim desta página, ou revisar
+                  suas escolhas pelo link “Privacidade e cookies” no rodapé.
                 </p>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
                   Conforme suas escolhas opcionais, podemos registrar página,

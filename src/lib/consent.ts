@@ -249,7 +249,57 @@ export function currentTrackingEnvironment(): TrackingEnvironment {
  * O override existe somente para um smoke test deliberado e mantém o ambiente
  * identificado no payload para permitir sua exclusão dos relatórios.
  */
+/**
+ * Chave que marca este aparelho como INTERNO e desliga toda a medição nele.
+ *
+ * POR QUE EXISTE
+ *
+ * Em 19/08 o Clarity registrou 13 sessões em 3 dias, e 10 eram Chrome/macOS do
+ * Brasil com média de 469 segundos: eram o dono e o desenvolvedor testando o
+ * site. Sobravam 3 visitantes reais. Qualquer média calculada sobre isso é
+ * ficção, e decisão de verba tomada em cima dela é chute.
+ *
+ * Serve também como o mecanismo de OPOSIÇÃO que a página /privacidade promete:
+ * quem não quer nem a contagem essencial por legítimo interesse abre
+ * `?nao-medir=1` e para de ser medido, sem depender de e-mail.
+ */
+const OPT_OUT_KEY = "retifica_premium_nao_medir";
+const OPT_OUT_PARAM = "nao-medir";
+
+/**
+ * Lê e atualiza a marca de aparelho interno.
+ *
+ * `?nao-medir=1` liga, `?nao-medir=0` desliga. A escolha fica no aparelho, para
+ * valer nas visitas seguintes sem repetir o parâmetro na URL.
+ */
+export function trackingOptedOut() {
+  if (typeof window === "undefined") return false;
+
+  try {
+    const param = new URLSearchParams(window.location.search).get(OPT_OUT_PARAM);
+    if (param === "1" || param === "true") {
+      window.localStorage.setItem(OPT_OUT_KEY, "1");
+      return true;
+    }
+    if (param === "0" || param === "false") {
+      window.localStorage.removeItem(OPT_OUT_KEY);
+      return false;
+    }
+    return window.localStorage.getItem(OPT_OUT_KEY) === "1";
+  } catch {
+    // Sem storage não há como lembrar da escolha; medir é o padrão.
+    return false;
+  }
+}
+
+/**
+ * Evita contaminar GA4, Ads, Clarity e Retiflow com localhost ou previews.
+ * O override existe somente para um smoke test deliberado e mantém o ambiente
+ * identificado no payload para permitir sua exclusão dos relatórios.
+ */
 export function canSendTrackingRequests() {
+  if (trackingOptedOut()) return false;
+
   return (
     currentTrackingEnvironment() === "production" ||
     process.env.NEXT_PUBLIC_TRACKING_DEBUG === "true"

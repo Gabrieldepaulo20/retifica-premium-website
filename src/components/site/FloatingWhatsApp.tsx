@@ -103,7 +103,11 @@ export function FloatingWhatsApp() {
          Colado na base: antes ficava 96px acima dela no celular, o que fazia o
          botão pairar no meio da tela e cobrir texto. E maior, para o polegar
          acertar sem mira. */
-      className="group fixed bottom-[max(0.9rem,env(safe-area-inset-bottom))] right-3 z-[999] inline-flex min-h-13 items-center gap-2.5 rounded-full bg-[#25D366] py-2 pl-2 pr-5 text-[#04240F] shadow-[0_12px_30px_rgba(4,36,15,0.45)] ring-1 ring-black/10 transition duration-300 hover:-translate-y-1 hover:brightness-110 active:translate-y-0 md:bottom-5 md:right-5 md:min-h-14"
+      /* z-[1200] fica ACIMA do aviso de privacidade, que usa z-[1100]. O
+         caminho para o WhatsApp nunca pode ser coberto por nada: foi
+         justamente por ficar escondido que o visitante pago saía em 8
+         segundos sem clicar. */
+      className="group fixed bottom-[max(0.9rem,env(safe-area-inset-bottom))] right-3 z-[1200] inline-flex min-h-13 items-center gap-2.5 rounded-full bg-[#25D366] py-2 pl-2 pr-5 text-[#04240F] shadow-[0_12px_30px_rgba(4,36,15,0.45)] ring-1 ring-black/10 transition duration-300 hover:-translate-y-1 hover:brightness-110 active:translate-y-0 md:bottom-5 md:right-5 md:min-h-14"
       aria-label="Fale conosco no WhatsApp"
     >
       <span className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm md:h-10 md:w-10">
