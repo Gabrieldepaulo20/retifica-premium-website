@@ -449,23 +449,9 @@ function VideoPlaceholder({
     <div className="relative overflow-hidden border border-white/12 bg-[#0A1424] shadow-[0_26px_80px_rgba(0,0,0,0.25)]">
       <div className="aspect-video bg-[radial-gradient(circle_at_30%_20%,rgba(245,184,46,0.28),transparent_28%),linear-gradient(135deg,rgba(29,95,170,0.22),rgba(7,17,31,0.92))] p-5 md:p-6">
         <div className="flex h-full flex-col justify-between">
-          <div className="flex items-center justify-between gap-4">
-            <span className="rounded-full border border-white/16 bg-white/8 px-3 py-1 font-body text-xs font-bold uppercase text-white/72">
-              Processo em foco
-            </span>
-            <span className="grid h-11 w-11 place-items-center rounded-full border border-[#F5B82E]/45 text-[#F5B82E]">
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                aria-hidden="true"
-              >
-                <path d="M4 7h16v10H4zM8 7V4h8v3M8 12h8" />
-              </svg>
-            </span>
-          </div>
+          <span className="w-fit rounded-full border border-white/16 bg-white/8 px-3 py-1 font-body text-xs font-bold uppercase text-white/72">
+            Processo em foco
+          </span>
           <div>
             <p className="max-w-xl font-heading text-xl font-bold leading-tight text-white sm:text-2xl md:text-3xl">
               {title}
@@ -475,15 +461,6 @@ function VideoPlaceholder({
       </div>
       <div className="border-t border-white/10 bg-white/[0.04] p-4">
         <p className="font-body text-sm leading-6 text-white/64">{hint}</p>
-        <div className="mt-3 grid grid-cols-8 gap-1">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <span
-              key={`video-progress-${index}`}
-              className="h-1.5 rounded-full bg-white/12"
-              style={{ opacity: index === 0 ? 1 : 0.35 + index * 0.06 }}
-            />
-          ))}
-        </div>
       </div>
     </div>
   );
