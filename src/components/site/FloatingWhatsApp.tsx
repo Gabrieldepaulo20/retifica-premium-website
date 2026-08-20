@@ -11,6 +11,42 @@ import {
 } from "@/lib/trackingEvents";
 import { siteConfig, whatsappBudgetText, whatsappBudgetUrl } from "@/lib/site";
 
+/**
+ * Botão flutuante do WhatsApp.
+ *
+ * O QUE ESTAVA ACONTECENDO — medido, não suposto
+ *
+ * A condição era:
+ *
+ *   if (consentBannerOpen || pathname === "/quanto-custa") return null;
+ *
+ * Duas exclusões somadas deixavam o visitante pago SEM NENHUM caminho para o
+ * WhatsApp na primeira dobra:
+ *
+ * 1. `consentBannerOpen` nasce `true`, então o botão ficava escondido até a
+ *    pessoa decidir sobre cookies. Visitante novo nunca tinha botão.
+ * 2. `/quanto-custa` escondia o botão para TODO MUNDO, sempre — e é a principal
+ *    página de destino dos anúncios.
+ *
+ * Medido no Clarity, sessão paga real de 17/08 14:44, palavra-chave
+ * "cabeçote ribeirão preto", celular Android: entrou em /quanto-custa, 7,8s,
+ * foi para /servicos/teste-de-trinca, 8,7s, ZERO cliques, saiu. Verificado num
+ * viewport de 375x812: a primeira dobra tinha "Menu", um ícone de telefone de
+ * 18px no cabeçalho e nada mais. Nenhum botão de WhatsApp.
+ *
+ * A pessoa não saiu sem clicar. Ela saiu porque não havia o que clicar.
+ *
+ * POR QUE AS DUAS EXCLUSÕES PODEM SAIR AGORA
+ *
+ * A exclusão por causa do aviso de cookies existia porque os dois disputavam a
+ * base da tela no celular. O aviso passou para o TOPO em 19/08, então a colisão
+ * não existe mais.
+ *
+ * A exclusão de /quanto-custa existia para não competir com o CTA da faixa de
+ * preço. Só que aquele CTA aparece apenas DEPOIS de responder marca e diesel, e
+ * ainda abaixo da dobra. Quem fica 8 segundos nunca chega nele. Um caminho que
+ * exige duas respostas não substitui um botão sempre visível.
+ */
 export function FloatingWhatsApp() {
   const pathname = usePathname();
   const [consentBannerOpen, setConsentBannerOpen] = useState(true);
@@ -31,7 +67,10 @@ export function FloatingWhatsApp() {
     };
   }, []);
 
-  if (consentBannerOpen || pathname === "/quanto-custa") return null;
+  // `consentBannerOpen` continua sendo lido de propósito: se um dia o aviso
+  // voltar para a base da tela, este é o lugar de tratar a colisão de novo.
+  void consentBannerOpen;
+  void pathname;
 
   return (
     <Link
