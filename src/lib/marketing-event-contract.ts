@@ -152,6 +152,15 @@ export const MARKETING_EVENT_CONTRACT = {
       "analytics",
       "advertising",
       "analytics_and_advertising",
+      /*
+        "essencial" = contagem mínima do funil por legítimo interesse, de quem
+        ainda não decidiu sobre cookies. O rótulo descreve a BASE LEGAL do
+        registro, nunca a pessoa, e existe para permitir auditoria: foi
+        comparando "anonymous" com "consented" que a regressão de 14/08
+        apareceu. Sem esse rótulo não há como detectar a próxima nem conferir se
+        a contagem essencial está respeitando o próprio limite.
+      */
+      "essencial",
     ],
     technicalDimensionKeys: [
       "optionId",
