@@ -1199,6 +1199,25 @@ function captureRuntimeAttribution() {
     source: classified.source,
     medium: classified.medium,
     originType: classified.originType,
+    /*
+      Palavra-chave e campanha entram na atribuição em memória.
+
+      Sem isso, o visitante que não decidiu sobre cookies chegava com
+      `medium=cpc` mas sem `term`, e o cruzamento "qual palavra trouxe quem
+      falou" ficava cego justamente na maior parte do tráfego pago.
+
+      São descrições da SEGMENTAÇÃO DO ANÚNCIO, não identificadores da pessoa:
+      `utm_term` é a palavra que a retífica comprou, `utm_campaign` é o nome da
+      campanha. Nenhum dos dois permite reconhecer alguém entre sites, ao
+      contrário do `gclid`, que segue removido de quem não autorizou
+      publicidade.
+
+      Continua sendo memória apenas: `runtimeAttribution` não é gravado no
+      aparelho — `captureTrafficAttribution` é que persiste, e ela permanece
+      atrás do consentimento.
+    */
+    term: privacySafeAttributionText(params.get("utm_term"), 120),
+    campaign: privacySafeAttributionText(params.get("utm_campaign"), 120),
     landingPage: privacySafePageLocation(),
     referrer: safeReferrerOrigin(),
     capturedAt: capturedAt.toISOString(),
