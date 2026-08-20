@@ -151,12 +151,12 @@ export default function PrivacidadePage() {
                     Como parar essa contagem agora.
                   </strong>{" "}
                   Abra{" "}
-                  <a
+                  <Link
                     href="/?nao-medir=1"
                     className="font-bold text-[#053282] underline decoration-[#053282]/30 underline-offset-4"
                   >
                     premiumretifica.com.br/?nao-medir=1
-                  </a>{" "}
+                  </Link>{" "}
                   e este aparelho para de ser medido, imediatamente e nas visitas
                   seguintes, sem depender de e-mail nem de resposta nossa. Para
                   voltar a permitir, troque o número por zero. Você também pode se
