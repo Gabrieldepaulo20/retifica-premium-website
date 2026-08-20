@@ -95,7 +95,7 @@ test("cliente invalida códigos legados para que o storage local regenere", () =
   assert.equal(isSupportedLeadCode("RP-20260819-AB12"), false);
 });
 
-test("rotas não geram IDs no retry e metadata de contato respeita a allowlist", async () => {
+test("rotas não geram IDs no retry e metadata de contato leva mensagem, assunto e nível B2B ao Retiflow", async () => {
   const contactSource = await readFile(
     new URL("../src/app/api/contato/route.ts", import.meta.url),
     "utf8"
@@ -113,7 +113,9 @@ test("rotas não geram IDs no retry e metadata de contato respeita a allowlist",
   const leadStart = contactSource.indexOf("lead:", metadataStart);
   assert.ok(metadataStart >= 0 && leadStart > metadataStart);
   const metadataSource = contactSource.slice(metadataStart, leadStart);
-  assert.doesNotMatch(metadataSource, /subject|b2bLevel/);
+  assert.match(metadataSource, /mensagem: mensagem \|\| undefined/);
+  assert.match(metadataSource, /assunto: assunto \|\| undefined/);
+  assert.match(metadataSource, /nivel_b2b: b2bLevel \|\| undefined/);
 });
 
 test("rotas removem PII de IDs e paths antes de encaminhar ao Edge", async () => {
@@ -231,6 +233,8 @@ test("rotas removem PII de IDs e paths antes de encaminhar ao Edge", async () =>
     visitorCity: "Ribeirão Preto",
     measurementMode: "analytics",
     eventContractVersion: "marketing-events-v3",
+    mensagem: "Preciso avaliar o cabeçote.",
+    assunto: "Solicitar orçamento",
   });
   assert.deepEqual(analyticsContact.lead, {
     name: "Cliente Teste",

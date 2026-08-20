@@ -301,8 +301,17 @@ export function EstimativaGuiada() {
       // Sem isto, todo número do funil vira média de segmentos que não se
       // parecem. Com isto, dá para ler conclusão e conversão por segmento.
       segmento,
+      marca_veiculo: answers.vehicle.make || undefined,
+      modelo_veiculo: answers.vehicle.model || undefined,
+      sintomas: answers.symptoms.length ? answers.symptoms.join(",") : undefined,
     }),
-    [answers.serviceContextId, segmento]
+    [
+      answers.serviceContextId,
+      segmento,
+      answers.vehicle.make,
+      answers.vehicle.model,
+      answers.symptoms,
+    ]
   );
 
   useEffect(() => {

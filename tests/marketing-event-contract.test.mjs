@@ -116,8 +116,8 @@ test("campos obrigatórios, opcionais e limites críticos permanecem versionados
   assert.equal(MARKETING_EVENT_CONTRACT.limits.eventId, 80);
   assert.equal(MARKETING_EVENT_CONTRACT.limits.clickId, 220);
   assert.equal(MARKETING_EVENT_CONTRACT.limits.metadataString, 180);
-  assert.equal(MARKETING_EVENT_CONTRACT.metadata.allowedKeys.length, 30);
-  assert.equal(MARKETING_EVENT_CONTRACT.metadata.maxKeys, 30);
+  assert.equal(MARKETING_EVENT_CONTRACT.metadata.allowedKeys.length, 36);
+  assert.equal(MARKETING_EVENT_CONTRACT.metadata.maxKeys, 36);
   assert.equal(MARKETING_EVENT_CONTRACT.metadata.keyLength, 80);
   assert.equal(MARKETING_EVENT_CONTRACT.metadata.numericMin, -1_000_000);
   assert.equal(MARKETING_EVENT_CONTRACT.metadata.numericMax, 1_000_000);
@@ -191,7 +191,7 @@ test("allowlist, quantidade e limites de metadata são determinísticos", () => 
     unknownAfter: "ignorado",
   });
 
-  assert.equal(Object.keys(sanitized).length, 30);
+  assert.equal(Object.keys(sanitized).length, 36);
   assert.deepEqual(
     Object.keys(sanitized),
     [...MARKETING_EVENT_CONTRACT.metadata.allowedKeys]

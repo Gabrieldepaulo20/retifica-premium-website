@@ -338,13 +338,20 @@ export async function POST(request: Request) {
     wbraid: wbraid || undefined,
     city: cidade || undefined,
     metadata: sanitizeMarketingEventMetadata({
+      // Cidade é dado digitado voluntariamente no formulário, não
+      // rastreamento de terceiro. Bloqueada só no modo publicidade-apenas;
+      // liberada em análise e no modo essencial (ninguém decidiu ainda).
       visitorCity:
         measurementMode === "analytics" ||
-        measurementMode === "analytics_and_advertising"
+        measurementMode === "analytics_and_advertising" ||
+        measurementMode === "essencial"
           ? cidade
           : undefined,
       measurementMode,
       eventContractVersion: MARKETING_EVENT_CONTRACT.schemaVersion,
+      mensagem: mensagem || undefined,
+      assunto: assunto || undefined,
+      nivel_b2b: b2bLevel || undefined,
     }),
     lead: {
       name: nome,

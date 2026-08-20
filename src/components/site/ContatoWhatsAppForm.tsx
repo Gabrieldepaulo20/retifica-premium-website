@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  measurementModeForConsent,
   privacySafePageLocation,
   readConsentPreferences,
 } from "@/lib/consent";
@@ -336,13 +337,10 @@ export function ContatoWhatsAppForm({
 
     try {
       const consent = readConsentPreferences();
-      const measurementMode = consent?.analytics
-        ? consent.advertising
-          ? "analytics_and_advertising"
-          : "analytics"
-        : consent?.advertising
-          ? "advertising"
-          : undefined;
+      const measurementMode = measurementModeForConsent({
+        analytics: consent?.analytics ?? false,
+        advertising: consent?.advertising ?? false,
+      });
       const requestPayload = {
         ...form,
         eventId: createMarketingEventId(),

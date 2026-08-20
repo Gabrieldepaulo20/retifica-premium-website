@@ -23,7 +23,21 @@ export type ExternalMarketingEvent = {
   city?: string;
   /** UF informada voluntariamente, quando disponível. */
   region?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: {
+    /** Texto livre do formulário de contato. */
+    mensagem?: string;
+    /** Assunto selecionado no formulário de contato. */
+    assunto?: string;
+    /** Faixa de investimento escolhida no formulário B2B. */
+    nivel_b2b?: string;
+    /** Marca do veículo informada nas perguntas do site guiada. */
+    marca_veiculo?: string;
+    /** Modelo do veículo informado nas perguntas do site guiada. */
+    modelo_veiculo?: string;
+    /** Sintomas selecionados nas perguntas do site guiada, unidos por vírgula. */
+    sintomas?: string;
+    [key: string]: unknown;
+  };
   lead?: {
     name?: string;
     email?: string;

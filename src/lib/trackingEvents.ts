@@ -107,6 +107,12 @@ export type MarketingEventParams = {
   destination_path?: string;
   /** Cidade informada de forma explícita; é enviada apenas ao Retiflow. */
   visitor_city?: string;
+  /** Marca do veículo, informada nas perguntas do site guiada. */
+  marca_veiculo?: string;
+  /** Modelo do veículo, informado nas perguntas do site guiada. */
+  modelo_veiculo?: string;
+  /** Sintomas selecionados nas perguntas do site guiada, unidos por vírgula. */
+  sintomas?: string;
   [key: string]: string | number | undefined;
 };
 
@@ -1345,9 +1351,16 @@ export function sendExternalMarketingEvent(
       estimateState: params.estimate_state,
       destinationType: destination.type,
       destinationPath: destination.path,
-      visitorCity: analyticsConsented
-        ? explicitCity(params.visitor_city)
-        : undefined,
+      // Cidade é dado digitado voluntariamente, não rastreamento de terceiro.
+      // Bloqueada só no modo publicidade-apenas; liberada em análise e no
+      // modo essencial (ninguém decidiu ainda), como o Edge já faz.
+      visitorCity:
+        analyticsConsented || !advertisingConsented
+          ? explicitCity(params.visitor_city)
+          : undefined,
+      marca_veiculo: params.marca_veiculo,
+      modelo_veiculo: params.modelo_veiculo,
+      sintomas: params.sintomas,
       sessionOriginType,
       siteHostname: currentTrackingHostname(),
       environment: currentTrackingEnvironment(),
