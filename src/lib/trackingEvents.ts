@@ -473,10 +473,58 @@ function privacySafeAttributionText(value: unknown, max = 180) {
   return compact;
 }
 
+/**
+ * Contagem essencial do funil, por LEGÍTIMO INTERESSE (LGPD art. 7º, IX).
+ *
+ * Autorizada pelo controlador em 19/08/2026, com a página /privacidade
+ * reescrita no mesmo commit para descrever exatamente esta lista e o direito de
+ * oposição. Se esta lista crescer, aquele texto muda junto — o site não pode
+ * medir mais do que promete.
+ *
+ * POR QUE ESTA LISTA É CURTA
+ *
+ * Legítimo interesse cobre só o estritamente necessário e de baixo impacto para
+ * o titular. Entram os degraus do funil que respondem "o site funciona?" e "o
+ * anúncio se paga?" — nada além. Continuam exigindo consentimento: tempo ativo
+ * detalhado, rolagem, cidade, `gclid` e tudo que permita remontar o
+ * comportamento de uma pessoa específica.
+ *
+ * O evento anônimo viaja com um id de sessão criado em MEMÓRIA por
+ * `createEphemeralContactIntent`, que morre ao fechar a aba: sem cookie, sem
+ * localStorage, sem anonymousId persistente.
+ *
+ * HISTÓRICO — para não regredir de novo
+ *
+ * 03/08, commit 8460093: passou a registrar sessão sem consentimento opcional.
+ * 10/08, commit 40db840: introduziu este portão e desfez aquilo sem querer.
+ * O efeito chegou aos visitantes em 14/08. Medido no banco: sessões registradas
+ * caíram de 18–36 por dia para 1–12, e a cobertura dos cliques pagos caiu de
+ * ~100% para 20%. O painel mostrava 1 contato enquanto o atendimento recebia
+ * mais de 30.
+ */
+const ESSENTIAL_MEASUREMENT_EVENTS = new Set([
+  "page_view",
+  "whatsapp_click",
+  "phone_click",
+  "form_submit",
+  "generate_lead",
+  /*
+    `session_engagement` entra para responder "as pessoas ficam na página?".
+    Carrega UM número por sessão, `engagedSeconds` — não uma linha do tempo do
+    que a pessoa fez. É o mínimo para saber se a página segura quem chega.
+
+    Continuam fora, exigindo consentimento: `scroll_depth`, cliques decorativos
+    e os eventos de passo da triagem, que juntos remontariam comportamento
+    individual.
+  */
+  "session_engagement",
+]);
+
 function hasExternalEventConsent(eventType: string) {
   return (
     hasAnalyticsConsent() ||
-    (hasAdvertisingConsent() && ADVERTISING_MEASUREMENT_EVENTS.has(eventType))
+    (hasAdvertisingConsent() && ADVERTISING_MEASUREMENT_EVENTS.has(eventType)) ||
+    ESSENTIAL_MEASUREMENT_EVENTS.has(eventType)
   );
 }
 
@@ -1172,10 +1220,21 @@ export function sendExternalMarketingEvent(
   if (!eventDefinition) return;
   eventType = eventDefinition.name;
 
+  /*
+    O tempo ativo chega aqui como `custom` com `event_label` igual a
+    "session_engagement", sem passar por `trackMarketingEvent`. Liberar o tipo
+    `custom` inteiro abriria TODOS os eventos personalizados — passos da
+    triagem, impressão de CTA, engagement_5s — que a página /privacidade diz
+    depender de consentimento. Por isso a liberação é pelo rótulo, um a um.
+  */
+  const rotulo = compactString(params.event_label, 120);
+  const contagemEssencialPorRotulo =
+    eventType === "custom" && rotulo === "session_engagement";
+
   if (
     typeof window === "undefined" ||
     !isConsentRuntimeReady() ||
-    !hasExternalEventConsent(eventType) ||
+    (!hasExternalEventConsent(eventType) && !contagemEssencialPorRotulo) ||
     !canSendTrackingRequests()
   ) {
     return;
@@ -1496,10 +1555,21 @@ export function trackMarketingEvent(
   eventName: GaEventName,
   params: MarketingEventParams = {}
 ) {
+  /*
+    Portão mestre. Era `!hasMeasurementConsent()` puro, e por isso barrava tudo
+    antes de qualquer verificação por evento — inclusive a contagem essencial.
+    Era ELE o motivo de nenhum evento sair de quem não decidiu.
+
+    A contagem essencial passa; o resto continua exigindo escolha. Nada é
+    afrouxado a jusante: o envio ao Google/GA4 abaixo já está guardado por
+    `hasAnalyticsConsent()`, a conversão do Ads por `hasAdvertisingConsent()`, e
+    `consentSafeExternalMarketingPayload` remove `gclid` de quem não autorizou
+    publicidade. Só o registro próprio (Retiflow) recebe o evento anônimo.
+  */
   if (
     typeof window === "undefined" ||
     !isConsentRuntimeReady() ||
-    !hasMeasurementConsent()
+    (!hasMeasurementConsent() && !ESSENTIAL_MEASUREMENT_EVENTS.has(eventName))
   ) {
     return;
   }

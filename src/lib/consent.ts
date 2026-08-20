@@ -164,7 +164,17 @@ export function measurementModeForConsent(
   }
   if (preferences.analytics) return "analytics" as const;
   if (preferences.advertising) return "advertising" as const;
-  return undefined;
+  /*
+    Sem escolha opcional, o evento continua saindo — mas só os degraus do funil
+    listados em ESSENTIAL_MEASUREMENT_EVENTS, por legítimo interesse.
+
+    Retorna "essencial" em vez de `undefined` para que esses registros sejam
+    distinguíveis no banco. Sem esse rótulo não há como auditar se a contagem
+    essencial está respeitando o próprio limite, nem como detectar uma regressão
+    como a de 14/08 — foi justamente comparando `anonymous` com `consented` que
+    a quebra apareceu. O rótulo descreve a BASE LEGAL do registro, não a pessoa.
+  */
+  return "essencial" as const;
 }
 
 export function sanitizeTrackingPayloadForConsent<
@@ -181,7 +191,21 @@ export function sanitizeTrackingPayloadForConsent<
       ? { ...(cleanedPayload.metadata as Record<string, unknown>) }
       : {};
 
-  if (!preferences.analytics) {
+  /*
+    Cidade permanece na contagem essencial, por decisão do controlador em
+    19/08/2026: para uma retífica com uma oficina só, saber de que cidade vem a
+    procura é o que define raio de anúncio e se vale buscar a peça.
+
+    Salvaguardas que tornam isso defensável, e que NÃO devem ser removidas:
+    - granularidade de cidade/UF, estimada por IP, nunca GPS;
+    - o painel só exibe grupos com no mínimo 3 sessões (`minimumSessions`),
+      então cidade pequena não vira identificação por eliminação;
+    - nunca combinada com nome, telefone ou e-mail.
+
+    A página /privacidade descreve exatamente isso e o direito de oposição.
+  */
+  const semQualquerEscolha = !preferences.analytics && !preferences.advertising;
+  if (!preferences.analytics && !semQualquerEscolha) {
     delete cleanedPayload.city;
     delete cleanedPayload.visitorCity;
     delete metadata.visitorCity;

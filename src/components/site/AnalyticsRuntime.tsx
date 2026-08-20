@@ -132,7 +132,16 @@ export function AnalyticsRuntime() {
   }, [consentReady, consentRevision, pathname, sessionRevision]);
 
   useEffect(() => {
-    if (!consentReady || !hasAnalyticsConsent()) {
+    /*
+      Tempo ativo entra na contagem essencial: é o que responde "a página segura
+      quem chega?". Antes o efeito nem rodava sem consentimento de análise.
+
+      Sem consentimento, a contagem vive só em `accumulatedActiveMsRef`, ou seja
+      na memória da aba. O `persistActiveTime` abaixo continua guardado por
+      `hasAnalyticsConsent()`, então nada é escrito no aparelho de quem não
+      decidiu — que é exatamente o que a página /privacidade promete.
+    */
+    if (!consentReady) {
       accumulatedActiveMsRef.current = 0;
       return;
     }
@@ -222,10 +231,16 @@ export function AnalyticsRuntime() {
 
     captureTrafficAttribution();
 
-    if (
-      hasAnalyticsConsent() &&
-      lastMeasuredPathnameRef.current !== pathname
-    ) {
+    /*
+      `page_view` faz parte da contagem essencial (legítimo interesse), então
+      não depende mais de consentimento de análise. Era este `if` que impedia
+      qualquer registro de quem não decidiu.
+
+      Quem filtra o que pode sair é `ESSENTIAL_MEASUREMENT_EVENTS` em
+      trackingEvents.ts; aqui a decisão é só "houve navegação". O envio ao
+      GA4/Ads segue guardado lá dentro por consentimento.
+    */
+    if (lastMeasuredPathnameRef.current !== pathname) {
       trackMarketingEvent("page_view", {
         event_category: "navigation",
         event_label:

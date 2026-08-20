@@ -234,9 +234,18 @@ export async function POST(request: Request) {
   const pageLocation =
     sanitizeMarketingPageLocation(body.pageLocation) || undefined;
   const metadata = sanitizeMarketingEventMetadata(body.metadata);
+  /*
+    Cidade é aceita com análise autorizada OU na contagem essencial
+    ("essencial"), por decisão do controlador em 19/08/2026 — ver a nota em
+    `sanitizeTrackingPayloadForConsent` e a página /privacidade.
+
+    O modo "advertising" continua SEM cidade: quem liberou só publicidade não
+    autorizou análise, e cidade não é necessária para medir conversão de anúncio.
+  */
   if (
     metadata.measurementMode !== "analytics" &&
-    metadata.measurementMode !== "analytics_and_advertising"
+    metadata.measurementMode !== "analytics_and_advertising" &&
+    metadata.measurementMode !== "essencial"
   ) {
     delete metadata.visitorCity;
   }

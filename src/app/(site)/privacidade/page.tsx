@@ -107,15 +107,57 @@ export default function PrivacidadePage() {
                   Quais informações podemos utilizar
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
-                  Antes da sua decisão, o site usa apenas o armazenamento necessário
-                  para guardar a preferência de privacidade e restaurar uma perguntas do site
-                  iniciada neste aparelho. Eventos de navegação, tempo ativo e cliques
-                  não são enviados ao Retiflow, Google ou Clarity sem autorização.
-                  Conforme suas escolhas opcionais, podemos registrar página, origem,
-                  dispositivo, campanha e identificadores técnicos de clique. A
-                  atribuição local expira em até 90 dias e a preferência de privacidade
-                  em até 180 dias.
-                  Com análise autorizada, cidade, estado e país podem aparecer de
+                  Antes da sua decisão, o site usa apenas o armazenamento
+                  necessário para guardar a preferência de privacidade e
+                  restaurar uma pergunta do site iniciada neste aparelho.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  <strong className="text-[#06172e]">
+                    Contagem essencial, sem depender da sua escolha.
+                  </strong>{" "}
+                  Mesmo antes de você decidir, registramos uma contagem mínima
+                  para saber se o site funciona e se o investimento em anúncio se
+                  justifica: que a página foi aberta e se alguém tocou em falar no
+                  WhatsApp, ligar ou enviar o formulário. Fazemos isso com base no
+                  legítimo interesse previsto no art. 7º, IX da LGPD.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  Nessa contagem essencial também registramos{" "}
+                  <strong className="text-[#06172e]">
+                    quanto tempo a página ficou ativa
+                  </strong>{" "}
+                  — um único total por visita, não um histórico do que você fez —
+                  e uma{" "}
+                  <strong className="text-[#06172e]">
+                    estimativa de cidade e estado
+                  </strong>
+                  , calculada a partir do seu acesso à internet, nunca por GPS.
+                  Temos uma oficina só, e é isso que nos diz de onde vem a procura
+                  e se vale buscar a peça na sua região. Nos relatórios, cidades
+                  com menos de três visitas ficam ocultas, para que ninguém seja
+                  identificado por eliminação.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  Nessa contagem <strong className="text-[#06172e]">não</strong>{" "}
+                  usamos cookie nem identificador guardado no seu aparelho. O
+                  código de sessão existe apenas na memória da aba e desaparece
+                  quando você fecha o site. Não registramos seu nome, telefone,
+                  e-mail, endereço, identificador de clique de anúncio nem rolagem
+                  de página, e não juntamos a contagem com dados de atendimento.
+                  Ela não é usada para publicidade.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  Você pode se opor a essa contagem essencial a qualquer momento,
+                  escrevendo para o contato indicado no fim desta página. Também
+                  pode revisar suas escolhas pelo link “Privacidade e cookies” no
+                  rodapé.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  Conforme suas escolhas opcionais, podemos registrar página,
+                  origem, dispositivo, campanha, tempo ativo, rolagem e
+                  identificadores técnicos de clique. A atribuição local expira em
+                  até 90 dias e a preferência de privacidade em até 180 dias. Com
+                  análise autorizada, cidade, estado e país podem aparecer de
                   forma aproximada e agregada nos relatórios dos provedores. Essa
                   estimativa não corresponde ao GPS e não identifica com precisão
                   onde a pessoa está.
