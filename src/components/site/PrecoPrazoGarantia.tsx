@@ -55,10 +55,10 @@ type Cartao = {
 const cartoes: Cartao[] = [
   {
     titulo: "Quanto custa",
-    destaque: "Organize o seu caso primeiro",
-    texto: "São 6 perguntas rápidas. No fim você vê o que costuma estar por trás do que está acontecendo.",
+    destaque: "Veja uma referência de valor",
+    texto: "Consulte a faixa para carro de passeio. O orçamento definitivo depende da avaliação do cabeçote.",
     href: "/quanto-custa",
-    cta: "Fazer a perguntas do site",
+    cta: "Consultar referência de preço",
     icone: (
       <svg viewBox="0 0 32 32" className="h-7 w-7" aria-hidden="true" {...traco}>
         <circle cx="16" cy="16" r="11" />

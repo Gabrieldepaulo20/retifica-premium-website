@@ -1583,6 +1583,25 @@ export function buildWhatsAppUrlWithAttribution(
   return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
 }
 
+/** Envio exclusivo ao GA4: permite medir a página após um aceite tardio
+ * sem duplicar o page_view já contado no registro próprio. */
+export function trackAnalyticsEvent(
+  eventName: GaEventName,
+  params: MarketingEventParams = {}
+): boolean {
+  if (typeof window === "undefined" || !isConsentRuntimeReady() || !hasAnalyticsConsent() || !canSendTrackingRequests()) {
+    return false;
+  }
+  const trackingWindow = window as TrackingWindow;
+  if (typeof trackingWindow.gtag !== "function") return false;
+  trackingWindow.gtag("event", eventName, sanitizeGoogleEventParams({
+    ...attributionEventParams(),
+    ...params,
+    page_location: privacySafePageLocation(),
+  }));
+  return true;
+}
+
 export function trackMarketingEvent(
   eventName: GaEventName,
   params: MarketingEventParams = {}
@@ -1607,26 +1626,7 @@ export function trackMarketingEvent(
   }
 
   const trackingWindow = window as TrackingWindow;
-  const eventParams = sanitizeGoogleEventParams({
-    ...attributionEventParams(),
-    ...params,
-    page_location: privacySafePageLocation(),
-  });
-
-  if (
-    hasAnalyticsConsent() &&
-    typeof trackingWindow.gtag === "function"
-  ) {
-    trackingWindow.gtag("event", eventName, eventParams);
-  } else if (
-    hasAnalyticsConsent() &&
-    Array.isArray(trackingWindow.dataLayer)
-  ) {
-    trackingWindow.dataLayer.push({
-      event: eventName,
-      ...eventParams,
-    });
-  }
+  trackAnalyticsEvent(eventName, params);
 
   const conversionSendTo = GOOGLE_ADS_CONVERSIONS[eventName];
   if (

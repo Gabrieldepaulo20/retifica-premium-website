@@ -163,7 +163,8 @@
     "measurementModes": [
       "analytics",
       "advertising",
-      "analytics_and_advertising"
+      "analytics_and_advertising",
+      "essencial"
     ],
     "technicalDimensionKeys": [
       "optionId",

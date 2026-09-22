@@ -22,7 +22,7 @@ import { videos } from "@/lib/videos";
 const pagePath = "/retifica-em-ribeirao-preto";
 
 const whatsappMessage =
-  "Olá, sou de Ribeirão Preto e vim pelo site da Retífica Premium. Gostaria de um orçamento para retífica de cabeçote.";
+  "Olá! Vi a página de atendimento a Ribeirão Preto e quero combinar a avaliação de um cabeçote. Como funciona o recebimento da peça na oficina de Sertãozinho?";
 
 export const metadata: Metadata = {
   title: "Retífica de Cabeçote para Ribeirão Preto | Sertãozinho-SP",
@@ -83,12 +83,12 @@ const steps = [
     desc: "Conte o sintoma do motor ou envie fotos da peça. Respondemos com orientação técnica e o caminho para o orçamento.",
   },
   {
-    title: "Diagnóstico e orçamento",
-    desc: "Avaliamos o caso e enviamos orçamento detalhado pelo WhatsApp, sem compromisso e sem orçamento no escuro.",
+    title: "Combinamos o recebimento",
+    desc: "Informe onde está o cabeçote desmontado. Confirme prazo e condições da avaliação, entrega ou eventual coleta antes de sair.",
   },
   {
-    title: "Combinamos a logística",
-    desc: "Confirmamos pelo WhatsApp se há retirada ou entrega disponível para o endereço e a data informados.",
+    title: "Avaliação e orçamento",
+    desc: "Com a peça na oficina, conferimos seu estado e informamos o serviço necessário, o valor e o prazo para você aprovar.",
   },
   {
     title: "Serviço e orientação",
@@ -207,7 +207,7 @@ const faq = [
 export default function RetificaRibeiraoPretoPage() {
   return (
     <main className="min-h-screen bg-white">
-      <section className="relative overflow-hidden bg-[#051B3D] py-16 text-white md:py-24">
+      <section className="relative overflow-hidden bg-[#051B3D] py-8 text-white md:py-20">
         <div className="absolute inset-0 z-0">
           <Image
             src="/oficina.jpeg"
@@ -226,13 +226,13 @@ export default function RetificaRibeiraoPretoPage() {
               Atendemos Ribeirão Preto · oficina em Sertãozinho-SP
             </p>
             <h1 className="font-heading text-3xl font-extrabold leading-tight md:text-5xl">
-              Retífica de cabeçote para Ribeirão Preto —{" "}
-              <span className="text-rp-gold">conferência antes da decisão</span>
+              Retífica de cabeçote para Ribeirão Preto. {" "}
+              <span className="text-rp-gold">Avalie a peça antes de decidir.</span>
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">
-              Conte o que aconteceu e onde a peça está. A equipe orienta a
-              avaliação, confirma prazo e informa se há logística disponível
-              para a sua região antes da aprovação.
+              Nossa oficina fica em Sertãozinho. Combine o recebimento do
+              cabeçote desmontado e consulte a possibilidade de coleta em Ribeirão.
+              Você recebe o orçamento após a avaliação, antes de autorizar o serviço.
             </p>
 
             {/* Selos: as três objeções de quem busca "retífica em Ribeirão Preto",
@@ -263,7 +263,7 @@ export default function RetificaRibeiraoPretoPage() {
                 message={whatsappMessage}
                 className="inline-flex h-12 items-center justify-center rounded-full bg-[#25D366] px-8 text-sm font-bold text-[#052E16] transition-all hover:brightness-110 md:h-14 md:text-base"
               >
-                Pedir orçamento no WhatsApp
+                Combinar avaliação pelo WhatsApp
               </TrackedWhatsAppLink>
               <TrackedPhoneLink
                 eventLabel="ribeirao_preto_hero_phone"
@@ -272,6 +272,14 @@ export default function RetificaRibeiraoPretoPage() {
                 Ligar {siteConfig.phone.display}
               </TrackedPhoneLink>
             </div>
+
+            <TrackedCtaLink
+              href="/quanto-custa"
+              eventLabel="ribeirao_preto_hero_preco"
+              className="order-1 mt-4 w-fit py-2 text-sm font-semibold text-rp-gold underline underline-offset-4 sm:order-none"
+            >
+              Quer uma referência de preço primeiro?
+            </TrackedCtaLink>
 
             <NumerosProva numeros={numerosProva} tom="claro" className="order-4 mt-7 sm:order-none" />
           </div>
@@ -293,7 +301,6 @@ export default function RetificaRibeiraoPretoPage() {
                 fill
                 sizes="(max-width: 768px) 92vw, 560px"
                 className="object-cover"
-                priority
               />
             </div>
           )}

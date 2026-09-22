@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createPageViewMeasurement } from "@/lib/page-view-measurement";
 import {
   CONSENT_CHANGED_EVENT,
   CONSENT_RUNTIME_READY_EVENT,
@@ -16,6 +17,7 @@ import {
   sendExternalMarketingEvent,
   trackFunnelEvent,
   trackMarketingEvent,
+  trackAnalyticsEvent,
 } from "@/lib/trackingEvents";
 
 const SCROLL_THRESHOLDS = [50, 75, 90] as const;
@@ -24,8 +26,7 @@ const ENGAGEMENT_PULSE_MS = 30_000;
 
 export function AnalyticsRuntime() {
   const pathname = usePathname();
-  const previousPathnameRef = useRef<string | null>(null);
-  const lastMeasuredPathnameRef = useRef<string | null>(null);
+  const pageViewsRef = useRef(createPageViewMeasurement());
   const accumulatedActiveMsRef = useRef(0);
   const sessionRevisionRef = useRef(0);
   const [consentReady, setConsentReady] = useState(false);
@@ -44,8 +45,7 @@ export function AnalyticsRuntime() {
       const nextRevision = sessionRevisionRef.current + 1;
       sessionRevisionRef.current = nextRevision;
       accumulatedActiveMsRef.current = 0;
-      previousPathnameRef.current = null;
-      lastMeasuredPathnameRef.current = null;
+      pageViewsRef.current.reset();
       setSessionRevision(nextRevision);
     };
 
@@ -226,9 +226,6 @@ export function AnalyticsRuntime() {
   useEffect(() => {
     if (!consentReady) return;
 
-    const previousPathname = previousPathnameRef.current;
-    previousPathnameRef.current = pathname;
-
     captureTrafficAttribution();
 
     /*
@@ -240,16 +237,16 @@ export function AnalyticsRuntime() {
       trackingEvents.ts; aqui a decisão é só "houve navegação". O envio ao
       GA4/Ads segue guardado lá dentro por consentimento.
     */
-    if (lastMeasuredPathnameRef.current !== pathname) {
-      trackMarketingEvent("page_view", {
+    pageViewsRef.current.measure(pathname, hasAnalyticsConsent(), {
+      own: (label) => sendExternalMarketingEvent("page_view", {
         event_category: "navigation",
-        event_label:
-          lastMeasuredPathnameRef.current === null || previousPathname === null
-            ? "page_view"
-            : "spa_navigation",
-      });
-      lastMeasuredPathnameRef.current = pathname;
-    }
+        event_label: label,
+      }),
+      analytics: () => trackAnalyticsEvent("page_view", {
+        event_category: "navigation",
+        event_label: "page_view",
+      }),
+    });
 
     if (!hasAnalyticsConsent()) return;
     const fired = new Set<number>();

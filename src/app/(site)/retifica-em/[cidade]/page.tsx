@@ -23,8 +23,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cidade = getCidadePorSlug(slug);
   if (!cidade) return {};
 
-  const titulo = `Retífica de Cabeçote em ${cidade.nome} — Buscamos e Entregamos`;
-  const descricao = `Retífica de cabeçote para ${cidade.nome}. A oficina fica em Sertãozinho-SP, a ${cidade.distanciaKm} km. A gente busca, conferimos, orçamos e devolvemos. Garantia de 3 meses.`;
+  const titulo = `Retífica de Cabeçote para ${cidade.nome} | Avaliação em Sertãozinho`;
+  const descricao = `Retífica de cabeçote para ${cidade.nome}. A oficina fica em Sertãozinho-SP, a ${cidade.distanciaKm} km. Consulte avaliação e condições de recebimento ou coleta da peça. Garantia de 3 meses.`;
 
   return {
     title: titulo,
@@ -51,11 +51,11 @@ export default async function CidadePage({ params }: Props) {
   const faq = [
     {
       question: `Vocês têm oficina em ${cidade.nome}?`,
-      answer: `Não. A oficina fica em Sertãozinho-SP, a aproximadamente ${cidade.distanciaKm} km de ${cidade.nome}. O que fazemos é buscar o cabeçote em ${cidade.nome}, ver o que ela tem, passar o preço e devolver a peça pronta. Você não precisa se deslocar.`,
+      answer: `Não. A oficina fica em Sertãozinho-SP, a aproximadamente ${cidade.distanciaKm} km de ${cidade.nome}. Atendemos peças de ${cidade.nome}. Consulte as condições de entrega ou coleta antes de enviar o cabeçote desmontado.`,
     },
     {
       question: "Buscar e entregar custa alguma coisa?",
-      answer: `Não. Buscar e entregar em ${cidade.nome}. ${cidade.contexto}`,
+      answer: `Confirme com a equipe a disponibilidade, o custo e a rota para ${cidade.nome} antes de combinar a coleta ou entrega.`,
     },
     {
       question: "Como sei o preço antes de mandar a peça?",
@@ -87,7 +87,7 @@ export default async function CidadePage({ params }: Props) {
           </p>
 
           <h1 className="mt-3 max-w-3xl font-heading text-[2.15rem] font-bold leading-[1.04] tracking-[-0.015em] md:text-[3.35rem]">
-            Retífica de cabeçote em {cidade.nome}: a gente busca e devolve
+            Retífica de cabeçote para {cidade.nome}
           </h1>
 
           {/*
@@ -98,9 +98,9 @@ export default async function CidadePage({ params }: Props) {
           */}
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/85 md:text-xl">
             Nossa oficina fica em Sertãozinho, a {cidade.distanciaKm} km de{" "}
-            {cidade.nome} {cidade.rota}. Você não precisa levar nada: buscamos o
-            cabeçote, conferimos na oficina, falamos o preço e devolvemos a peça
-            pronta.
+            {cidade.nome} {cidade.rota}. Combine o recebimento do cabeçote
+            desmontado. A avaliação define o orçamento antes de você autorizar
+            o serviço. Consulte a disponibilidade de coleta para seu endereço.
           </p>
 
           <div className="mt-7 flex flex-col gap-2.5 sm:flex-row">
@@ -133,7 +133,7 @@ export default async function CidadePage({ params }: Props) {
             Como funciona para quem é de {cidade.nome}
           </p>
           <h2 className="mt-2 max-w-2xl font-heading text-[1.8rem] font-bold leading-tight text-gray-900 md:text-[2.35rem]">
-            Você não sai do lugar
+            Da entrega da peça à aprovação do serviço
           </h2>
 
           <ol className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-gray-200 bg-gray-200 sm:grid-cols-2">
@@ -143,8 +143,8 @@ export default async function CidadePage({ params }: Props) {
                 texto: `Conta o que está acontecendo e onde o cabeçote está em ${cidade.nome}. Se ainda estiver no carro, a gente explica o que fazer.`,
               },
               {
-                titulo: "A gente busca",
-                texto: cidade.contexto,
+                titulo: "Combinamos o recebimento",
+                texto: "Confirme prazo, condições da avaliação e como entregar a peça ou consultar a coleta.",
               },
               {
                 titulo: "Vemos o que a peça tem",

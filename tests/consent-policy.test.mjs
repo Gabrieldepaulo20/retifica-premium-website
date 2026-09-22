@@ -111,6 +111,6 @@ test("replay recalcula measurementMode e remove dados sem consentimento atual", 
     advertising: false,
   });
   assert.equal(denied.gclid, undefined);
-  assert.equal(denied.metadata.measurementMode, undefined);
-  assert.equal(measurementModeForConsent({ analytics: false, advertising: false }), undefined);
+  assert.equal(denied.metadata.measurementMode, "essencial");
+  assert.equal(measurementModeForConsent({ analytics: false, advertising: false }), "essencial");
 });

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { EstimativaGuiada } from "@/components/site/EstimativaGuiada";
+import { EstimativaOpcional } from "@/components/site/EstimativaOpcional";
 import { FaixaRapida } from "@/components/site/FaixaRapida";
 import { BreadcrumbSchema, FAQSchema } from "@/components/site/StructuredData";
 import { siteConfig } from "@/lib/site";
@@ -93,7 +93,7 @@ const faq = [
 export default function QuantoCustaPage() {
   return (
     <main className="min-h-screen bg-white">
-      <section className="relative overflow-hidden bg-rp-navy pb-16 pt-10 text-white md:pb-24 md:pt-16">
+      <section className="relative overflow-hidden bg-rp-navy pb-12 pt-6 text-white md:pb-20 md:pt-12">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
@@ -105,26 +105,16 @@ export default function QuantoCustaPage() {
         />
         <div className="relative z-10 mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <p className="font-heading text-xs font-bold uppercase tracking-[0.24em] text-rp-gold">
-            Retífica Premium · Sertãozinho e região
+            Oficina em Sertãozinho · atendemos Ribeirão Preto e região
           </p>
           <h1 className="mt-3 max-w-3xl font-heading text-[2.15rem] font-bold leading-[1.04] tracking-[-0.015em] md:text-[3.35rem]">
             Quanto custa retificar um cabeçote?
           </h1>
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/85 md:text-xl">
-            Depende do que a peça tem por dentro, e isso só dá para saber olhando. Quem
-            fecha preço por telefone está chutando — o valor muda quando o cabeçote
-            chega aqui.
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/85 md:text-lg">
+            Veja uma referência de valor sem informar seu contato. O orçamento
+            definitivo vem após a avaliação da peça, antes de autorizar o serviço.
           </p>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/72 md:text-lg">
-            O que dá para fazer agora é te mostrar quanto custou para quem já passou
-            por aqui com um carro parecido. Sem nome, sem telefone, sem compromisso.
-          </p>
-          {/*
-            A faixa vem antes das perguntas porque 84% do tráfego pago não rola a
-            página e 62% sai em menos de 10 segundos. Quem só quer o número
-            recebe aqui; quem quer contexto continua para as perguntas.
-          */}
-          <div className="mt-8">
+          <div className="mt-5">
             <FaixaRapida />
           </div>
 
@@ -133,11 +123,11 @@ export default function QuantoCustaPage() {
               Quer entender o que está acontecendo?
             </p>
             <p className="mt-2 max-w-2xl text-base leading-relaxed text-white/70">
-              São seis perguntas rápidas. No fim você vê o que costuma estar por
-              trás do que está acontecendo. Continua sem pedir contato.
+              Se quiser, organize os sintomas e as informações do veículo antes
+              da conversa. As perguntas não substituem a avaliação da peça.
             </p>
             <div className="mt-6">
-              <EstimativaGuiada />
+              <EstimativaOpcional />
             </div>
           </div>
         </div>
@@ -193,7 +183,7 @@ export default function QuantoCustaPage() {
             Transparência
           </p>
           <h2 className="mt-2 font-heading text-[1.8rem] font-bold leading-tight text-gray-900 md:text-[2.35rem]">
-            O que estas perguntas faz — e o que não faz
+            Como funciona a referência de preço
           </h2>
           <div className="mt-7 divide-y divide-[#E5DCC6] border-y border-[#E5DCC6]">
             {faq.map((item) => (

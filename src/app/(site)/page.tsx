@@ -134,17 +134,16 @@ export default function HomePage() {
                 <span className="text-white">DO CABEÇOTE?</span>
                 <br />
                 <span className="text-[#f59e0b] text-[22px] md:text-[42px] lg:text-5xl">
-                  A GENTE BUSCA E DEVOLVE PRONTO
+                  AVALIAÇÃO ANTES DE AUTORIZAR O SERVIÇO
                 </span>
               </h1>
 
               {/* Subtexto */}
               <div className="flex flex-col gap-1.5 md:gap-2">
                 <p className="mx-auto max-w-3xl text-[14px] leading-relaxed text-gray-300 md:max-w-4xl md:text-lg md:leading-relaxed">
-                  Você não precisa levar nada. Buscamos o cabeçote em
-                  Sertãozinho e região, falamos o preço antes de fazer e
-                  devolvemos com três meses de garantia. Carro, caminhão,
-                  ônibus e trator.
+                  Oficina em Sertãozinho, com atendimento a Ribeirão Preto e
+                  região. Avaliamos o cabeçote e informamos o orçamento antes
+                  do serviço. Consulte condições de coleta e entrega da peça.
                 </p>
               </div>
               {/* Micro-prova social */}
