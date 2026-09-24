@@ -553,7 +553,7 @@ function getOrCreateBrowserId(
       preferredValue,
       MARKETING_EVENT_CONTRACT.limits.anonymousId
     ) || `${prefix}-${randomId()}`;
-  storage?.setItem(key, value);
+  try { storage?.setItem(key, value); } catch { /* Contact stays available with full storage. */ }
   return value;
 }
 
@@ -645,7 +645,7 @@ function leadCode() {
  * evita que um cliente de meses atrás seja contado como o mesmo lead.
  */
 function getOrCreateLeadCode(storage: Storage | null): string {
-  if (!storage) return leadCode();
+  if (!storage) return createEphemeralContactIntent().leadCode;
 
   const now = Date.now();
   try {
@@ -755,7 +755,7 @@ export function getOrCreateContactIntent(): ContactIntent {
     createdAt: new Date().toISOString(),
   };
 
-  sessionStorage?.setItem(CONTACT_INTENT_KEY, JSON.stringify(intent));
+  try { sessionStorage?.setItem(CONTACT_INTENT_KEY, JSON.stringify(intent)); } catch { /* Memory fallback. */ }
   return intent;
 }
 

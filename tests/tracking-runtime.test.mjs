@@ -41,6 +41,12 @@ test('real tracking runtime: denied cookieless conversion, accepted IDs survive 
     assert.equal(tracking.getStoredAttribution().gclid,'test-ad-click');
     tracking.trackMarketingEvent('phone_click');
     assert.ok(calls.find(a=>a[1]==='conversion'&&a[2].send_to==='AW-123/phone')[2].transaction_id);
+    const savedLocal=window.localStorage;
+    window.localStorage={getItem(){throw Error('blocked')},setItem(){throw Error('blocked')},removeItem(){throw Error('blocked')}};
+    consent.saveConsentPreferences(choice);
+    const first=tracking.getOrCreateContactIntent();
+    assert.equal(tracking.getOrCreateContactIntent().leadCode, first.leadCode);
+    window.localStorage=savedLocal;
     const count=calls.length;
     window.localStorage.setItem('retifica_premium_tracking_opt_out','1');
     loc.search='?nao-medir=1';
