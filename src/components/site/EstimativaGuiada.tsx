@@ -1,5 +1,6 @@
 "use client";
 
+import { CityLocationPicker } from "@/components/site/CityLocationPicker";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   assessIntent,
@@ -972,8 +973,9 @@ export function EstimativaGuiada() {
               <div>
                 <Field label="Cidade"><input className={inputClass} value={answers.city} onFocus={() => trackFieldInteraction("contact", "city")} onChange={(event) => update({ city: event.target.value })} placeholder="Ex.: Sertãozinho" autoComplete="address-level2" /></Field>
                 <p className="mt-1.5 text-xs leading-relaxed text-white/65">
-                  Usada para orientar atendimento e logística. Não pedimos GPS e a cidade não é enviada ao Google como parâmetro personalizado.
+                  Usada para orientar atendimento e logística. A cidade não é enviada ao Google como parâmetro personalizado.
                 </p>
+                <CityLocationPicker onConfirm={(city) => update({ city })} />
               </div>
               <fieldset><legend className="mb-2 font-heading text-sm font-bold text-white/85">Para quando você precisa?</legend><div className="grid gap-2.5 sm:grid-cols-2">{(Object.entries(urgencyLabels) as [Urgency, string][]).map(([value, label]) => <Option key={value} name="urgency" value={value} selected={answers.urgency === value} label={label} onClick={() => { update({ urgency: value }); trackOption("contact", `urgency_${value}`); }} />)}</div></fieldset>
               <fieldset>

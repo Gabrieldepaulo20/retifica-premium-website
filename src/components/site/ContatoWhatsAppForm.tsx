@@ -1,5 +1,6 @@
 "use client";
 
+import { CityLocationPicker } from "@/components/site/CityLocationPicker";
 import { sendEnhancedLead } from "@/lib/enhanced-leads";
 import { canSendTrackingRequests, hasAdvertisingConsent } from "@/lib/consent";
 
@@ -581,8 +582,9 @@ export function ContatoWhatsAppForm({
           placeholder="Ex.: Sertãozinho ou Ribeirão Preto"
         />
         <p className="mt-1.5 text-[11px] leading-relaxed text-white/60">
-          Usada para orientar atendimento e logística. Não pedimos sua localização precisa.
+          Usada para orientar atendimento e logística. Você pode digitar ou usar a localização opcional abaixo.
         </p>
+        <CityLocationPicker onConfirm={(city) => updateField("cidade", city)} />
       </div>
 
       {!isB2B ? (

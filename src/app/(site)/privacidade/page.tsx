@@ -28,7 +28,7 @@ const categories = [
     title: "Análise avançada da experiência",
     status: "Você escolhe",
     description:
-      "Autoriza Google Analytics 4 e Clarity a analisar páginas e estimar região; o Retiflow registra a jornada e a cidade que você informar. Não acessa o GPS.",
+      "Autoriza Google Analytics 4 e Clarity a analisar páginas e estimar região; o Retiflow registra a jornada e a cidade que você informar. A permissão de localização é separada.",
   },
   {
     number: "03",
@@ -178,8 +178,20 @@ export default function PrivacidadePage() {
                   ou personalizar. Não existe aceite automático por tempo ou por
                   continuar navegando. Na personalização, os controles opcionais
                   começam desligados. O banner de cookies não concede permissão de
-                  localização do navegador; se um recurso desse tipo for oferecido no
-                  futuro, ele deverá pedir uma confirmação própria no momento do uso.
+                  localização do navegador. O recurso opcional “Usar minha localização”
+                  tem autorização separada, solicitada somente quando você escolhe
+                  localização aproximada ou exata. Cancelar não impede o atendimento.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  Nesse recurso, a posição é processada apenas no seu aparelho para
+                  sugerir uma cidade, usando malhas públicas simplificadas do IBGE de
+                  São Paulo. Na opção aproximada, as coordenadas são arredondadas
+                  antes da consulta local; na exata, pedimos maior precisão ao navegador,
+                  que pode não estar disponível. As coordenadas não são gravadas nem
+                  transmitidas pelo site ao nosso servidor, ao Retiflow, ao IBGE ou ao Google.
+                  Somente a cidade que você confirmar preenche o formulário e segue
+                  o mesmo tratamento da cidade digitada. Você pode corrigi-la ou apagá-la.
+                  Não fazemos acompanhamento contínuo da localização.
                 </p>
               </section>
 

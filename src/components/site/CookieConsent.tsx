@@ -497,7 +497,7 @@ export function CookieConsent({
                   />
                   <ChoiceRow
                     title="Análise avançada da experiência"
-                    description="Mede páginas e experiência; o Retiflow registra a jornada consentida e a cidade que você informar. Sem GPS."
+                    description="Mede páginas e experiência; o Retiflow registra a jornada consentida e a cidade que você informar. A permissão de localização é separada."
                     checked={analytics}
                     onChange={setAnalytics}
                   />

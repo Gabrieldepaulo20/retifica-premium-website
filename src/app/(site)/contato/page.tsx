@@ -133,7 +133,7 @@ export default function ContatoPage() {
             </h2>
             <p className="mb-6 mt-2 text-sm leading-relaxed text-white/65">
               Nome e telefone são necessários para responder. Cidade é opcional;
-              nenhum dado de localização precisa é solicitado.
+              você pode digitá-la ou usar a localização com autorização separada.
             </p>
             <ContatoWhatsAppForm />
           </div>
