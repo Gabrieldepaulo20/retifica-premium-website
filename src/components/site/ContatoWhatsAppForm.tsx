@@ -1,5 +1,8 @@
 "use client";
 
+import { sendEnhancedLead } from "@/lib/enhanced-leads";
+import { canSendTrackingRequests, hasAdvertisingConsent } from "@/lib/consent";
+
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -440,6 +443,15 @@ export function ContatoWhatsAppForm({
         return;
       }
 
+      void sendEnhancedLead({
+        enabled: process.env.NEXT_PUBLIC_GOOGLE_ADS_ENHANCED_LEADS_ENABLED === "true",
+        consent: hasAdvertisingConsent,
+        allowed: canSendTrackingRequests,
+        gtag: (window as Window & { gtag?: (...args: unknown[]) => void }).gtag,
+        adsId: process.env.NEXT_PUBLIC_GOOGLE_ADS_ID,
+        email: form.email,
+        phone: form.telefone,
+      });
       trackMarketingEvent("generate_lead", {
         event_category: "lead",
         event_label: `${leadLabel}_email`,

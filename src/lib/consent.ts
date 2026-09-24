@@ -1,3 +1,4 @@
+import { clearAttributionCookie } from "@/lib/attribution-storage";
 import { sanitizeMarketingPageLocation } from "@/lib/marketing-event-contract";
 
 export type ConsentPreferences = {
@@ -23,7 +24,7 @@ export const CONSENT_STORAGE_KEY = "retifica_premium_consent";
 export const CONSENT_CHANGED_EVENT = "retifica:consent-changed";
 export const CONSENT_RUNTIME_READY_EVENT = "retifica:consent-runtime-ready";
 export const CONSENT_BANNER_VISIBILITY_EVENT = "retifica:consent-banner-visibility";
-export const CONSENT_POLICY_VERSION = "2026-08-19";
+export const CONSENT_POLICY_VERSION = "2026-09-24";
 export const CONSENT_PURPOSE_VERSION = "measurement-v1";
 
 const CONSENT_TTL_MS = 180 * 24 * 60 * 60 * 1000;
@@ -71,6 +72,8 @@ function storageAvailable(kind: "localStorage" | "sessionStorage") {
   }
 }
 
+let memoryPreferences: ConsentPreferences | null = null;
+
 function isConsentPreferences(value: unknown): value is ConsentPreferences {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
 
@@ -92,11 +95,11 @@ function isConsentPreferences(value: unknown): value is ConsentPreferences {
 }
 
 export function readConsentPreferences(): ConsentPreferences | null {
-  if (!storageAvailable("localStorage")) return null;
+  if (!storageAvailable("localStorage")) return memoryPreferences;
 
   try {
     const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);
-    if (!raw) return null;
+    if (!raw) return memoryPreferences;
 
     const preferences = JSON.parse(raw) as unknown;
     if (
@@ -109,8 +112,7 @@ export function readConsentPreferences(): ConsentPreferences | null {
 
     return preferences;
   } catch {
-    window.localStorage.removeItem(CONSENT_STORAGE_KEY);
-    return null;
+    return memoryPreferences;
   }
 }
 
@@ -139,8 +141,8 @@ export function createConsentPreferences(
 }
 
 export function saveConsentPreferences(preferences: ConsentPreferences) {
-  if (!storageAvailable("localStorage")) return;
-  window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(preferences));
+  memoryPreferences = preferences;
+  try { window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(preferences)); memoryPreferences = null; } catch { /* Current choice remains in memory. */ }
 }
 
 export function hasAnalyticsConsent() {
@@ -391,6 +393,7 @@ function clearCookiesWithPrefixes(prefixes: readonly string[]) {
 }
 
 function clearAdvertisingAttribution() {
+  clearAttributionCookie();
   if (!storageAvailable("localStorage")) return;
 
   try {
@@ -412,7 +415,7 @@ function clearAdvertisingAttribution() {
       JSON.stringify(attribution)
     );
   } catch {
-    window.localStorage.removeItem("retifica_premium_attribution");
+    try { window.localStorage.removeItem("retifica_premium_attribution"); } catch { /* Storage unavailable. */ }
   }
 }
 
@@ -425,7 +428,7 @@ function sanitizeTrackingOutbox(preferences: ConsentPreferences) {
     if (!raw) return;
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) {
-      window.localStorage.removeItem(outboxKey);
+      try { window.localStorage.removeItem(outboxKey); } catch { /* Storage unavailable. */ }
       return;
     }
 
@@ -458,12 +461,12 @@ function sanitizeTrackingOutbox(preferences: ConsentPreferences) {
     });
 
     if (allowed.length === 0) {
-      window.localStorage.removeItem(outboxKey);
+      try { window.localStorage.removeItem(outboxKey); } catch { /* Storage unavailable. */ }
       return;
     }
     window.localStorage.setItem(outboxKey, JSON.stringify(allowed));
   } catch {
-    window.localStorage.removeItem(outboxKey);
+    try { window.localStorage.removeItem(outboxKey); } catch { /* Storage unavailable. */ }
   }
 }
 
@@ -495,16 +498,17 @@ export function clearTrackingStorage() {
 
   if (storageAvailable("localStorage")) {
     for (const key of TRACKING_STORAGE_KEYS) {
-      window.localStorage.removeItem(key);
+      try { window.localStorage.removeItem(key); } catch { /* Storage unavailable. */ }
     }
   }
 
   if (storageAvailable("sessionStorage")) {
     for (const key of TRACKING_STORAGE_KEYS) {
-      window.sessionStorage.removeItem(key);
+      try { window.sessionStorage.removeItem(key); } catch { /* Storage unavailable. */ }
     }
   }
 
+  clearAttributionCookie();
   clearCookiesWithPrefixes(TRACKING_COOKIE_PREFIXES);
 }
 

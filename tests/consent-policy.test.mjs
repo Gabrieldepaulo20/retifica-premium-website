@@ -15,8 +15,8 @@ import {
   TRACKING_STORAGE_KEYS,
 } from "../src/lib/consent.ts";
 
-test("cinco segundos sem interação só autorizam minimizar o aviso", () => {
-  assert.equal(CONSENT_BANNER_MINIMIZE_AFTER_MS, 5_000);
+test("trinta segundos sem interação só autorizam minimizar o aviso", () => {
+  assert.equal(CONSENT_BANNER_MINIMIZE_AFTER_MS, 30_000);
   assert.equal(
     shouldMinimizeConsentBanner({
       hasStoredPreferences: false,
@@ -67,9 +67,9 @@ test("a interface oferece aceitar e recusar com o mesmo peso e reabertura", asyn
     new URL("../src/components/site/CookieConsent.tsx", import.meta.url),
     "utf8"
   );
-  assert.match(source, />\s*Recusar medição\s*</);
-  assert.match(source, />\s*Aceitar medição\s*</);
-  assert.match(source, /Medição desligada · escolher/);
+  assert.match(source, />\s*Recusar cookies\s*</);
+  assert.match(source, />\s*Aceitar cookies\s*</);
+  assert.match(source, /Cookies opcionais · escolher/);
   assert.match(source, /aria-labelledby="privacy-banner-title"/);
   assert.match(source, /focus-visible:outline/);
 });

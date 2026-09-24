@@ -139,6 +139,7 @@
       "environment",
       "measurementMode",
       "eventContractVersion",
+      "attributionCapturedAt",
       "mensagem",
       "assunto",
       "nivel_b2b",
@@ -146,7 +147,7 @@
       "modelo_veiculo",
       "sintomas"
     ],
-    "maxKeys": 36,
+    "maxKeys": 37,
     "keyLength": 80,
     "numericMin": -1000000,
     "numericMax": 1000000,

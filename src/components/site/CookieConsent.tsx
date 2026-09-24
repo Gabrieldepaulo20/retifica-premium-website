@@ -16,6 +16,7 @@ import {
   readConsentPreferences,
   saveConsentPreferences,
   type ConsentPreferences,
+  privacySafePageLocation,
   updateClarityConsent,
   updateGoogleConsent,
 } from "@/lib/consent";
@@ -51,13 +52,10 @@ function appendScript(id: string, src: string) {
 }
 
 function initializeGoogleTags(
-  preferences: ConsentPreferences,
+  preferences: ConsentPreferences | null,
   ids: Pick<CookieConsentProps, "gaMeasurementId" | "googleAdsId">
 ) {
-  if (
-    (!preferences.analytics && !preferences.advertising) ||
-    !canSendTrackingRequests()
-  ) {
+  if (!canSendTrackingRequests()) {
     return;
   }
 
@@ -69,7 +67,7 @@ function initializeGoogleTags(
       runtimeWindow.dataLayer?.push(args);
     };
 
-  const bootstrapId = preferences.analytics
+  const bootstrapId = preferences?.analytics
     ? ids.gaMeasurementId
     : ids.googleAdsId;
 
@@ -83,7 +81,7 @@ function initializeGoogleTags(
   }
 
   if (
-    preferences.analytics &&
+    preferences?.analytics &&
     ids.gaMeasurementId &&
     !runtimeWindow.__retificaGaConfigured
   ) {
@@ -94,11 +92,13 @@ function initializeGoogleTags(
   }
 
   if (
-    preferences.advertising &&
     ids.googleAdsId &&
     !runtimeWindow.__retificaAdsConfigured
   ) {
-    runtimeWindow.gtag("config", ids.googleAdsId);
+    runtimeWindow.gtag("config", ids.googleAdsId, {
+      allow_ad_personalization_signals: false,
+      page_location: privacySafePageLocation(),
+    });
     runtimeWindow.__retificaAdsConfigured = true;
   }
 
@@ -202,6 +202,7 @@ export function CookieConsent({
       if (!stored) {
         clearTrackingStorage();
         updateGoogleConsent(null);
+        initializeGoogleTags(null, { gaMeasurementId, googleAdsId });
         dispatchConsentRuntimeReady();
         return;
       }
@@ -395,7 +396,7 @@ export function CookieConsent({
                     tabIndex={-1}
                     className="font-heading text-base font-bold leading-tight outline-none sm:text-lg"
                   >
-                    Antes de continuar
+                    Sua escolha de cookies
                   </h2>
                   <div className="flex shrink-0 items-center gap-3 text-xs font-bold">
                     <Link
@@ -423,8 +424,8 @@ export function CookieConsent({
                   no WhatsApp, nem conversão no Google Ads.
                 */}
                 <p className="mt-0.5 text-[11px] leading-tight text-white/72 sm:text-sm sm:leading-relaxed">
-                  Usamos medição para saber quais páginas ajudam quem procura
-                  retífica. Não vendemos nem repassamos seus dados.
+                  Cookies opcionais ajudam a medir visitas e anúncios. Sem aceite,
+                  o Google recebe apenas sinais limitados sem cookies. Você pode recusar.
                 </p>
               </div>
 
@@ -438,7 +439,7 @@ export function CookieConsent({
                     }}
                     className="min-h-11 whitespace-nowrap rounded-full border border-white/30 bg-white/[0.08] px-3 text-xs font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-5 sm:text-sm"
                   >
-                    Recusar medição
+                    Recusar cookies
                   </button>
                   <button
                     type="button"
@@ -448,7 +449,7 @@ export function CookieConsent({
                     }}
                     className="min-h-11 whitespace-nowrap rounded-full border border-white/30 bg-white/[0.08] px-3 text-xs font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-5 sm:text-sm"
                   >
-                    Aceitar medição
+                    Aceitar cookies
                   </button>
                 </div>
               ) : null}
@@ -537,7 +538,7 @@ export function CookieConsent({
           aria-controls="privacy-preferences-dialog"
         >
           {isMinimized && !preferences
-            ? "Medição desligada · escolher"
+            ? "Cookies opcionais · escolher"
             : "Privacidade"}
         </button>
       )}

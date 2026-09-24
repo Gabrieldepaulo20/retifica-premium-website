@@ -1,4 +1,4 @@
-export const CONSENT_BANNER_MINIMIZE_AFTER_MS = 5_000;
+export const CONSENT_BANNER_MINIMIZE_AFTER_MS = 30_000;
 
 export function shouldMinimizeConsentBanner(args: {
   hasStoredPreferences: boolean;

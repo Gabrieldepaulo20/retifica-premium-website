@@ -133,6 +133,7 @@ export const MARKETING_EVENT_CONTRACT = {
       "environment",
       "measurementMode",
       "eventContractVersion",
+      "attributionCapturedAt",
       "mensagem",
       "assunto",
       "nivel_b2b",
@@ -140,7 +141,7 @@ export const MARKETING_EVENT_CONTRACT = {
       "modelo_veiculo",
       "sintomas",
     ],
-    maxKeys: 36,
+    maxKeys: 37,
     keyLength: 80,
     numericMin: -1_000_000,
     numericMax: 1_000_000,
@@ -455,6 +456,13 @@ export function sanitizeMarketingEventMetadata(
       const cityLimit = MARKETING_EVENT_CONTRACT.limits[rules.visitorCityLimit];
       const city = cleanContractMetadataString(item, cityLimit);
       if (/^[\p{L}\s.'-]+$/u.test(city)) metadata[key] = city;
+      continue;
+    }
+
+    if (key === "attributionCapturedAt") {
+      if (typeof item === "string" && /^\d{4}-\d{2}-\d{2}T/.test(item) && Number.isFinite(Date.parse(item))) {
+        metadata[key] = new Date(item).toISOString();
+      }
       continue;
     }
 

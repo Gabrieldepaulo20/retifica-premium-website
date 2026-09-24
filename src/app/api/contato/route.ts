@@ -349,6 +349,7 @@ export async function POST(request: Request) {
           : undefined,
       measurementMode,
       eventContractVersion: MARKETING_EVENT_CONTRACT.schemaVersion,
+      attributionCapturedAt: attribution.capturedAt,
       mensagem: mensagem || undefined,
       assunto: assunto || undefined,
       nivel_b2b: b2bLevel || undefined,

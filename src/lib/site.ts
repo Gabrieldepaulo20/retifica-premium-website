@@ -60,7 +60,7 @@ export const siteConfig = {
 } as const;
 
 export const whatsappBudgetText =
-  "Olá, vim pelo site da Retífica Premium e gostaria de solicitar um orçamento para retífica de cabeçote ou diagnóstico do motor.";
+  "Olá! Quero combinar uma avaliação do cabeçote e entender o que precisa ser feito.";
 
 export const whatsappBudgetUrl = `https://wa.me/${
   siteConfig.whatsapp.number

@@ -1,5 +1,6 @@
 "use client";
 
+import { installContactNavigationGuard } from "@/lib/google-ads-dispatch";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPageViewMeasurement } from "@/lib/page-view-measurement";
@@ -11,6 +12,7 @@ import {
 } from "@/lib/consent";
 import {
   captureTrafficAttribution,
+  getPendingAdsConversion,
   flushExternalMarketingEventOutbox,
   getOrCreateContactIntent,
   MEASUREMENT_SESSION_ROTATED_EVENT,
@@ -32,6 +34,8 @@ export function AnalyticsRuntime() {
   const [consentReady, setConsentReady] = useState(false);
   const [consentRevision, setConsentRevision] = useState(0);
   const [sessionRevision, setSessionRevision] = useState(0);
+
+  useEffect(() => installContactNavigationGuard(document, getPendingAdsConversion, href => window.location.assign(href)), []);
 
   useEffect(() => {
     const handleConsentChanged = () => {

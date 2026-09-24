@@ -69,7 +69,7 @@ export default function PrivacidadePage() {
             ideia quando quiser.
           </p>
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-white/50">
-            Última atualização: 10 de agosto de 2026
+            Última atualização: 24 de setembro de 2026
           </p>
         </div>
       </section>
@@ -180,6 +180,29 @@ export default function PrivacidadePage() {
                   começam desligados. O banner de cookies não concede permissão de
                   localização do navegador; se um recurso desse tipo for oferecido no
                   futuro, ele deverá pedir uma confirmação própria no momento do uso.
+                </p>
+              </section>
+
+              <section>
+                <h2 className="font-heading text-2xl font-bold text-[#06172e]">
+                  Sinais limitados de anúncios, sem cookies
+                </h2>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  O Google Ads pode receber sinais limitados de carregamento e de
+                  cliques em contato mesmo sem aceite dos cookies opcionais, pelo
+                  Consent Mode. Nesse modo, cookies de anúncios, envio de dados
+                  pessoais de atendimento e personalização permanecem desativados.
+                  O Google processa informações técnicas da conexão e o estado do
+                  consentimento para medição agregada; isso não confirma uma venda
+                  nem identifica quem enviou uma mensagem no WhatsApp.
+                  O link de oposição acima também interrompe esses sinais.
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[#42526d]">
+                  Quando você autoriza a medição, a atribuição pode ficar no
+                  armazenamento local e em um cookie próprio por até 90 dias.
+                  Uma referência curta na mensagem do WhatsApp permite localizar
+                  esse atendimento no Retiflow. Você pode removê-la antes de enviar.
+                  Não incluímos identificadores de anúncios nessa mensagem.
                 </p>
               </section>
 
