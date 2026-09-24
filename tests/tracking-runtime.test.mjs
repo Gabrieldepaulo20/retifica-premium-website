@@ -5,6 +5,7 @@ process.env.NEXT_PUBLIC_GOOGLE_ADS_WHATSAPP_SEND_TO='AW-123/whatsapp';
 process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_SEND_TO='AW-123/phone';
 const tracking = await import('../src/lib/trackingEvents.ts');
 const consent = await import('../src/lib/consent.ts');
+const contract = await import('../src/lib/marketing-event-contract.ts');
 
 class MemoryStorage {
   data=new Map();
@@ -12,6 +13,44 @@ class MemoryStorage {
   setItem(k,v){this.data.set(k,String(v))}
   removeItem(k){this.data.delete(k)}
 }
+
+test('confirmed city attaches to the visit immediately without Google events, even with ad-only cookies', async () => {
+  const original={window:globalThis.window,document:globalThis.document,navigator:Object.getOwnPropertyDescriptor(globalThis,'navigator'),fetch:globalThis.fetch};
+  const requests=[], google=[];
+  try {
+    globalThis.window={location:{hostname:'www.premiumretifica.com.br',origin:'https://www.premiumretifica.com.br',pathname:'/servicos',search:'',href:'https://www.premiumretifica.com.br/servicos'},localStorage:new MemoryStorage(),sessionStorage:new MemoryStorage(),__retificaConsentRuntimeReady:true,innerWidth:390,matchMedia:()=>({matches:true}),dispatchEvent(){},gtag:(...args)=>google.push(args)};
+    globalThis.document={referrer:'',title:'Serviços',cookie:''};
+    Object.defineProperty(globalThis,'navigator',{value:{userAgent:'Mobile'},configurable:true});
+    globalThis.fetch=async (_url,options)=>{requests.push(JSON.parse(options.body));return new Response(JSON.stringify({ok:true,storageSaved:true}),{status:200})};
+    for (const prefs of [{analytics:false,advertising:false},{analytics:false,advertising:true}]) {
+      consent.saveConsentPreferences(consent.createConsentPreferences(prefs));
+      const id=tracking.getOrCreateContactIntent().sessionId;
+      assert.equal(tracking.confirmSessionCity('Ribeirão Preto','manual'),true);
+      await new Promise(r=>setImmediate(r));
+      const event=requests.at(-1);
+      assert.equal(event.eventType,'custom');
+      assert.equal(event.metadata.eventLabel,'location_confirmed');
+      assert.equal(event.metadata.visitorCity,'Ribeirão Preto');
+      assert.equal(event.metadata.method,'city_manual');
+      assert.equal(event.sessionId,id);
+      assert.equal(event.pagePath,'/servicos');
+      assert.equal(event.lead,undefined);
+    }
+    assert.equal(google.length,0);
+    assert.doesNotMatch(JSON.stringify(requests),/latitude|longitude/);
+    const count=requests.length;
+    assert.equal(tracking.confirmSessionCity('-21.17, -47.81','manual'),false);
+    window.location.search='?nao-medir=1';
+    tracking.confirmSessionCity('Sertãozinho','precise');
+    await new Promise(r=>setImmediate(r));
+    assert.equal(requests.length,count);
+    assert.equal(contract.isConfirmedLocationEvent('custom',{eventLabel:'cta_click',method:'city_manual',visitorCity:'Sertãozinho'}),false);
+    assert.equal(contract.isConfirmedLocationEvent('custom',{eventLabel:'location_confirmed',method:'unknown',visitorCity:'Sertãozinho'}),false);
+  } finally {
+    globalThis.window=original.window;globalThis.document=original.document;globalThis.fetch=original.fetch;
+    if(original.navigator)Object.defineProperty(globalThis,'navigator',original.navigator);
+  }
+});
 
 test('real tracking runtime: denied cookieless conversion, accepted IDs survive navigation, no duplicate, opt-out stops', async () => {
   const original={window:globalThis.window,document:globalThis.document,navigator:Object.getOwnPropertyDescriptor(globalThis,'navigator'),fetch:globalThis.fetch};

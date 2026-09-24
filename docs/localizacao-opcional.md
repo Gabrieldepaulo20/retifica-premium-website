@@ -19,3 +19,12 @@ Fontes:
 Conversão do dado: associar `properties.codarea` ao `id` dos nomes; normalizar Polygon para lista de polígonos; manter anéis internos e calcular limites por município. Não é estimativa por sede mais próxima.
 
 Não há mudanças em banco, contratos de eventos, Google Ads ou permissão de cookies. Retiflow recebe somente o campo de cidade já existente, conforme o fluxo de contato e a política atual.
+
+
+## Integração por sessão — atualização
+
+O seletor também está disponível abaixo do cabeçalho em todas as páginas. A confirmação explícita (manual, aproximada ou exata) envia `custom/location_confirmed` com `visitorCity`, `method=city_manual|city_approximate|city_precise`, página, horário e a sessão atual. Não é lead, não dispara Ads/GA4 e não é uma consulta contínua de localização. O texto antes da confirmação descreve a associação à visita. Opt-out continua bloqueando envio.
+
+A confirmação tem autorização própria e passa pelos contratos mesmo no modo de cookies publicidade-apenas, sem autorizar outros microeventos. Os demais eventos preservam suas regras atuais. Não são adicionados cookies/IDs para tentar identificar quem recusou medição; sem cookies usa-se a sessão efêmera existente. Navegação com recarga/fechamento pode iniciar outra sessão, e não inferimos que seja a mesma pessoa.
+
+No Retiflow, a coluna Cidade informada agrega somente eventos da mesma sessão, usa o horário mais recente independentemente da ordem de chegada e mostra Não informada quando ausente. Os detalhes mostram a página/horário do registro da cidade. Páginas de entrada, caminho e ações continuam vindo de eventos reais. Nenhuma migration ou alteração de RLS/Auth.

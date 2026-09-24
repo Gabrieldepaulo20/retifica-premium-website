@@ -126,16 +126,10 @@ export default function PrivacidadePage() {
                   <strong className="text-[#06172e]">
                     quanto tempo a página ficou ativa
                   </strong>{" "}
-                  — um único total por visita, não um histórico do que você fez —
-                  e uma{" "}
-                  <strong className="text-[#06172e]">
-                    estimativa de cidade e estado
-                  </strong>
-                  , calculada a partir do seu acesso à internet, nunca por GPS.
-                  Temos uma oficina só, e é isso que nos diz de onde vem a procura
-                  e se vale buscar a peça na sua região. Nos relatórios, cidades
-                  com menos de três visitas ficam ocultas, para que ninguém seja
-                  identificado por eliminação.
+                  — um total de tempo ativo por visita. A cidade não é obrigatória:
+                  ela pode ser informada por você no formulário ou confirmada no
+                  recurso opcional de localização. Não preenchemos a cidade de uma
+                  sessão com base na região escolhida em uma campanha de anúncios.
                 </p>
                 <p className="mt-3 text-sm leading-7 text-[#42526d]">
                   Nessa contagem <strong className="text-[#06172e]">não</strong>{" "}
@@ -189,9 +183,15 @@ export default function PrivacidadePage() {
                   antes da consulta local; na exata, pedimos maior precisão ao navegador,
                   que pode não estar disponível. As coordenadas não são gravadas nem
                   transmitidas pelo site ao nosso servidor, ao Retiflow, ao IBGE ou ao Google.
-                  Somente a cidade que você confirmar preenche o formulário e segue
-                  o mesmo tratamento da cidade digitada. Você pode corrigi-la ou apagá-la.
-                  Não fazemos acompanhamento contínuo da localização.
+                  Ao confirmar, você autoriza o envio somente da cidade ao Retiflow,
+                  junto do código da sessão, página e horário da confirmação. Assim,
+                  nossa equipe pode consultar a cidade informada e as páginas dessa visita
+                  para orientar o atendimento e entender a procura na região, mesmo sem
+                  envio de formulário. Essa escolha é separada dos cookies de publicidade.
+                  Você pode corrigir a cidade; o painel usa a informação mais recente.
+                  Quando você não informa, mostramos “Não informada”. Não fazemos
+                  acompanhamento contínuo da localização. Relatórios agregados por cidade
+                  continuam ocultando grupos com menos de três sessões.
                 </p>
               </section>
 

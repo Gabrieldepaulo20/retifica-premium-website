@@ -5,6 +5,7 @@ import { AnalyticsRuntime } from "@/components/site/AnalyticsRuntime";
 import { CookieConsent } from "@/components/site/CookieConsent";
 import { GoogleAdsWebsiteCallRuntime } from "@/components/site/GoogleAdsWebsiteCallRuntime";
 import { Header } from "@/components/site/Header";
+import { SessionLocation } from "@/components/site/SessionLocation";
 import { FloatingWhatsApp } from "@/components/site/FloatingWhatsApp";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import "./globals.css";
@@ -129,6 +130,7 @@ gtag('set', 'ads_data_redaction', true);`}
         <AnalyticsRuntime />
         <GoogleAdsWebsiteCallRuntime />
         <Header />
+        <SessionLocation />
         {children}
         <CookieConsent
           gaMeasurementId={GA_MEASUREMENT_ID}

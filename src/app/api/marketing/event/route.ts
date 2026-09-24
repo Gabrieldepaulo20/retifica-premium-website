@@ -6,6 +6,7 @@ import {
 } from "@/lib/external-marketing";
 import {
   containsHighConfidencePersonalData,
+  isConfirmedLocationEvent,
   isSiteTelemetryEndpointEventAllowed,
   MARKETING_EVENT_CONTRACT,
   normalizeMarketingLeadCode,
@@ -246,6 +247,7 @@ export async function POST(request: Request) {
     metadata.measurementMode !== "analytics" &&
     metadata.measurementMode !== "analytics_and_advertising" &&
     metadata.measurementMode !== "essencial"
+    && !isConfirmedLocationEvent(eventType, metadata)
   ) {
     delete metadata.visitorCity;
   }

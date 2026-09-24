@@ -1,5 +1,5 @@
 import { clearAttributionCookie } from "@/lib/attribution-storage";
-import { sanitizeMarketingPageLocation } from "@/lib/marketing-event-contract";
+import { isConfirmedLocationEvent, sanitizeMarketingPageLocation } from "@/lib/marketing-event-contract";
 
 export type ConsentPreferences = {
   version: string;
@@ -193,21 +193,11 @@ export function sanitizeTrackingPayloadForConsent<
       ? { ...(cleanedPayload.metadata as Record<string, unknown>) }
       : {};
 
-  /*
-    Cidade permanece na contagem essencial, por decisão do controlador em
-    19/08/2026: para uma retífica com uma oficina só, saber de que cidade vem a
-    procura é o que define raio de anúncio e se vale buscar a peça.
-
-    Salvaguardas que tornam isso defensável, e que NÃO devem ser removidas:
-    - granularidade de cidade/UF, estimada por IP, nunca GPS;
-    - o painel só exibe grupos com no mínimo 3 sessões (`minimumSessions`),
-      então cidade pequena não vira identificação por eliminação;
-    - nunca combinada com nome, telefone ou e-mail.
-
-    A página /privacidade descreve exatamente isso e o direito de oposição.
-  */
+  // A confirmed city is volunteered for this visit, separately from cookie choices.
+  // Other city-bearing events retain their existing consent gate.
   const semQualquerEscolha = !preferences.analytics && !preferences.advertising;
-  if (!preferences.analytics && !semQualquerEscolha) {
+  if (!preferences.analytics && !semQualquerEscolha
+    && !isConfirmedLocationEvent(payload.eventType, metadata)) {
     delete cleanedPayload.city;
     delete cleanedPayload.visitorCity;
     delete metadata.visitorCity;

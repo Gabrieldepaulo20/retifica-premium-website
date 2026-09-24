@@ -16,6 +16,7 @@ import {
 import {
   containsHighConfidencePersonalData,
   isCanonicalMarketingLeadCode,
+  isConfirmedLocationEvent,
   isSiteTelemetryEndpointEventAllowed,
   MARKETING_EVENT_CONTRACT,
   normalizeMarketingEventType,
@@ -1102,7 +1103,8 @@ export async function flushExternalMarketingEventOutbox() {
 
   try {
     for (const entry of snapshot) {
-      if (!hasExternalEventConsent(entry.payload.eventType)) continue;
+      if (!hasExternalEventConsent(entry.payload.eventType)
+        && !isConfirmedLocationEvent(entry.payload.eventType, entry.payload.metadata ?? {})) continue;
       if (entry.nextAttemptAt > Date.now()) {
         remaining.push(entry);
         continue;
@@ -1253,13 +1255,14 @@ export function sendExternalMarketingEvent(
     depender de consentimento. Por isso a liberação é pelo rótulo, um a um.
   */
   const rotulo = compactString(params.event_label, 120);
+  const cidadeConfirmada = isConfirmedLocationEvent(eventType, { eventLabel: rotulo, method: params.method, visitorCity: params.visitor_city });
   const contagemEssencialPorRotulo =
     eventType === "custom" && rotulo === "session_engagement";
 
   if (
     typeof window === "undefined" ||
     !isConsentRuntimeReady() ||
-    (!hasExternalEventConsent(eventType) && !contagemEssencialPorRotulo) ||
+    (!hasExternalEventConsent(eventType) && !contagemEssencialPorRotulo && !cidadeConfirmada) ||
     !canSendTrackingRequests()
   ) {
     return;
@@ -1355,7 +1358,7 @@ export function sendExternalMarketingEvent(
       // Bloqueada só no modo publicidade-apenas; liberada em análise e no
       // modo essencial (ninguém decidiu ainda), como o Edge já faz.
       visitorCity:
-        analyticsConsented || !advertisingConsented
+        analyticsConsented || !advertisingConsented || cidadeConfirmada
           ? explicitCity(params.visitor_city)
           : undefined,
       marca_veiculo: params.marca_veiculo,
@@ -1703,4 +1706,16 @@ export function trackEngagementEvent(
     event_label: gaEventLabel,
     ...params,
   });
+}
+
+/** Called only after the visitor confirms a city. No GA4/Ads event or conversion. */
+export function confirmSessionCity(city: string, method: "manual" | "approximate" | "precise") {
+  const safeCity = explicitCity(city);
+  if (!safeCity) return false;
+  sendExternalMarketingEvent("custom", {
+    event_label: "location_confirmed",
+    method: `city_${method}`,
+    visitor_city: safeCity,
+  });
+  return true;
 }

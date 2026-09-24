@@ -520,3 +520,12 @@ export function sanitizeMarketingEventMetadata(
 
   return metadata;
 }
+
+/** City sharing has its own explicit confirmation, independent of ad cookies. */
+export function isConfirmedLocationEvent(eventType: unknown, value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const metadata = value as Record<string, unknown>;
+  return eventType === "custom" && metadata.eventLabel === "location_confirmed"
+    && ["city_manual", "city_approximate", "city_precise"].includes(String(metadata.method))
+    && typeof sanitizeMarketingEventMetadata(metadata).visitorCity === "string";
+}
